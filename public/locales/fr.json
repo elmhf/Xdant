@@ -1,0 +1,163 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "logout": "Se déconnecter",
+    "select": "Sélectionner",
+    "enabled": "Activé",
+    "disabled": "Désactivé"
+  },
+  "addProblem": {
+    "title": "Ajouter un problème",
+    "description": "Spécifiez et configurez le problème",
+    "selectProblemError": "Veuillez sélectionner un problème (obligatoire)",
+    "selectMaskError": "Veuillez sélectionner un masque pour le problème (obligatoire)",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "clearAll": "Tout effacer",
+    "successMessage": "Problème ajouté avec succès"
+  },
+  "dentalForm": {
+    "dentalVisualization": "Visualisation dentaire",
+    "drawingTools": "Outils de dessin",
+    "resetDrawing": "Réinitialiser le dessin",
+    "resetDrawingSuccess": "Dessin réinitialisé avec succès",
+    "actions": "Actions",
+    "saveDraft": "Enregistrer le brouillon",
+    "draftSaved": "Brouillon enregistré avec succès",
+    "duplicate": "Dupliquer",
+    "problemDuplicated": "Problème dupliqué",
+    "view": "Voir",
+    "export": "Exporter",
+    "exportImage": "Exporter l’image",
+    "exportingImage": "Exportation en cours...",
+    "print": "Imprimer",
+    "clearAll": "Tout effacer",
+    "allFieldsCleared": "Tous les champs ont été effacés",
+    "dentalProblemReport": "Rapport de problème dentaire",
+    "problem": "Problème",
+    "problemPlaceholder": "Saisir ou sélectionner un problème",
+    "select": "Sélectionner",
+    "dentalProblems": "Problèmes dentaires",
+    "severity": "Gravité",
+    "selectSeverity": "Sélectionner le niveau de gravité",
+    "severityLevels": "Niveaux de gravité",
+    "stage": "Stade",
+    "selectStage": "Sélectionner le stade de progression",
+    "progressionStages": "Stades de progression",
+    "description": "Description",
+    "descriptionPlaceholder": "Écrivez une brève description du problème"
+  },
+  "cardButton": {
+    "toggleView": "Changer la vue",
+    "resetTooth": "Réinitialiser la dent",
+    "addProblem": "Ajouter un problème",
+    "confirmUnapprove": "Confirmer l’annulation",
+    "unapprovePrompt": "Êtes-vous sûr de vouloir annuler l’approbation de la dent {{toothNumber}} ?",
+    "cancel": "Annuler",
+    "unapprove": "Annuler l’approbation",
+    "approve": "Approuver",
+    "approved": "Approuvé",
+    "toothApproved": "Dent {{toothNumber}} approuvée",
+    "toothUnapproved": "Dent {{toothNumber}} désapprouvée",
+    "approveError": "Échec de la mise à jour de l’état d’approbation",
+    "tooltipApprove": "Cliquez pour approuver (Ctrl+A)",
+    "tooltipUnapprove": "Cliquez pour désapprouver (Ctrl+A)"
+  },
+  "navbar": {
+    "home": "Accueil",
+    "patients": "Patients",
+    "patientName": "Félicia Hall",
+    "reportTitle": "Rapport CBCT IA",
+    "print": "Imprimer l’analyse"
+  },
+  "addComment": {
+    "comment": "Commentaire",
+    "title": "Ajouter un nouveau commentaire",
+    "placeholder": "Écrivez votre commentaire ici...",
+    "confirm": "Confirmer",
+    "cancel": "Annuler"
+  },
+  "side": {
+    "card": {
+      "Tooth": "Dent",
+      "NoProblemsDetected": "Aucun problème détecté"
+    },
+    "dentalChart": "Diagramme dentaire",
+    "showFilters": "Afficher les filtres",
+    "hideFilters": "Masquer les filtres",
+    "searchDentalIssues": "Rechercher des problèmes dentaires",
+    "searchByProblemOrComment": "Rechercher par problème ou commentaire...",
+    "filterByStatus": "Filtrer par statut",
+    "allTeeth": "Toutes les dents",
+    "approved": "Approuvées",
+    "withIssues": "Avec problèmes",
+    "withNotes": "Avec notes",
+    "loadingDentalChart": "Chargement du diagramme dentaire...",
+    "noMatchingTeethFound": "Aucune dent correspondante trouvée",
+    "dataNotAvailable": "Données non disponibles",
+    "adjustSearchOrFilter": "Essayez de modifier les critères de recherche ou de filtre",
+    "loadPatientToEnableFilters": "Veuillez charger les données du patient pour activer les filtres",
+    "resetAllFilters": "Réinitialiser tous les filtres",
+    "language": "Langue"
+  },
+  "reportSettings": {
+    "title": "Paramètres du rapport",
+    "downloadPDF": "Télécharger le PDF",
+    "generating": "Génération en cours...",
+    "downloadSuccess": "Fichier téléchargé avec succès !",
+    "selectPlaceholder": "Sélectionner",
+    "colorPrint": "Impression en couleur",
+    "colorPrintDesc": "Imprimer le rapport en couleur au lieu du noir et blanc",
+    "signedByDoctor": "Signé par le médecin",
+    "signedByDoctorDesc": "Ajouter la signature du médecin en bas du rapport",
+    "includeXrayImages": "Inclure les images radiographiques",
+    "includeXrayImagesDesc": "Ajouter des images radiographiques pour chaque dent si disponible",
+    "includeDoctorNotes": "Inclure les notes du médecin",
+    "includeDoctorNotesDesc": "Afficher les notes médicales enregistrées pour chaque dent",
+    "showToothNumbers": "Afficher les numéros des dents",
+    "showToothNumbersDesc": "Afficher le numéro de chaque dent dans le rapport",
+    "includeTreatmentPlan": "Inclure le plan de traitement",
+    "includeTreatmentPlanDesc": "Ajouter un résumé du plan de traitement à la fin du rapport",
+    "onlyAffectedTeeth": "Dents affectées uniquement",
+    "onlyAffectedTeethDesc": "Exclure les dents saines du rapport",
+    "clinicStamp": "Ajouter un tampon de la clinique",
+    "clinicStampDesc": "Insérer un tampon numérique à la fin du rapport",
+    "showDateTime": "Afficher la date et l’heure",
+    "showDateTimeDesc": "Afficher la date et l’heure de l’émission du rapport",
+    "includeCoverPage": "Inclure une page de couverture",
+    "includeCoverPageDesc": "Ajouter une première page avec les informations de la clinique et du patient",
+    "reportLanguage": "Langue du rapport",
+    "detailLevel": "Niveau de détail"
+  },
+  "languages": {
+    "arabic": "Arabe",
+    "english": "Anglais",
+    "french": "Français"
+  },
+  "detailLevels": {
+    "brief": "Bref",
+    "detailed": "Détaillé"
+  },
+  "error": {
+    "generic": "Une erreur s’est produite. Veuillez réessayer.",
+    "network": "Erreur réseau. Veuillez vérifier votre connexion Internet.",
+    "notFound": "Page demandée non trouvée.",
+    "unauthorized": "Accès non autorisé",
+    "timeout": "Délai de la requête dépassé",
+    "serverError": "Erreur interne du serveur"
+  },
+  "validation": {
+    "required": "Ce champ est requis",
+    "invalidEmail": "Adresse e-mail invalide",
+    "minLength": "Doit contenir au moins {{count}} caractères",
+    "maxLength": "Ne doit pas dépasser {{count}} caractères",
+    "passwordMismatch": "Les mots de passe ne correspondent pas"
+  },
+  "notifications": {
+    "success": "Opération réussie",
+    "warning": "Avertissement",
+    "error": "Erreur",
+    "info": "Information"
+  }
+}

@@ -1,0 +1,108 @@
+.comparisonContainer {
+  width: 100%;
+  padding: 20px;
+}
+
+.comparisonControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: var(--card-background-color);
+  border-radius: var(--Border-Radios);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.compareButton {
+  transition: all 0.2s ease;
+}
+
+.compareButton:hover {
+  transform: translateY(-1px);
+}
+
+.selectionControls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.comparisonView {
+  transition: all 0.3s ease;
+}
+
+.comparisonView.active {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: var(--Border-Radios);
+  padding: 15px;
+}
+
+.teethComparison {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+}
+
+.toothColumn {
+  flex: 1;
+  min-width: 0;
+}
+
+.comparisonDivider {
+  width: 1px;
+  background-color: #e0e0e0;
+  margin: 0 15px;
+  position: relative;
+}
+
+.comparisonDivider::before {
+  content: "VS";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: #6678b7;
+  border: 1px solid #e0e0e0;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background-color: #f5f5f5;
+  border-radius: var(--Border-Radios);
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .comparisonControls {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .teethComparison {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .comparisonDivider {
+    width: 100%;
+    height: 1px;
+    margin: 15px 0;
+  }
+  
+  .comparisonDivider::before {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

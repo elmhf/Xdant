@@ -1,0 +1,163 @@
+{
+  "common": {
+    "welcome": "Bienvenido",
+    "logout": "Cerrar sesión",
+    "select": "Seleccionar",
+    "enabled": "Activado",
+    "disabled": "Desactivado"
+  },
+  "addProblem": {
+    "title": "Agregar problema",
+    "description": "Especifique y configure el problema",
+    "selectProblemError": "Por favor, seleccione un problema (obligatorio)",
+    "selectMaskError": "Por favor, seleccione una máscara para el problema (obligatorio)",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "clearAll": "Borrar todo",
+    "successMessage": "Problema agregado exitosamente"
+  },
+  "dentalForm": {
+    "dentalVisualization": "Visualización dental",
+    "drawingTools": "Herramientas de dibujo",
+    "resetDrawing": "Restablecer dibujo",
+    "resetDrawingSuccess": "Dibujo restablecido exitosamente",
+    "actions": "Acciones",
+    "saveDraft": "Guardar borrador",
+    "draftSaved": "Borrador guardado exitosamente",
+    "duplicate": "Duplicar",
+    "problemDuplicated": "Problema duplicado",
+    "view": "Ver",
+    "export": "Exportar",
+    "exportImage": "Exportar imagen",
+    "exportingImage": "Exportando como imagen...",
+    "print": "Imprimir",
+    "clearAll": "Borrar todo",
+    "allFieldsCleared": "Todos los campos han sido borrados",
+    "dentalProblemReport": "Informe de problema dental",
+    "problem": "Problema",
+    "problemPlaceholder": "Ingrese o seleccione un problema",
+    "select": "Seleccionar",
+    "dentalProblems": "Problemas dentales",
+    "severity": "Gravedad",
+    "selectSeverity": "Seleccione el nivel de gravedad",
+    "severityLevels": "Niveles de gravedad",
+    "stage": "Etapa",
+    "selectStage": "Seleccione la etapa de progresión",
+    "progressionStages": "Etapas de progresión",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Escriba una breve descripción del problema"
+  },
+  "cardButton": {
+    "toggleView": "Cambiar vista",
+    "resetTooth": "Restablecer diente",
+    "addProblem": "Agregar problema",
+    "confirmUnapprove": "Confirmar desaprobación",
+    "unapprovePrompt": "¿Está seguro de que desea desaprobar el diente {{toothNumber}}?",
+    "cancel": "Cancelar",
+    "unapprove": "Desaprobar",
+    "approve": "Aprobar",
+    "approved": "Aprobado",
+    "toothApproved": "Diente {{toothNumber}} aprobado",
+    "toothUnapproved": "Diente {{toothNumber}} desaprobado",
+    "approveError": "Error al actualizar el estado de aprobación",
+    "tooltipApprove": "Haga clic para aprobar (Ctrl+A)",
+    "tooltipUnapprove": "Haga clic para desaprobar (Ctrl+A)"
+  },
+  "navbar": {
+    "home": "Inicio",
+    "patients": "Pacientes",
+    "patientName": "Felicia Hall",
+    "reportTitle": "Informe CBCT con IA",
+    "print": "Imprimir análisis"
+  },
+  "addComment": {
+    "comment": "Comentario",
+    "title": "Agregar nuevo comentario",
+    "placeholder": "Escriba su comentario aquí...",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar"
+  },
+  "side": {
+    "card": {
+      "Tooth": "Diente",
+      "NoProblemsDetected": "No se detectaron problemas"
+    },
+    "dentalChart": "Gráfico dental",
+    "showFilters": "Mostrar filtros",
+    "hideFilters": "Ocultar filtros",
+    "searchDentalIssues": "Buscar problemas dentales",
+    "searchByProblemOrComment": "Buscar por problema o comentario...",
+    "filterByStatus": "Filtrar por estado",
+    "allTeeth": "Todos los dientes",
+    "approved": "Aprobados",
+    "withIssues": "Con problemas",
+    "withNotes": "Con notas",
+    "loadingDentalChart": "Cargando gráfico dental...",
+    "noMatchingTeethFound": "No se encontraron dientes coincidentes",
+    "dataNotAvailable": "Datos no disponibles",
+    "adjustSearchOrFilter": "Intente ajustar los criterios de búsqueda o filtro",
+    "loadPatientToEnableFilters": "Por favor, cargue los datos del paciente para habilitar los filtros",
+    "resetAllFilters": "Restablecer todos los filtros",
+    "language": "Idioma"
+  },
+  "reportSettings": {
+    "title": "Configuración del informe",
+    "downloadPDF": "Descargar PDF",
+    "generating": "Generando...",
+    "downloadSuccess": "¡Archivo descargado exitosamente!",
+    "selectPlaceholder": "Seleccionar",
+    "colorPrint": "Impresión en color",
+    "colorPrintDesc": "Imprimir el informe en color en lugar de blanco y negro",
+    "signedByDoctor": "Firmado por el médico",
+    "signedByDoctorDesc": "Agregar la firma del médico al final del informe",
+    "includeXrayImages": "Incluir imágenes de rayos X",
+    "includeXrayImagesDesc": "Agregar imágenes de rayos X para cada diente si están disponibles",
+    "includeDoctorNotes": "Incluir notas del médico",
+    "includeDoctorNotesDesc": "Mostrar las notas médicas registradas para cada diente",
+    "showToothNumbers": "Mostrar números de dientes",
+    "showToothNumbersDesc": "Mostrar el número de cada diente en el informe",
+    "includeTreatmentPlan": "Incluir plan de tratamiento",
+    "includeTreatmentPlanDesc": "Agregar un resumen del plan de tratamiento al final del informe",
+    "onlyAffectedTeeth": "Solo dientes afectados",
+    "onlyAffectedTeethDesc": "Excluir los dientes sanos del informe",
+    "clinicStamp": "Agregar sello de la clínica",
+    "clinicStampDesc": "Insertar un sello digital al final del informe",
+    "showDateTime": "Mostrar fecha y hora",
+    "showDateTimeDesc": "Mostrar la fecha y hora de emisión del informe",
+    "includeCoverPage": "Incluir página de portada",
+    "includeCoverPageDesc": "Agregar una primera página con la información de la clínica y del paciente",
+    "reportLanguage": "Idioma del informe",
+    "detailLevel": "Nivel de detalle"
+  },
+  "languages": {
+    "arabic": "Árabe",
+    "english": "Inglés",
+    "french": "Francés"
+  },
+  "detailLevels": {
+    "brief": "Breve",
+    "detailed": "Detallado"
+  },
+  "error": {
+    "generic": "Ocurrió un error. Por favor, inténtelo de nuevo.",
+    "network": "Error de red. Por favor, verifique su conexión a Internet.",
+    "notFound": "Página solicitada no encontrada.",
+    "unauthorized": "Acceso no autorizado",
+    "timeout": "Tiempo de espera de la solicitud agotado",
+    "serverError": "Error interno del servidor"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Correo electrónico inválido",
+    "minLength": "Debe contener al menos {{count}} caracteres",
+    "maxLength": "No debe exceder de {{count}} caracteres",
+    "passwordMismatch": "Las contraseñas no coinciden"
+  },
+  "notifications": {
+    "success": "Operación exitosa",
+    "warning": "Advertencia",
+    "error": "Error",
+    "info": "Información"
+  }
+}

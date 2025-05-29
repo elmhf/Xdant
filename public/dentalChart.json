@@ -1,0 +1,57 @@
+{
+  "dental_chart": [
+    {
+      "quadrant": "Upper Right",
+      "teeth": [
+        {"number": 18, "status": "Missing"},
+        {"number": 17, "status": "Missing"},
+        {"number": 16, "status": "Missing"},
+        {"number": 15, "status": "Missing"},
+        {"number": 14, "status": "Missing"},
+        {"number": 13, "status": "Missing"},
+        {"number": 12, "status": "Missing"},
+        {"number": 11, "status": "Missing"}
+      ]
+    },
+    {
+      "quadrant": "Upper Left",
+      "teeth": [
+        {"number": 21, "status": "Missing"},
+        {"number": 22, "status": "Missing"},
+        {"number": 23, "status": "Missing"},
+        {"number": 24, "status": "Missing"},
+        {"number": 25, "status": "Missing"},
+        {"number": 26, "status": "Missing"},
+        {"number": 27, "status": "Missing"},
+        {"number": 28, "status": "Missing"}
+      ]
+    },
+    {
+      "quadrant": "Lower Left",
+      "teeth": [
+        {"number": 48, "status": "Missing"},
+        {"number": 47, "status": "Missing"},
+        {"number": 46, "status": "Missing"},
+        {"number": 45, "status": "Missing"},
+        {"number": 44, "status": "Missing"},
+        {"number": 43, "status": "Missing"},
+        {"number": 42, "status": "Missing"},
+        {"number": 41, "status": "Missing"}
+      ]
+    },
+    {
+      "quadrant": "Lower Right",
+      "teeth": [
+        {"number": 31, "status": "Missing"},
+        {"number": 32, "status": "Missing"},
+        {"number": 33, "status": "Missing"},
+        {"number": 34, "status": "Missing"},
+        {"number": 35, "status": "Missing"},
+        {"number": 36, "status": "Missing"},
+        {"number": 37, "status": "Missing"},
+        {"number": 38, "status": "Missing"}
+      ]
+    }
+  ],
+  "statuses": ["Healthy", "Treated", "Unhealthy", "Missing"]
+}

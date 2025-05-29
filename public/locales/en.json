@@ -1,0 +1,163 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "logout": "Logout",
+    "select": "Select",
+    "enabled": "Enabled",
+    "disabled": "Disabled"
+  },
+  "addProblem": {
+    "title": "Add Problem",
+    "description": "Specify and configure the problem",
+    "selectProblemError": "Please select a problem (required)",
+    "selectMaskError": "Please select a mask for the problem (required)",
+    "close": "Close",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "clearAll": "Clear All",
+    "successMessage": "Problem added successfully"
+  },
+  "dentalForm": {
+    "dentalVisualization": "Dental Visualization",
+    "drawingTools": "Drawing Tools",
+    "resetDrawing": "Reset Drawing",
+    "resetDrawingSuccess": "Drawing reset successfully",
+    "actions": "Actions",
+    "saveDraft": "Save Draft",
+    "draftSaved": "Draft saved successfully",
+    "duplicate": "Duplicate",
+    "problemDuplicated": "Problem duplicated",
+    "view": "View",
+    "export": "Export",
+    "exportImage": "Export Image",
+    "exportingImage": "Exporting as image...",
+    "print": "Print",
+    "clearAll": "Clear All",
+    "allFieldsCleared": "All fields cleared",
+    "dentalProblemReport": "Dental Problem Report",
+    "problem": "Problem",
+    "problemPlaceholder": "Enter or select a problem",
+    "select": "Select",
+    "dentalProblems": "Dental Problems",
+    "severity": "Severity",
+    "selectSeverity": "Select Severity Level",
+    "severityLevels": "Severity Levels",
+    "stage": "Stage",
+    "selectStage": "Select Progression Stage",
+    "progressionStages": "Progression Stages",
+    "description": "Description",
+    "descriptionPlaceholder": "Write a short description of the problem"
+  },
+  "cardButton": {
+    "toggleView": "Toggle View",
+    "resetTooth": "Reset Tooth",
+    "addProblem": "Add Problem",
+    "confirmUnapprove": "Confirm Unapproval",
+    "unapprovePrompt": "Are you sure you want to unapprove tooth {{toothNumber}}?",
+    "cancel": "Cancel",
+    "unapprove": "Unapprove",
+    "approve": "Approve",
+    "approved": "Approved",
+    "toothApproved": "Tooth {{toothNumber}} approved",
+    "toothUnapproved": "Tooth {{toothNumber}} unapproved",
+    "approveError": "Failed to update approval status",
+    "tooltipApprove": "Click to approve (Ctrl+A)",
+    "tooltipUnapprove": "Click to unapprove (Ctrl+A)"
+  },
+  "navbar": {
+    "home": "Home",
+    "patients": "Patients",
+    "patientName": "Felicia Hall",
+    "reportTitle": "AI CBCT Report",
+    "print": "Print Analysis"
+  },
+  "addComment": {
+    "comment": "Comment",
+    "title": "Add New Comment",
+    "placeholder": "Write your comment here...",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "side": {
+    "card": {
+      "Tooth": "Tooth",
+      "NoProblemsDetected": "No problems detected"
+    },
+    "dentalChart": "Dental Chart",
+    "showFilters": "Show Filters",
+    "hideFilters": "Hide Filters",
+    "searchDentalIssues": "Search Dental Issues",
+    "searchByProblemOrComment": "Search by problem or comment...",
+    "filterByStatus": "Filter by Status",
+    "allTeeth": "All Teeth",
+    "approved": "Approved",
+    "withIssues": "With Issues",
+    "withNotes": "With Notes",
+    "loadingDentalChart": "Loading dental chart...",
+    "noMatchingTeethFound": "No matching teeth found",
+    "dataNotAvailable": "Data not available",
+    "adjustSearchOrFilter": "Try adjusting the search or filter criteria",
+    "loadPatientToEnableFilters": "Please load patient data to enable filters",
+    "resetAllFilters": "Reset All Filters",
+    "language": "Language"
+  },
+  "reportSettings": {
+    "title": "Settings",
+    "downloadPDF": "Download",
+    "generating": "Loading...",
+    "downloadSuccess": "Downloaded!",
+    "selectPlaceholder": "Select",
+    "colorPrint": "Color",
+    "colorPrintDesc": "Color report",
+    "signedByDoctor": "Signature",
+    "signedByDoctorDesc": "Add signature",
+    "includeXrayImages": "X-rays",
+    "includeXrayImagesDesc": "Add X-rays",
+    "includeDoctorNotes": "Notes",
+    "includeDoctorNotesDesc": "Show notes",
+    "showToothNumbers": "Numbers",
+    "showToothNumbersDesc": "Show numbers",
+    "includeTreatmentPlan": "Plan",
+    "includeTreatmentPlanDesc": "Add plan",
+    "onlyAffectedTeeth": "Affected",
+    "onlyAffectedTeethDesc": "Only affected",
+    "clinicStamp": "Stamp",
+    "clinicStampDesc": "Add stamp",
+    "showDateTime": "Date/Time",
+    "showDateTimeDesc": "Show date/time",
+    "includeCoverPage": "Cover",
+    "includeCoverPageDesc": "Add cover",
+    "reportLanguage": "Language",
+    "detailLevel": "Detail"
+  },
+  "languages": {
+    "arabic": "Arabic",
+    "english": "English",
+    "french": "French"
+  },
+  "detailLevels": {
+    "brief": "Brief",
+    "detailed": "Detailed"
+  },
+  "error": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Please check your internet connection.",
+    "notFound": "The requested page was not found.",
+    "unauthorized": "Unauthorized access",
+    "timeout": "Request timed out",
+    "serverError": "Internal server error"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "minLength": "Must be at least {{count}} characters",
+    "maxLength": "Must not exceed {{count}} characters",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "notifications": {
+    "success": "Operation completed successfully",
+    "warning": "Warning",
+    "error": "Error",
+    "info": "Info"
+  }
+}

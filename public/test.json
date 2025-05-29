@@ -1,0 +1,182 @@
+{
+  "patientId": "PT-2023-7891",
+  "scan": {
+    "imageUrl": "/scans/full_dental_xray.png",
+    "dimensions": { "width": 1080, "height": 1060 },
+    "scanDate": "2023-10-05T09:45:00Z",
+    "scanType": "Dental X-ray"
+  },
+  
+    "teeth": [
+      {
+        "toothNumber": 11,
+        "category": "Healthy",
+        "position": { "x": 200, "y": 150 },
+        "boundingBox": { "x1": 190, "y1": 140, "x2": 210, "y2": 160 },
+        "problems": [],
+        "gumHealth": "Healthy",
+        "lastCheckup": "2023-09-20T11:00:00Z"
+      },
+      {
+        "toothNumber": 21,
+        "category": "Unhealthy",
+        "position": { "x": 250, "y": 160 },
+        "boundingBox": { "x1": 240, "y1": 150, "x2": 460, "y2": 370 },
+        "problems": [
+          {
+            "type": "Caries",
+            "subtype": "Interproximal",
+            "coordinates": { "x": 255, "y": 165 },
+            "mask": [
+              [255, 165],
+              [256, 166],
+              [257, 167]
+            ],
+            "depth": "1.8mm",
+            "severity": "Medium",
+            "confidence": 0.90,
+            "detectedAt": "2023-08-25T10:30:00Z",
+            "progression": "Stable",
+            "images": ["/images/caries_21_1.png"]
+          }
+        ],
+        "gumHealth": "Mild Inflammation",
+        "lastCheckup": "2023-09-20T11:00:00Z"
+      },
+      {
+        "toothNumber": 32,
+        "category": "Unhealthy",
+        "position": { "x": 900, "y": 950 },
+        "boundingBox": { "x1": 205, "y1": 205, "x2": 500, "y2": 500 },
+        "problems": [
+          {
+            "type": "Fracture",
+            "subtype": "Vertical Root",
+            "coordinates": { "x": 905, "y": 955 },
+            "mask": [
+              [905, 955],
+              [906, 956],
+              [907, 957]
+            ],
+            "length": "3.5mm",
+            "severity": "Critical",
+            "confidence": 0.96,
+            "detectedAt": "2023-09-10T15:00:00Z",
+            "progression": "Acute",
+            "images": ["/images/fracture_32_1.png"]
+          }
+        ],
+        "gumHealth": "Moderate Inflammation",
+        "lastCheckup": "2023-09-20T11:00:00Z"
+      },
+      {
+        "toothNumber": 12,
+        "category": "Healthy",
+        "position": { "x": 280, "y": 150 },
+        "boundingBox": { "x1": 270, "y1": 140, "x2": 290, "y2": 160 },
+        "problems": [],
+        "gumHealth": "Healthy",
+        "lastCheckup": "2023-09-20T11:00:00Z"
+      },
+      {
+        "toothNumber": 22,
+        "category": "Unhealthy",
+        "position": { "x": 310, "y": 160 },
+        "boundingBox": { "x1": 300, "y1": 150, "x2": 460, "y2": 370 },
+        "problems": [
+          {
+            "type": "Caries",
+            "subtype": "Occlusal",
+            "coordinates": { "x": 315, "y": 170 },
+            "mask": [
+              [315, 170],
+              [316, 171],
+              [317, 172]
+            ],
+            "depth": "1.5mm",
+            "severity": "Low",
+            "confidence": 0.88,
+            "detectedAt": "2023-09-15T10:30:00Z",
+            "progression": "Stable",
+            "images": ["/images/caries_22_1.png"]
+          }
+        ],
+        "gumHealth": "Mild Inflammation",
+        "lastCheckup": "2023-09-20T11:00:00Z"
+      },
+      {
+        "toothNumber": 31,
+        "category": "Unhealthy",
+        "position": { "x": 850, "y": 950 },
+        "boundingBox": { "x1": 830, "y1": 930, "x2": 870, "y2": 970 },
+        "problems": [
+          {
+            "type": "Caries",
+            "subtype": "Occlusal",
+            "coordinates": { "x": 860, "y": 960 },
+            "mask": [
+              [860, 960],
+              [861, 961],
+              [862, 962]
+            ],
+            "depth": "2.0mm",
+            "severity": "Medium",
+            "confidence": 0.85,
+            "detectedAt": "2023-09-17T11:00:00Z",
+            "progression": "Stable",
+            "images": ["/images/caries_31_1.png"]
+          }
+        ],
+        "gumHealth": "Mild Inflammation",
+        "lastCheckup": "2023-09-20T11:00:00Z"
+      }
+    ]
+  ,
+  "statistics": {
+    "healthy": 10,
+    "treated": 5,
+    "unhealthy": 7,
+    "missing": 3,
+    "problemDistribution": {
+      "caries": 4,
+      "fractures": 2,
+      "abscesses": 1
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "Urgent",
+      "actions": [
+        {
+          "description": "Extract tooth #32",
+          "costEstimate": "$350",
+          "duration": "1 hour",
+          "resources": [
+            {
+              "type": "Video",
+              "title": "Tooth Extraction Procedure",
+              "url": "https://example.com/video1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "priority": "High",
+      "actions": [
+        {
+          "description": "Perform root canal treatment on tooth #21",
+          "costEstimate": "$1200",
+          "duration": "2 hours",
+          "resources": [
+            {
+              "type": "Article",
+              "title": "Root Canal Treatment: What to Expect",
+              "url": "https://example.com/article1"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,210 @@
+.main {
+    border-radius: var(--Border-Radios);
+    background-color: var(--card-background-color);
+    padding:30px;
+    display: flex;
+    gap: 20px;
+    position: relative;
+    justify-content: space-between;
+
+}
+
+
+.ToothNumberText{
+    font-size: 20px;
+}
+.Info {
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+}
+
+.InfoImageTooth {
+    min-width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 7px;
+
+}
+
+.InfoProblemsTooth {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 15px;
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+
+}
+
+.imageContainer {
+    border-radius: 7px;
+    position: relative;
+    overflow: hidden;
+
+}
+
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Images {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0); overflow-y: auto;
+
+}
+
+
+.Images {
+    --sb-track-color: #5f5e5e;
+    --sb-thumb-color: #6678b7;
+    --sb-size: 5px;
+  }
+  
+  .Images::-webkit-scrollbar {
+    width: var(--sb-size);
+  }
+  
+  .Images::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 28px;
+  }
+  
+  .Images::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 28px;
+  }
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+
+}
+
+.Commet {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.CommetBoX {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+
+}
+
+/* Collapsed Card State */
+.collapsedCard .main {
+    flex-direction: row;
+    align-items: center;
+    min-height: 0;
+}
+
+.collapsedCard .InfoProblemsTooth,
+.collapsedCard .Images,
+.collapsedCard .commetbutton
+.collapsedCard .RestButton  {
+    height: 0;
+    width: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+.collapsedCard .commetbutton{
+    height: 0;
+    width: 0;
+    opacity: 0;
+    padding: 0;
+
+}
+.collapsedCard .RestButton{
+    height: 0;
+    width: 0;
+    opacity: 0;
+    padding: 0;
+}
+
+.collapsedCard .HeddingButton {
+    top: 0;
+    right: 0;
+    position: relative;
+}
+
+
+.uncollapsedCard .HeddingButton {
+    top: 20px;
+    right: 10px;
+    position: absolute;
+
+}
+
+
+.uncollapsedCard .RestButton {
+padding: 8px 12px;
+}
+
+/* Uncollapsed Card State */
+.uncollapsedCard .main {
+    flex-direction: column;
+
+}
+
+.uncollapsedCard .InfoProblemsTooth,
+.uncollapsedCard .Images,
+.uncollapsedCard .commetbutton ,
+.uncollapsedCard .RestButton {
+    height: auto;
+    width: auto;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+
+.buttonHover:hover{
+    color :black;
+    background-color: aqua;
+}
+
+/* ToothCaard.module.css */
+.noProblems {
+  display: flex;
+  gap: 10px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  color: white;
+}
+
+.problemTag {
+  display: flex;
+  gap: 10px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  color: white;
+  margin-bottom: 5px;
+}
+
+.toothIcon {
+  width: 10px;
+  filter: none;
+}
+
+.infoContent {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

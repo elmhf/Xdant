@@ -1,0 +1,162 @@
+[
+    {
+        "N": "18",
+        "Type": "Molar",
+        "Position": "Upper Right"
+    },
+    {
+        "N": "17",
+        "Type": "Molar",
+        "Position": "Upper Right"
+    },
+    {
+        "N": "16",
+        "Type": "Molar",
+        "Position": "Upper Right"
+    },
+    {
+        "N": "15",
+        "Type": "Premolar",
+        "Position": "Upper Right"
+    },
+    {
+        "N": "14",
+        "Type": "Premolar",
+        "Position": "Upper Right"
+    },
+    {
+        "N": "13",
+        "Type": "Canine",
+        "Position": "Upper Right"
+    },
+    {
+        "N": "12",
+        "Type": "Incisor",
+        "Position": "Upper Right"
+    },
+    {
+        "N": "11",
+        "Type": "Incisor",
+        "Position": "Upper Right"
+    },
+    {
+        "N": "21",
+        "Type": "Incisor",
+        "Position": "Upper Left"
+    },
+    {
+        "N": "22",
+        "Type": "Incisor",
+        "Position": "Upper Left"
+    },
+    {
+        "N": "23",
+        "Type": "Canine",
+        "Position": "Upper Left"
+    },
+    {
+        "N": "24",
+        "Type": "Premolar",
+        "Position": "Upper Left"
+    },
+    {
+        "N": "25",
+        "Type": "Premolar",
+        "Position": "Upper Left"
+    },
+    {
+        "N": "26",
+        "Type": "Molar",
+        "Position": "Upper Left"
+    },
+    {
+        "N": "27",
+        "Type": "Molar",
+        "Position": "Upper Left"
+    },
+    {
+        "N": "28",
+        "Type": "Molar",
+        "Position": "Upper Left"
+    },
+    {
+        "N": "48",
+        "Type": "Molar",
+        "Position": "Lower Right"
+    },
+    {
+        "N": "47",
+        "Type": "Molar",
+        "Position": "Lower Right"
+    },
+    {
+        "N": "46",
+        "Type": "Molar",
+        "Position": "Lower Right"
+    },
+    {
+        "N": "45",
+        "Type": "Premolar",
+        "Position": "Lower Right"
+    },
+    {
+        "N": "44",
+        "Type": "Premolar",
+        "Position": "Lower Right"
+    },
+    {
+        "N": "43",
+        "Type": "Canine",
+        "Position": "Lower Right"
+    },
+    {
+        "N": "42",
+        "Type": "Incisor",
+        "Position": "Lower Right"
+    },
+    {
+        "N": "41",
+        "Type": "Incisor",
+        "Position": "Lower Right"
+    },
+    {
+        "N": "31",
+        "Type": "Incisor",
+        "Position": "Lower Left"
+    },
+    {
+        "N": "32",
+        "Type": "Incisor",
+        "Position": "Lower Left"
+    },
+    {
+        "N": "33",
+        "Type": "Canine",
+        "Position": "Lower Left"
+    },
+    {
+        "N": "34",
+        "Type": "Premolar",
+        "Position": "Lower Left"
+    },
+    {
+        "N": "35",
+        "Type": "Premolar",
+        "Position": "Lower Left"
+    },
+    {
+        "N": "36",
+        "Type": "Molar",
+        "Position": "Lower Left"
+    },
+    {
+        "N": "37",
+        "Type": "Molar",
+        "Position": "Lower Left"
+    },
+    {
+        "N": "38",
+        "Type": "Molar",
+        "Position": "Lower Left"
+    }
+]

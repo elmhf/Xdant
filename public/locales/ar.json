@@ -1,0 +1,186 @@
+{
+  "common": {
+    "welcome": "مرحبًا",
+    "logout": "تسجيل الخروج",
+    "select": "اختر",
+    "enabled": "مفعل",
+    "disabled": "معطل"
+  },
+  
+  "addProblem": {
+    "title": "إضافة مشكلة",
+    "description": "حدد المشكلة وتهيئتها",
+    "selectProblemError": "يرجى تحديد مشكلة (إلزامي)",
+    "selectMaskError": "يرجى تحديد قناع للمشكلة (إلزامي)",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "clearAll": "مسح الكل",
+    "successMessage": "تمت إضافة المشكلة بنجاح"
+  },
+
+  "dentalForm": {
+    "dentalVisualization": "عرض الأسنان",
+    "drawingTools": "أدوات الرسم",
+    "resetDrawing": "إعادة تعيين الرسم",
+    "resetDrawingSuccess": "تمت إعادة تعيين الرسم بنجاح",
+    "actions": "الإجراءات",
+    "saveDraft": "حفظ المسودة",
+    "draftSaved": "تم حفظ المسودة بنجاح",
+    "duplicate": "نسخ",
+    "problemDuplicated": "تم نسخ المشكلة",
+    "view": "عرض",
+    "export": "تصدير",
+    "exportImage": "تصدير الصورة",
+    "exportingImage": "جارٍ التصدير كصورة...",
+    "print": "طباعة",
+    "clearAll": "مسح الكل",
+    "allFieldsCleared": "تم مسح جميع الحقول",
+    "dentalProblemReport": "تقرير مشكلة الأسنان",
+    "problem": "مشكلة",
+    "problemPlaceholder": "أدخل أو حدد المشكلة",
+    "select": "اختر",
+    "dentalProblems": "مشاكل الأسنان",
+    "severity": "الخطورة",
+    "selectSeverity": "اختر مستوى الخطورة",
+    "severityLevels": "مستويات الخطورة",
+    "stage": "المرحلة",
+    "selectStage": "اختر مرحلة التقدم",
+    "progressionStages": "مراحل التقدم",
+    "description": "الوصف",
+    "descriptionPlaceholder": "اكتب وصفًا مختصرًا للمشكلة"
+  },
+
+  "cardButton": {
+    "toggleView": "تبديل العرض",
+    "resetTooth": "إعادة تعيين السن",
+    "addProblem": "إضافة مشكلة",
+    "confirmUnapprove": "تأكيد الإلغاء",
+    "unapprovePrompt": "هل أنت متأكد أنك تريد إلغاء الموافقة على السن {{toothNumber}}؟",
+    "cancel": "إلغاء",
+    "unapprove": "إلغاء الموافقة",
+    "approve": "موافقة",
+    "approved": "تمت الموافقة",
+    "toothApproved": "تمت الموافقة على السن {{toothNumber}}",
+    "toothUnapproved": "تم إلغاء الموافقة على السن {{toothNumber}}",
+    "approveError": "فشل في تحديث حالة الموافقة",
+    "tooltipApprove": "انقر للموافقة (Ctrl+A)",
+    "tooltipUnapprove": "انقر لإلغاء الموافقة (Ctrl+A)"
+  },
+
+  "navbar": {
+    "home": "الرئيسية",
+    "patients": "المرضى",
+    "patientName": "فيليشيا هول",
+    "reportTitle": "تقرير CBCT بالذكاء الاصطناعي",
+    "print": "طباعة التحاليل"
+  },
+
+  "addComment": {
+    "comment": "تعليق",
+    "title": "إضافة تعليق جديد",
+    "placeholder": "اكتب تعليقك هنا...",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء"
+  },
+
+  "side": {
+    "card": {
+      "Tooth": "سن",
+      "NoProblemsDetected": "لم يتم اكتشاف مشاكل"
+    },
+    "dentalChart": "مخطط الأسنان",
+    "showFilters": "إظهار الفلاتر",
+    "hideFilters": "إخفاء الفلاتر",
+    "searchDentalIssues": "بحث عن مشاكل الأسنان",
+    "searchByProblemOrComment": "البحث حسب المشكلة أو التعليق...",
+    "filterByStatus": "تصفية حسب الحالة",
+    "allTeeth": "كل الأسنان",
+    "approved": "تمت الموافقة",
+    "withIssues": "مع مشاكل",
+    "withNotes": "مع ملاحظات",
+    "loadingDentalChart": "جارٍ تحميل مخطط الأسنان...",
+    "noMatchingTeethFound": "لم يتم العثور على أسنان مطابقة",
+    "dataNotAvailable": "البيانات غير متوفرة",
+    "adjustSearchOrFilter": "حاول تعديل معايير البحث أو التصفية",
+    "loadPatientToEnableFilters": "يرجى تحميل بيانات المريض لتفعيل الفلاتر",
+    "resetAllFilters": "إعادة تعيين جميع الفلاتر",
+    "language": "اللغة"
+  },
+
+  "reportSettings": {
+    "title": "إعدادات التقرير",
+    "downloadPDF": "تنزيل PDF",
+    "generating": "جاري الإنشاء...",
+    "downloadSuccess": "تم تنزيل الملف بنجاح!",
+    "selectPlaceholder": "اختر",
+    
+    "colorPrint": "طباعة ملونة",
+    "colorPrintDesc": "طباعة التقرير بالألوان بدلاً من الأبيض والأسود",
+    
+    "signedByDoctor": "توقيع الطبيب",
+    "signedByDoctorDesc": "إضافة توقيع الطبيب أسفل التقرير",
+    
+    "includeXrayImages": "عرض صور الأشعة",
+    "includeXrayImagesDesc": "إدراج صور الأشعة السينية لكل سن إن وجدت",
+    
+    "includeDoctorNotes": "عرض ملاحظات الطبيب",
+    "includeDoctorNotesDesc": "إظهار الملاحظات الطبية المدوّنة لكل سن",
+    
+    "showToothNumbers": "إظهار أرقام الأسنان",
+    "showToothNumbersDesc": "عرض رقم كل سن في التقرير",
+    
+    "includeTreatmentPlan": "عرض خطة العلاج",
+    "includeTreatmentPlanDesc": "إضافة ملخص لخطة العلاج في نهاية التقرير",
+    
+    "onlyAffectedTeeth": "طباعة الأسنان المتأثرة فقط",
+    "onlyAffectedTeethDesc": "تجاهل الأسنان السليمة من التقرير",
+    
+    "clinicStamp": "إضافة ختم العيادة",
+    "clinicStampDesc": "إدراج ختم رقمي في نهاية التقرير",
+    
+    "showDateTime": "عرض التاريخ والوقت",
+    "showDateTimeDesc": "إظهار تاريخ ووقت إصدار التقرير",
+    
+    "includeCoverPage": "إضافة صفحة غلاف",
+    "includeCoverPageDesc": "إضافة صفحة أولى تحتوي على اسم العيادة وبيانات المريض",
+    
+    "reportLanguage": "لغة التقرير",
+    "detailLevel": "مستوى التفاصيل"
+  },
+  
+  "languages": {
+    "arabic": "العربية",
+    "english": "الإنجليزية",
+    "french": "الفرنسية"
+  },
+  
+  "detailLevels": {
+    "brief": "مختصر",
+    "detailed": "تفصيلي"
+  },
+
+  "error": {
+    "generic": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "network": "خطأ في الشبكة. يرجى التحقق من اتصالك بالإنترنت.",
+    "notFound": "لم يتم العثور على الصفحة المطلوبة.",
+    "unauthorized": "غير مصرح بالوصول",
+    "timeout": "انتهت مهلة الطلب",
+    "serverError": "خطأ في الخادم الداخلي"
+  },
+
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "بريد إلكتروني غير صالح",
+    "minLength": "يجب أن يحتوي على الأقل على {{count}} أحرف",
+    "maxLength": "يجب ألا يتجاوز {{count}} أحرف",
+    "passwordMismatch": "كلمات المرور غير متطابقة"
+  },
+
+  "notifications": {
+    "success": "تمت العملية بنجاح",
+    "warning": "تحذير",
+    "error": "خطأ",
+    "info": "معلومة"
+  }
+}
