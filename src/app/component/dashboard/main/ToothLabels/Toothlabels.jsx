@@ -1,73 +1,49 @@
-"use client"
-import styles from './ToothLabels.module.css'
-import ToothChar from "./ToothChar/ToothChar"
-import { BsSquareFill } from "react-icons/bs";
-import { FaTooth, FaRegTimesCircle } from "react-icons/fa";
-import { useState } from 'react';
+"use client";
+import ToothChar from "./ToothChar/ToothChar";
 import SettingButton from './buttons/SettingButton';
-import { Tooltip } from '@/components/ui/tooltip';
-
-// لوحة ألوان متسقة
-const COLOR_PALETTE = {
-  healthy: 'rgb(var(--color-Healthy))',
-  treated: 'rgb(var(--color-Treated))',
-  unhealthy: 'rgb(var(--color-Unhealthy))',
-  missing: 'var(--color-Missing)',
-  background: 'var(--card-background-color)',
-  text: 'var(--text-color)'
-};
-
-const ToothStatusIndicator = ({ icon: Icon, color, label }) => (
-  <div className={styles.statusItem}>
-    <Icon className={styles.statusIcon} style={{ color }} />
-    <span className={styles.statusLabel} style={{ color }}>{label}</span>
-  </div>
-);
+import { useState, useRef, useEffect } from 'react';
 
 const Toothlabels = () => {
   const [selectedTooth, setSelectedTooth] = useState(null);
+  const chartContainerRef = useRef(null);
+  const [maxHeight, setMaxHeight] = useState(240); // default
+
+  useEffect(() => {
+    // optional logic if you want to auto-adjust height based on window size
+    const handleResize = () => {
+      const vh = window.innerHeight;
+      const newHeight = Math.min(300, vh * 0.25); // max 300px or 25vh
+      setMaxHeight(newHeight);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        {/* Header Section */}
-        <div className={styles.header}>
-          <h2 className={styles.title}>
-            Teeth in the Report
-          </h2>
-          <div className={styles.actions}>
-            <SettingButton />
-          </div>
+    <div className="w-full flex justify-center items-center  bg-gray-50">
+      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-md p-4 flex flex-col gap-4">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-800">Teeth in the Report</h2>
+          <SettingButton />
         </div>
 
-        {/* Teeth Chart Section */}
-        <div className={styles.chartContainer}>
-          <ToothChar data2={selectedTooth} />
+        {/* Chart */}
+        <div
+          ref={chartContainerRef}
+          className="w-full flex justify-center  overflow-x-auto overflow-y-hidden border rounded-xl"
+          style={{
+            maxHeight: `${maxHeight}px`,
+
+          }}
+        >
+          <ToothChar selectedTooth={selectedTooth} setSelectedTooth={setSelectedTooth} />
         </div>
 
-        {/* Status Legend */}
-        {/* <div className={styles.legend}>
-          <ToothStatusIndicator 
-            icon={BsSquareFill} 
-            color={COLOR_PALETTE.healthy} 
-            label="Healthy" 
-          />
-          <ToothStatusIndicator 
-            icon={BsSquareFill} 
-            color={COLOR_PALETTE.treated} 
-            label="Treated" 
-          />
-          <ToothStatusIndicator 
-            icon={BsSquareFill} 
-            color={COLOR_PALETTE.unhealthy} 
-            label="Unhealthy" 
-          />
-          <ToothStatusIndicator 
-            icon={FaRegTimesCircle} 
-            color={COLOR_PALETTE.missing} 
-            label="Missing" 
-          />
-        </div> */}
+   
       </div>
     </div>
   );

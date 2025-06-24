@@ -1,3 +1,134 @@
+/* General Card Styling */
+.cardWrapper {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  padding: 16px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.cardWrapper:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Header */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.toothInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.toothTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.toothMeta {
+  font-size: 14px;
+  color: #6B7280;
+  background-color: #F3F4F6;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* Tags */
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tag {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.tagPurple {
+  background-color: #EDE9FE;
+  color: #5B21B6;
+}
+
+.tagRed {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.noProblemTag {
+  background-color: #E5E7EB;
+  color: #4B5563;
+}
+
+/* Image Gallery */
+.galleryContainer {
+  margin-bottom: 16px;
+  /* Ensure RanderImages component creates a grid */
+}
+
+/* Footer */
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.footerActions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionButton {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  background-color: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 0.15s ease;
+}
+
+.actionButton:hover {
+  background-color: #F9FAFB;
+  border-color: #9CA3AF;
+}
+
+.footerStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusText {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.statusBadge {
+  font-size: 12px;
+  font-weight: 600;
+  color: #047857;
+  background-color: #D1FAE5;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
 .main {
     border-radius: var(--Border-Radios);
     background-color: var(--card-background-color);

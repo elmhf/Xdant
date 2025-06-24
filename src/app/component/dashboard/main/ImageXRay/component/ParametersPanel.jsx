@@ -22,7 +22,7 @@ const FILTER_PRESETS = {
   xray: { brightness: 120, contrast: 110, saturation: 80 }
 };
 
-export default function ParametersPanel({ settings, onSettingChange, onClose, useFilter }) {
+export default function ParametersPanel({ settings, onSettingChange, useFilter }) {
   // Destructure filter states from useFilter prop
   const [
     { brightness, setBrightness },
@@ -225,7 +225,6 @@ export default function ParametersPanel({ settings, onSettingChange, onClose, us
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={onClose}
           className="hover:bg-gray-100 rounded-full"
         >
           <PanelLeftClose className="h-4 w-4" />

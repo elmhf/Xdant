@@ -4,14 +4,19 @@ import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  DialogTrigger
 } from "@/components/ui/dialog";
+
+import { useDentalStore } from '@/stores/dataStore';
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Plus } from 'lucide-react';
 
 import useEditData from '../../JsFiles/useEditData';
 import DentalProblemForm from './AddProblemModel';
@@ -25,6 +30,7 @@ const AddProblem = ({ teeth }) => {
   const [maskProblem, setmaskProblem] = useState({ type: "unknown", mask: [] });
   const [Severity, setSeverity] = useState("");
   const [Progression, setProgression] = useState("");
+  const { addToothProblem } = useDentalStore();
 
   const handleSubmit = () => {
 
@@ -71,6 +77,24 @@ const AddProblem = ({ teeth }) => {
       },
       teeth['toothNumber']
     );
+
+    addToothProblem(teeth['toothNumber'],{
+        type: ProblemVlaue,
+        subtype: "Occlusal",
+        coordinates: {
+          x: 460,
+          y: 330
+        },
+        mask: [maskProblem],
+        depth: "2.1mm",
+        severity: Severity,
+        confidence: 0.94,
+        detectedAt: "2023-09-12T14:22:30",
+        progression: Progression,
+        images: ["/images/caries_11_1.png"]
+      })
+      
+      
     toast.success(t("addProblem.successMessage"), { duration: 1000 });
   };
 
@@ -87,47 +111,58 @@ const AddProblem = ({ teeth }) => {
   
 
   return (
-    <DialogContent className="sm:max-w-[80vw] max-h-[90vh] overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle>{t("addProblem.title")}</DialogTitle>
-        <DialogDescription>
-          {t("addProblem.description")}
-        </DialogDescription>
-      </DialogHeader>
-
-      <div className="grid gap-4 py-4">
-        <DentalProblemForm
-          teeth={teeth}
-          ProblemVlaueState={{ ProblemVlaue, setProblemVlaue }}
-          descriptionState={{ description, setdescription }}
-          maskProblemState={{ maskProblem, setmaskProblem }}
-          SeverityState={{ Severity, setSeverity }}
-          ProgressionState={{ Progression, setProgression }}
-        />
-      </div>
-
-      <DialogFooter>
-        <Button
-          type="submit"
-          onClick={handleSubmit}
-          className="bg-primary hover:bg-primary/90"
-        >
-          {t("addProblem.confirm")}
-        </Button>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button
           variant="outline"
-          onClick={() => setOpen(false)}
+          className="flex items-center gap-2 hover:bg-primary/10"
         >
-          {t("addProblem.cancel")}
+          <Plus className="w-4 h-4" />
+          {t("addProblem.addNew")}
         </Button>
-        <Button
-          variant="outline"
-          onClick={clearAll}
-        >
-          {t("addProblem.clearAll")}
-        </Button>
-      </DialogFooter>
-    </DialogContent>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[80vw] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{t("addProblem.title")}</DialogTitle>
+          <DialogDescription>
+            {t("addProblem.description")}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4 py-4">
+          <DentalProblemForm
+            teeth={teeth}
+            ProblemVlaueState={{ ProblemVlaue, setProblemVlaue }}
+            descriptionState={{ description, setdescription }}
+            maskProblemState={{ maskProblem, setmaskProblem }}
+            SeverityState={{ Severity, setSeverity }}
+            ProgressionState={{ Progression, setProgression }}
+          />
+        </div>
+
+        <DialogFooter>
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            className="bg-primary hover:bg-primary/90"
+          >
+            {t("addProblem.confirm")}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setOpen(false)}
+          >
+            {t("addProblem.cancel")}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={clearAll}
+          >
+            {t("addProblem.clearAll")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

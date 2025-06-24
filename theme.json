@@ -1,0 +1,150 @@
+{
+    "designSystem": {
+      "name": "Modern Productivity UI Theme",
+      "version": "1.0.0",
+      "description": "A clean, modern, and intuitive design system based on visual analysis of provided productivity app screenshots, suitable for dashboards and professional applications.",
+  
+      "global": {
+        "fontFamily": "'Inter', 'Poppins', sans-serif",
+        "baseFontSize": "16px",
+        "lineHeight": "1.5",
+        "borderRadiusBase": "8px",
+        "shadowDefault": "0px 4px 10px rgba(0, 0, 0, 0.05)"
+      },
+  
+      "colors": {
+        "palette": {
+          "neutral": {
+            "white": "#FFFFFF",
+            "offWhite": "#F8F9FA",
+            "lightGray": "#F2F4F7",
+            "darkGray": "#333333",
+            "mediumGray": "#6C757D",
+            "lightMutedGray": "#B0B0B0",
+            "border": "#E0E0E0"
+          },
+          "accent": {
+            "primaryBlue": "#2196F3",
+            "successGreen": "#4CAF50",
+            "warningYellow": "#FFC107",
+            "dangerRed": "#EF5350",
+            "secondaryPurple": "#673AB7",
+            "blockingOrange": "#FF8C00"
+          }
+        },
+        "text": {
+          "primary": "{colors.palette.neutral.darkGray}",
+          "secondary": "{colors.palette.neutral.mediumGray}",
+          "muted": "{colors.palette.neutral.lightMutedGray}",
+          "onAccent": "{colors.palette.neutral.white}"
+        },
+        "background": {
+          "primary": "{colors.palette.neutral.white}",
+          "secondary": "{colors.palette.neutral.lightGray}",
+          "card": "{colors.palette.neutral.white}"
+        },
+        "border": {
+          "default": "{colors.palette.neutral.border}",
+          "active": "{colors.palette.accent.primaryBlue}"
+        },
+        "shadow": {
+          "default": "rgba(0, 0, 0, 0.05)"
+        }
+      },
+  
+      "typography": {
+        "headings": {
+          "h1": { "fontSize": "32px", "fontWeight": 600, "color": "{colors.text.primary}" },
+          "h2": { "fontSize": "24px", "fontWeight": 500, "color": "{colors.text.primary}" },
+          "h3": { "fontSize": "18px", "fontWeight": 500, "color": "{colors.text.primary}" },
+          "h4": { "fontSize": "16px", "fontWeight": 500, "color": "{colors.text.primary}" }
+        },
+        "body": {
+          "default": { "fontSize": "{global.baseFontSize}", "fontWeight": 400, "color": "{colors.text.primary}" },
+          "secondary": { "fontSize": "{global.baseFontSize}", "fontWeight": 400, "color": "{colors.text.secondary}" },
+          "small": { "fontSize": "12px", "fontWeight": 400, "color": "{colors.text.muted}" }
+        }
+      },
+  
+      "spacing": {
+        "unit": "8px",
+        "xxs": "4px",
+        "xs": "8px",
+        "sm": "16px",
+        "md": "24px",
+        "lg": "32px",
+        "xl": "48px"
+      },
+  
+      "components": {
+        "button": {
+          "borderRadius": "6px",
+          "padding": {
+            "vertical": "{spacing.xs}",
+            "horizontal": "{spacing.sm}"
+          },
+          "primary": {
+            "backgroundColor": "{colors.accent.primaryBlue}",
+            "textColor": "{colors.text.onAccent}",
+            "border": "none",
+            "hover": {
+              "backgroundColor": "darken({colors.accent.primaryBlue}, 10%)"
+            }
+          },
+          "secondary": {
+            "backgroundColor": "transparent",
+            "textColor": "{colors.accent.primaryBlue}",
+            "border": "1px solid {colors.accent.primaryBlue}",
+            "hover": {
+              "backgroundColor": "{colors.palette.neutral.lightGray}"
+            }
+          },
+          "textOnly": {
+            "backgroundColor": "transparent",
+            "textColor": "{colors.text.secondary}",
+            "border": "none",
+            "hover": {
+              "backgroundColor": "{colors.palette.neutral.lightGray}"
+            }
+          }
+        },
+        "inputField": {
+          "borderRadius": "4px",
+          "backgroundColor": "{colors.background.primary}",
+          "borderDefault": "1px solid {colors.border.default}",
+          "borderFocus": "1px solid {colors.border.active}",
+          "padding": "{spacing.xs} {spacing.sm}",
+          "placeholderColor": "{colors.text.muted}"
+        },
+        "card": {
+          "borderRadius": "12px",
+          "backgroundColor": "{colors.background.card}",
+          "boxShadow": "{global.shadowDefault}",
+          "padding": "{spacing.md}"
+        },
+        "avatar": {
+          "shape": "circle",
+          "size": "40px",
+          "border": "none"
+        },
+        "tag": {
+          "borderRadius": "4px",
+          "padding": "{spacing.xxs} {spacing.xs}",
+          "default": {
+            "backgroundColor": "{colors.palette.neutral.lightGray}",
+            "textColor": "{colors.text.secondary}"
+          },
+          "accent": {
+            "management": { "backgroundColor": "#FEEBCB", "textColor": "#DD6B20" },
+            "design": { "backgroundColor": "#BEE3F8", "textColor": "#2B6CB0" },
+            "uiDesign": { "backgroundColor": "#FED7D7", "textColor": "#C53030" },
+            "projects": { "backgroundColor": "#D6BCFA", "textColor": "#6B46C1" },
+            "urgent": { "backgroundColor": "{colors.palette.accent.dangerRed}", "textColor": "{colors.text.onAccent}" },
+            "blocking": { "backgroundColor": "{colors.palette.accent.blockingOrange}", "textColor": "{colors.text.onAccent}" },
+            "essential": { "backgroundColor": "{colors.palette.accent.primaryBlue}", "textColor": "{colors.text.onAccent}" },
+            "assignee": { "backgroundColor": "{colors.palette.accent.secondaryPurple}", "textColor": "{colors.text.onAccent}" }
+          }
+        }
+      }
+    }
+  }

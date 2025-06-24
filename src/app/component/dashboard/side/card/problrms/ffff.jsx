@@ -93,6 +93,9 @@ const RenderImageWithProblem = memo(({ maskPoints, problems }) => {
                 fill="rgba(255, 0, 0, 0.3)"
                 stroke="red"
                 strokeWidth={2}
+                shadowColor="rgba(255, 0, 0, 0.5)"
+                shadowBlur={6}
+                shadowOffset={{ x: 1, y: 1 }}
                 closed
                 lineJoin="round"
               />

@@ -22,6 +22,25 @@ const DentalOverlays = ({
     ]).flat();
   };
 
+  // Helper to apply shadow properties to Line elements
+  const applyShadowProps = (style, currentScale) => {
+    const props = {
+      fill: style.fill,
+      stroke: style.stroke,
+      strokeWidth: style.strokeWidth / currentScale,
+      perfectDrawEnabled: false,
+    };
+
+    // Apply shadow if available
+    if (style.shadowColor) {
+      props.shadowColor = style.shadowColor;
+      props.shadowBlur = (style.shadowBlur || 3) / currentScale;
+      props.shadowOffset = { x: 1 / currentScale, y: 1 / currentScale };
+    }
+
+    return props;
+  };
+
   const renderToothElements = (teeth, index) => {
     if (!teeth.teeth_mask) return null;
     
@@ -36,10 +55,8 @@ const DentalOverlays = ({
         {ShowSetting.showTeeth && (
           <Line
             points={adjustCoordinates(teeth.teeth_mask, toothCenter)}
-            {...colorPalette.tooth}
-            strokeWidth={colorPalette.tooth.strokeWidth / scale}
+            {...applyShadowProps(colorPalette.tooth, scale)}
             closed
-            perfectDrawEnabled={false}
           />
         )}
 
@@ -49,10 +66,8 @@ const DentalOverlays = ({
             <Line
               key={`problem-${index}-${pIndex}`}
               points={adjustCoordinates(problem.mask, toothCenter)}
-              {...colorPalette.problem}
-              strokeWidth={colorPalette.problem.strokeWidth / scale}
+              {...applyShadowProps(colorPalette.problem, scale)}
               closed
-              perfectDrawEnabled={false}
             />
           ))}
         
@@ -60,10 +75,8 @@ const DentalOverlays = ({
         {ShowSetting.showRoots && teeth.Root?.mask && (
           <Line
             points={adjustCoordinates(teeth.Root.mask, toothCenter)}
-            {...colorPalette.root}
-            strokeWidth={colorPalette.root.strokeWidth / scale}
+            {...applyShadowProps(colorPalette.root, scale)}
             closed
-            perfectDrawEnabled={false}
           />
         )}
         
@@ -71,10 +84,8 @@ const DentalOverlays = ({
         {ShowSetting.showCrown && teeth.Crown?.mask && (
           <Line
             points={adjustCoordinates(teeth.Crown.mask, toothCenter)}
-            {...colorPalette.crown}
-            strokeWidth={colorPalette.crown.strokeWidth / scale}
+            {...applyShadowProps(colorPalette.crown, scale)}
             closed
-            perfectDrawEnabled={false}
           />
         )}
       </React.Fragment>

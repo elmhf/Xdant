@@ -119,6 +119,16 @@ export default function Navbar() {
             <Printer className="mr-2 h-4 w-4" />
             {t('navbar.print')}
           </Button>
+
+          <Button 
+            variant="outline"
+            size="icon"
+            className="mr-2"
+            aria-label="الصفحة الرئيسية"
+            onClick={() => router.push('/')}
+          >
+            <ChevronRight className="h-5 w-5 rotate-180" />
+          </Button>
           
           <LayoutControls />
           

@@ -2,7 +2,7 @@ import { memo, useEffect, useState, useRef, useCallback } from "react";
 import { Stage, Layer, Image, Line } from "react-konva";
 import useImageStore from "@/stores/ImageStore";
 
-const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 200 }) => {
+const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 200, className = "" }) => {
   const { getImage } = useImageStore();
   const image = getImage();
   const [imageObj, setImageObj] = useState(null);
@@ -76,7 +76,7 @@ const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 20
       );
       
       setAdjustedMaskPoints(adjustedMasks);
-      console.log(adjustedMasks, "Processed problems");
+      // console.log(adjustedMasks, "Processed problems");
     } catch (error) {
       console.error("Error processing image:", error);
     }
@@ -92,8 +92,8 @@ const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 20
   return (
     <div 
       ref={containerRef}
-      className={`flex w-[${size}px] h-[${size}px] items-center justify-center`}
-      style={{ borderRadius: '7px', overflow: 'hidden' }}
+      className={`flex items-center justify-center ${className}`}
+      style={{ borderRadius: '12px', overflow: 'hidden', width: size, height: size }}
     >
       <Stage 
         ref={stageRef}

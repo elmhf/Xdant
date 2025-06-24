@@ -9,7 +9,7 @@ const AddPoint = ({ imageUrl }) => {
 
   useEffect(() => {
     const img = new window.Image();
-    img.src = "http://localhost:3000/4.png"; // Change to imageUrl if you're passing it as a prop
+    img.src = "/4.png"; // Change to imageUrl if you're passing it as a prop
     img.onload = () => {
       setImage(img);
     };
@@ -54,6 +54,8 @@ const AddPoint = ({ imageUrl }) => {
               fill="rgba(0, 0, 255, 0.2)" // Optional: Add a fill color for the polygon
               closed // Close the polygon (connect the last point to the first)
               lineJoin="round" // Smooth the edges
+              shadowColor="rgba(0, 0, 255, 0.5)"
+              shadowBlur={8}
             />
           )}
 
@@ -65,6 +67,8 @@ const AddPoint = ({ imageUrl }) => {
                 stroke="blue"
                 strokeWidth={6}
                 lineCap="round"
+                shadowColor="rgba(0, 0, 255, 0.5)"
+                shadowBlur={8}
               />
             </Group>
           ))}

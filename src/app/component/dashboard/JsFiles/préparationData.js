@@ -3,17 +3,17 @@
 import { useContext } from "react";
 
 import { DataContext } from "../dashboard";
-const  préparationData =(data,thoothNumber)=>{
 
+export function usePréparationData(data1, thoothNumber) {
   const { data, setData, ToothEditData, setToothEditData } = useContext(DataContext);
-               const a= {
-                    "type": data['type'],
-                    "subtype": "Occlusal",
-                    "mask": data["mask"],
-                    "depth": "2.1mm",
-                    "severity": "Medium",
-                    "confidence": 0.94,
-                    "detectedAt": "",
-                    "progression": "Stable",
-                }
-};
+  const a = {
+    "type": data['type'],
+    "subtype": "Occlusal",
+    "mask": data["mask"],
+    "depth": "2.1mm",
+    "severity": "Medium",
+    "confidence": 0.94,
+    "detectedAt": "",
+    "progression": "Stable",
+  };
+}

@@ -90,9 +90,26 @@ export const generatePDF = async ({
     elementClone.style.height = 'auto';
     document.body.appendChild(elementClone);
 
+    // استبدال كل Stage (canvas) بصورة PNG
+    const allCanvases = elementClone.querySelectorAll('canvas');
+    allCanvases.forEach((canvas) => {
+      try {
+        const dataUrl = canvas.toDataURL('image/png');
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        img.width = canvas.width;
+        img.height = canvas.height;
+        img.style.display = 'block';
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+        canvas.parentNode.replaceChild(img, canvas);
+      } catch (e) {}
+    });
+
     await processImagesInElement(elementClone);
     fixUnsupportedColors(elementClone);
 
+    // حذف العناصر الغير لازمة
     const unwantedElements = elementClone.querySelectorAll('button, .no-print, [data-no-print]');
     unwantedElements.forEach(el => {
       el.style.display = 'none';
@@ -105,6 +122,7 @@ export const generatePDF = async ({
       el.style.printColorAdjust = 'exact';
     });
 
+    // انتظر تحميل كل الصور
     const images = elementClone.querySelectorAll('img');
     await Promise.all(Array.from(images).map(img => {
       return new Promise((resolve) => {
@@ -117,12 +135,7 @@ export const generatePDF = async ({
       });
     }));
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 10;
-    const contentWidth = pageWidth - (margin * 2);
-
+    // تصوير الصفحة كاملة
     const canvas = await html2canvas(elementClone, {
       scale: settings.resolutionScale,
       useCORS: true,
@@ -148,38 +161,48 @@ export const generatePDF = async ({
 
     document.body.removeChild(elementClone);
 
+    // تقسيم الصورة على صفحات PDF
     const imgData = canvas.toDataURL('image/jpeg', settings.imageQuality);
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const contentWidth = pageWidth - (margin * 2);
+    const contentHeight = pageHeight - (margin * 2);
+
+    // حساب أبعاد الصورة
     const imgProps = pdf.getImageProperties(imgData);
     const imgRatio = imgProps.width / imgProps.height;
-    
     let imgWidth = contentWidth;
     let imgHeight = contentWidth / imgRatio;
-    let totalPages = Math.ceil(imgHeight / (pageHeight - margin * 2));
+    if (imgHeight < contentHeight) {
+      imgHeight = contentHeight;
+      imgWidth = contentHeight * imgRatio;
+    }
 
-    for (let i = 0; i < totalPages; i++) {
-      if (i > 0) {
-        pdf.addPage();
-      }
-      
-      const yOffset = -(i * (pageHeight - margin * 2));
-      
+    let position = margin;
+    let page = 0;
+    while (position < imgHeight + margin) {
+      if (page > 0) pdf.addPage();
       pdf.addImage(
         imgData,
         'JPEG',
         margin,
-        margin + yOffset,
+        margin - position,
         imgWidth,
         imgHeight,
         undefined,
         'FAST'
       );
+      position += contentHeight;
+      page++;
     }
 
     const fileName = `dental-report-${patientId || 'unknown'}-${new Date().toISOString().slice(0, 10)}.pdf`;
     pdf.save(fileName);
 
     const fileSize = (pdf.output('blob').size / 1024).toFixed(2);
-    onSuccess(fileSize, totalPages);
+    onSuccess(fileSize, page);
 
   } catch (error) {
     onError(error);

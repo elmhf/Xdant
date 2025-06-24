@@ -81,7 +81,11 @@
   "side": {
     "card": {
       "Tooth": "Tooth",
-      "NoProblemsDetected": "No problems detected"
+      "NoProblemsDetected": "No problems detected",
+      "Condition": "Condition",
+      "Comment": "Comment",
+      "Slices": "Slices",
+      "Approved": "Approved"
     },
     "dentalChart": "Dental Chart",
     "showFilters": "Show Filters",
@@ -128,7 +132,13 @@
     "includeCoverPage": "Cover",
     "includeCoverPageDesc": "Add cover",
     "reportLanguage": "Language",
-    "detailLevel": "Detail"
+    "detailLevel": "Detail",
+    "showJawLine": "Jaw line",
+    "showJawLineDesc": "Show jaw line",
+    "showTeeth": "Teeth",
+    "showTeethDesc": "Show teeth",
+    "showSameProblem": "Same problem",
+    "showSameProblemDesc": "Show same problem"
   },
   "languages": {
     "arabic": "Arabic",
@@ -159,5 +169,57 @@
     "warning": "Warning",
     "error": "Error",
     "info": "Info"
+  },
+  "report": {
+    "settings": {
+      "title": "PDF Settings",
+      "author": "Author Name",
+      "addPageNumbers": "Add Page Numbers",
+      "fontSize": "Font Size",
+      "enableRTL": "Enable RTL Writing",
+      "size": "Page Size",
+      "margins": "Margins (mm)",
+      "orientation": "Page Orientation",
+      "imageQuality": "Image Quality (%)",
+      "compression": "File Compression",
+      "optimizeSize": "Optimize File Size",
+      "protect": "Protect File",
+      "password": "Password",
+      "passwordPlaceholder": "Leave empty for no protection",
+      "allowPrint": "Allow Printing",
+      "allowCopy": "Allow Copying",
+      "showTeeth": "Show Teeth",
+      "showJaw": "Show Jaw",
+      "showRoots": "Show Roots",
+      "showEndo": "Show Endodontic Treatment",
+      "showCrown": "Show Crowns",
+      "showNerves": "Show Nerves",
+      "showUpperJaw": "Show Upper Jaw",
+      "showLowerJaw": "Show Lower Jaw",
+      "showGumHealth": "Show Gum Health",
+      "showClinicalNotes": "Show Clinical Notes",
+      "showVisualAnalysis": "Show Visual Analysis",
+      "showProblemCounts": "Show Problem Counts",
+      "showHealthyStatus": "Show Healthy Status",
+      "showProblemDetails": "Show Problem Details",
+      "showDoctorComments": "Show Doctor Comments",
+      "showDiagnoses": "Show Diagnoses",
+      "showToothChart": "Show Tooth Chart",
+      "showCBCTAnalysis": "Show CBCT Analysis",
+      "showSignedByDoctor": "Show Doctor Signature",
+      "upper": "Upper",
+      "lower": "Lower",
+      "save": "Save Settings",
+      "resetSettings": "Reset Settings"
+    },
+    "sections": {
+      "basic": "Basic Settings",
+      "page": "Page Setup",
+      "quality": "Quality & Size",
+      "security": "Security",
+      "CBCTAnalysis": "CBCT Analysis",
+      "jaw": "Jaw Settings",
+      "report": "Report Settings"
+    }
   }
 }

@@ -62,6 +62,7 @@ const ImageCropper = ({ img, teethData }) => {
             image={image}
             width={image.width * scaleFactor}
             height={image.height * scaleFactor}
+            alt="Dental X-ray"
           />
 
           {/* رسم كل الأسنان من القائمة */}
@@ -96,6 +97,9 @@ const ImageCropper = ({ img, teethData }) => {
                       closed
                       stroke="red"
                       strokeWidth={2 * scaleFactor}
+                      shadowColor="rgba(255, 0, 0, 0.6)"
+                      shadowBlur={8 * scaleFactor}
+                      shadowOffset={{ x: 1 * scaleFactor, y: 1 * scaleFactor }}
                     />
                   );
                 })}

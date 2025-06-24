@@ -1,223 +1,455 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback, useContext } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import PatientInfoSection from "./PatientInfoSection";
 import TeethDetailsSection from "./TeethDetailsSection";
 import TreatmentPlansSection from "./TreatmentPlansSection";
 import RenderProblemDrw from "./RenderProblemDrw";
 import ToothChar from "../../main/ToothLabels/ToothChar/ToothChar";
+import { useDentalSettings } from '@/hooks/SettingHooks/useDentalSettings ';
+import { PDFContext } from "./report";
 
-// مكون التوقيع الجديد
-const SignaturePad = ({ onSave }) => {
+// ======================== SIGNATURE PAD COMPONENT ========================
+const SignaturePad = ({ onSave, disabled = false }) => {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [signature, setSignature] = useState(null);
+  const [hasSignature, setHasSignature] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
-  const startDrawing = (e) => {
+  // Setup canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 2.5;
+    
+    // Set fixed canvas size for consistent PDF output
+    canvas.width = 400;
+    canvas.height = 150;
+  }, []);
+
+  // Get point coordinates
+  const getPoint = useCallback((e) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    if (e.touches) {
+      return {
+        x: (e.touches[0].clientX - rect.left) * scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY
+      };
+    } else {
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+      };
+    }
+  }, []);
+
+  // Drawing handlers
+  const startDrawing = useCallback((e) => {
+    if (disabled) return;
+    e.preventDefault();
     setIsDrawing(true);
+    
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    const rect = canvas.getBoundingClientRect();
+    const point = getPoint(e);
     
     ctx.beginPath();
-    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#000';
-    ctx.lineCap = 'round';
-  };
+    ctx.moveTo(point.x, point.y);
+  }, [disabled, getPoint]);
 
-  const draw = (e) => {
-    if (!isDrawing) return;
+  const draw = useCallback((e) => {
+    if (!isDrawing || disabled) return;
+    e.preventDefault();
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    const rect = canvas.getBoundingClientRect();
+    const point = getPoint(e);
     
-    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.lineTo(point.x, point.y);
     ctx.stroke();
-  };
+    
+    if (!hasSignature) {
+      setHasSignature(true);
+    }
+  }, [isDrawing, disabled, getPoint, hasSignature]);
 
-  const endDrawing = () => {
+  const endDrawing = useCallback(() => {
     setIsDrawing(false);
-  };
+  }, []);
 
-  const clearSignature = () => {
+  // Clear signature
+  const clearSignature = useCallback(() => {
+    setIsClearing(true);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    setSignature(null);
-  };
+    
+    setTimeout(() => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      setHasSignature(false);
+      setIsClearing(false);
+    }, 150);
+  }, []);
 
-  const saveSignature = () => {
+  // Save signature
+  const saveSignature = useCallback(() => {
+    if (!hasSignature) return;
     const canvas = canvasRef.current;
-    const dataUrl = canvas.toDataURL('image/png');
-    setSignature(dataUrl);
-    onSave(dataUrl);
-  };
+    const dataUrl = canvas.toDataURL('image/png', 1.0);
+    onSave?.(dataUrl);
+  }, [hasSignature, onSave]);
 
   return (
-    <div className="signature-pad-container">
-      <div className="border rounded-lg p-4 mb-4 bg-white">
+    <div className="w-full max-w-2xl mx-auto space-y-4">
+      <div className="text-center mb-4">
+        <h3 className="text-lg font-semibold text-slate-900 mb-1">
+          منطقة التوقيع الإلكتروني
+        </h3>
+        <p className="text-sm text-slate-600">ارسم توقيعك في المنطقة أدناه</p>
+      </div>
+
+      <div className="relative bg-white border-2 border-slate-300 rounded-lg p-2">
         <canvas
           ref={canvasRef}
-          width={300}
-          height={150}
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={endDrawing}
           onMouseLeave={endDrawing}
-          className="w-full border-b border-gray-200 cursor-crosshair bg-white"
+          onTouchStart={startDrawing}
+          onTouchMove={draw}
+          onTouchEnd={endDrawing}
+          className={`
+            w-full h-32 border border-slate-200 rounded cursor-crosshair touch-none
+            ${disabled ? 'cursor-not-allowed opacity-50' : ''}
+            ${isClearing ? 'opacity-30' : ''}
+          `}
         />
-        <div className="flex justify-between mt-2">
-          <Button variant="outline" onClick={clearSignature} size="sm">
-            مسح
-          </Button>
-          <Button onClick={saveSignature} size="sm" disabled={!signature}>
-            حفظ التوقيع
-          </Button>
+        
+        {!hasSignature && !isDrawing && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span className="text-slate-400 text-sm">ابدأ بالرسم هنا</span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-3 justify-center">
+        <Button
+          variant="outline"
+          onClick={clearSignature}
+          disabled={!hasSignature || isClearing || disabled}
+          className="text-red-600 border-red-200 hover:bg-red-50"
+        >
+          مسح
+        </Button>
+        <Button
+          onClick={saveSignature}
+          disabled={!hasSignature || disabled}
+          className="bg-slate-900 hover:bg-slate-800"
+        >
+          حفظ التوقيع
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+// ======================== DOCTOR SIGNATURE COMPONENT ========================
+const DoctorSignature = () => {
+  const [signature, setSignature] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleSaveSignature = (sig) => {
+    setSignature(sig);
+    setIsDialogOpen(false);
+  };
+
+  return (
+    <div className="print:break-inside-avoid">
+      <div className="border-t-2 border-slate-200 pt-8 mt-8">
+        <div className="flex justify-between items-end">
+          
+          {/* Doctor Info */}
+          <div className="space-y-2">
+            <div className="text-sm text-slate-600">
+              <p>تاريخ التقرير: {new Date().toLocaleDateString('ar-SA')}</p>
+            </div>
+          </div>
+
+          {/* Signature Area */}
+          <div className="text-center">
+            <div className="w-64 h-20 border-b-2 border-slate-800 mb-2 flex items-end justify-center pb-1">
+              {signature ? (
+                <img 
+                  src={signature} 
+                  alt="Doctor Signature" 
+                  className="max-h-16 max-w-60 object-contain"
+                />
+              ) : (
+                <span className="text-slate-400 text-sm print:hidden">منطقة التوقيع</span>
+              )}
+            </div>
+            
+            <div className="space-y-1">
+              <p className="font-bold text-slate-900">Dr. Dental Expert</p>
+              <p className="text-sm text-slate-600">Licensed Dentist</p>
+              <p className="text-xs text-slate-500">DDS, Oral & Maxillofacial Surgery</p>
+            </div>
+
+            {/* Signature Button - Hidden in print */}
+            <div className="mt-4 print:hidden">
+              {signature ? (
+                <div className="flex gap-2 justify-center">
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        تعديل التوقيع
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-3xl">
+                      <DialogHeader>
+                        <DialogTitle>التوقيع الإلكتروني</DialogTitle>
+                      </DialogHeader>
+                      <SignaturePad onSave={handleSaveSignature} />
+                    </DialogContent>
+                  </Dialog>
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSignature(null)}
+                    className="text-red-600 border-red-200 hover:bg-red-50"
+                  >
+                    حذف
+                  </Button>
+                </div>
+              ) : (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="bg-slate-900 hover:bg-slate-800">
+                      أضف توقيعك
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                      <DialogTitle>التوقيع الإلكتروني</DialogTitle>
+                    </DialogHeader>
+                    <SignaturePad onSave={handleSaveSignature} />
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-// مكون توقيع الطبيب المعدل
-function DoctorSignature() {
-  const [signature, setSignature] = useState(null);
-  const [showPad, setShowPad] = useState(false);
 
-  return (
-    <CardFooter className="flex justify-end">
-      <div className="text-right">
-        <p className="font-medium">د. خبير الأسنان</p>
-        <p className="text-sm text-muted-foreground">طبيب أسنان مرخص</p>
-        
-        {signature ? (
-          <div className="mt-4">
-            <img src={signature} alt="Doctor Signature" className="h-16" />
-            <p className="text-xs text-muted-foreground mt-1">
-              التوقيع الإلكتروني - {new Date().toLocaleDateString()}
-            </p>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="mt-2 text-xs"
-              onClick={() => setShowPad(true)}
-            >
-              تعديل التوقيع
-            </Button>
-          </div>
-        ) : (
-          <Button 
-            variant="outline" 
-            className="mt-4"
-            onClick={() => setShowPad(true)}
-          >
-            أضف توقيعك
-          </Button>
-        )}
+// ======================== REPORT SECTION WRAPPER ========================
+const ReportSection = ({ title, children, className = "", printClass = "" }) => (
+  <div className={`print:break-inside-avoid ${printClass} ${className}`}>
+    <h3 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-300 pb-2">
+      {title}
+    </h3>
+    <div className="bg-white rounded-lg border">
+      {children}
+    </div>
+  </div>
+);
 
-        {showPad && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-96">
-              <h3 className="text-lg font-bold mb-4">التوقيع الإلكتروني</h3>
-              <SignaturePad 
-                onSave={(sig) => {
-                  setSignature(sig);
-                  setShowPad(false);
-                }} 
-              />
-              <Button 
-                variant="outline" 
-                className="mt-2 w-full"
-                onClick={() => setShowPad(false)}
-              >
-                إلغاء
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    </CardFooter>
-  );
-}
-
+// ======================== MAIN REPORT COMPONENT ========================
 export default function ReportView({ 
   patientData, 
   settings, 
   getImage 
 }) {
+  const { contextPDFRef } = useContext(PDFContext);
+  
+  const currentDate = new Date().toLocaleDateString();
+  const patientName = patientData?.patientInfo?.info?.fullName || 'Patient Name';
+  const patientDOB = patientData?.patientInfo?.info?.dob || '--';
+  const studyDate = patientData?.metadata?.lastUpdated 
+    ? new Date(patientData.metadata.lastUpdated).toLocaleDateString() 
+    : currentDate;
+
   return (
-    <Card className={settings.colorPrint ? "report-pdf" : "report-pdf grayscale"}>
-      {/* Report Header with Clinic Info */}
-      <CardHeader>
-        <div className="flex justify-between items-center border-b pb-4 mb-4">
-          <div className="flex items-center gap-4">
-            <img src="/41.png" alt="Clinic Logo" className="w-14 h-14 rounded" />
-            <div>
-              <h2 className="text-lg font-bold">Dental Clinic</h2>
-              <p className="text-xs text-muted-foreground">ON M5S 2B3, Canada, Toronto</p>
-              <p className="text-xs text-muted-foreground">648 Bay St</p>
-              <p className="text-xs text-muted-foreground">+1 647-850-7650</p>
-              <p className="text-xs text-muted-foreground">info@dentalclinic.ca</p>
+    <div className="report-pdf-container min-h-screen bg-white print:bg-white print:shadow-none">
+      
+      {/* Print Styles */}
+      <style jsx>{`
+        @media print {
+          .report-pdf-container {
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+          }
+          .print\\:break-inside-avoid {
+            break-inside: avoid;
+          }
+          .print\\:break-after-page {
+            break-after: page;
+          }
+          .print\\:hidden {
+            display: none !important;
+          }
+          body {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+          }
+        }
+        .report-pdf-container {
+          max-width: 8.5in;
+          margin: 0 auto;
+          padding: 0.5in;
+          font-family: 'Arial', sans-serif;
+          line-height: 1.4;
+        }
+      `}</style>
+
+      <Card className="border-0 shadow-none print:shadow-none">
+        
+        {/* Report Header */}
+        <CardHeader 
+          ref={(el) => (contextPDFRef.current[0] = el)}
+          className="print:break-inside-avoid border-b-2 border-blue-600 pb-6 mb-8"
+        >
+          <div className="flex justify-between items-start gap-8">
+            
+            {/* Clinic Information */}
+            <div className="flex-1">
+              <div className="space-y-4">
+                <h1 className="text-3xl font-bold text-blue-800">XDental</h1>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p className="font-medium">648 Bay St</p>
+                  <p>Toronto, ON M5S 2B3, Canada</p>
+                  <p>Phone: +1 647-850-7650</p>
+                  <p>Email: info@dentalclinic.ca</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Report Information */}
+            <div className="flex-1 text-right">
+              <h2 className="text-3xl font-bold text-blue-800 mb-6">CBCT AI REPORT</h2>
+              <Card className="bg-gray-50 border">
+                <CardContent className="p-4">
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-700">Patient:</span>
+                      <span className="font-medium">{patientName}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-700">DOB:</span>
+                      <span>{patientDOB}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-700">Study Date:</span>
+                      <span>{studyDate}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-700">Report Date:</span>
+                      <span>{currentDate}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
-          <div className="text-right">
-            <h3 className="text-xl font-bold text-primary">CBCT AI Report</h3>
-            <p className="text-xs">{patientData?.patientInfo?.info?.fullName || 'Patient Name'}</p>
-            <p className="text-xs">DoB: {patientData?.patientInfo?.info?.dob || '--'}</p>
-            <p className="text-xs">Study Date: {patientData?.metadata?.lastUpdated ? new Date(patientData.metadata.lastUpdated).toLocaleDateString() : new Date().toLocaleDateString()}</p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-7 p-[40px] justify-center items-center">
-        {/* X-ray Image */}
-        <div className="w-[90%] flex flex-col gap-4 justify-center mb-6">
-          <h1 className="text-xl font-bold text-primary">CBCT AI Report</h1>
-          <RenderProblemDrw image={getImage()} />
-        </div>
-        {/* Tooth Chart */}
-        <div className="w-full w-2xl max-w-[85%] mb-6">
-          <ToothChar />
-        </div>
+        </CardHeader>
 
-        {/* Teeth Details Table */}
-        {settings.showDiagnoses && (
-          <div className=" w-[90%] mb-6">
-            <TeethDetailsSection teeth={patientData.teeth} />
-          </div>
-        )}
-        {/* Treatment Plan Table */}
-        {settings.showSlices && patientData.treatmentPlan && (
-          <div className="w-full max-w-3xl mb-6">
-            <TreatmentPlansSection treatmentPlans={patientData.treatmentPlan} />
-          </div>
-        )}
-        <Separator />
-      </CardContent>
-      
-      {/* Doctor Signature */}
-      {settings.signedByDoctor && <DoctorSignature />}
-    </Card>
-  );
-}
+        <CardContent className="space-y-8">
+          
+          {/* CBCT Analysis Section */}
+          {settings.showCBCTAnalysis && (
+            <ReportSection title="CBCT Analysis">
+              <div className="p-4">
+                <RenderProblemDrw 
+                  tooth={patientData.teeth} 
+                  Jaw={patientData.jawData} 
+                  image={getImage()} 
+                  ShowSetting={settings} 
+                  stageRef={contextPDFRef} 
+                />
+              </div>
+            </ReportSection>
+          )}
 
-function ReportHeader({ patientData }) {
-  return (
-    <div className="flex justify-between items-start">
-      <div>
-        <CardTitle className="text-2xl">تقرير صحة الأسنان</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          تحليل شامل لصحة الأسنان لـ {patientData.patientInfo?.info?.fullName || 'المريض'}
-        </p>
-      </div>
-      <p className="text-sm text-muted-foreground">
-        {patientData.metadata?.lastUpdated ?
-          new Date(patientData.metadata.lastUpdated).toLocaleDateString() :
-          new Date().toLocaleDateString()}
-      </p>
+          {/* Tooth Chart Section */}
+          {settings.showToothChart && (
+            <ReportSection 
+              title="Tooth Chart"
+              className="space-y-4"
+            >
+              <div 
+                ref={(el) => (contextPDFRef.current[2] = el)}
+                className="p-4"
+              >
+                <ToothChar />
+              </div>
+            </ReportSection>
+          )}
+
+          {/* Diagnoses Details Section */}
+          {settings.showDiagnoses && (
+            <ReportSection title="Diagnoses Details">
+              <TeethDetailsSection 
+                settings={settings} 
+                teeth={patientData.teeth} 
+              />
+            </ReportSection>
+          )}
+
+          {/* Treatment Plan Section */}
+          {settings.showSlices && patientData.treatmentPlan && (
+            <ReportSection title="Treatment Plan">
+              <div className="p-4">
+                {/* <TreatmentPlansSection treatmentPlans={patientData.treatmentPlan} /> */}
+                <p className="text-gray-600 italic">Treatment plan details will be displayed here.</p>
+              </div>
+            </ReportSection>
+          )}
+
+          {/* Additional Notes Section */}
+          <ReportSection title="Additional Notes">
+            <div className="bg-gray-50 p-6 min-h-24">
+              <p className="text-sm text-gray-600 italic leading-relaxed">
+                This report is generated using AI analysis of CBCT imaging. 
+                Clinical correlation and professional judgment are recommended for final diagnosis and treatment planning.
+              </p>
+            </div>
+          </ReportSection>
+
+        </CardContent>
+        
+        {/* Doctor Signature Section */}
+        {settings.showSignedByDoctor && (
+          <CardFooter className="mt-12">
+            <DoctorSignature />
+          </CardFooter>
+        )}
+        
+        {/* Report Footer */}
+        <div className="text-center text-xs text-gray-500 mt-8 pt-4 border-t border-gray-200 space-y-1">
+          <p className="font-medium">This report is confidential and intended for medical professionals only.</p>
+          <p>Generated on {currentDate} | Page 1 of 1</p>
+        </div>
+        
+      </Card>
     </div>
   );
 }

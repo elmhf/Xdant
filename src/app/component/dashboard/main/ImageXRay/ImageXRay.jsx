@@ -9,7 +9,9 @@ import LoadingState from "./component/states/LoadingState";
 import ErrorState from "./component/states/ErrorState";
 import { useDentalSettings } from "./component/CustomHook/useDentalSettings";
 import useImageStore from "@/stores/ImageStore";
-export default function ImageCard() {
+import { useDentalStore } from "@/stores/dataStore";
+
+export default function ImageCard({ settings, SettingChange ,setSettings}) {
 
   const {
     images,
@@ -26,20 +28,19 @@ export default function ImageCard() {
     handleDownload,downloadImageWithAnnotations
   } = useImageCard();
 const { getImage } = useImageStore();
-  console.log(images,"images")
-    const { settings, SettingChange ,updateSettingProblem,setSettings} = useDentalSettings();
-  const { data,ToothEditData } = React.useContext(DataContext);
+  console.log(getImage(),"images")
+  const data = useDentalStore(state => state.data);
+
   console.log(data?.teeth,"data?.teeth")
   if (isLoading) return <LoadingState />;
   if (error) return <ErrorState error={error} onRetry={handleReanalyze} />;
-  if (!images.length) return <ImageUploader onUpload={handleUpload} />;
+  if (!getImage()) return <ImageUploader onUpload={handleUpload} />;
 
 
 
 
   return (
     <>
-    
       <ImageViewer
         image={getImage()}
         teethData={data?.teeth}
@@ -56,9 +57,9 @@ const { getImage } = useImageStore();
       
       {isFullScreen && (
         <FullScreenViewer
-          image={images[0]}
+          image={getImage()}
           teethData={data?.teeth}
-          settings={imageSettings}
+          settings={settings}
           onClose={toggleFullScreen}
           onDownload={handleDownload}
         />

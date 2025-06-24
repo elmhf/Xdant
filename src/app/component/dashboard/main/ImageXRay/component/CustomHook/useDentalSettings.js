@@ -1,97 +1,68 @@
 "use client";
 import { useState } from 'react';
 
+// الإعدادات الافتراضية
+const DEFAULT_SETTINGS = {
+  brightness: 100,
+  contrast: 100,
+  zoom: 100,
+  showTeeth: true,
+  showJaw: true,
+  showRoots: false,
+  showEndo: true,
+  showCrown: true,
+  showNerves: false,
+  showNumbering: true,
+  showCaries: true,
+  problems: {
+    showNerves: false,
+    showNumbering: true,
+    showCaries: true,
+    showdfghjk: true,
+  },
+};
+
 export const useDentalSettings = () => {
+  // حالة الإعدادات
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
-
-
-  const updateSettingProblem = (problemsArray,setSettingList) => {
-    // Create an object where each problem in the array will be set to true
+  // تحديث مشاكل معينة
+  const updateSettingProblem = (problemsArray, setSettingList) => {
     const updatedProblems = problemsArray.reduce((acc, problem) => {
-      acc[`show${problem}`] = true; // Set each problem to `true`
+      acc[`show${problem}`] = true;
       return acc;
     }, {});
-    
-    // Update the state with   the new problems
     setSettingList(prevSettings => ({
       ...prevSettings,
       problems: {
-        ...updatedProblems, // Merge the new problems into the existing problems
+        ...prevSettings.problems,
+        ...updatedProblems,
       },
     }));
   };
 
-
-
-  const [settings, setSettings] = useState({
-    brightness: 100,
-    contrast: 100,
-    zoom: 100,
-    showTeeth: true,
-    showJaw: true,
-    showRoots: false,
-    showEndo:true,
-    showCrown:true,
-    showNerves: false,
-    showNumbering: true,
-    showCaries: true,
-    problems:{
-      showNerves: false,
-      showNumbering: true,
-      showCaries: true,
-      showNumbering: true,
-      showNumbering: true,
-      showdfghjk: true,
-    },
-  });
-
+  // تغيير أي إعداد
   const SettingChange = (key, value, chapter = null) => {
-    
     setSettings(prev => {
-      let newSettings = { ...prev }; 
-  
+      let newSettings = { ...prev };
       if (chapter === "problems") {
         newSettings.problems = { ...newSettings.problems, [key]: value };
       } else {
-        newSettings[key] = value; 
+        newSettings[key] = value;
       }
-  
+      // إذا ألغيت إظهار الأسنان، ألغِ الجذور والأعصاب تلقائيًا
       if (key === 'showTeeth' && value === false) {
         newSettings.showRoots = false;
         newSettings.showNerves = false;
       }
-  
-      // Special case for `brightness`
-      if (key === 'brightness') {
-        
-      }
-  
       return newSettings;
     });
   };
-  
 
+  // إعادة تعيين الإعدادات للوضع الافتراضي
   const resetSettings = () => {
-    setSettings({
-      brightness: 100,
-      contrast: 100,
-      zoom: 100,
-      showTeeth: true,
-      showJaw: false,
-      showRoots: false,
-      showNerves: false,
-      showNumbering: true,
-      showCaries: true,
-      problems:{
-        showNerves: false,
-        showNumbering: true,
-        showCaries: true,
-        showNumbering: true,
-        showNumbering: true,
-        showdfghjk: true,
-      },
-    });
+    setSettings(DEFAULT_SETTINGS);
   };
 
-  return { settings, SettingChange,updateSettingProblem, resetSettings,setSettings };
+  return { settings, SettingChange, updateSettingProblem, resetSettings, setSettings };
 };

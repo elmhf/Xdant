@@ -3,12 +3,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-:root * {
-  font-family: Poppins;
-  font-weight: 522;
-}
-
-
 :root {
 --text-color: rgb(51, 51, 51);
 }
@@ -58,7 +52,7 @@
   --card-foreground: #333333; 
   --popover: #ffffff; 
   --popover-foreground: #333333; 
-  --primary: #5a7bff; 
+  --primary: #000000da; 
   --primary-foreground: #ffffff; 
   --secondary: #f2f2f2; 
   --secondary-foreground: #4d4d4d; 
@@ -71,7 +65,7 @@
   --border: #e6e6e6; 
   --input: #f2f2f2; 
   --ring: #999999; 
-  --chart-1: #6b8cff; 
+  --chart-1: #0a0a0a; 
   --chart-2: #66d9d9; 
   --chart-3: #7d9fff; 
   --chart-4: #a3e57d; 
@@ -79,7 +73,7 @@
   --radius: 0.625rem;
   --sidebar: #ffffff; 
   --sidebar-foreground: #333333; 
-  --sidebar-primary: #5a7bff; 
+  --sidebar-primary: #050505; 
   --sidebar-primary-foreground: #ffffff; 
   --sidebar-accent: #f2f2f2; 
   --sidebar-accent-foreground: #4d4d4d; 
@@ -350,5 +344,32 @@ html {
 }
 
 .rs-modal-backdrop {
+
   z-index: 1000;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+html, body, * {
+  font-family: 'Poppins', sans-serif !important;
 }

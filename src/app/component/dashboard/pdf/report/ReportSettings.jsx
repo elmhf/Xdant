@@ -1,213 +1,292 @@
-'use client';
-import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Download, Settings, Info, Check } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useTranslation } from "react-i18next";
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Settings,
+  ChevronDown,
+  ChevronRight,
+  RotateCcw,
+  FileText,
+  Layout,
+  Shield
+} from 'lucide-react';
+import { useDentalSettings } from '@/hooks/SettingHooks/useDentalSettings ';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
 
-export default function ReportSettings({ 
-  settings, 
-  toggleSetting, 
-  updateSetting,
-  downloadPDF, 
-  isGenerating,
-  lang 
-}) {
+const ReportSettings = ({ settings, updateSetting, resetSettings }) => {
   const { t } = useTranslation();
-  const [showSuccess, setShowSuccess] = useState(false);
+  
+useEffect(() => {console.log("settings",settings)}, [settings]);
+  const [expandedSections, setExpandedSections] = useState({
+    basic: false,
+    page: false,
+    quality: false,
+    security: false,
+    CBCTAnalysis: false,
+    Jaw: false,
+    report: false
+  });
 
-  const handleDownload = async () => {
-    try {
-      await downloadPDF();
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
-    } catch (error) {
-      console.error("Download failed:", error);
-    }
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
   };
 
-  const options = useMemo(() => [
-    { 
-      key: "colorPrint", 
-      label: t("reportSettings.colorPrint"), 
-      description: t("reportSettings.colorPrintDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "signedByDoctor", 
-      label: t("reportSettings.signedByDoctor"), 
-      description: t("reportSettings.signedByDoctorDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "includeXrayImages", 
-      label: t("reportSettings.includeXrayImages"), 
-      description: t("reportSettings.includeXrayImagesDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "includeDoctorNotes", 
-      label: t("reportSettings.includeDoctorNotes"), 
-      description: t("reportSettings.includeDoctorNotesDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "showToothNumbers", 
-      label: t("reportSettings.showToothNumbers"), 
-      description: t("reportSettings.showToothNumbersDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "includeTreatmentPlan", 
-      label: t("reportSettings.includeTreatmentPlan"), 
-      description: t("reportSettings.includeTreatmentPlanDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "onlyAffectedTeeth", 
-      label: t("reportSettings.onlyAffectedTeeth"), 
-      description: t("reportSettings.onlyAffectedTeethDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "clinicStamp", 
-      label: t("reportSettings.clinicStamp"), 
-      description: t("reportSettings.clinicStampDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "showDateTime", 
-      label: t("reportSettings.showDateTime"), 
-      description: t("reportSettings.showDateTimeDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "includeCoverPage", 
-      label: t("reportSettings.includeCoverPage"), 
-      description: t("reportSettings.includeCoverPageDesc"), 
-      type: "boolean",
-    },
-    { 
-      key: "reportLanguage", 
-      label: t("reportSettings.reportLanguage"), 
-      type: "select", 
-      options: [
-        t("languages.arabic"), 
-        t("languages.english"), 
-        t("languages.french")
-      ],
-      icon: "🌐"
-    },
-    { 
-      key: "detailLevel", 
-      label: t("reportSettings.detailLevel"), 
-      type: "select", 
-      options: [
-        t("detailLevels.brief"), 
-        t("detailLevels.detailed")
-      ],
-      icon: "🔍"
-    },
-  ], [t]);
+  const formatLabel = (key) => {
+    const translations = {
+      // Basic
+      'title': t('report.settings.title'),
+      'author': t('report.settings.author'),
+      'addPageNumbers': t('report.settings.addPageNumbers'),
+      'fontSize': t('report.settings.fontSize'),
+      'enableRTL': t('report.settings.enableRTL'),
+      
+      // Page
+      'size': t('report.settings.size'),
+      'margins': t('report.settings.margins'),
+      'orientation': t('report.settings.orientation'),
+      
+      // Quality
+      'imageQuality': t('report.settings.imageQuality'),
+      'compression': t('report.settings.compression'),
+      'optimizeSize': t('report.settings.optimizeSize'),
+      
+      // Security
+      'protect': t('report.settings.protect'),
+      'password': t('report.settings.password'),
+      'allowPrint': t('report.settings.allowPrint'),
+      'allowCopy': t('report.settings.allowCopy'),
+
+      // CBCT Analysis
+      'showTeeth': t('report.settings.showTeeth'),
+      'showJaw': t('report.settings.showJaw'),
+      'showRoots': t('report.settings.showRoots'),
+      'showEndo': t('report.settings.showEndo'),
+      'showCrown': t('report.settings.showCrown'),
+      'showNerves': t('report.settings.showNerves'),
+
+      // Jaw
+      'showUpperJaw': t('report.settings.showUpperJaw'),
+      'showLowerJaw': t('report.settings.showLowerJaw'),
+
+      // Reports
+      'showGumHealth': t('report.settings.showGumHealth'),
+      'showClinicalNotes': t('report.settings.showClinicalNotes'),
+      'showVisualAnalysis': t('report.settings.showVisualAnalysis'),
+      'showProblemCounts': t('report.settings.showProblemCounts'),
+      'showHealthyStatus': t('report.settings.showHealthyStatus'),
+      'showProblemDetails': t('report.settings.showProblemDetails'),
+      'showDoctorComments': t('report.settings.showDoctorComments'),
+
+      // Other
+      'showDiagnoses': t('report.settings.showDiagnoses'),
+      'showToothChart': t('report.settings.showToothChart'),
+      'showCBCTAnalysis': t('report.settings.showCBCTAnalysis'),
+      'showSignedByDoctor': t('report.settings.showSignedByDoctor'),
+      'upper': t('report.settings.upper'),
+      'lower': t('report.settings.lower')
+    };
+    
+    return translations[key] || key;
+  };
+
+  const getSectionIcon = (key) => {
+    const icons = {
+      basic: FileText,
+      page: Layout,
+      quality: Settings,
+      security: Shield,
+      CBCTAnalysis: FileText,
+      Jaw: Layout,
+      report: Settings
+    };
+    return icons[key] || Settings;
+  };
+
+  const getSectionTitle = (key) => {
+    const titles = {
+      basic: t('report.sections.basic'),
+      page: t('report.sections.page'),
+      quality: t('report.sections.quality'),
+      security: t('report.sections.security'),
+      CBCTAnalysis: t('report.sections.CBCTAnalysis'),
+      Jaw: t('report.sections.jaw'),
+      report: t('report.sections.report')
+    };
+    return titles[key] || key;
+  };
+
+  const renderInput = (value, path, key) => {
+    if (typeof value === 'boolean') {
+      return (
+        <div className="flex items-center justify-between p-4 rounded-lg border bg-card " >
+          <Label htmlFor={path} className="text-sm font-medium cursor-pointer text-right">
+            {formatLabel(key)}
+          </Label>
+          <div dir="ltr" className="flex items-center">
+          <Switch
+            id={path}
+            checked={value}
+            onCheckedChange={(checked) => updateSetting(path, checked)}
+          /></div>
+        </div>
+      );
+    }
+
+    if (typeof value === 'string') {
+      return (
+        <div className="p-4 rounded-lg border bg-card space-y-2" >
+          <Label htmlFor={path} className="text-sm font-medium text-right block">
+            {formatLabel(key)}
+          </Label>
+          <Input
+            id={path}
+            type={key === 'password' ? 'password' : 'text'}
+            value={value}
+            onChange={(e) => updateSetting(path, e.target.value)}
+            placeholder={key === 'password' ? t('report.settings.passwordPlaceholder') : ''}
+            className="text-right"
+          />
+        </div>
+      );
+    }
+
+    if (typeof value === 'number') {
+      const maxValue = key.includes('Quality') ? 100 : 
+                     key.includes('margins') ? 50 : 
+                     key.includes('fontSize') ? 24 : 200;
+      
+      return (
+        <div className="p-4 rounded-lg border bg-card space-y-3" >
+          <div className="flex justify-between items-center">
+            <Label className="text-sm font-medium text-right">
+              {formatLabel(key)}
+            </Label>
+            <span className="text-sm font-medium bg-muted px-2 py-1 rounded text-muted-foreground">
+              {value}{key.includes('Quality') ? '%' : ''}
+            </span>
+          </div>
+          <div >
+            <Slider
+              value={[value]}
+              onValueChange={(values) => updateSetting(path, values[0])}
+              max={maxValue}
+              min={key.includes('fontSize') ? 8 : 1}
+              step={1}
+              className="w-full"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const renderSettings = (obj, parentPath = '') => {
+    return Object.entries(obj).map(([key, value]) => {
+      const currentPath = parentPath ? `${parentPath}.${key}` : key;
+
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        const IconComponent = getSectionIcon(key);
+        const isExpanded = expandedSections[key];
+        
+        return (
+          <Collapsible
+            key={currentPath}
+            open={isExpanded}
+            onOpenChange={() => toggleSection(key)}
+          >
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                className="w-full justify-between p-4 h-auto border rounded-lg hover:bg-muted/50"
+                
+              >
+                <div className="flex items-center gap-3 flex-row-reverse">
+                  {isExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-muted-foreground rotate-180" />
+                  )}
+                  <span className="text-sm font-medium text-right">
+                    {getSectionTitle(key)}
+                  </span>
+                  <IconComponent className="h-4 w-4 text-muted-foreground" />
+                </div>
+              </Button>
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="mt-2">
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  {renderSettings(value, currentPath)}
+                </CardContent>
+              </Card>
+            </CollapsibleContent>
+          </Collapsible>
+        );
+      }
+
+      return (
+        <div key={currentPath}>
+          {renderInput(value, currentPath, key)}
+        </div>
+      );
+    });
+  };
 
   return (
-    <Card className="relative">
-      {/* Success notification */}
-      {showSuccess && (
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-lg z-10 animate-fade-in-out">
-          <Check className="h-4 w-4" />
-          <span className="text-sm font-medium">{t("reportSettings.downloadSuccess")}</span>
-        </div>
-      )}
-      
-      <CardContent className="space-y-4  pr-2 py-4">
-        {options.map((option) => (
-          <div key={option.key} className="space-y-2 group">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col">
-                  {option.description && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {option.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              { option.type === "select" ? (
-                <Select
-                  value={settings[option.key]}
-                  onValueChange={(value) => updateSetting(option.key, value)}
-                >
-                  <SelectTrigger className="w-[160px] text-sm">
-                    <SelectValue placeholder={t("common.select")} />
-                  </SelectTrigger>
-                  <SelectContent className="min-w-[160px]">
-                    {option.options.map((opt) => (
-                      <SelectItem 
-                        key={opt} 
-                        value={opt}
-                        className="text-sm"
-                      >
-                        {opt}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ): option.type === "boolean" ? (
-                <div className="flex items-center gap-2">
-                  <TooltipProvider delayDuration={200}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div>
-                          <Switch
-                            id={option.key}
-                            checked={!!settings[option.key]}
-                            onCheckedChange={() => toggleSetting(option.key)}
-                          />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="left" className="bg-gray-800 text-white">
-                        <p>{settings[option.key] ? t("common.enabled") : t("common.disabled")}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              ) : null}
+    <div className="w-full max-w-4xl mx-auto p-4 min-h-screen" >
+      <Card className="shadow-lg">
+        <CardHeader className="border-b">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-3">
+              <Settings className="h-5 w-5" />
+              {t('report.settings.title')}
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={resetSettings}
+                className="h-8 w-8"
+                title={t('report.settings.resetSettings')}
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-        ))}
-      </CardContent>
+        </CardHeader>
 
-      <CardFooter className="border-t pt-4">
-        <Button 
-          onClick={handleDownload} 
-          disabled={isGenerating} 
-          className="w-full gap-2 h-11 text-base font-medium"
-          variant={isGenerating ? "secondary" : "default"}
-        >
-          {isGenerating ? (
-            <LoadingSpinner t={t} />
-          ) : (
-            <>
-              <Download className="h-5 w-5" />
-              {t("reportSettings.downloadPDF")}
-            </>
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-}
-
-function LoadingSpinner({ t }) {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="animate-spin rounded-full h-5 w-5 border-2 border-current border-t-transparent"></div>
-      <span className="font-medium">{t("reportSettings.generating")}</span>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            {renderSettings(settings)}
+          </div>
+          
+          <div className="mt-8 pt-6">
+            <Separator className="mb-6" />
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" size="sm">
+                {t('common.cancel')}
+              </Button>
+              <Button size="sm">
+                {t('report.settings.save')}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-}
+};
+
+export default ReportSettings;

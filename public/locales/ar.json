@@ -146,7 +146,13 @@
     "includeCoverPageDesc": "إضافة صفحة أولى تحتوي على اسم العيادة وبيانات المريض",
     
     "reportLanguage": "لغة التقرير",
-    "detailLevel": "مستوى التفاصيل"
+    "detailLevel": "مستوى التفاصيل",
+    "showJawLine": "خط الفك",
+    "showJawLineDesc": "إظهار خط الفك",
+    "showTeeth": "الأسنان",
+    "showTeethDesc": "إظهار الأسنان",
+    "showSameProblem": "نفس المشكلة",
+    "showSameProblemDesc": "إظهار نفس المشكلة"
   },
   
   "languages": {
@@ -182,5 +188,58 @@
     "warning": "تحذير",
     "error": "خطأ",
     "info": "معلومة"
+  },
+  
+  "report": {
+    "settings": {
+      "title": "إعدادات PDF",
+      "author": "اسم المؤلف",
+      "addPageNumbers": "إضافة أرقام الصفحات",
+      "fontSize": "حجم الخط",
+      "enableRTL": "تمكين الكتابة من اليمين لليسار",
+      "size": "حجم الصفحة",
+      "margins": "الهوامش (مم)",
+      "orientation": "اتجاه الصفحة",
+      "imageQuality": "جودة الصور (%)",
+      "compression": "ضغط الملف",
+      "optimizeSize": "تحسين حجم الملف",
+      "protect": "حماية الملف",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "اتركه فارغاً لعدم الحماية",
+      "allowPrint": "السماح بالطباعة",
+      "allowCopy": "السماح بالنسخ",
+      "showTeeth": "إظهار الأسنان",
+      "showJaw": "إظهار الفك",
+      "showRoots": "إظهار الجذور",
+      "showEndo": "إظهار علاج العصب",
+      "showCrown": "إظهار التيجان",
+      "showNerves": "إظهار الأعصاب",
+      "showUpperJaw": "إظهار الفك العلوي",
+      "showLowerJaw": "إظهار الفك السفلي",
+      "showGumHealth": "إظهار صحة اللثة",
+      "showClinicalNotes": "إظهار الملاحظات السريرية",
+      "showVisualAnalysis": "إظهار التحليل البصري",
+      "showProblemCounts": "إظهار عدد المشاكل",
+      "showHealthyStatus": "إظهار الحالة الصحية",
+      "showProblemDetails": "إظهار تفاصيل المشاكل",
+      "showDoctorComments": "إظهار تعليقات الطبيب",
+      "showDiagnoses": "إظهار التشخيصات",
+      "showToothChart": "إظهار مخطط الأسنان",
+      "showCBCTAnalysis": "إظهار تحليل CBCT",
+      "showSignedByDoctor": "إظهار توقيع الطبيب",
+      "upper": "علوي",
+      "lower": "سفلي",
+      "save": "حفظ الإعدادات",
+      "resetSettings": "إعادة تعيين الإعدادات"
+    },
+    "sections": {
+      "basic": "الإعدادات الأساسية",
+      "page": "إعداد الصفحة",
+      "quality": "الجودة والحجم",
+      "security": "الأمان",
+      "CBCTAnalysis": "تحليل CBCT",
+      "jaw": "إعدادات الفك",
+      "report": "إعدادات التقرير"
+    }
   }
 }

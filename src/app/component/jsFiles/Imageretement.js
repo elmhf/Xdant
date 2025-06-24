@@ -56,5 +56,6 @@ const ImageCropper = memo(({ img, teethData }) => {
     </div>
   );
 });
+ImageCropper.displayName = "ImageCropper";
 
 export default ImageCropper;

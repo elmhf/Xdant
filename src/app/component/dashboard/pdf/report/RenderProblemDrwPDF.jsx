@@ -1,6 +1,7 @@
 import { memo, useEffect, useState, useRef, useCallback } from "react";
 import { Stage, Layer, Image, Line } from "react-konva";
 import useImageStore from "@/stores/ImageStore";
+import jsPDF from 'jspdf';
 
 const RenderProblemDrwPDF = memo(({ maskPoints = [], problems = [], size  }) => {
   const { getImage } = useImageStore();
@@ -93,10 +94,20 @@ const RenderProblemDrwPDF = memo(({ maskPoints = [], problems = [], size  }) => 
   const scaleX = cropDimensions.width ? dimensions.width / cropDimensions.width : 1;
   const scaleY = cropDimensions.height ? dimensions.height / cropDimensions.height : 1;
 
+  // دالة تصدير PDF
+  const handleExportPDF = () => {
+    if (stageRef.current) {
+      const dataUrl = stageRef.current.toDataURL({ pixelRatio: 2 });
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [dimensions.width, dimensions.height] });
+      pdf.addImage(dataUrl, 'PNG', 0, 0, dimensions.width, dimensions.height);
+      pdf.save('dental-drawing.pdf');
+    }
+  };
+
   return (
     <div 
       ref={containerRef}
-      className={`flex w-[${size}px] h-[${size}px] items-center justify-center`}
+      className={`flex w-[${size}px] h-[${size}px] items-center justify-center flex-col`}
       style={{ borderRadius: '7px', overflow: 'hidden' }}
     >
       <Stage 

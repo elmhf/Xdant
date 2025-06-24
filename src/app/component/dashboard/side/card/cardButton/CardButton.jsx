@@ -59,8 +59,12 @@ const CardButton = React.memo(({ teeth, idcard, viewModeState }) => {
   });
 
   const toothNumber = useMemo(() => {
-    const match = idcard.match(/\d+/);
-    return match ? match[0] : null;
+    if (typeof idcard === 'number') return idcard.toString();
+    if (typeof idcard === 'string') {
+      const match = idcard.match(/\d+/);
+      return match ? match[0] : null;
+    }
+    return null;
   }, [idcard]);
 
   useEffect(() => {
@@ -98,7 +102,7 @@ const CardButton = React.memo(({ teeth, idcard, viewModeState }) => {
       };
     });
 
-    await editwithData({ idcard });
+    // await editwithData({ idcard });
   }, [toothNumber, setToothEditData, editwithData, idcard]);
 
   const approveTooth = useCallback(async () => {
@@ -168,81 +172,48 @@ const CardButton = React.memo(({ teeth, idcard, viewModeState }) => {
   }, [onApprove]);
 
   return (
-    <div className="flex w-full items-center justify-between gap-2">
-      <div className={`${style.HeddingButton}`}>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 px-2 hover:bg-gray-100"
-              aria-label="Tooth actions"
-            >
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-48">
-            <DropdownMenuItem onClick={toggleViewMode} className="flex items-center gap-2">
-              {viewMode === 'carousel' ? <Grid className="h-4 w-4" /> : <List className="h-4 w-4" />}
-              <span>{t("cardButton.toggleView")}</span>
-            </DropdownMenuItem>
+    <div className="flex items-center gap-3">
+      {/* Menu Button */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 hover:bg-gray-100/80 rounded-full"
+            aria-label="More actions"
+          >
+            <MoreVertical className="h-4 w-4 text-gray-600" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48 p-1.5">
+          <DropdownMenuItem onClick={toggleViewMode} className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100">
+            {viewMode === 'carousel' ? <Grid className="h-4 w-4" /> : <List className="h-4 w-4" />}
+            <span>{t("cardButton.toggleView")}</span>
+          </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="my-1" />
 
-            <DropdownMenuItem onClick={onRest} className="flex items-center gap-2">
-              <RotateCcw className="h-4 w-4" />
-              <span>{t("cardButton.resetTooth")}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setLocalState(prev => ({ ...prev, openProblemDialog: true }))}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              <span>{t("cardButton.addProblem")}</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <DropdownMenuItem onClick={onRest} className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100">
+            <RotateCcw className="h-4 w-4" />
+            <span>{t("cardButton.resetTooth")}</span>
+          </DropdownMenuItem>
+          
+          <DropdownMenuItem
+            onClick={() => setLocalState(prev => ({ ...prev, openProblemDialog: true }))}
+            className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100"
+          >
+            <Plus className="h-4 w-4" />
+            <span>{t("cardButton.addProblem")}</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-        <Dialog
-          open={localState.openProblemDialog}
-          onOpenChange={open => setLocalState(prev => ({ ...prev, openProblemDialog: open }))}
-        >
-          <DialogContent>
-            <AddProblem
-              teeth={teeth}
-              onClose={() => setLocalState(prev => ({ ...prev, openProblemDialog: false }))}
-            />
-          </DialogContent>
-        </Dialog>
-
-        <Dialog
-          open={localState.showUnapproveDialog}
-          onOpenChange={open => setLocalState(prev => ({ ...prev, showUnapproveDialog: open }))}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{t("cardButton.confirmUnapprove")}</DialogTitle>
-            </DialogHeader>
-            <p>{t("cardButton.unapprovePrompt", { toothNumber })}</p>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button
-                variant="outline"
-                onClick={() => setLocalState(prev => ({ ...prev, showUnapproveDialog: false }))}
-              >
-                {t("cardButton.cancel")}
-              </Button>
-              <Button variant="destructive" onClick={approveTooth}>
-                {t("cardButton.unapprove")}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      <div className=" flex justify-center">
+      {/* Comment Button */}
+      <div className="relative">
         <AddComment idteeth={toothNumber} />
       </div>
 
+      {/* Approve Button */}
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -250,33 +221,76 @@ const CardButton = React.memo(({ teeth, idcard, viewModeState }) => {
             size="sm"
             onClick={onApprove}
             disabled={localState.isApproving}
-            className={`gap-1 transition-all ${
+            className={`h-8 min-w-[100px] gap-1.5 shadow-sm transition-all duration-200 ${
               localState.isApproved
-                ? "bg-green-600 hover:bg-green-700 text-white"
-                : "bg-green-50 hover:bg-green-100 text-green-700"
+                ? "bg-green-600 hover:bg-green-700 text-white border-transparent"
+                : "bg-white hover:bg-green-50 text-green-700 border-green-200 hover:border-green-300"
             }`}
-            aria-label={
-              localState.isApproved
-                ? t("cardButton.unapprove")
-                : t("cardButton.approve")
-            }
           >
             {localState.isApproving ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
                 <Check className="h-4 w-4" />
-                {localState.isApproved ? t("cardButton.approved") : t("cardButton.approve")}
+                <span className="text-sm">
+                  {localState.isApproved ? t("cardButton.approved") : t("cardButton.approve")}
+                </span>
               </>
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent>
-          {localState.isApproved
-            ? t("cardButton.tooltipUnapprove")
-            : t("cardButton.tooltipApprove")}
+        <TooltipContent side="bottom" className="bg-gray-900 text-white">
+          <p className="text-sm">
+            {localState.isApproved
+              ? t("cardButton.tooltipUnapprove")
+              : t("cardButton.tooltipApprove")}
+          </p>
         </TooltipContent>
       </Tooltip>
+
+      {/* Dialogs */}
+      <Dialog
+        open={localState.openProblemDialog}
+        onOpenChange={open => setLocalState(prev => ({ ...prev, openProblemDialog: open }))}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">{t("cardButton.addProblemTitle")}</DialogTitle>
+          </DialogHeader>
+          <AddProblem
+            teeth={teeth}
+            onClose={() => setLocalState(prev => ({ ...prev, openProblemDialog: false }))}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={localState.showUnapproveDialog}
+        onOpenChange={open => setLocalState(prev => ({ ...prev, showUnapproveDialog: open }))}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-red-600">{t("cardButton.confirmUnapprove")}</DialogTitle>
+          </DialogHeader>
+          <p className="text-gray-600">{t("cardButton.unapprovePrompt", { toothNumber })}</p>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setLocalState(prev => ({ ...prev, showUnapproveDialog: false }))}
+              className="bg-white hover:bg-gray-50"
+            >
+              {t("cardButton.cancel")}
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={approveTooth}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {t("cardButton.unapprove")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 });

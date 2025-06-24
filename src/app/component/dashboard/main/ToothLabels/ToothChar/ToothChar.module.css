@@ -1,7 +1,8 @@
-.main {padding: 20px;
+.main {padding: 10px;
+  width: 100%;
     display: grid;
-    grid-template-columns: repeat(16, minmax(20px, 0.6fr));
-    gap:3px;
+    grid-template-columns: repeat(16, minmax(12px, 0.4fr));
+    gap:2px;
 
   }
   
@@ -10,23 +11,34 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 10px;
     text-align: center;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.22s cubic-bezier(.4,2,.6,1);
     cursor: pointer;
     aspect-ratio: 1/2;
-
+    box-shadow: 0 1px 4px rgba(80,80,120,0.04);
+    border: 2px solid transparent;
+    position: relative;
+    background-clip: padding-box;
   }
   
   .toothItem:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1;
+    transform: scale(1.08);
+    box-shadow: 0 6px 18px rgba(80,80,120,0.13), 0 1.5px 6px rgba(80,80,120,0.08);
+    z-index: 2;
+    border-color: #b3baff33;
+  }
+  
+  .selectedTooth {
+    border: 2.5px solid #6366f1 !important;
+    box-shadow: 0 0 0 4px #6366f122, 0 8px 24px rgba(80,80,120,0.13);
+    z-index: 3;
+    background: linear-gradient(120deg, #f5f7ff 60%, #e0e7ff 100%) !important;
   }
   
   .toothImageContainer {
     width: 100%;
-    height: 60%;
+    height: 40%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +48,7 @@
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s cubic-bezier(.4,2,.6,1);
   }
   
   .placeholderImage {
@@ -49,9 +61,11 @@
   }
   
   .toothNumber {
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 700;
     margin-top: 4px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px #fff8;
   }
   
   .skeletonGrid {
@@ -64,7 +78,7 @@
   .skeletonTooth {
     width: 100%;
     aspect-ratio: 1/1;
-    border-radius: 6px;
+    border-radius: 10px;
   }
   
   .errorContainer {

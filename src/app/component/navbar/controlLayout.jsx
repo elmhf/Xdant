@@ -1,4 +1,4 @@
-import { useLayout } from "@/stores/setting";
+import useLayout from "@/hooks/useLayout";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -8,37 +8,18 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, PanelLeft, PanelTop, Minimize, Maximize } from "lucide-react";
-
-const LAYOUT_OPTIONS = [
-  {
-    value: 'DEFAULT',
-    label: 'Disposition par défaut',
-    icon: LayoutGrid,
-    iconClass: "h-4 w-4"
-  },
-  {
-    value: 'VERTICAL',
-    label: 'Division verticale',
-    icon: PanelLeft,
-    iconClass: "h-4 w-4"
-  },
-  {
-    value: 'HORIZONTAL',
-    label: 'Division horizontale',
-    icon: PanelTop, 
-    iconClass: "h-4 w-4"
-  },
-  {
-    value: 'COMPACT',
-    label: 'Mode compact',
-    icon: Minimize,
-    iconClass: "h-4 w-4"
-  }
-];
+import { LayoutGrid, Minimize, Maximize } from "lucide-react";
 
 export const LayoutControls = () => {
-  const { currentLayout, isFullscreen, applyLayout, toggleFullscreen } = useLayout();
+  const { layoutKey, setLayout, allLayouts } = useLayout();
+
+  // توليد الخيارات ديناميكياً من allLayouts
+  const layoutOptions = Object.entries(allLayouts).map(([key, val]) => ({
+    value: key,
+    label: val.name,
+    icon: LayoutGrid, // يمكنك تخصيص أيقونة لكل layout إذا رغبت
+    iconClass: "h-4 w-4"
+  }));
 
   return (
     <div className="flex items-center justify-end">
@@ -59,40 +40,22 @@ export const LayoutControls = () => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-gray-100" />
           
-          {LAYOUT_OPTIONS.map((option) => (
+          {layoutOptions.map((option) => (
             <DropdownMenuItem
               key={option.value}
-              onClick={() => applyLayout(option.value)}
+              onClick={() => setLayout(option.value)}
               className={`flex items-center px-2 py-1.5 text-sm cursor-pointer ${
-                currentLayout === option.value 
+                layoutKey === option.value 
                   ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-500'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <option.icon className={`mr-2 ${option.iconClass} ${
-                currentLayout === option.value ? 'text-blue-600' : 'text-gray-500'
+                layoutKey === option.value ? 'text-blue-600' : 'text-gray-500'
               }`} />
               <span>{option.label}</span>
             </DropdownMenuItem>
           ))}
-          
-          <DropdownMenuSeparator className="bg-gray-100" />
-          <DropdownMenuItem 
-            onClick={toggleFullscreen}
-            className="flex items-center px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
-          >
-            {isFullscreen ? (
-              <>
-                <Minimize className="mr-2 h-4 w-4 text-gray-500" />
-                <span>Quitter le mode plein écran</span>
-              </>
-            ) : (
-              <>
-                <Maximize className="mr-2 h-4 w-4 text-gray-500" />
-                <span>Plein écran</span>
-              </>
-            )}
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

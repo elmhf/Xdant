@@ -1,5 +1,6 @@
 
 .container {
+  padding: 20px;
   --primary-color: #2563eb;
   --secondary-color: #3b82f6;
   --background-color: #f8fafc00;
@@ -11,20 +12,19 @@
 
   width: 100%;
   height: 100vh;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   background-color: var(--background-color);
   overflow: hidden;
   position: relative;
+  max-height: fit-content;
 }
 
 .controls {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
-  padding: 10px;
   z-index: 10;
 }
 
@@ -59,10 +59,8 @@
 }
 
 .XRayI, .ToothLabels, .side, .compare {
-  background-color: var(--card-background);
+  background-color: transparent;
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  padding: 20px;
   transition: var(--transition);
   overflow: hidden;
   position: relative;
@@ -73,10 +71,13 @@
 }
 
 .XRayI {
+  box-shadow: var(--shadow);
+
   grid-area: XRayI;
 }
 
 .ToothLabels {
+    height: fit-content;
   grid-area: ToothLabels;
   overflow-y: auto;
 }

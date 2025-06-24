@@ -64,7 +64,6 @@ const initialData = {
 };
 
 export const useDentalStore = create(
-  persist(
     (set, get) => ({
       
       data: JSON.parse(JSON.stringify(initialData)),
@@ -72,6 +71,113 @@ export const useDentalStore = create(
       currentIndex: -1,
       loading: false,
       error: null,
+
+      // التحقق من وجود البيانات
+      hasData: () => {
+        const state = get();
+        const data = state.data;
+        
+        // التحقق من وجود معرف المريض
+        if (!data.patientInfo?.patientId || data.patientInfo.patientId.trim() === "") {
+          return false;
+        }
+        
+        // التحقق من وجود اسم المريض
+        if (!data.patientInfo?.info?.fullName || data.patientInfo.info.fullName.trim() === "") {
+          return false;
+        }
+        
+        return true;
+      },
+
+      // التحقق من وجود بيانات المريض الأساسية
+      hasPatientInfo: () => {
+        const data = get().data.patientInfo;
+        return !!(
+          data?.patientId && 
+          data?.info?.fullName && 
+          data?.info?.dateOfBirth
+        );
+      },
+
+      // التحقق من وجود بيانات الأسنان
+      hasTeethData: () => {
+        const teeth = get().data.teeth;
+        return teeth && teeth.length > 0;
+      },
+
+      // التحقق من وجود بيانات المسح
+      hasScanData: () => {
+        const scanInfo = get().data.scanInfo;
+        return !!(
+          scanInfo?.device || 
+          scanInfo?.scanDate || 
+          scanInfo?.scanType
+        );
+      },
+
+      // التحقق من وجود خطط العلاج
+      hasTreatmentPlans: () => {
+        const plans = get().data.treatmentPlan;
+        return plans && plans.length > 0;
+      },
+
+      // التحقق من وجود مشاكل في الأسنان
+      hasProblems: () => {
+        const teeth = get().data.teeth;
+        return teeth && teeth.some(tooth => tooth.problems && tooth.problems.length > 0);
+      },
+
+      // التحقق من حالة البيانات الشاملة
+      getDataStatus: () => {
+        const state = get();
+        return {
+          hasData: state.hasData(),
+          hasPatientInfo: state.hasPatientInfo(),
+          hasTeethData: state.hasTeethData(),
+          hasScanData: state.hasScanData(),
+          hasTreatmentPlans: state.hasTreatmentPlans(),
+          hasProblems: state.hasProblems(),
+          isEmpty: !state.hasData(),
+          teethCount: state.data.teeth?.length || 0,
+          problemsCount: state.data.teeth?.reduce((count, tooth) => 
+            count + (tooth.problems?.length || 0), 0) || 0,
+          treatmentPlansCount: state.data.treatmentPlan?.length || 0
+        };
+      },
+
+      // التحقق من صحة البيانات
+      validateData: () => {
+        const data = get().data;
+        const errors = [];
+
+        // التحقق من معلومات المريض
+        if (!data.patientInfo?.patientId) {
+          errors.push("معرف المريض مطلوب");
+        }
+        
+        if (!data.patientInfo?.info?.fullName) {
+          errors.push("اسم المريض مطلوب");
+        }
+        
+        if (!data.patientInfo?.info?.dateOfBirth) {
+          errors.push("تاريخ الميلاد مطلوب");
+        }
+        
+        // التحقق من بيانات الأسنان
+        if (data.teeth && data.teeth.length > 0) {
+          data.teeth.forEach((tooth, index) => {
+            if (!tooth.toothNumber) {
+              errors.push(`رقم السن مفقود في السن رقم ${index + 1}`);
+            }
+          });
+        }
+
+        return {
+          isValid: errors.length === 0,
+          errors: errors
+        };
+      },
 
       // تحميل بيانات المريض
       loadPatientData: (patientData) => {
@@ -105,6 +211,7 @@ export const useDentalStore = create(
               }
             },
             teeth: patientData.teeth?.map(tooth => ({
+              comment: tooth.comment || "",
               toothNumber: tooth.toothNumber,
               category: tooth.category || "",
               position: tooth.position ? { ...tooth.position } : { x: 0, y: 0 },
@@ -153,7 +260,7 @@ export const useDentalStore = create(
               }
             } : initialData.metadata
           };
-
+          
           set({
             data: formattedData,
             history: [formattedData],
@@ -323,7 +430,6 @@ export const useDentalStore = create(
         currentIndex: state.currentIndex
       }),
     }
-  )
 );
 
 // دوال مساعدة

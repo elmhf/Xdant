@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const useImageStore = create(
-  persist(
+  
     (set, get) => ({
       image: null,
       analysis: null,
@@ -55,7 +55,7 @@ const useImageStore = create(
     {
       name: 'image-storage',
     }
-  )
+  
 );
 
 export default useImageStore;

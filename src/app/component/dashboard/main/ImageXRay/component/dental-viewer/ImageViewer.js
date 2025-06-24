@@ -148,6 +148,7 @@ const ImageViewer = ({
                 height={imgState.size.height}
                 x={(viewState.containerSize.width - imgState.size.width) / 2}
                 y={(viewState.containerSize.height - imgState.size.height) / 2}
+                alt="Dental scan image"
               />
               {children}
             </Group>

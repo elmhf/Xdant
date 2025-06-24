@@ -219,36 +219,14 @@ export default function DentalProblemForm({
         
         <div className="flex-1 border rounded-lg overflow-hidden bg-gray-50 relative">
           <RanderImagwithDrw
-            Draw={true}
             size={500}
             maskPoints={teeth['boundingBox']}
             setMask={{ maskProblem, setmaskProblem }}
+            imageUrl={teeth.xrayImage || teeth.image} // استخدام الصورة من بيانات السن
+            aspectRatio={4/3} // نسبة العرض إلى الارتفاع المناسبة لصور الأسنان
           />
         </div>
         
-        {/* Quick status summary
-        {(ProblemVlaue || Severity || Progression) && (
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <h3 className="text-sm font-medium mb-2">{t("dentalForm.currentStatus")}</h3>
-            <div className="flex flex-wrap gap-2">
-              {ProblemVlaue && (
-                <Badge variant="default" className="text-sm">
-                  {ProblemVlaue}
-                </Badge>
-              )}
-              {Severity && (
-                <Badge variant="secondary" className="text-sm">
-                  {t("dentalForm.severity")}: {Severity}
-                </Badge>
-              )}
-              {Progression && (
-                <Badge variant="secondary" className="text-sm">
-                  {t("dentalForm.stage")}: {Progression}
-                </Badge>
-              )}
-            </div>
-          </div>
-        )} */}
       </div>
 
       {/* Right side - Form */}
