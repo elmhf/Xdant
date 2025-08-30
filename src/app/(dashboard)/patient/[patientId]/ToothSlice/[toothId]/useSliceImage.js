@@ -1,10 +1,17 @@
 import { useImageStore } from "@/app/(dashboard)/OrthogonalViews/stores/imageStore";
+import { useDentalStore } from "@/stores/dataStore";
 import { useEffect, useState, useRef } from "react";
 
 export function useSliceImage(view, index) {
   const getViewImages = useImageStore(state => state.getViewImages);
   const images = getViewImages(view);
-  return images && images[index];
+  
+  // Also try to get images from the dental store if available
+  const dentalData = useDentalStore(state => state.data);
+  const sliceImages = dentalData?.slices?.[view] || dentalData?.sliceImages?.[view];
+  
+  // Return image from image store first, then from dental store
+  return images?.[index] || sliceImages?.[index];
 }
 
 /**

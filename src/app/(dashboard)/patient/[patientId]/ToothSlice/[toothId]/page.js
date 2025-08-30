@@ -9,6 +9,7 @@ import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useDentalSettings } from "@/app/component/dashboard/main/ImageXRay/component/CustomHook/useDentalSettings";
 import { useImageStore } from "@/app/(dashboard)/OrthogonalViews/stores/imageStore";
 import { useSliceRegion, useSliceImage } from "./useSliceImage";
+import { useToothSliceData } from "../../hook/useToothSliceData";
 import { motion } from "framer-motion";
 
 // تحسين 1: تخزين مؤقت للمناطق العشوائية لتجنب إعادة توليدها
@@ -132,32 +133,31 @@ const SlicesSection = React.memo(({ view, count, start, end }) => {
   );
 });
 
-
-
-
-
-
-
-
-
-
-
-
 SlicesSection.displayName = 'SlicesSection';
 
 export default function ToothSlicePage() {
   const { toothId } = useParams();
   const toothNumber = parseInt(toothId, 10);
   const stageRef = useRef(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // تحسين 11: إضافة معالجة الأخطاء
   const [sliceRanges, setSliceRanges] = useState({
     axial: { start: 50, end: 70 },
     coronal: { start: 20, end: 59 },
     sagittal: { start: 100, end: 129 }
   });
 
-  const tooth = useDentalStore(state =>
+  // Use the new unified tooth slice data hook
+  const {
+    data: toothSliceData,
+    loading,
+    error,
+    fetchData,
+    retry,
+    clearCache,
+    hasData,
+    hasError
+  } = useToothSliceData();
+
+  const tooth = toothSliceData?.tooth || useDentalStore(state =>
     (state.data?.teeth || []).find(t => t.toothNumber === toothNumber)
   );
 
@@ -167,43 +167,21 @@ export default function ToothSlicePage() {
     sliceCounts
   } = useImageStore();
 
+  // Get slice counts from dental store if available
+  const dentalData = useDentalStore(state => state.data);
+  const storeSliceCounts = dentalData?.sliceCounts || {};
+
   const { settings, SettingChange, setSettings } = useDentalSettings();
 
-  // تحسين 12: تحسين fetch data مع معالجة الأخطاء
-  const fetchSlicesCount = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 ثواني timeout
-      
-      const res = await fetch("http://localhost:5000/slices-count", {
-        signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      
-      const data = await res.json();
-      await loadAllViews(data);
-    } catch (err) {
-      console.error("Failed to fetch slice counts", err);
-      setError(err.message || "Failed to load slice data");
-    } finally {
-      setLoading(false);
-    }
-  }, [loadAllViews]);
-
+  // Use the unified hook for data fetching
   useEffect(() => {
-    fetchSlicesCount();
-  }, [fetchSlicesCount]);
+    if (toothId && !hasData) {
+      console.log('🚀 Fetching tooth slice data for tooth:', toothId);
+      fetchData(toothId).catch(error => {
+        console.error('❌ Failed to fetch tooth slice data:', error);
+      });
+    }
+  }, [toothId, hasData, fetchData]);
 
   // تحسين 13: تحسين context value
   const contextValue = useMemo(() => ({
@@ -237,17 +215,27 @@ export default function ToothSlicePage() {
     );
   }
 
-  if (error) {
+  if (hasError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="text-red-500 text-lg mb-4">Error: {error}</div>
-          <button 
-            onClick={fetchSlicesCount}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Try Again
-          </button>
+          <div className="flex gap-2 mt-4">
+            <button 
+              onClick={() => retry(toothId)}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              🔄 Try Again
+            </button>
+            {process.env.NODE_ENV === 'development' && (
+              <button 
+                onClick={clearCache}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              >
+                Clear Cache
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -313,13 +301,13 @@ export default function ToothSlicePage() {
               const end = sliceRanges[view].end;
               const numSlices = end - start + 1;
               // Get slice thickness from voxelSizes in the store
-              const voxelSizes = useImageStore.getState().voxelSizes;
+              const voxelSizes = useImageStore.getState().voxelSizes || dentalData?.voxelSizes || {};
               const sliceThickness =
                 view === 'axial'
-                  ? voxelSizes.z_spacing_mm
+                  ? voxelSizes.z_spacing_mm || 1
                   : view === 'coronal'
-                  ? voxelSizes.y_spacing_mm
-                  : voxelSizes.x_spacing_mm;
+                  ? voxelSizes.y_spacing_mm || 1
+                  : voxelSizes.x_spacing_mm || 1;
               const depthMM = (numSlices * sliceThickness).toFixed(2);
 
               return (
@@ -335,7 +323,7 @@ export default function ToothSlicePage() {
   
                   <SlicesSection
                     view={view}
-                    count={sliceCounts[view] || 1}
+                    count={sliceCounts[view] || storeSliceCounts[view] || 1}
                     start={start}
                     end={end}
                   />
