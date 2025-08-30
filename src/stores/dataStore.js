@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 
 // الهيكل الأولي للبيانات
 const initialData = {
+  reportType: '', // نوع التقرير
   patientInfo: {
     patientId: "",
     info: {
@@ -64,6 +65,7 @@ const initialData = {
 };
 
 export const useDentalStore = create(
+
     (set, get) => ({
       
       data: JSON.parse(JSON.stringify(initialData)),
@@ -184,6 +186,7 @@ export const useDentalStore = create(
         set({ loading: true, error: null });
         
         try {
+          console.log("Loading patient data:", patientData);
           if (!patientData?.patientId) {
             throw new Error("بيانات المريض ناقصة");
           }
@@ -211,7 +214,7 @@ export const useDentalStore = create(
               }
             },
             teeth: patientData.teeth?.map(tooth => ({
-              comment: tooth.comment || "",
+              note: tooth.note || "",
               toothNumber: tooth.toothNumber,
               category: tooth.category || "",
               position: tooth.position ? { ...tooth.position } : { x: 0, y: 0 },
@@ -226,7 +229,10 @@ export const useDentalStore = create(
               lastCheckup: tooth.lastCheckup || "",
               Endo: tooth.Endo ? { mask: [...tooth.Endo.mask] } : null,
               Root: tooth.Root ? { mask: [...tooth.Root.mask] } : null,
-              Crown: tooth.Crown ? { mask: [...tooth.Crown.mask] } : null
+              Crown: tooth.Crown ? { mask: [...tooth.Crown.mask] } : null,
+              approved: typeof tooth.approved === 'boolean' ? tooth.approved : false,
+              roots: typeof tooth.roots === 'number' ? tooth.roots : 1,
+              canals: typeof tooth.canals === 'number' ? tooth.canals : 1
             })) || [],
             statistics: patientData.statistics ? {
               ...patientData.statistics,
@@ -419,7 +425,60 @@ export const useDentalStore = create(
       // تصدير البيانات
       exportData: () => {
         return JSON.parse(JSON.stringify(get().data));
-      }
+      },
+
+      // تحديث حالة الموافقة لسن معين
+      updateToothApproval: (toothNumber, approved) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+        if (toothIndex !== -1) {
+          currentData.teeth[toothIndex].approved = approved;
+          set({ data: currentData });
+        }
+      },
+
+      addToothNote: (toothNumber, note) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+        if (toothIndex !== -1) {
+          if (!Array.isArray(currentData.teeth[toothIndex].notes)) {
+            currentData.teeth[toothIndex].notes = [];
+          }
+          currentData.teeth[toothIndex].notes.push({ ...note, date: new Date().toISOString() });
+          set({ data: currentData });
+        }
+      },
+
+      updateToothNote: (toothNumber, noteIndex, updatedNote) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const tooth = currentData.teeth.find(t => t.toothNumber === toothNumber);
+        if (tooth && Array.isArray(tooth.notes) && tooth.notes[noteIndex]) {
+          tooth.notes[noteIndex] = { ...tooth.notes[noteIndex], ...updatedNote, date: new Date().toISOString() };
+          set({ data: currentData });
+        }
+      },
+
+      deleteToothNote: (toothNumber, noteIndex) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const tooth = currentData.teeth.find(t => t.toothNumber === toothNumber);
+        if (tooth && Array.isArray(tooth.notes) && tooth.notes[noteIndex]) {
+          tooth.notes.splice(noteIndex, 1);
+          set({ data: currentData });
+        }
+      },
+
+      // تحديث نوع التقرير
+      setReportType: (type) => {
+        set(state => ({
+          data: {
+            ...state.data,
+            reportType: type
+          }
+        }));
+      },
+      getReportType: () => get().data.reportType,
+      isPano: () => get().data.reportType === 'pano ai' || get().data.reportType === 'pano',
+      isCbct: () => get().data.reportType === 'cbct ai' || get().data.reportType === 'cbct',
     }),
     {
       name: 'dental-patient-data',
@@ -430,7 +489,34 @@ export const useDentalStore = create(
         currentIndex: state.currentIndex
       }),
     }
+  
 );
+
+// جلب بيانات JSON من رابط
+// مثال الاستعمال:
+// await fetchJsonFromUrl('https://example.com/patient.json'); // 1: بيانات المريض
+// await fetchJsonFromUrl('https://example.com/teeth.json');   // 2: بيانات الأسنان
+// await fetchJsonFromUrl('https://example.com/scan.json');    // 3: بيانات المسح
+export async function fetchJsonFromUrl(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const jsonData = await response.json();
+    // If the store exists, fill the data
+    if (typeof useDentalStore === 'function') {
+      const store = useDentalStore.getState();
+      if (store && typeof store.loadPatientData === 'function') {
+        store.loadPatientData(jsonData);
+      }
+    }
+    return jsonData;
+  } catch (error) {
+    console.error('Failed to fetch JSON:', error);
+    return null;
+  }
+}
 
 // دوال مساعدة
 export const getToothName = (toothNumber) => {

@@ -19,6 +19,31 @@
     "successMessage": "تمت إضافة المشكلة بنجاح"
   },
 
+  "addCondition": {
+    "title": "إضافة حالة",
+    "description": "إضافة حالة أو مشكلة جديدة لهذا السن",
+    "condition": "الحالة",
+    "selectCondition": "اختر حالة",
+    "selectConditionError": "يرجى اختيار حالة",
+    "conditions": "الحالات",
+    "severity": "مستوى الخطورة",
+    "selectSeverity": "اختر مستوى الخطورة",
+    "selectSeverityError": "يرجى اختيار مستوى الخطورة",
+    "severityLevels": "مستويات الخطورة",
+    "location": "الموقع",
+    "locationPlaceholder": "مثل: السطح العض، الوجه الخدي، الوجه اللساني",
+    "date": "تاريخ الاكتشاف",
+    "description": "الوصف",
+    "descriptionPlaceholder": "صف الحالة بالتفصيل...",
+    "notes": "ملاحظات إضافية",
+    "notesPlaceholder": "أي ملاحظات أو ملاحظات إضافية...",
+    "reset": "إعادة تعيين",
+    "cancel": "إلغاء",
+    "save": "حفظ الحالة",
+    "successMessage": "تمت إضافة الحالة بنجاح",
+    "errorMessage": "فشل في إضافة الحالة"
+  },
+
   "dentalForm": {
     "dentalVisualization": "عرض الأسنان",
     "drawingTools": "أدوات الرسم",
@@ -77,9 +102,9 @@
   },
 
   "addComment": {
-    "comment": "تعليق",
-    "title": "إضافة تعليق جديد",
-    "placeholder": "اكتب تعليقك هنا...",
+    "note": "ملاحظة",
+    "title": "إضافة ملاحظة جديدة",
+    "placeholder": "اكتب ملاحظتك هنا...",
     "confirm": "تأكيد",
     "cancel": "إلغاء"
   },
@@ -87,13 +112,23 @@
   "side": {
     "card": {
       "Tooth": "سن",
-      "NoProblemsDetected": "لم يتم اكتشاف مشاكل"
+      "NoProblemsDetected": "لم يتم اكتشاف مشاكل",
+      "AddNote": "إضافة ملاحظة",
+      "NotePlaceholder": "أضف ملاحظة...",
+      "SendNote": "إرسال ملاحظة",
+      "Cancel": "إلغاء",
+      "Edit": "تعديل",
+      "Delete": "حذف",
+      "Save": "حفظ",
+      "Notes": "ملاحظات",
+      "Attachment": "مرفق",
+      "ConfirmDelete": "هل أنت متأكد أنك تريد حذف هذه الملاحظة؟"
     },
     "dentalChart": "مخطط الأسنان",
     "showFilters": "إظهار الفلاتر",
     "hideFilters": "إخفاء الفلاتر",
     "searchDentalIssues": "بحث عن مشاكل الأسنان",
-    "searchByProblemOrComment": "البحث حسب المشكلة أو التعليق...",
+    "searchByProblemOrNote": "البحث حسب المشكلة أو الملاحظة...",
     "filterByStatus": "تصفية حسب الحالة",
     "allTeeth": "كل الأسنان",
     "approved": "تمت الموافقة",
@@ -222,7 +257,7 @@
       "showProblemCounts": "إظهار عدد المشاكل",
       "showHealthyStatus": "إظهار الحالة الصحية",
       "showProblemDetails": "إظهار تفاصيل المشاكل",
-      "showDoctorComments": "إظهار تعليقات الطبيب",
+      "showDoctorNotes": "إظهار ملاحظات الطبيب",
       "showDiagnoses": "إظهار التشخيصات",
       "showToothChart": "إظهار مخطط الأسنان",
       "showCBCTAnalysis": "إظهار تحليل CBCT",

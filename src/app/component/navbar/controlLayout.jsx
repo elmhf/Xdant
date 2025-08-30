@@ -1,4 +1,4 @@
-import useLayout from "@/hooks/useLayout";
+import { useLayout } from '@/contexts/LayoutContext';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -8,11 +8,11 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Minimize, Maximize } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 
 export const LayoutControls = () => {
   const { layoutKey, setLayout, allLayouts } = useLayout();
-
+console.log(layoutKey,"layoutKey navBar")
   // توليد الخيارات ديناميكياً من allLayouts
   const layoutOptions = Object.entries(allLayouts).map(([key, val]) => ({
     value: key,
@@ -43,7 +43,7 @@ export const LayoutControls = () => {
           {layoutOptions.map((option) => (
             <DropdownMenuItem
               key={option.value}
-              onClick={() => setLayout(option.value)}
+              onClick={() =>  {console.log("set"); setLayout(option.value)}}
               className={`flex items-center px-2 py-1.5 text-sm cursor-pointer ${
                 layoutKey === option.value 
                   ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-500'

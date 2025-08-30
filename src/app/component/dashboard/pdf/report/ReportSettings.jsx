@@ -22,7 +22,6 @@ import { Separator } from '@/components/ui/separator';
 const ReportSettings = ({ settings, updateSetting, resetSettings }) => {
   const { t } = useTranslation();
   
-useEffect(() => {console.log("settings",settings)}, [settings]);
   const [expandedSections, setExpandedSections] = useState({
     basic: false,
     page: false,

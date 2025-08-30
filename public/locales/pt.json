@@ -72,22 +72,32 @@
     "print": "Imprimir análises"
   },
   "addComment": {
-    "comment": "Comentário",
-    "title": "Adicionar novo comentário",
-    "placeholder": "Escreva seu comentário aqui...",
+    "note": "Nota",
+    "title": "Adicionar nova nota",
+    "placeholder": "Escreva sua nota aqui...",
     "confirm": "Confirmar",
     "cancel": "Cancelar"
   },
   "side": {
     "card": {
       "Tooth": "Dente",
-      "NoProblemsDetected": "Nenhum problema detectado"
+      "NoProblemsDetected": "Nenhum problema detectado",
+      "AddNote": "Adicionar nota",
+      "NotePlaceholder": "Adicione uma nota...",
+      "SendNote": "Enviar nota",
+      "Cancel": "Cancelar",
+      "Edit": "Editar",
+      "Delete": "Excluir",
+      "Save": "Salvar",
+      "Notes": "Notas",
+      "Attachment": "Anexo",
+      "ConfirmDelete": "Tem certeza de que deseja excluir esta nota?"
     },
     "dentalChart": "Gráfico Dentário",
     "showFilters": "Mostrar filtros",
     "hideFilters": "Ocultar filtros",
     "searchDentalIssues": "Buscar problemas dentários",
-    "searchByProblemOrComment": "Buscar por problema ou comentário...",
+    "searchByProblemOrNote": "Buscar por problema ou nota...",
     "filterByStatus": "Filtrar por status",
     "allTeeth": "Todos os dentes",
     "approved": "Aprovados",
@@ -168,7 +178,7 @@
       "showProblemCounts": "Mostrar contagem de problemas",
       "showHealthyStatus": "Mostrar status saudável",
       "showProblemDetails": "Mostrar detalhes dos problemas",
-      "showDoctorComments": "Mostrar comentários do médico",
+      "showDoctorNotes": "Mostrar notas do médico",
       "showDiagnoses": "Mostrar diagnósticos",
       "showToothChart": "Mostrar gráfico dental",
       "showCBCTAnalysis": "Mostrar análise CBCT",

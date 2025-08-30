@@ -125,7 +125,6 @@ const applyShadowProps = (style, scale) => {
 
 const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, resetMeasurements, onUndoCallback, showGrid, zoom, isLocked, showLayers }) => {
   const { stageRef } = useContext(DataContext);
-  console.log(showLayers,"showLayers")
   const containerRef = useRef(null);
   const imageNodeRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -149,7 +148,6 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [lastPointerPos, setLastPointerPos] = useState({ x: 0, y: 0 });
-  const [isSpacePressed, setIsSpacePressed] = useState(false);
   const [{ brightness, contrast, saturation }] = useFilter;
   
   // State for measurement tool
@@ -175,8 +173,6 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   // Get cursor style based on active tool
   const getCursorStyle = useCallback(() => {
     if (isDragging) return 'grabbing';
-    if (isSpacePressed) return 'grab';
-    
     switch (activeTool) {
       case 'pointer': return 'default';
       case 'pan': return 'grab';
@@ -185,7 +181,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
       case 'point': return 'crosshair';
       default: return 'default';
     }
-  }, [activeTool, isDragging, isSpacePressed]);
+  }, [activeTool, isDragging]);
 
   // Save current state to history
   const saveToHistory = useCallback((action, data) => {
@@ -333,8 +329,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
       ]);
       
       const endTime = performance.now();
-      console.log(`Filter processing time: ${endTime - startTime}ms`);
-      
+            
       imageNodeRef.current.getLayer()?.batchDraw();
     };
 
@@ -421,11 +416,6 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   // معالجة اختصارات لوحة المفاتيح مع دعم 120 FPS
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        setIsSpacePressed(true);
-      }
-      
       // التحريك بالأسهم مع نعومة عالية
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
         e.preventDefault();
@@ -456,14 +446,6 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
     };
 
     const handleKeyUp = (e) => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        setIsSpacePressed(false);
-        if (isDragging) {
-          setIsDragging(false);
-          setDragStart({ x: 0, y: 0 });
-        }
-      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -641,10 +623,10 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
       return; // Prevent dragging when using measurement tool
     }
 
-    if (e.target === e.target.getStage() || isSpacePressed) {
+    if (e.target === e.target.getStage()) {
       handleDragStart(e);
     }
-  }, [activeTool, isDrawing, stageRef, transform, isSpacePressed, handleDragStart, currentLinePoints, saveToHistory, isLocked]);
+  }, [activeTool, isDrawing, stageRef, transform, handleDragStart, currentLinePoints, saveToHistory, isLocked]);
 
   const handleStageMouseMove = useCallback((e) => {
     // Track cursor position for drawing guides

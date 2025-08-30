@@ -8,7 +8,7 @@ import { NotificationProvider } from './component/jsFiles/NotificationProvider';
 import Navbar from './component/navbar/NavBar';
 import { LanguageProvider } from './language/LanguageProvider';
 import { createContext, useState } from "react";
-import PageLoader from './component/pageLoder/page.loder';
+import PageLoader from './component/pageLoder/page.loderfdfsdfsgss';
 
 // إنشاء الـ Contexts
 
@@ -21,12 +21,12 @@ export default function ClientProviders({ children }) {
     <I18nextProvider i18n={i18n}>
       <LanguageProvider defaultLanguage={defaultLanguage}>
             <NotificationProvider>
-                <PageLoader />
+  
 
-                  <main className="flex flex-col w-full justify-center items-center  min-h-screen bg-background text-primary">
-                    {/* Navbar */}
-                    <Navbar />
-                    {children}
+                  <main className="flex flex-col w-full min-h-screen h-screen bg-background text-primary">
+                    <div className="flex-1 max-h-full min-h-0 w-full flex flex-col items-center justify-center">
+                      {children}
+                    </div>
                   </main>
                 
                 <Toaster className="z-[1050]" richColors />

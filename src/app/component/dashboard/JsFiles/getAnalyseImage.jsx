@@ -1,23 +1,19 @@
 "use client";
 
-import { useContext } from "react";
-import { DataContext } from "../dashboard";
 import { toast } from "sonner";
 import useImageStore from '@/stores/ImageStore';
 import { useDentalStore } from "@/stores/dataStore";
 const useAnalyseImage = () => {
   const loadPatientData = useDentalStore(state => state.loadPatientData);
-  const startTime = performance.now();
-  const { setAnalysis, setToothData } = useImageStore();
-  const { image,  setData, setToothEditData } = useContext(DataContext);
-  
+  const startTime = performance.now();  
+
   const getAnalyseImage = async () => {
-    // Reset states
-    setData({});
-    setToothEditData({ ToothEditData: [] });
+    if (typeof window === "undefined") {
+      return;
+    }
 
     try {
-      const response = await fetch("http://localhost:3003/Test", {
+      const response = await fetch("http://localhost:5000/api/teeth/Test", {
          method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -32,29 +28,20 @@ const useAnalyseImage = () => {
       const result = await response.json();
       await loadPatientData(result.data);
       // Update zustand store
-      setAnalysis(result.data);
-      setToothData({
-        ToothEditData: result.data2,
-        hestoriqData: [result.data]
-      });
 
 
-   setData(result.data);
-      setToothEditData({
-        "toothEditData": result.data2,
-        "hestoriqData": [result.data]
-      });
+
 
     } catch (error) {
       console.error("Error analyzing image:", error);
       toast.error("Failed to analyze image");
       // Reset states on error
-      setAnalysis(null);
-      setToothData({ ToothEditData: [], hestoriqData: [] });
+
     }
   };
   const end = performance.now();
   
+  // Always return an object, even on the server
   return { getAnalyseImage };
 };
 

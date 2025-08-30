@@ -3,6 +3,8 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import ClientProviders from "./ClientProviders";
 import { icons } from "lucide-react";
+import { LayoutProvider } from '@/contexts/LayoutContext';
+import "leaflet/dist/leaflet.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -33,12 +35,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
-      <body>
-        <ClientProviders>
-          {children}
-        </ClientProviders>
-      </body>
-    </html>
+    <LayoutProvider>
+      <html lang="en" className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
+        <body>
+          
+          <ClientProviders>
+            {children}
+          </ClientProviders>
+        </body>
+      </html>
+    </LayoutProvider>
   );
 }

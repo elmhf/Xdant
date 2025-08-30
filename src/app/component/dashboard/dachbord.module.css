@@ -1,12 +1,12 @@
 
 .container {
-  padding: 20px;
+  padding: 4px;
   --primary-color: #2563eb;
   --secondary-color: #3b82f6;
   --background-color: #f8fafc00;
   --card-background: #ffffff;
   --text-color: #1e293b;
-  --border-radius: 12px;
+  --border-radius: 0.3vw;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --transition: all 0.3s ease;
 
@@ -143,14 +143,12 @@
     gap: 15px;
   }
   
-  .XRayI, .ToothLabels, .side, .compare {
-    padding: 15px;
-  }
+
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 15px;
+    padding: 4px;
   }
   
   .wrapper {

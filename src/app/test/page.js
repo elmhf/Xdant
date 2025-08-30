@@ -1,159 +1,374 @@
-"use client"
-// ExamplePage.jsx
-import React, { useState } from "react";
+'use client'
+import React, { useState, useRef, useEffect } from 'react';
 
-const packages = [
-  {
-    id: "1",
-    from: "Florence",
-    to: "Stockholm",
-    status: "PACKED",
-    orderId: "#1B498-98018",
-  },
-  {
-    id: "2",
-    from: "Norra Nynäshamn",
-    to: "Stockholm",
-    status: "IN TRANSIT",
-    orderId: "#29698-98971",
-    courier: {
-      name: "Harris Whitaker",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    sender: "Amazon",
-    departed: "15 Dec 03:27 PM",
-    distance: "1246 km",
-    weight: "5.2 kg",
-    currentLocation: "Farsta, Sweden",
-    lastStop: "6 hours ago",
-    details: "Delivery history and details",
-  },
-  {
-    id: "3",
-    from: "Dresden",
-    to: "Stockholm",
-    status: "IN TRANSIT",
-    orderId: "#04948-98367",
-  },
-  {
-    id: "4",
-    from: "Helsinki",
-    to: "Stockholm",
-    status: "IN TRANSIT",
-    orderId: "#14398-98719",
-  },
-  {
-    id: "5",
-    from: "Warsaw",
-    to: "Stockholm",
-    status: "DELIVERED",
-    orderId: "#25398-98001",
-  },
-  {
-    id: "6",
-    from: "Hamburg",
-    to: "Stockholm",
-    status: "DELIVERED",
-    orderId: "#25398-98001",
-  },
-];
+// محاكاة الـ hook (في الواقع تستورده من ملفك)
+const useImageCard = () => {
+  const [state, setState] = useState({
+    images: [],
+    isLoading: false,
+    error: null,
+    isFullScreen: false,
+    showParameters: false,
+    imageSettings: {
+      brightness: 100,
+      contrast: 100,
+      zoom: 100
+    }
+  });
 
-const statusColors = {
-  "PACKED": "bg-purple-200 text-purple-700",
-  "IN TRANSIT": "bg-lime-200 text-lime-700",
-  "DELIVERED": "bg-gray-200 text-gray-700",
+  // محاكاة تحميل صورة من URL
+  const handleLoadImageFromUrl = async (imageUrl) => {
+    if (!imageUrl) {
+      setState(prev => ({ ...prev, error: 'Invalid image URL' }));
+      return;
+    }
+
+    try {
+      setState(prev => ({ ...prev, isLoading: true, error: null }));
+      
+      // محاكاة التحميل
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const imageObj = {
+        file: null,
+        data_url: imageUrl,
+        name: 'image-from-url.jpg',
+        size: 0,
+        type: 'image/jpeg'
+      };
+
+      setState(prev => ({ 
+        ...prev, 
+        images: [imageObj], 
+        isLoading: false 
+      }));
+
+    } catch (err) {
+      setState(prev => ({
+        ...prev,
+        error: 'Failed to load image',
+        isLoading: false
+      }));
+    }
+  };
+
+  const isValidImageUrl = (url) => {
+    return url && (url.includes('.jpg') || url.includes('.png') || url.includes('.jpeg'));
+  };
+
+  return {
+    ...state,
+    handleLoadImageFromUrl,
+    isValidImageUrl
+  };
 };
 
-export default function ExamplePage() {
-  const [selected, setSelected] = useState(packages[1]);
+// كومبوننت الـ Form
+const ImageLoadForm = ({ onImageLoad }) => {
+  const [imageUrl, setImageUrl] = useState('');
+  const { handleLoadImageFromUrl, isLoading, error, isValidImageUrl } = useImageCard();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!imageUrl.trim()) {
+      alert('يرجى إدخال رابط الصورة');
+      return;
+    }
+
+    if (!isValidImageUrl(imageUrl)) {
+      alert('يرجى إدخال رابط صورة صالح (jpg, png, jpeg)');
+      return;
+    }
+
+    await handleLoadImageFromUrl(imageUrl);
+    
+    // إرسال الصورة للكومبوننت الأب
+    if (onImageLoad) {
+      onImageLoad(imageUrl);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <aside className="w-80 bg-white border-r border-gray-200 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold">Packages</h2>
-          <button className="p-2 rounded-full hover:bg-gray-100">
-            <svg width="20" height="20" fill="none"><circle cx="10" cy="10" r="2" fill="#888" /></svg>
-          </button>
+    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+      <h2 className="text-xl font-bold mb-4 text-gray-800">تحميل صورة من رابط</h2>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
+            رابط الصورة
+          </label>
+          <input
+            type="url"
+            id="imageUrl"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="https://example.com/image.jpg"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={isLoading}
+          />
         </div>
-        {/* Tabs */}
-        <div className="flex gap-2 px-6 py-4">
-          <button className="px-4 py-2 rounded-full bg-black text-white font-semibold">On the way</button>
-          <button className="px-4 py-2 rounded-full text-gray-500 font-semibold">Delivered</button>
-        </div>
-        {/* Packages List */}
-        <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
-          {packages.map(pkg => (
-            <div
-              key={pkg.id}
-              className={`rounded-2xl bg-white shadow-sm border border-gray-100 p-4 cursor-pointer transition-all ${selected.id === pkg.id ? "ring-2 ring-black" : ""}`}
-              onClick={() => setSelected(pkg)}
-            >
-              <div className="flex items-center justify-between">
-                <div className="font-medium">{pkg.from} <span className="text-gray-400">→</span> {pkg.to}</div>
-                <span className={`text-xs px-2 py-1 rounded-full font-bold ${statusColors[pkg.status]}`}>{pkg.status}</span>
-              </div>
-              <div className="text-xs text-gray-400 mt-1">{pkg.orderId}</div>
-              {/* تفاصيل إضافية للطرد المحدد */}
-              {selected.id === pkg.id && pkg.courier && (
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <img src={pkg.courier.avatar} alt="" className="w-8 h-8 rounded-full" />
-                    <div>
-                      <div className="text-sm font-semibold">{pkg.courier.name}</div>
-                      <div className="text-xs text-gray-400">Courier</div>
-                    </div>
-                  </div>
-                  <div className="flex gap-4 text-xs text-gray-500">
-                    <div><span className="font-bold text-gray-700">Sender:</span> {pkg.sender}</div>
-                    <div><span className="font-bold text-gray-700">Departed:</span> {pkg.departed}</div>
-                  </div>
-                  <div className="flex gap-4 text-xs text-gray-500">
-                    <div><span className="font-bold text-gray-700">Distance:</span> {pkg.distance}</div>
-                    <div><span className="font-bold text-gray-700">Weight:</span> {pkg.weight}</div>
-                  </div>
-                  <button className="w-full mt-2 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm">Delivery history and details</button>
-                </div>
-              )}
+
+        {error && (
+          <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={isLoading || !imageUrl.trim()}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              جاري التحميل...
             </div>
+          ) : (
+            'تحميل الصورة'
+          )}
+        </button>
+      </form>
+
+      {/* أمثلة سريعة */}
+      <div className="mt-4">
+        <p className="text-sm text-gray-600 mb-2">أمثلة سريعة:</p>
+        <div className="flex flex-wrap gap-2">
+          {[
+            'https://picsum.photos/800/600?random=1',
+            'https://picsum.photos/800/600?random=2',
+            'https://picsum.photos/800/600?random=3'
+          ].map((url, index) => (
+            <button
+              key={index}
+              onClick={() => setImageUrl(url)}
+              className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded text-gray-700"
+              disabled={isLoading}
+            >
+              مثال {index + 1}
+            </button>
           ))}
         </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col relative">
-        {/* صورة بدل الخريطة */}
-        <div className="flex-1 relative">
-          <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
-            alt="Map"
-            className="w-full h-full object-cover"
-          />
-          {/* عنوان المدينة فوق الصورة */}
-          <div className="absolute top-8 left-1/2 -translate-x-1/2 text-4xl font-bold text-gray-800 drop-shadow-lg">
-            {selected.to}
-          </div>
-        </div>
-        {/* تفاصيل الطرد المحدد أسفل الصورة */}
-        <div className="absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-gray-200 p-6 flex items-center justify-between shadow-lg">
-          <div>
-            <div className="text-xs text-gray-400">Order ID {selected.orderId}</div>
-            <div className="flex items-center gap-2 mt-1">
-              <span className={`text-xs px-2 py-1 rounded-full font-bold ${statusColors[selected.status]}`}>{selected.status}</span>
-              <span className="text-gray-700 font-semibold">{selected.from} → {selected.to}</span>
-              <span className="text-gray-400">|</span>
-              <span className="text-gray-500">Current Location: <span className="font-bold text-gray-700">{selected.currentLocation || "-"}</span></span>
-              <span className="text-gray-400">|</span>
-              <span className="text-gray-500">Distance: <span className="font-bold text-gray-700">{selected.distance || "-"}</span></span>
-              <span className="text-gray-400">|</span>
-              <span className="text-gray-500">Last Stop: <span className="font-bold text-gray-700">{selected.lastStop || "-"}</span></span>
-            </div>
-          </div>
-          <button className="px-4 py-2 rounded-full bg-black text-white font-semibold shadow hover:bg-gray-900">Contact courier</button>
-        </div>
-      </main>
+      </div>
     </div>
   );
-}
+};
+
+// كومبوننت Konva (محاكاة - في الواقع تستعمل react-konva)
+const KonvaImageDisplay = ({ imageUrl, imageSettings }) => {
+  const canvasRef = useRef(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageObj, setImageObj] = useState(null);
+
+  useEffect(() => {
+    if (imageUrl) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        setImageObj(img);
+        setImageLoaded(true);
+      };
+      img.onerror = () => {
+        console.error('Failed to load image');
+        setImageLoaded(false);
+      };
+      img.src = imageUrl;
+    }
+  }, [imageUrl]);
+
+  useEffect(() => {
+    if (imageLoaded && imageObj && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      
+      // مسح الـ canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // تطبيق إعدادات الصورة
+      const { brightness, contrast, zoom } = imageSettings;
+      
+      ctx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+      
+      // حساب الأبعاد مع التكبير
+      const scale = zoom / 100;
+      const width = imageObj.width * scale;
+      const height = imageObj.height * scale;
+      
+      // توسيط الصورة
+      const x = (canvas.width - width) / 2;
+      const y = (canvas.height - height) / 2;
+      
+      // رسم الصورة
+      ctx.drawImage(imageObj, x, y, width, height);
+      
+      // إعادة تعيين الفلتر
+      ctx.filter = 'none';
+    }
+  }, [imageLoaded, imageObj, imageSettings]);
+
+  if (!imageUrl) {
+    return (
+      <div className="bg-gray-100 rounded-lg p-12 text-center">
+        <div className="text-gray-400 text-lg mb-2">📷</div>
+        <p className="text-gray-600">لا توجد صورة محملة</p>
+        <p className="text-sm text-gray-500">استعمل النموذج أعلاه لتحميل صورة</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">معاينة الصورة</h3>
+      
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <canvas
+          ref={canvasRef}
+          width={800}
+          height={600}
+          className="w-full h-auto bg-gray-50"
+          style={{ maxHeight: '400px', objectFit: 'contain' }}
+        />
+      </div>
+
+      {!imageLoaded && (
+        <div className="mt-4 text-center">
+          <div className="animate-pulse text-gray-500">جاري تحميل الصورة...</div>
+        </div>
+      )}
+
+      {imageLoaded && (
+        <div className="mt-4 text-sm text-gray-600 text-center">
+          <p>✅ تم تحميل الصورة بنجاح</p>
+          <p>الأبعاد: {imageObj?.width} × {imageObj?.height}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// كومبوننت التحكم في إعدادات الصورة
+const ImageControls = ({ imageSettings, onSettingChange }) => {
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">إعدادات الصورة</h3>
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            السطوع: {imageSettings.brightness}%
+          </label>
+          <input
+            type="range"
+            min="50"
+            max="150"
+            value={imageSettings.brightness}
+            onChange={(e) => onSettingChange('brightness', parseInt(e.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            التباين: {imageSettings.contrast}%
+          </label>
+          <input
+            type="range"
+            min="50"
+            max="150"
+            value={imageSettings.contrast}
+            onChange={(e) => onSettingChange('contrast', parseInt(e.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            التكبير: {imageSettings.zoom}%
+          </label>
+          <input
+            type="range"
+            min="25"
+            max="200"
+            value={imageSettings.zoom}
+            onChange={(e) => onSettingChange('zoom', parseInt(e.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          />
+        </div>
+
+        <button
+          onClick={() => {
+            onSettingChange('brightness', 100);
+            onSettingChange('contrast', 100);
+            onSettingChange('zoom', 100);
+          }}
+          className="w-full bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
+        >
+          إعادة تعيين
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// الكومبوننت الرئيسي
+const ImageFormWithKonva = () => {
+  const [currentImageUrl, setCurrentImageUrl] = useState('');
+  const [imageSettings, setImageSettings] = useState({
+    brightness: 100,
+    contrast: 100,
+    zoom: 100
+  });
+
+  const handleImageLoad = (imageUrl) => {
+    setCurrentImageUrl(imageUrl);
+  };
+
+  const handleSettingChange = (setting, value) => {
+    setImageSettings(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto p-4 space-y-6">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">تحميل وعرض الصور</h1>
+        <p className="text-gray-600">قم بتحميل صورة من رابط وعرضها مع إمكانية التحكم في الإعدادات</p>
+      </div>
+
+      {/* نموذج تحميل الصورة */}
+      <ImageLoadForm onImageLoad={handleImageLoad} />
+
+      {/* عرض الصورة والتحكم */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <KonvaImageDisplay 
+            imageUrl={currentImageUrl} 
+            imageSettings={imageSettings}
+          />
+        </div>
+        
+        <div>
+          <ImageControls 
+            imageSettings={imageSettings}
+            onSettingChange={handleSettingChange}
+          />
+        </div>
+      </div>
+
+      {/* معلومات إضافية */}
+      {currentImageUrl && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="font-semibold text-blue-900 mb-2">معلومات الصورة:</h4>
+          <p className="text-blue-800 text-sm break-all">
+            <strong>الرابط:</strong> {currentImageUrl}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ImageFormWithKonva;

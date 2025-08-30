@@ -1,24 +1,62 @@
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
 
 function Input({
   className,
   type,
+  label,
+  required = false,
+  error,
   ...props
 }) {
   return (
-    <input
-      type={type}
-      data-slot="input"
-      className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-        className
+    <div className="space-y-2">
+      {label && (
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
       )}
-      {...props} />
+      <input
+        type={type}
+        data-slot="input"
+        className={cn(
+          // Base styles matching the design
+          "flex h-11 w-full rounded-lg border border-gray-200 bg-white px-4 py-3",
+          "text-sm text-gray-900 placeholder:text-gray-500",
+          "transition-all duration-200 ease-in-out",
+          
+          // Focus states
+          "focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-20",
+          "focus:border-purple-500",
+          
+          // Hover states
+          "hover:border-gray-300",
+          
+          // Error states
+          error && "border-red-300 focus:border-red-500 focus:ring-red-500 focus:ring-opacity-20",
+          
+          // Disabled states
+          "disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed disabled:opacity-75",
+          
+
+          
+          // File input specific styles
+          "file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0",
+          "file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700",
+          "file:hover:bg-purple-100 file:cursor-pointer",
+          "dark:file:bg-purple-900 dark:file:text-purple-300",
+          
+          className
+        )}
+        {...props}
+      />
+      {error && (
+        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
-
 export { Input }

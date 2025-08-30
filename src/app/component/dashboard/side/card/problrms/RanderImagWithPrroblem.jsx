@@ -2,7 +2,7 @@ import { memo, useEffect, useState, useRef, useCallback } from "react";
 import { Stage, Layer, Image, Line } from "react-konva";
 import useImageStore from "@/stores/ImageStore";
 
-const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 200, className = "" }) => {
+const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], height = 200, width, className = "" }) => {
   const { getImage } = useImageStore();
   const image = getImage();
   const [imageObj, setImageObj] = useState(null);
@@ -11,7 +11,7 @@ const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 20
   const [cropDimensions, setCropDimensions] = useState({ width: 0, height: 0 });
   const stageRef = useRef(null);
   const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: size, height: size });
+  const [dimensions, setDimensions] = useState({ width: width || height, height });
 
   // Load main image
   useEffect(() => {
@@ -29,12 +29,15 @@ const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 20
 
   // Set container dimensions
   useEffect(() => {
-    const updateDimensions = () => {
-      setDimensions({ width: size, height: size });
-    };
-    
-    updateDimensions();
-  }, [size]);
+    if (width) {
+      setDimensions({ width, height });
+    } else if (cropDimensions.width && cropDimensions.height) {
+      const aspectRatio = cropDimensions.width / cropDimensions.height;
+      setDimensions({ width: Math.round(height * aspectRatio), height });
+    } else {
+      setDimensions({ width: height, height });
+    }
+  }, [height, width, cropDimensions.width, cropDimensions.height]);
 
   // Crop image and adjust mask points
   const processImage = useCallback(() => {
@@ -76,7 +79,6 @@ const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 20
       );
       
       setAdjustedMaskPoints(adjustedMasks);
-      // console.log(adjustedMasks, "Processed problems");
     } catch (error) {
       console.error("Error processing image:", error);
     }
@@ -92,8 +94,8 @@ const RenderImageWithProblem = memo(({ maskPoints = [], problems = [], size = 20
   return (
     <div 
       ref={containerRef}
-      className={`flex items-center justify-center ${className}`}
-      style={{ borderRadius: '12px', overflow: 'hidden', width: size, height: size }}
+      className={`flex items-center justify-center `}
+      style={{ borderRadius: '12px', overflow: 'hidden', width: dimensions.width, height: dimensions.height }}
     >
       <Stage 
         ref={stageRef}

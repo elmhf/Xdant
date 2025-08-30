@@ -5,8 +5,7 @@ import { DataContext } from './dashboard';
 
 const DentalComponent = () => {
     const {selectedTooth,setSelectedTooth,} = useContext(DataContext);
-    console.log(selectedTooth)
-    return (
+        return (
         <div>
             {selectedTooth} 
         </div>

@@ -57,7 +57,7 @@ const ToothDetailsForPDF = ({ tooth, ShowSetting = DEFAULT_SETTINGS  }) => {
 
   // دمج الإعدادات مع الافتراضية
   const settings = { ...DEFAULT_SETTINGS, ...ShowSetting };
-  useEffect(() => {console.log("settings",settings)}, [settings]);
+
   const problems = tooth.problems || [];
   const primaryProblem = problems[0];
   const titleColor = getColor(primaryProblem?.type);

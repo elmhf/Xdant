@@ -1,13 +1,14 @@
 "use client";
 import ToothChar from "./ToothChar/ToothChar";
 import SettingButton from './buttons/SettingButton';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
+import { DataContext } from "../../dashboard"; // أو المسار الصحيح
 
 const Toothlabels = () => {
+  const { ToothNumberSelect, setToothNumberSelect } = useContext(DataContext);
   const [selectedTooth, setSelectedTooth] = useState(null);
   const chartContainerRef = useRef(null);
   const [maxHeight, setMaxHeight] = useState(240); // default
-
   useEffect(() => {
     // optional logic if you want to auto-adjust height based on window size
     const handleResize = () => {
@@ -22,25 +23,46 @@ const Toothlabels = () => {
   }, []);
 
   return (
-    <div className="w-full flex justify-center items-center  bg-gray-50">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-md p-4 flex flex-col gap-4">
+    <div className="w-full flex justify-center items-center  rounded-2xl  overflow-hidden bg-white ">
+      <div className="w-full max-w-5xl bg-white   p-4 flex flex-col gap-4">
         
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-around">
           <h2 className="text-2xl font-bold text-gray-800">Teeth in the Report</h2>
           <SettingButton />
         </div>
 
+
         {/* Chart */}
         <div
           ref={chartContainerRef}
-          className="w-full flex justify-center  overflow-x-auto overflow-y-hidden border rounded-xl"
-          style={{
-            maxHeight: `${maxHeight}px`,
-
-          }}
+          className="w-full flex-col flex items-center justify-center"
         >
-          <ToothChar selectedTooth={selectedTooth} setSelectedTooth={setSelectedTooth} />
+                  {/* Legend */}
+        <div className="flex items-center gap-4 mb-2 w-fitt">
+          <span className="flex items-center gap-1 text-gray-500 text-base">
+            <span className="inline-block w-4 h-4 rounded-full border-2 border-black"></span>
+            Healthy
+          </span>
+          <span className="flex items-center gap-1 text-gray-500 text-base">
+            <span className="inline-block w-4 h-4 rounded-full" style={{ background: '#8b5cf6' }}></span>
+            Treated
+          </span>
+          <span className="flex items-center gap-1 text-gray-500 text-base">
+            <span className="inline-block w-4 h-4 text-xl text-red-500 flex items-center justify-center">×</span>
+            Missing
+          </span>
+          <span className="flex items-center gap-1 text-gray-500 text-base">
+            <span className="inline-block w-4 h-4 rounded-full" style={{ background: '#f59e42' }}></span>
+            Suspicious
+          </span>
+          <span className="flex items-center gap-1 text-gray-500 text-base">
+            <span className="inline-block w-4 h-4 rounded-full" style={{ background: '#f43f5e' }}></span>
+            Unhealthy
+          </span>
+        </div>
+
+          <ToothChar selectedTooth={ToothNumberSelect} setSelectedTooth={setToothNumberSelect} />
         </div>
 
    

@@ -277,8 +277,7 @@ export default function ReportPage() {
         setIsLoading(false);
       } finally {
         const end = performance.now();
-        console.log('⏱️ fetchPatientData took', (end - start).toFixed(0), 'ms');
-      }
+              }
     };
 
     fetchPatientData();

@@ -4,12 +4,17 @@ import {
   useState,
   useEffect,
   useMemo,
-  useCallback
+  useCallback,
+  useContext
 } from "react";
 import { IoMdClose } from "react-icons/io";
+import { FaRegThumbsUp } from "react-icons/fa";
+import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDentalStore } from "@/stores/dataStore";
+import { DataContext } from "../../../dashboard";
+
 
 const TOOTH_CATEGORIES = {
   Healthy: {
@@ -117,7 +122,7 @@ const useToothSVGs = () => {
   return { toothSVGs, loading, error };
 };
 
-function ToothSVG({ toothNumber, className, toothSVGs }) {
+function ToothSVG({ toothNumber, className, toothSVGs, color, strokeColor }) {
   const svgRef = useRef(null);
   const [error, setError] = useState(null);
 
@@ -127,8 +132,11 @@ function ToothSVG({ toothNumber, className, toothSVGs }) {
       return null;
     }
     setError(null);
-    return toothSVGs[toothNumber];
-  }, [toothSVGs, toothNumber]);
+    // Replace fill with currentColor, and stroke with strokeColor
+    return toothSVGs[toothNumber]
+      .replace(/fill="(currentFill|currentStroke|strokeColor|currentColor)"/g, 'fill="currentColor"')
+      .replace(/stroke="(currentFill|currentStroke|strokeColor|currentColor)"/g, `stroke="${strokeColor}"`);
+  }, [toothSVGs, toothNumber, strokeColor]);
 
   // تطبيق stroke-width بعد render
   useEffect(() => {
@@ -160,9 +168,11 @@ function ToothSVG({ toothNumber, className, toothSVGs }) {
   return (
     <svg
       ref={svgRef}
-      viewBox="0 0 1000 1000"
+      height={100}
+      viewBox="0 0 1000 1300"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      style={{ color }}
       dangerouslySetInnerHTML={{ __html: svgContent }}
     />
   );
@@ -197,6 +207,7 @@ const useDentalChart = () => {
   const abortControllerRef = useRef(null);
 
   const fetchDentalChart = useCallback(async () => {
+    if (typeof window === 'undefined') return;
     try {
       setLoading(true);
       setError(null);
@@ -271,14 +282,17 @@ const useDentalChart = () => {
   };
 };
 
-const ToothChar = ({ selectedTooth, setSelectedTooth, ref }) => {
+const ToothChar = ({ ref }) => {
   const data = useDentalStore(state => state.data);
+  console.log(data.teeth,"data.teeth")
+
+  const { toothNumberSelect, setToothNumberSelect } = useContext(DataContext);
   const { dentalChart, loading: chartLoading, error: chartError, retry } = useDentalChart();
   const { toothSVGs, loading: svgLoading, error: svgError } = useToothSVGs();
 
   const handleToothClick = useCallback((event) => {
     const id = event.currentTarget.getAttribute("name");
-    if (setSelectedTooth) setSelectedTooth(id);
+    if (setToothNumberSelect) setToothNumberSelect(id);
     try {
       const element = document.getElementById(`TooTh-Card-${id}`);
       if (element) {
@@ -287,7 +301,7 @@ const ToothChar = ({ selectedTooth, setSelectedTooth, ref }) => {
     } catch (err) {
       console.error("Scroll error:", err);
     }
-  }, [setSelectedTooth]);
+  }, [setToothNumberSelect]);
 
   const ToothJSX = useMemo(() => {
     if (!Array.isArray(dentalChart)) {
@@ -304,18 +318,51 @@ const ToothChar = ({ selectedTooth, setSelectedTooth, ref }) => {
         const toothData = (data.teeth || []).find(t => t?.toothNumber === number);
         const category = toothData?.category || 'Unknown';
         const categoryStyles = TOOTH_CATEGORIES[category] || TOOTH_CATEGORIES.Unknown;
-        const isSelected = selectedTooth == number;
+        const isSelected = toothNumberSelect == number;
+
+        let toothColor = categoryStyles.color;
+        let strokeColor = '#cbd5e1'; // default gray
+
+        // Unknown teeth always get white fill and black stroke
+        if (category === 'Unknown') {
+          toothColor = '#fff';
+          strokeColor = '#000';
+        } else if (category === 'Healthy') {
+          toothColor = '#fff';
+          strokeColor = '#000';
+        } else {
+          // For other categories, determine stroke color based on selection and background
+          const isBgWhite = (
+            (isSelected && (
+              categoryStyles.bg === 'white' ||
+              categoryStyles.bg === '#fff' ||
+              categoryStyles.bg === 'rgba(255,255,255,1)' ||
+              categoryStyles.bg.includes('to-indigo-100') ||
+              categoryStyles.bg.includes('from-indigo-50')
+            ))
+          );
+          if (isSelected && isBgWhite) {
+            strokeColor = '#000';
+          } else if (isSelected) {
+            strokeColor = '#fff';
+          }
+        }
+
+        const isUnknown =
+          !toothData ||
+          !toothData.category ||
+          toothData.category === 'Unknown' ||
+          toothData.category === null ||
+          toothData.category === '';
 
         // Tailwind classes for tooth item
-        const baseClasses = `flex  flex-col items-center justify-cente rounded-lg text-center transition-all duration-200 cursor-pointer aspect-[1/2] box-border relative bg-clip-padding border-1 border-transparent shadow-sm`;
-        const hoverClasses = `hover:scale-105 hover:shadow-lg hover:border-indigo-200 z-10`;
-        const selectedClasses = isSelected ? `border-2.5 border-indigo-500 shadow-[0_0_0_4px_rgba(99,102,241,0.13)] z-20 bg-gradient-to-br from-indigo-50 to-indigo-100` : '';
-
+        const baseClasses = `flex flex-col items-center justify-cente rounded-[0.5vw] text-center transition-all duration-200 cursor-pointer aspect-[1/2.5] box-border relative bg-clip-padding border`;
+        // Remove hoverClasses and selectedClasses for border, handle with framer-motion
         return (
           <TooltipProvider key={`tooth-${number}-${quadrantIndex}`}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div
+                <motion.div
                   onClick={handleToothClick}
                   id={`Tooth-${number}`}
                   name={number}
@@ -323,15 +370,25 @@ const ToothChar = ({ selectedTooth, setSelectedTooth, ref }) => {
                     display: "flex",
                     flexDirection: number > 30 ? 'column-reverse' : "column",
                     backgroundColor: categoryStyles.bg,
-                    borderColor: isSelected ? '#6366f1' : categoryStyles.color,
                     stroke: categoryStyles.color
                   }}
                   className={[
                     baseClasses,
-                    hoverClasses,
-                    selectedClasses
                   ].join(' ')}
                   aria-label={`Tooth ${number} - ${category}`}
+                  animate={{
+                    borderColor: isSelected ? "#6366f1" : categoryStyles.bg,
+                    borderWidth: "0.2vw"
+                  }}
+                  whileHover={{
+                    borderColor: "#6366f1",
+                    borderWidth: "0.2vw"
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 5
+                  }}
                 >
                   <div className="w-full h-[60%] flex items-center justify-center">
                     {category === 'Missing' ? (
@@ -342,25 +399,27 @@ const ToothChar = ({ selectedTooth, setSelectedTooth, ref }) => {
                     ) : (
                       <ToothSVG 
                         toothNumber={number} 
-                        className="max-w-full max-h-full object-contain transition-transform duration-200"
+                        className="max-w-full max-h-full h-full object-contain transition-transform duration-200"
                         toothSVGs={toothSVGs}
+                        color={isUnknown ? '#fff' : toothColor}
+                        strokeColor={isUnknown ? '#000' : strokeColor}
                       />
                     )}
                   </div>
                   <div
-                    className="text-base font-bold mt-1 tracking-wide text-shadow"
+                    className="text-[1vw] font-medium  tracking-wide text-shadow"
                     style={{ color: categoryStyles.color }}
                   >
                     {number}
                   </div>
-                </div>
+                </motion.div>
               </TooltipTrigger>
             </Tooltip>
           </TooltipProvider>
         );
       }).filter(Boolean);
     });
-  }, [dentalChart, data.teeth, handleToothClick, toothSVGs, selectedTooth]);
+  }, [dentalChart, data.teeth, handleToothClick, toothSVGs, toothNumberSelect]);
 
   const loading = chartLoading || svgLoading;
   const error = chartError || svgError;
@@ -393,7 +452,7 @@ const ToothChar = ({ selectedTooth, setSelectedTooth, ref }) => {
   if (!Array.isArray(dentalChart) || dentalChart.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 p-6 text-center">
-        <div className="text-2xl">📋</div>
+        <div className="text-[1vw]">📋</div>
         <div className="text-gray-500 font-semibold">No dental chart data available</div>
         <button
           className="px-4 py-2 rounded bg-indigo-500 text-white hover:bg-indigo-600 transition"
@@ -407,7 +466,7 @@ const ToothChar = ({ selectedTooth, setSelectedTooth, ref }) => {
 
   return (
     <div
-      className="p-5  w-[80%]  grid grid-cols-16 gap-1 md:gap-1 overflow-x-auto"
+      className="  w-[80%] gap-[0.1vw]  grid grid-cols-16 "
       ref={ref}
       style={{ minWidth: 0 }}
     >

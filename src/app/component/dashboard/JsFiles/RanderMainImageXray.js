@@ -12,7 +12,6 @@ const ImageCropper = ({ img, teethData }) => {
 
 
   const onChange = async (imageList) =>  {
-    setImage(imageList);
 
     await handleUpload()
   };

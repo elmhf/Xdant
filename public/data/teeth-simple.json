@@ -1,0 +1,180 @@
+{
+  "jaws": {
+    "upperJaw": {
+      "id": "upperJaw",
+      "label": "Upper jaw",
+      "visible": true,
+      "color": "#eeeeee"
+    },
+    "lowerJaw": {
+      "id": "lowerJaw",
+      "label": "Lower jaw",
+      "visible": true,
+      "color": "#eeeeee"
+    }
+  },
+  "teeth": {
+    "upper": {
+      "1": { "id": "1", "label": "Tooth 1", "visible": true, "color": "#ffffff", "position": "upper" },
+      "2": { "id": "2", "label": "Tooth 2", "visible": true, "color": "#ffffff", "position": "upper" },
+      "3": { "id": "3", "label": "Tooth 3", "visible": true, "color": "#ffffff", "position": "upper" },
+      "4": { "id": "4", "label": "Tooth 4", "visible": true, "color": "#ffffff", "position": "upper" },
+      "5": { "id": "5", "label": "Tooth 5", "visible": true, "color": "#ffffff", "position": "upper" },
+      "6": { "id": "6", "label": "Tooth 6", "visible": true, "color": "#ffffff", "position": "upper" },
+      "7": { "id": "7", "label": "Tooth 7", "visible": true, "color": "#ffffff", "position": "upper" },
+      "8": { "id": "8", "label": "Tooth 8", "visible": true, "color": "#ffffff", "position": "upper" },
+      "9": { "id": "9", "label": "Tooth 9", "visible": true, "color": "#ffffff", "position": "upper" },
+      "10": { "id": "10", "label": "Tooth 10", "visible": true, "color": "#ffffff", "position": "upper" },
+      "11": { "id": "11", "label": "Tooth 11", "visible": true, "color": "#ffffff", "position": "upper" },
+      "12": { "id": "12", "label": "Tooth 12", "visible": true, "color": "#ffffff", "position": "upper" },
+      "13": { "id": "13", "label": "Tooth 13", "visible": true, "color": "#ffffff", "position": "upper" },
+      "14": { "id": "14", "label": "Tooth 14", "visible": true, "color": "#ffffff", "position": "upper" },
+      "15": { "id": "15", "label": "Tooth 15", "visible": true, "color": "#ffffff", "position": "upper" },
+      "16": { "id": "16", "label": "Tooth 16", "visible": true, "color": "#ffffff", "position": "upper" },
+      "17": { "id": "17", "label": "Tooth 17", "visible": true, "color": "#ffffff", "position": "upper" },
+      "18": { "id": "18", "label": "Tooth 18", "visible": true, "color": "#ffffff", "position": "upper" },
+      "19": { "id": "19", "label": "Tooth 19", "visible": true, "color": "#ffffff", "position": "upper" },
+      "20": { "id": "20", "label": "Tooth 20", "visible": true, "color": "#ffffff", "position": "upper" },
+      "21": { "id": "21", "label": "Tooth 21", "visible": true, "color": "#ffffff", "position": "upper" },
+      "22": { "id": "22", "label": "Tooth 22", "visible": true, "color": "#ffffff", "position": "upper" },
+      "23": { "id": "23", "label": "Tooth 23", "visible": true, "color": "#ffffff", "position": "upper" },
+      "24": { "id": "24", "label": "Tooth 24", "visible": true, "color": "#ffffff", "position": "upper" },
+      "25": { "id": "25", "label": "Tooth 25", "visible": true, "color": "#ffffff", "position": "upper" },
+      "26": { "id": "26", "label": "Tooth 26", "visible": true, "color": "#ffffff", "position": "upper" },
+      "27": { "id": "27", "label": "Tooth 27", "visible": true, "color": "#ffffff", "position": "upper" },
+      "28": { "id": "28", "label": "Tooth 28", "visible": true, "color": "#ffffff", "position": "upper" },
+      "29": { "id": "29", "label": "Tooth 29", "visible": true, "color": "#ffffff", "position": "upper" },
+      "30": { "id": "30", "label": "Tooth 30", "visible": true, "color": "#ffffff", "position": "upper" },
+      "31": { "id": "31", "label": "Tooth 31", "visible": true, "color": "#ffffff", "position": "upper" },
+      "32": { "id": "32", "label": "Tooth 32", "visible": true, "color": "#ffffff", "position": "upper" }
+    },
+    "lower": {
+      "33": { "id": "33", "label": "Tooth 33", "visible": true, "color": "#ffffff", "position": "lower" },
+      "34": { "id": "34", "label": "Tooth 34", "visible": true, "color": "#ffffff", "position": "lower" },
+      "35": { "id": "35", "label": "Tooth 35", "visible": true, "color": "#ffffff", "position": "lower" },
+      "36": { "id": "36", "label": "Tooth 36", "visible": true, "color": "#ffffff", "position": "lower" },
+      "37": { "id": "37", "label": "Tooth 37", "visible": true, "color": "#ffffff", "position": "lower" },
+      "38": { "id": "38", "label": "Tooth 38", "visible": true, "color": "#ffffff", "position": "lower" },
+      "39": { "id": "39", "label": "Tooth 39", "visible": true, "color": "#ffffff", "position": "lower" },
+      "40": { "id": "40", "label": "Tooth 40", "visible": true, "color": "#ffffff", "position": "lower" },
+      "41": { "id": "41", "label": "Tooth 41", "visible": true, "color": "#ffffff", "position": "lower" },
+      "42": { "id": "42", "label": "Tooth 42", "visible": true, "color": "#ffffff", "position": "lower" },
+      "43": { "id": "43", "label": "Tooth 43", "visible": true, "color": "#ffffff", "position": "lower" },
+      "44": { "id": "44", "label": "Tooth 44", "visible": true, "color": "#ffffff", "position": "lower" },
+      "45": { "id": "45", "label": "Tooth 45", "visible": true, "color": "#ffffff", "position": "lower" },
+      "46": { "id": "46", "label": "Tooth 46", "visible": true, "color": "#ffffff", "position": "lower" },
+      "47": { "id": "47", "label": "Tooth 47", "visible": true, "color": "#ffffff", "position": "lower" },
+      "48": { "id": "48", "label": "Tooth 48", "visible": true, "color": "#ffffff", "position": "lower" },
+      "49": { "id": "49", "label": "Tooth 49", "visible": true, "color": "#ffffff", "position": "lower" },
+      "50": { "id": "50", "label": "Tooth 50", "visible": true, "color": "#ffffff", "position": "lower" },
+      "51": { "id": "51", "label": "Tooth 51", "visible": true, "color": "#ffffff", "position": "lower" },
+      "52": { "id": "52", "label": "Tooth 52", "visible": true, "color": "#ffffff", "position": "lower" },
+      "53": { "id": "53", "label": "Tooth 53", "visible": true, "color": "#ffffff", "position": "lower" },
+      "54": { "id": "54", "label": "Tooth 54", "visible": true, "color": "#ffffff", "position": "lower" },
+      "55": { "id": "55", "label": "Tooth 55", "visible": true, "color": "#ffffff", "position": "lower" },
+      "56": { "id": "56", "label": "Tooth 56", "visible": true, "color": "#ffffff", "position": "lower" },
+      "57": { "id": "57", "label": "Tooth 57", "visible": true, "color": "#ffffff", "position": "lower" },
+      "58": { "id": "58", "label": "Tooth 58", "visible": true, "color": "#ffffff", "position": "lower" },
+      "59": { "id": "59", "label": "Tooth 59", "visible": true, "color": "#ffffff", "position": "lower" },
+      "60": { "id": "60", "label": "Tooth 60", "visible": true, "color": "#ffffff", "position": "lower" },
+      "61": { "id": "61", "label": "Tooth 61", "visible": true, "color": "#ffffff", "position": "lower" },
+      "62": { "id": "62", "label": "Tooth 62", "visible": true, "color": "#ffffff", "position": "lower" },
+      "63": { "id": "63", "label": "Tooth 63", "visible": true, "color": "#ffffff", "position": "lower" },
+      "64": { "id": "64", "label": "Tooth 64", "visible": true, "color": "#ffffff", "position": "lower" }
+    }
+  },
+  "anatomy": {
+    "softTissue": {
+      "id": "e9ec1b0e-b6f4-4043-8883-b8c92edbbc1d",
+      "label": "SoftTissue",
+      "visible": false,
+      "color": "#f2f3f0"
+    },
+    "cranial": {
+      "id": "76c16443-e6fe-4b8d-a1c0-eabfc45c1f50",
+      "label": "Cranial",
+      "visible": true,
+      "color": "#c5c5de"
+    },
+    "sinus": {
+      "id": "89e48bdb-192a-4aef-beb0-160bb873b338",
+      "label": "Sinus",
+      "visible": true,
+      "color": "#6da9df"
+    },
+    "incisiveCanal": {
+      "id": "2bd3218a-e363-4420-894b-4c2fc67b84ec",
+      "label": "IncisiveCanal",
+      "visible": true,
+      "color": "#cc3f47"
+    },
+    "maxilla": {
+      "id": "8dba3833-d1c0-44a7-a853-2560014b4e47",
+      "label": "Maxilla",
+      "visible": true,
+      "color": "#cd7bde"
+    },
+    "mandible": {
+      "id": "007c919a-45c0-4904-9752-41f2b9c8d4ab",
+      "label": "Mandible",
+      "visible": true,
+      "color": "#3799f3"
+    },
+    "mandibularCanal": {
+      "id": "4286319b-e1b8-434c-9338-a3dd8cb9a657",
+      "label": "Mandibular canal",
+      "visible": true,
+      "color": "#cc3f47"
+    },
+    "gingivaUpper": {
+      "id": "9e2dcd76-7e5b-4874-8853-81e696b9d959",
+      "label": "GingivaUpper",
+      "visible": false,
+      "color": "#ff6379"
+    },
+    "gingivaLower": {
+      "id": "52b22a17-2827-4ec6-8a41-a13421688ae3",
+      "label": "GingivaLower",
+      "visible": true,
+      "color": "#ff6379"
+    },
+    "airways": {
+      "id": "eda8aaf0-37b9-44aa-a5c7-45c91a6331ee",
+      "label": "Airways",
+      "visible": true,
+      "color": "#617c8a"
+    }
+  },
+  "ios": {
+    "scan1": {
+      "id": "scan1",
+      "label": "IOS Scan 1",
+      "visible": false,
+      "color": "#ffffff"
+    },
+    "scan2": {
+      "id": "scan2",
+      "label": "IOS Scan 2",
+      "visible": false,
+      "color": "#ffffff"
+    },
+    "scan3": {
+      "id": "scan3",
+      "label": "IOS Scan 3",
+      "visible": false,
+      "color": "#ffffff"
+    }
+  },
+  "actions": {
+    "upload": {
+      "id": "upload",
+      "label": "Upload",
+      "icon": "plus"
+    },
+    "export": {
+      "id": "export",
+      "label": "Export",
+      "icon": "plusFat"
+    }
+  }
+} 

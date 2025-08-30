@@ -1,43 +1,41 @@
 "use client";
-import React,{useEffect, useMemo} from "react";
+import React, { useEffect, useMemo } from "react";
 import { DataContext } from "../../dashboard";
 import useImageCard from "./component/useImageCard";
-import ImageUploader from "./component/ImageUploader";
 import ImageViewer from "./component/ImageViewer";
-import FullScreenViewer from "./component/FullScreenViewer";
 import LoadingState from "./component/states/LoadingState";
 import ErrorState from "./component/states/ErrorState";
 import { useDentalSettings } from "./component/CustomHook/useDentalSettings";
 import useImageStore from "@/stores/ImageStore";
 import { useDentalStore } from "@/stores/dataStore";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function ImageCard({ settings, SettingChange ,setSettings}) {
+// Skeleton component for image placeholder
+const ImageSkeleton = () => (
+    <div className="flex justify-center p-0 max-w-[100%] ">
+      <Skeleton className="h-[1200px] w-[1200px] max-w-[90%] max-h-[90%] rounded-xl" />
+    </div>
+);
 
+export default function ImageCard({ settings, SettingChange, setSettings }) {
   const {
     images,
     isLoading,
     error,
     isFullScreen,
     showParameters,
-
     handleUpload,
     handleReanalyze,
     toggleFullScreen,
     setShowParameters,
-    handleSettingChange,
-    handleDownload,downloadImageWithAnnotations
+    downloadImageWithAnnotations
   } = useImageCard();
-const { getImage } = useImageStore();
-  console.log(getImage(),"images")
+  
+  const { getImage } = useImageStore();
   const data = useDentalStore(state => state.data);
 
-  console.log(data?.teeth,"data?.teeth")
-  if (isLoading) return <LoadingState />;
   if (error) return <ErrorState error={error} onRetry={handleReanalyze} />;
-  if (!getImage()) return <ImageUploader onUpload={handleUpload} />;
-
-
-
+  if (!getImage()) return <ImageSkeleton />;
 
   return (
     <>
@@ -54,16 +52,6 @@ const { getImage } = useImageStore();
         onSettingChange={SettingChange}
         setSettings={setSettings}
       />
-      
-      {isFullScreen && (
-        <FullScreenViewer
-          image={getImage()}
-          teethData={data?.teeth}
-          settings={settings}
-          onClose={toggleFullScreen}
-          onDownload={handleDownload}
-        />
-      )}
     </>
   );
 }

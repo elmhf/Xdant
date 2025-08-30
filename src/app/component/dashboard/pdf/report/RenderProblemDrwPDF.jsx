@@ -75,10 +75,8 @@ const RenderProblemDrwPDF = memo(({ maskPoints = [], problems = [], size  }) => 
       const adjustedMasks = problems.map(problem => 
         problem?.flatMap(([x, y]) => [x - minX, y - minY]) || []
       );
-      console.log(problems[0], "Adjusted masks");
-      setAdjustedMaskPoints(adjustedMasks);
-      console.log(adjustedMasks, "Processed problems");
-    } catch (error) {
+            setAdjustedMaskPoints(adjustedMasks);
+          } catch (error) {
       console.error("Error processing image:", error);
     }
   }, [imageObj, maskPoints, problems]);
@@ -89,8 +87,7 @@ const RenderProblemDrwPDF = memo(({ maskPoints = [], problems = [], size  }) => 
 
 
   useEffect(() => {
-    console.log(adjustedMaskPoints, "Adjusted mask points");
-  },[adjustedMaskPoints])
+      },[adjustedMaskPoints])
   const scaleX = cropDimensions.width ? dimensions.width / cropDimensions.width : 1;
   const scaleY = cropDimensions.height ? dimensions.height / cropDimensions.height : 1;
 
@@ -127,13 +124,11 @@ const RenderProblemDrwPDF = memo(({ maskPoints = [], problems = [], size  }) => 
           {
           
           adjustedMaskPoints.map((points, index) => {
-            console.log(points, "Mask points");
             if (!points || points.length === 0) return null;
             
             const scaledPoints = points.map((coord, idx) => 
               idx % 2 === 0 ? coord * scaleX : coord * scaleY
             );
-            console.log(scaledPoints, "Scaled points");
             return (
               <Line
                 key={`mask-${index}`}
