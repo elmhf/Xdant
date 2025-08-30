@@ -9,7 +9,7 @@ import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useDentalSettings } from "@/app/component/dashboard/main/ImageXRay/component/CustomHook/useDentalSettings";
 import { useImageStore } from "@/app/(dashboard)/OrthogonalViews/stores/imageStore";
 import { useSliceRegion, useSliceImage } from "./useSliceImage";
-import { useToothSliceData } from "../../hook/useToothSliceData";
+import { useToothSliceData } from "../../../hook/useToothSliceData";
 import { motion } from "framer-motion";
 
 // تحسين 1: تخزين مؤقت للمناطق العشوائية لتجنب إعادة توليدها

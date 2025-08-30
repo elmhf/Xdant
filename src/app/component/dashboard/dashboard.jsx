@@ -16,29 +16,7 @@ import { useDentalStore } from '@/stores/dataStore'
 
 export const DataContext = createContext()
 
-// Animation variants للتحسين
-const animationVariants = {
-  fadeIn: {
-    initial: { opacity: 0, scale: 0.95 },
-    animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.95 },
-    transition: { duration: 0.2 }
-  },
-  slideInLeft: {
-    initial: { opacity: 0, x: -10 },
-    animate: { opacity: 1, x: 0 },
-    transition: { delay: 0.1 }
-  },
-  slideInRight: {
-    initial: { opacity: 0, x: 10 },
-    animate: { opacity: 1, x: 0 },
-    transition: { delay: 0.3 }
-  },
-  slideInUp: {
-    initial: { opacity: 0, y: 10 },
-    animate: { opacity: 1, y: 0 }
-  }
-}
+
 
 const Dashboard = ({ reportType }) => {
   const [data, setData] = useState({})

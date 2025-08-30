@@ -228,7 +228,7 @@ export default function ReportPage() {
   // Special handling for toothSlice - now it uses the unified data system
   if (reportType === 'toothSlice') {
     // Import and render the ToothSlice component with unified data
-    const ToothSliceComponent = React.lazy(() => import('../ToothSlice/[toothId]/page'));
+    const ToothSliceComponent = React.lazy(() => import("./ToothSlice/[toothId]/page"));
     
     return (
       <div className="w-full max-h-full mx-auto max-w-[90%] sm:w-full">

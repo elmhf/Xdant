@@ -291,8 +291,10 @@ const ToothDiagnosis = memo(({ idCard, setToothNumberSelect, isSelected, showIma
             variant="outline"
             size="sm"
             className="text-sm font-medium transition-all duration-150 px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center ml-2"
-            onClick={() => router.push(`ToothSlice/${idCard}`)}
-          >
+            onClick={() => {
+              console.log(router, "router.pathname");
+              router.push(`${router.pathname}/ToothSlice/${idCard}`);
+            }}          >
             Slice
           </Button>
           )}

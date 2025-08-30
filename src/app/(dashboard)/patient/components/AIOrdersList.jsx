@@ -110,13 +110,13 @@ const AIOrdersList = ({
     const reportType = (order.type || order.raport_type || '').toLowerCase();
     const reportId = order.id;
     if (reportType === 'cbct ai') {
-      router.push(`/patient/${patientId}/cbctReport/${reportId}`);
+      router.push(`/patient/${patientId}/${reportId}`);
     } else if (reportType === 'ioxray') {
-      router.push(`/patient/${patientId}/ioxRayReport/${reportId}`);
+      router.push(`/patient/${patientId}/${reportId}`);
     } else if (reportType === 'pano ai') {
-      router.push(`/patient/${patientId}/panoReport/${reportId}`);
+      router.push(`/patient/${patientId}/${reportId}`);
     } else if (reportType === '3d model ai') {
-      router.push(`/patient/${patientId}/threeDModelReport/${reportId}`);
+      router.push(`/patient/${patientId}/${reportId}`);
     } else {
       // fallback: cbct
       alert(`Unsupported report type ${order.type}`);
