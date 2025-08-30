@@ -13,12 +13,25 @@ export default function ReportPage() {
   const lastProcessedId = useRef(null);
   const [imageCard, setImageCard] = useState(null);
 
-  // Extract report ID and type from params
+  // Extract report ID and patient ID from params
   const reportId = params.report_id;
   const patientId = params.patientId;
   
-  // Detect report type from URL or query parameters
-  const reportType = params.report_type || 'unknown';
+  // Get query parameters for report type and tooth ID
+  const searchParams = new URLSearchParams(window.location.search);
+  const reportType = searchParams.get('type') || 'unknown';
+  const toothId = searchParams.get('toothId');
+  
+  // If type is toothSlice, use the toothId as the report type
+  const finalReportType = reportType === 'toothSlice' ? 'toothSlice' : reportType;
+  
+  console.log('🔗 URL Parameters:', {
+    reportId,
+    patientId,
+    reportType: finalReportType,
+    toothId,
+    allParams: params
+  });
 
   // Initialize imageCard separately to avoid stageRef issues
   const imageCardHook = useImageCard();
@@ -32,7 +45,7 @@ export default function ReportPage() {
   }, [imageCardHook, imageCard]);
 
   // Use different hooks based on report type
-  const reportDataHook = reportType === 'toothSlice' ? useToothSliceData() : useReportData({ imageCard });
+  const reportDataHook = finalReportType === 'toothSlice' ? useToothSliceData() : useReportData({ imageCard });
   
   const {
     data,
@@ -51,7 +64,8 @@ export default function ReportPage() {
          console.log('📊 Effect triggered:', {
        reportId,
        patientId,
-       reportType,
+       reportType: finalReportType,
+       toothId,
        lastProcessed: lastProcessedId.current,
        hasImageCard: !!imageCard
      });
@@ -67,19 +81,20 @@ export default function ReportPage() {
       return;
     }
 
-         console.log('🚀 Fetching new report:', reportId, 'Patient:', patientId, 'Type:', reportType);
+         console.log('🚀 Fetching new report:', reportId, 'Patient:', patientId, 'Type:', finalReportType);
      lastProcessedId.current = reportId;
 
     // Simple fetch without complex state management
-    fetchData(reportId).catch(error => {
+    const fetchId = finalReportType === 'toothSlice' ? toothId : reportId;
+    fetchData(fetchId).catch(error => {
       console.error('❌ Fetch failed:', error);
     });
 
-  }, [reportId, reportType, imageCard, fetchData]);
+  }, [reportId, finalReportType, toothId, imageCard, fetchData]);
 
   // Get appropriate loading message and icon based on report type
   const getLoadingConfig = () => {
-    switch (reportType) {
+    switch (finalReportType) {
       case 'pano':
         return { message: "Loading Panoramic Report...", icon: "🦷" };
       case 'threeDModel':
@@ -95,7 +110,7 @@ export default function ReportPage() {
 
   // Get appropriate error message based on report type
   const getErrorConfig = () => {
-    switch (reportType) {
+    switch (finalReportType) {
       case 'pano':
         return { title: "Failed to Load Panoramic Report", icon: "🦷" };
       case 'threeDModel':
@@ -111,7 +126,7 @@ export default function ReportPage() {
 
   // Get appropriate no data message based on report type
   const getNoDataConfig = () => {
-    switch (reportType) {
+    switch (finalReportType) {
       case 'pano':
         return { 
           title: "No Panoramic Report Data Available",
@@ -189,9 +204,9 @@ export default function ReportPage() {
          <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
            Patient ID: {patientId}
          </div>
-         <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
-           Type: {reportType}
-         </div>
+                 <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
+          Type: {finalReportType}
+        </div>
         <div className="flex gap-3 mt-4">
           <button 
             onClick={handleRetry}
@@ -214,11 +229,11 @@ export default function ReportPage() {
 
   // Success state
   if (hasData && data) {
-    console.log('✅ Rendering Dashboard with data, type:', detectedReportType || reportType);
+    console.log('✅ Rendering Dashboard with data, type:', detectedReportType || finalReportType);
     return (
       <div className="w-full max-h-full mx-auto max-w-[90%] sm:w-full">
         <Dashboard 
-          reportType={detectedReportType || reportType} 
+          reportType={detectedReportType || finalReportType} 
           reportData={data} 
         />
       </div>
@@ -226,7 +241,7 @@ export default function ReportPage() {
   }
 
   // Special handling for toothSlice - now it uses the unified data system
-  if (reportType === 'toothSlice') {
+  if (finalReportType === 'toothSlice') {
     // Import and render the ToothSlice component with unified data
     const ToothSliceComponent = React.lazy(() => import("./ToothSlice/[toothId]/page"));
     
@@ -274,9 +289,9 @@ export default function ReportPage() {
        <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
          Patient ID: {patientId}
        </div>
-       <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
-         Type: {reportType}
-       </div>
+               <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
+          Type: {finalReportType}
+        </div>
       <button 
         onClick={handleLoadReport}
         disabled={!imageCard}

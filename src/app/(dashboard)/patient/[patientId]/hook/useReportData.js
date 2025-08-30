@@ -14,9 +14,15 @@ async function fetchReportDataByPost(reportId, abortSignal) {
   const cleanReportId = String(reportId).trim();
   console.log('🔍 Fetching report:', cleanReportId);
 
-  // Extract patient ID from URL
-  const patientId = window.location.pathname.split('/')[2]; // Extract from /patient/[patientId]/
-  console.log('🔗 URL Parameters:', { patientId, reportId: cleanReportId });
+  // Extract patient ID and report ID from URL path
+  const pathSegments = window.location.pathname.split('/');
+  const patientId = pathSegments[2]; // Extract from /patient/[patientId]/
+  const reportIdFromPath = pathSegments[3]; // Extract from /[report_id]/
+  
+  // Use reportId from path if available, otherwise use the passed parameter
+  const finalReportId = reportIdFromPath || cleanReportId;
+  
+  console.log('🔗 URL Parameters:', { patientId, reportId: finalReportId, originalReportId: cleanReportId });
 
   try {
     const response = await fetch('http://localhost:5000/api/reports/get-data-with-json', {
@@ -27,7 +33,7 @@ async function fetchReportDataByPost(reportId, abortSignal) {
         'Accept': 'application/json',
       },
       body: JSON.stringify({ 
-        report_id: cleanReportId,
+        report_id: finalReportId,
         patient_id: patientId 
       }),
       signal: abortSignal // ← إضافة abort signal
