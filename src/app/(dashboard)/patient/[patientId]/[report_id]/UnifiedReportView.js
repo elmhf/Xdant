@@ -3,8 +3,8 @@ import React from "react";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Dashboard from '@/app/component/dashboard/dashboard';
-import { useReportData } from "./hook/useReportData";
-import { useToothSliceData } from "./hook/useToothSliceData";
+import { useReportData } from "../hook/useReportData";
+import { useToothSliceData } from "../hook/useToothSliceData";
 import useImageCard from "@/app/component/dashboard/main/ImageXRay/component/useImageCard";
 import ReportLoading from '@/app/component/utils/ReportLoading';
 
@@ -15,6 +15,7 @@ export default function UnifiedReportView() {
 
   // Extract report ID and type from params
   const reportId = params.panoReportid || params.threeDModelReportid || params.cbctReportid || params.toothId;
+  const patientId = params.patientId;
   const reportType = params.panoReportid ? 'pano' : 
                     params.threeDModelReportid ? 'threeDModel' : 
                     params.cbctReportid ? 'cbct' : 
@@ -48,12 +49,13 @@ export default function UnifiedReportView() {
 
   // Simple effect - only triggers on reportId change
   useEffect(() => {
-    console.log('📊 Effect triggered:', {
-      reportId,
-      reportType,
-      lastProcessed: lastProcessedId.current,
-      hasImageCard: !!imageCard
-    });
+         console.log('📊 Effect triggered:', {
+       reportId,
+       patientId,
+       reportType,
+       lastProcessed: lastProcessedId.current,
+       hasImageCard: !!imageCard
+     });
 
     // Skip if no reportId or same as last processed
     if (!reportId || reportId === lastProcessedId.current) {
@@ -66,8 +68,8 @@ export default function UnifiedReportView() {
       return;
     }
 
-    console.log('🚀 Fetching new report:', reportId, 'Type:', reportType);
-    lastProcessedId.current = reportId;
+         console.log('🚀 Fetching new report:', reportId, 'Patient:', patientId, 'Type:', reportType);
+     lastProcessedId.current = reportId;
 
     // Simple fetch without complex state management
     fetchData(reportId).catch(error => {
@@ -182,12 +184,15 @@ export default function UnifiedReportView() {
         <p className="text-red-500 text-center text-sm bg-red-50 p-3 rounded-lg">
           {error}
         </p>
-        <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
-          Report ID: {reportId}
-        </div>
-        <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
-          Type: {reportType}
-        </div>
+                 <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
+           Report ID: {reportId}
+         </div>
+         <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
+           Patient ID: {patientId}
+         </div>
+         <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
+           Type: {reportType}
+         </div>
         <div className="flex gap-3 mt-4">
           <button 
             onClick={handleRetry}
@@ -224,7 +229,7 @@ export default function UnifiedReportView() {
   // Special handling for toothSlice - now it uses the unified data system
   if (reportType === 'toothSlice') {
     // Import and render the ToothSlice component with unified data
-    const ToothSliceComponent = React.lazy(() => import('./ToothSlice/[toothId]/page'));
+    const ToothSliceComponent = React.lazy(() => import('../ToothSlice/[toothId]/page'));
     
     return (
       <div className="w-full max-h-full mx-auto max-w-[90%] sm:w-full">
@@ -264,12 +269,15 @@ export default function UnifiedReportView() {
           {description}
         </p>
       </div>
-      <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
-        Report ID: {reportId}
-      </div>
-      <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
-        Type: {reportType}
-      </div>
+             <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
+         Report ID: {reportId}
+       </div>
+       <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
+         Patient ID: {patientId}
+       </div>
+       <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
+         Type: {reportType}
+       </div>
       <button 
         onClick={handleLoadReport}
         disabled={!imageCard}

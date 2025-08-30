@@ -15,6 +15,13 @@ async function fetchToothSliceData(toothId, abortSignal) {
   const cleanToothId = String(toothId).trim();
   console.log('🦷 Fetching tooth slice data:', cleanToothId);
 
+  // Extract patient ID and report ID from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const patientId = window.location.pathname.split('/')[2]; // Extract from /patient/[patientId]/
+  const reportId = urlParams.get('reportId') || urlParams.get('report_id') || cleanToothId;
+  
+  console.log('🔗 URL Parameters:', { patientId, reportId, toothId: cleanToothId });
+
   try {
     // Use the same API endpoint as useReportData to get all data including slices
     const response = await fetch('http://localhost:5000/api/reports/get-data-with-json', {
@@ -24,7 +31,11 @@ async function fetchToothSliceData(toothId, abortSignal) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ report_id: cleanToothId }),
+      body: JSON.stringify({ 
+        report_id: reportId,
+        patient_id: patientId,
+        tooth_id: cleanToothId 
+      }),
       signal: abortSignal
     });
 

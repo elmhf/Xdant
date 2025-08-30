@@ -14,6 +14,10 @@ async function fetchReportDataByPost(reportId, abortSignal) {
   const cleanReportId = String(reportId).trim();
   console.log('🔍 Fetching report:', cleanReportId);
 
+  // Extract patient ID from URL
+  const patientId = window.location.pathname.split('/')[2]; // Extract from /patient/[patientId]/
+  console.log('🔗 URL Parameters:', { patientId, reportId: cleanReportId });
+
   try {
     const response = await fetch('http://localhost:5000/api/reports/get-data-with-json', {
       method: 'POST',
@@ -22,7 +26,10 @@ async function fetchReportDataByPost(reportId, abortSignal) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ report_id: cleanReportId }),
+      body: JSON.stringify({ 
+        report_id: cleanReportId,
+        patient_id: patientId 
+      }),
       signal: abortSignal // ← إضافة abort signal
     });
     console.log('responsekk',response)

@@ -35,7 +35,8 @@ Both hooks provide:
 
 ```
 [patientId]/
-├── UnifiedReportView.js          # Main unified component
+├── [report_id]/
+│   └── UnifiedReportView.js      # Main unified component
 ├── panoReport/[panoReportid]/
 │   └── page.js                   # Now imports UnifiedReportView
 ├── threeDModelReport/[threeDModelReportid]/
@@ -64,7 +65,7 @@ Each report page now simply imports and renders the unified component:
 
 ```javascript
 "use client";
-import UnifiedReportView from "../../UnifiedReportView";
+import UnifiedReportView from "../../[report_id]/UnifiedReportView";
 
 export default function PanoReportPage() {
   return <UnifiedReportView />;

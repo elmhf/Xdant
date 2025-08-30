@@ -1,5 +1,5 @@
 "use client";
-import UnifiedReportView from "../../UnifiedReportView";
+import UnifiedReportView from "../../[report_id]/UnifiedReportView";
 
 export default function PanoReportPage() {
   return <UnifiedReportView />;
