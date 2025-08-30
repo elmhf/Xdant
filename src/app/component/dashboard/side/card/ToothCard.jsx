@@ -21,7 +21,7 @@ import AddCommentDialog from './AddCommentDialog';
 import { Dialog as Modal, DialogTrigger as ModalTrigger, DialogContent as ModalContent } from "@/components/ui/dialog";
 import { useDentalStore } from '@/stores/dataStore';
 import { Badge } from "@/components/ui/badge";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const ToothDiagnosis = memo(({ idCard, setToothNumberSelect, isSelected, showImage, onToggleImage, showDiagnosisDetails, layoutKey }) => {
   const { applyLayout } = useLayout();
@@ -59,6 +59,7 @@ const ToothDiagnosis = memo(({ idCard, setToothNumberSelect, isSelected, showIma
   const [isReallyCompact, setIsReallyCompact] = useState(false);
   const [isExtraCompact, setIsExtraCompact] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const roots = tooth?.roots ?? 0;
   const canals = tooth?.canals ?? 0;
   const notes = (tooth?.notes || []).filter(n => n.text && n.text.trim() !== '');
@@ -292,8 +293,8 @@ const ToothDiagnosis = memo(({ idCard, setToothNumberSelect, isSelected, showIma
             size="sm"
             className="text-sm font-medium transition-all duration-150 px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center ml-2"
             onClick={() => {
-              console.log(router, "router.pathname");
-              router.push(`${router.pathname}/ToothSlice/${idCard}`);
+              console.log(pathname, "pathname");
+              router.push(`${pathname}/ToothSlice/${idCard}`);
             }}          >
             Slice
           </Button>
