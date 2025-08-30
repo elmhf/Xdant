@@ -36,40 +36,53 @@ Both hooks provide:
 ```
 [patientId]/
 ├── [report_id]/
-│   └── UnifiedReportView.js      # Main unified component
-├── panoReport/[panoReportid]/
-│   └── page.js                   # Now imports UnifiedReportView
-├── threeDModelReport/[threeDModelReportid]/
-│   └── page.js                   # Now imports UnifiedReportView
-├── cbctReport/[cbctReportid]/
-│   └── page.js                   # Now imports UnifiedReportView
+│   ├── page.js                   # Main unified component (handles all report types)
+│   └── UnifiedReportView.js      # Legacy component (for backward compatibility)
 ├── ToothSlice/[toothId]/
 │   ├── page.js                   # Tooth slice component (standalone)
 │   └── useSliceImage.js          # Tooth slice hooks
 └── hook/
-    └── useReportData.js          # Shared data fetching logic
+    ├── useReportData.js          # Shared data fetching logic
+    └── useToothSliceData.js      # Tooth slice data hook
 ```
 
 ## Benefits
 
-1. **Code Reusability**: Single component handles all report types
-2. **Maintainability**: Changes only need to be made in one place
-3. **Consistency**: All report types have the same behavior and UI patterns
-4. **Reduced Bundle Size**: Less duplicate code
-5. **Easier Testing**: Single component to test instead of multiple
-6. **Specialized Handling**: ToothSlice maintains its unique functionality while being part of the unified system
+1. **Simplified Routing**: Single route handles all report types instead of separate folders
+2. **Code Reusability**: Single component handles all report types
+3. **Maintainability**: Changes only need to be made in one place
+4. **Consistency**: All report types have the same behavior and UI patterns
+5. **Reduced Bundle Size**: Less duplicate code and fewer routes
+6. **Easier Testing**: Single component to test instead of multiple
+7. **Cleaner URLs**: More intuitive URL structure with query parameters
+8. **Specialized Handling**: ToothSlice maintains its unique functionality while being part of the unified system
 
 ## Usage
 
-Each report page now simply imports and renders the unified component:
+### New Direct Routing (Recommended)
 
-```javascript
-"use client";
-import UnifiedReportView from "../../[report_id]/UnifiedReportView";
+All reports now use direct routing to the `[report_id]` folder:
 
-export default function PanoReportPage() {
-  return <UnifiedReportView />;
-}
+```
+/patient/[patientId]/[report_id]?type=pano&id=abc123
+/patient/[patientId]/[report_id]?type=cbct&id=def456
+/patient/[patientId]/[report_id]?type=threeDModel&id=ghi789
+/patient/[patientId]/[report_id]?type=toothSlice&id=tooth123
+```
+
+### URL Structure
+
+- **Patient ID**: From URL path `/patient/[patientId]/`
+- **Report ID**: From URL path `/[report_id]`
+- **Report Type**: From query parameter `?type=pano|cbct|threeDModel|toothSlice`
+
+### Example URLs
+
+```
+/patient/123/report-456?type=pano
+/patient/123/report-789?type=cbct
+/patient/123/report-101?type=threeDModel
+/patient/123/tooth-5?type=toothSlice
 ```
 
 ## Configuration Functions
