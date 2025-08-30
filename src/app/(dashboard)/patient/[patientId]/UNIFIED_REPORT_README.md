@@ -64,10 +64,10 @@ Both hooks provide:
 All reports now use direct routing to the `[report_id]` folder:
 
 ```
-/patient/[patientId]/[report_id]?type=pano
-/patient/[patientId]/[report_id]?type=cbct
-/patient/[patientId]/[report_id]?type=threeDModel
-/patient/[patientId]/[report_id]?type=toothSlice&toothId=5
+/patient/[patientId]/[report_id]?type=pano&id=abc123
+/patient/[patientId]/[report_id]?type=cbct&id=def456
+/patient/[patientId]/[report_id]?type=threeDModel&id=ghi789
+/patient/[patientId]/[report_id]?type=toothSlice&id=tooth123
 ```
 
 ### URL Structure
@@ -75,7 +75,6 @@ All reports now use direct routing to the `[report_id]` folder:
 - **Patient ID**: From URL path `/patient/[patientId]/`
 - **Report ID**: From URL path `/[report_id]`
 - **Report Type**: From query parameter `?type=pano|cbct|threeDModel|toothSlice`
-- **Tooth ID**: From query parameter `?toothId=5` (for toothSlice type)
 
 ### Example URLs
 
@@ -83,7 +82,7 @@ All reports now use direct routing to the `[report_id]` folder:
 /patient/123/report-456?type=pano
 /patient/123/report-789?type=cbct
 /patient/123/report-101?type=threeDModel
-/patient/123/report-456?type=toothSlice&toothId=5
+/patient/123/tooth-5?type=toothSlice
 ```
 
 ## Configuration Functions
