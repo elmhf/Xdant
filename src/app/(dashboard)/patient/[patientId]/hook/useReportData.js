@@ -1,6 +1,7 @@
 // hooks/useReportData.js
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useDentalStore } from '@/stores/dataStore';
+import { useImageStore } from '@/app/(dashboard)/OrthogonalViews/stores/imageStore';
 
 // Simple cache for single report
 let singleReportCache = null;
@@ -30,11 +31,10 @@ async function fetchReportDataByPost(reportId, abortSignal) {
         report_id: cleanReportId,
         patient_id: patientId 
       }),
-      signal: abortSignal // ← إضافة abort signal
+      signal: abortSignal
     });
     console.log('responsekk',response)
     if (!response.ok) {
-      
       let errorMessage = `HTTP ${response.status}`;
       
       try {
@@ -51,7 +51,6 @@ async function fetchReportDataByPost(reportId, abortSignal) {
     console.log('✅ Data fetched successfully',data);
     return data;
   } catch (error) {
-    // تجاهل AbortError
     if (error.name === 'AbortError') {
       console.log('🚫 Request aborted');
       return null;
@@ -68,7 +67,6 @@ function detectReportType(reportData) {
     return 'unknown';
   }
 
-  // Check in multiple places for image URLs and data
   const places = [
     reportData.data,
     reportData.report, 
@@ -83,23 +81,19 @@ function detectReportType(reportData) {
     reportType: reportData.report?.report_type
   });
 
-  // Check each location for image URLs
   for (const dataToCheck of places) {
     if (!dataToCheck) continue;
 
-    // Check for pano image URL first
     if (dataToCheck.pano_image_url) {
       console.log('📋 Report type detected: PANO (found pano_image_url)');
       return 'pano';
     }
     
-    // Check for CBCT image URL
     if (dataToCheck.cbct_image_url) {
       console.log('📋 Report type detected: CBCT (found cbct_image_url)');
       return 'cbct';
     }
 
-    // Check for report_type field
     if (dataToCheck.report_type) {
       const reportType = String(dataToCheck.report_type).toLowerCase();
       console.log('📋 Report type detected:', reportType.toUpperCase(), '(from report_type field)');
@@ -108,7 +102,7 @@ function detectReportType(reportData) {
   }
 
   console.warn('⚠️ Unable to detect report type. Using default: cbct');
-  return 'cbct'; // default fallback
+  return 'cbct';
 }
 
 // Function to determine appropriate URL based on detected report type
@@ -121,7 +115,6 @@ function getReportUrl(reportData, detectedType) {
   const report = reportData.report;
   console.log('🔗 Getting URL for detected type:', detectedType?.toUpperCase());
 
-  // URL mapping based on detected report type
   const urlMap = {
     'pano': report.pano_image_url || report.report_url,
     'cbct': report.cbct_report_url || report.report_url,
@@ -183,17 +176,31 @@ function loadDataToStore(loadPatientData, data, reportId, source = 'fresh') {
 }
 
 /**
- * Hook with single report caching and automatic type detection
+ * Hook with single report caching, automatic type detection, and imageStore integration
  */
 export function useReportData(options = {}) {
   const { imageCard } = options;
   const { loadPatientData } = useDentalStore();
   
+  // ← إضافة imageStore hooks
+  const { 
+    setupFromReport,
+    reset: resetImageStore,
+    areAllViewsLoaded,
+    getViewLoading,
+    isViewLoaded,
+    loadAllViews
+  } = useImageStore();
+  
   const [state, setState] = useState({
     data: null,
     loading: false,
     error: null,
-    reportType: null
+    reportType: null,
+    // ← إضافة image loading states
+    imageLoading: false,
+    imageError: null,
+    imagesReady: false
   });
   
   const abortControllerRef = useRef(null);
@@ -226,6 +233,57 @@ export function useReportData(options = {}) {
     }
   }, [imageCard]);
 
+  // ← جديد: Handle CBCT images using imageStore
+  const handleCbctImages = useCallback(async (reportData) => {
+    if (!reportData) {
+      console.warn('⚠️ No report data for CBCT image handling');
+      return false;
+    }
+
+    console.log('🏥 Setting up CBCT images using imageStore...');
+    
+    // Update state to show image loading
+    setState(prev => ({
+      ...prev,
+      imageLoading: true,
+      imageError: null,
+      imagesReady: false
+    }));
+
+    try {
+      // Use setupFromReport to initialize imageStore
+      const result = await setupFromReport(reportData);
+      
+      if (result.success) {
+        console.log('✅ CBCT images setup successful');
+        
+        // Update state
+        setState(prev => ({
+          ...prev,
+          imageLoading: false,
+          imageError: null,
+          imagesReady: true
+        }));
+        
+        return true;
+      } else {
+        throw new Error(result.error || 'Failed to setup CBCT images');
+      }
+      
+    } catch (error) {
+      console.error('❌ Failed to setup CBCT images:', error);
+      
+      setState(prev => ({
+        ...prev,
+        imageLoading: false,
+        imageError: error.message,
+        imagesReady: false
+      }));
+      
+      return false;
+    }
+  }, [setupFromReport]);
+
   // Stable update state function
   const updateState = useCallback((newState) => {
     if (isMountedRef.current) {
@@ -233,7 +291,7 @@ export function useReportData(options = {}) {
     }
   }, []);
 
-  // Main data fetching function - مبسط أكثر
+  // Main data fetching function with imageStore integration
   const fetchData = useCallback(async (reportId, options = {}) => {
     const { forceRefresh = false } = options;
     console.log('🚀 fetchData called:', { reportId, forceRefresh, currentReport: currentReportRef.current });
@@ -249,7 +307,7 @@ export function useReportData(options = {}) {
       return state.data;
     }
     
-    // إذا كان تقرير جديد، نلغي الطلبات السابقة
+    // إذا كان تقرير جديد، نلغي الطلبات السابقة ونمسح imageStore
     if (currentReportRef.current !== reportId) {
       console.log('🔄 Different report detected, cleaning up');
       
@@ -257,6 +315,9 @@ export function useReportData(options = {}) {
         abortControllerRef.current.abort();
         abortControllerRef.current = null;
       }
+      
+      // ← Reset imageStore for new report
+      resetImageStore();
       
       lastProcessedUrlRef.current = null;
     }
@@ -279,13 +340,22 @@ export function useReportData(options = {}) {
           data: cachedData,
           loading: false,
           error: null,
-          reportType: cachedReportType
+          reportType: cachedReportType,
+          imageLoading: false,
+          imageError: null,
+          imagesReady: false
         });
 
-        // Process image URL from cache
-        const imageUrl = getImageUrl(cachedData, cachedReportType);
-        if (imageUrl) {
-          setTimeout(() => handleImageUrl(imageUrl), 100);
+        // Handle images based on report type
+        if (cachedReportType === 'cbct') {
+          // Use imageStore for CBCT
+          await handleCbctImages({ data: cachedData });
+        } else {
+          // Use imageCard for PANO
+          const imageUrl = getImageUrl(cachedData, cachedReportType);
+          if (imageUrl) {
+            setTimeout(() => handleImageUrl(imageUrl), 100);
+          }
         }
         
         return cachedData;
@@ -302,7 +372,10 @@ export function useReportData(options = {}) {
     updateState(prev => ({
       ...prev,
       loading: true,
-      error: null
+      error: null,
+      imageLoading: false,
+      imageError: null,
+      imagesReady: false
     }));
 
     // Create new abort controller
@@ -314,13 +387,11 @@ export function useReportData(options = {}) {
     try {
       const reportData = await fetchReportDataByPost(reportId, abortControllerRef.current.signal);
       
-      // Handle aborted request
       if (!reportData) {
         console.log('🚫 Request was aborted');
         return null;
       }
       
-      // Check if request is still current
       if (currentReportRef.current !== reportId || !isMountedRef.current) {
         console.log('🚫 Request obsolete or component unmounted');
         return null;
@@ -377,15 +448,26 @@ export function useReportData(options = {}) {
           data: fetchedData,
           loading: false,
           error: null,
-          reportType: detectedReportType
+          reportType: detectedReportType,
+          imageLoading: false,
+          imageError: null,
+          imagesReady: false
         });
 
-        // Process image URL
-        const imageUrl = getImageUrl(fetchedData, detectedReportType) || 
-                         getImageUrl(reportData?.report, detectedReportType);
-        
-        if (imageUrl) {
-          setTimeout(() => handleImageUrl(imageUrl), 100);
+        // ← Handle images based on report type
+        if (detectedReportType === 'cbct') {
+          // Use imageStore for CBCT images
+          console.log('🏥 Handling CBCT images with imageStore');
+          await handleCbctImages({ data: fetchedData });
+        } else {
+          // Use imageCard for PANO images
+          console.log('📸 Handling PANO image with imageCard');
+          const imageUrl = getImageUrl(fetchedData, detectedReportType) || 
+                           getImageUrl(reportData?.report, detectedReportType);
+          
+          if (imageUrl) {
+            setTimeout(() => handleImageUrl(imageUrl), 100);
+          }
         }
       }
 
@@ -404,20 +486,24 @@ export function useReportData(options = {}) {
           data: null,
           loading: false,
           error: error.message,
-          reportType: null
+          reportType: null,
+          imageLoading: false,
+          imageError: null,
+          imagesReady: false
         });
       }
       
       throw error;
     }
-  }, [loadPatientData, handleImageUrl, updateState]);
+  }, [loadPatientData, handleImageUrl, handleCbctImages, updateState, resetImageStore]);
 
   // Retry function
   const retry = useCallback((reportId) => {
     console.log('🔄 Retry requested, clearing cache');
     singleReportCache = null;
+    resetImageStore(); // ← Reset imageStore on retry
     return fetchData(reportId, { forceRefresh: true });
-  }, [fetchData]);
+  }, [fetchData, resetImageStore]);
 
   // Cancel current request
   const cancel = useCallback(() => {
@@ -432,10 +518,11 @@ export function useReportData(options = {}) {
   const clearCache = useCallback(() => {
     singleReportCache = null;
     lastProcessedUrlRef.current = null;
-    console.log('🗑️ Cache and URL tracking cleared');
-  }, []);
+    resetImageStore(); // ← Reset imageStore when clearing cache
+    console.log('🗑️ Cache, URL tracking, and imageStore cleared');
+  }, [resetImageStore]);
 
-  // Reset state and URL tracking - أبسط
+  // Reset state and URL tracking
   const reset = useCallback(() => {
     console.log('🔄 Resetting hook state');
     
@@ -449,18 +536,24 @@ export function useReportData(options = {}) {
     currentReportRef.current = null;
     lastProcessedUrlRef.current = null;
     
+    // ← Reset imageStore
+    resetImageStore();
+    
     // Reset state only if component is still mounted
     if (isMountedRef.current) {
       updateState({
         data: null,
         loading: false,
         error: null,
-        reportType: null
+        reportType: null,
+        imageLoading: false,
+        imageError: null,
+        imagesReady: false
       });
     }
-  }, [updateState]);
+  }, [updateState, resetImageStore]);
 
-  // Get cache information - مُحسن لتجنب re-renders
+  // Get cache information
   const getCacheInfo = useCallback(() => {
     if (singleReportCache) {
       return {
@@ -477,6 +570,29 @@ export function useReportData(options = {}) {
   const isReportType = useCallback((type) => {
     return state.reportType?.toLowerCase() === type?.toLowerCase();
   }, [state.reportType]);
+
+  // ← New: Get image loading status from imageStore
+  const getImageLoadingStatus = useCallback(() => {
+    if (state.reportType === 'cbct') {
+      return {
+        loading: state.imageLoading || getViewLoading('axial') || getViewLoading('coronal') || getViewLoading('sagittal'),
+        ready: state.imagesReady && areAllViewsLoaded(),
+        error: state.imageError,
+        axialLoaded: isViewLoaded('axial'),
+        coronalLoaded: isViewLoaded('coronal'),
+        sagittalLoaded: isViewLoaded('sagittal')
+      };
+    }
+    return {
+      loading: false,
+      ready: true,
+      error: null,
+      axialLoaded: false,
+      coronalLoaded: false,
+      sagittalLoaded: false
+    };
+  }, [state.reportType, state.imageLoading, state.imagesReady, state.imageError, 
+      getViewLoading, areAllViewsLoaded, isViewLoaded]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -496,6 +612,11 @@ export function useReportData(options = {}) {
     error: state.error,
     reportType: state.reportType,
     
+    // ← Image-related state
+    imageLoading: state.imageLoading,
+    imageError: state.imageError,
+    imagesReady: state.imagesReady,
+    
     // Actions
     fetchData,
     retry,
@@ -503,6 +624,7 @@ export function useReportData(options = {}) {
     clearCache,
     reset,
     handleImageUrl,
+    handleCbctImages, // ← New action
     
     // Helpers
     isLoading: state.loading,
@@ -512,6 +634,11 @@ export function useReportData(options = {}) {
     isPanoReport: isReportType('pano'),
     isCbctReport: isReportType('cbct'),
     isReportType,
+    getImageLoadingStatus, // ← New helper
+    
+    // ImageStore integration helpers
+    areImagesLoaded: areAllViewsLoaded,
+    loadAllImages: loadAllViews,
     
     // Debug
     getCacheInfo

@@ -10,15 +10,9 @@ const generateHash = async (text) => {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 80);
 };
 
-const generateCDNUrl = async (view, index, w = 700, q = 100) => {
-  const raw = `${view}-${index}-${w}-${q}-${SECRET_KEY}`;
-  const sig = await generateHash(raw);
-  return `http://localhost:5000/cdn-slice?view=${view}&index=${index}&w=${w}&q=${q}&s=${sig}`;
+const generateCDNUrl = async (view, index, basePath, w = 700, q = 100) => {
+  return `${basePath}/${view}/${index}`;
 };
-
-
-
-
 
 const loadImage = (url) => {
   return new Promise((resolve, reject) => {
@@ -30,9 +24,9 @@ const loadImage = (url) => {
   });
 };
 
-const fetchVoxelSizes = async () => {
+const fetchVoxelSizes = async (basePath) => {
   try {
-    const response = await fetch('http://localhost:5000/voxel-sizes');
+    const response = await fetch(`${basePath}/voxel-sizes`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data;
@@ -42,9 +36,9 @@ const fetchVoxelSizes = async () => {
   }
 };
 
-const fetchSlicesCount = async () => {
+const fetchSlicesCount = async (basePath) => {
   try {
-    const res = await fetch('http://localhost:5000/slices-count');
+    const res = await fetch(`${basePath}/slices-count`);
     if (!res.ok) throw new Error('Failed to fetch slice counts');
     return await res.json(); // { axial: ..., coronal: ..., sagittal: ... }
   } catch (err) {
@@ -54,6 +48,9 @@ const fetchSlicesCount = async () => {
 };
 
 export const useImageStore = create((set, get) => ({
+  // Base path configuration
+  basePath: 'http://localhost:5000',
+
   images: { axial: [], coronal: [], sagittal: [] },
   loading: { axial: false, coronal: false, sagittal: false },
   loadingCount: { axial: 0, coronal: 0, sagittal: 0 },
@@ -68,17 +65,27 @@ export const useImageStore = create((set, get) => ({
     error: null
   },
 
+  // Function to update base path
+  setBasePath: (newBasePath) => {
+    set({ basePath: newBasePath });
+  },
+
+  // Function to get current base path
+  getBasePath: () => get().basePath,
+
   setSliceCounts: (counts) => {
     set({ sliceCounts: counts });
   },
 
   loadVoxelSizes: async () => {
+    const { basePath } = get();
+    
     set(state => ({
       voxelSizes: { ...state.voxelSizes, loading: true, error: null }
     }));
 
     try {
-      const voxelData = await fetchVoxelSizes();
+      const voxelData = await fetchVoxelSizes(basePath);
       if (voxelData && voxelData.status === 'success') {
         set({
           voxelSizes: {
@@ -119,13 +126,16 @@ export const useImageStore = create((set, get) => ({
   },
 
   fetchSlicesCount: async () => {
-    const counts = await fetchSlicesCount();
+    const { basePath } = get();
+    const counts = await fetchSlicesCount(basePath);
     if (counts) get().setSliceCounts(counts);
     return counts;
   },
 
   loadViewImages: async (view, numSlices) => {
     const state = get();
+    const { basePath } = state;
+    
     if (state.loading[view]) return;
     if (state.images[view].length === numSlices && numSlices > 0) return;
 
@@ -138,7 +148,7 @@ export const useImageStore = create((set, get) => ({
     const imagePromises = [];
 
     for (let i = 0; i < numSlices; i++) {
-      const imagePromise = generateCDNUrl(view, i)
+      const imagePromise = generateCDNUrl(view, i, basePath)
         .then(url => loadImage(url))
         .then(img => ({ index: i, image: img }))
         .catch(error => {
@@ -201,8 +211,65 @@ export const useImageStore = create((set, get) => ({
     );
   },
 
+  // Setup function that takes report data and initializes everything
+  setupFromReport: async (reportData) => {
+    try {
+      const { data } = reportData;
+      
+      // Extract base path from report data_url
+      let newBasePath = get().basePath; // Keep current as default
+      if (data.report?.data_url) {
+        newBasePath = data.report.data_url;
+      }
+
+      // Extract voxel sizes from scan data
+      const voxelSizes = {
+        x_spacing_mm: data.scan?.dimensions?.x_spacing_mm || 1,
+        y_spacing_mm: data.scan?.dimensions?.y_spacing_mm || 1, 
+        z_spacing_mm: data.scan?.dimensions?.z_spacing_mm || 1,
+        unit: 'mm',
+        loading: false,
+        error: null
+      };
+
+      // Extract slice counts for each view
+      const sliceCounts = {
+        axial: data.scan?.dimensions?.axial_slices || 50,
+        coronal: data.scan?.dimensions?.coronal_slices || 50,
+        sagittal: data.scan?.dimensions?.sagittal_slices || 50
+      };
+
+      // Update the state with new values
+      set({
+        basePath: newBasePath,
+        voxelSizes,
+        sliceCounts,
+        // Reset images and loading states
+        images: { axial: [], coronal: [], sagittal: [] },
+        loading: { axial: false, coronal: false, sagittal: false },
+        loadingCount: { axial: 0, coronal: 0, sagittal: 0 }
+      });
+
+      // Start loading images for all views
+      const { loadViewImages } = get();
+      const imagePromises = Object.entries(sliceCounts).map(([view, count]) =>
+        loadViewImages(view, count)
+      );
+
+      await Promise.all(imagePromises);
+      
+      return { success: true, message: 'Setup completed successfully' };
+      
+    } catch (error) {
+      console.error('Error setting up from report:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
   reset: () => {
+    const { basePath } = get(); // Preserve basePath during reset
     set({
+      basePath, // Keep the current basePath
       images: { axial: [], coronal: [], sagittal: [] },
       loading: { axial: false, coronal: false, sagittal: false },
       loadingCount: { axial: 0, coronal: 0, sagittal: 0 },
