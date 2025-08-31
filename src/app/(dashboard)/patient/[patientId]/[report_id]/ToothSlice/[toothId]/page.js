@@ -9,7 +9,7 @@ import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import { useDentalSettings } from "@/app/component/dashboard/main/ImageXRay/component/CustomHook/useDentalSettings";
 import { useImageStore } from "@/app/(dashboard)/OrthogonalViews/stores/imageStore";
 import { useSliceRegion, useSliceImage } from "./useSliceImage";
-import { useToothSliceData } from "../../../hook/useToothSliceData";
+import { useReportData } from "../../../hook/useReportData";
 import { motion } from "framer-motion";
 
 // تحسين 1: تخزين مؤقت للمناطق العشوائية لتجنب إعادة توليدها
@@ -136,7 +136,7 @@ const SlicesSection = React.memo(({ view, count, start, end }) => {
 SlicesSection.displayName = 'SlicesSection';
 
 export default function ToothSlicePage() {
-  const { toothId } = useParams();
+  const { toothId, report_id } = useParams();
   const toothNumber = parseInt(toothId, 10);
   const stageRef = useRef(null);
   const [sliceRanges, setSliceRanges] = useState({
@@ -145,26 +145,29 @@ export default function ToothSlicePage() {
     sagittal: { start: 100, end: 129 }
   });
 
-  // Use the new unified tooth slice data hook
+  // Use the report data hook instead of tooth slice data
   const {
-    data: toothSliceData,
+    data: reportData,
     loading,
     error,
     fetchData,
     retry,
     clearCache,
     hasData,
-    hasError
-  } = useToothSliceData();
+    hasError,
+    reportType
+  } = useReportData();
 
-  const tooth = toothSliceData?.tooth || useDentalStore(state =>
+  const tooth = useDentalStore(state =>
     (state.data?.teeth || []).find(t => t.toothNumber === toothNumber)
   );
 
   const {
     getViewImages,
     loadAllViews,
-    sliceCounts
+    sliceCounts,
+    voxelSizes,
+    setupFromReport
   } = useImageStore();
 
   // Get slice counts from dental store if available
@@ -173,15 +176,25 @@ export default function ToothSlicePage() {
 
   const { settings, SettingChange, setSettings } = useDentalSettings();
 
-  // Use the unified hook for data fetching
+  // Fetch report data when component mounts
   useEffect(() => {
-    if (toothId && !hasData) {
-      console.log('🚀 Fetching tooth slice data for tooth:', toothId);
-      fetchData(toothId).catch(error => {
-        console.error('❌ Failed to fetch tooth slice data:', error);
+    if (report_id && !hasData) {
+      console.log('🚀 Fetching report data for report:', report_id);
+      fetchData(report_id).catch(error => {
+        console.error('❌ Failed to fetch report data:', error);
       });
     }
-  }, [toothId, hasData, fetchData]);
+  }, [report_id, hasData, fetchData]);
+
+  // Setup image store when report data is available
+  useEffect(() => {
+    if (reportData && hasData) {
+      console.log('🔄 Setting up image store with report data');
+      setupFromReport(reportData).catch(error => {
+        console.error('❌ Failed to setup image store:', error);
+      });
+    }
+  }, [reportData, hasData, setupFromReport]);
 
   // تحسين 13: تحسين context value
   const contextValue = useMemo(() => ({
@@ -209,7 +222,7 @@ export default function ToothSlicePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-          <p className="text-gray-600">Loading tooth slices...</p>
+          <p className="text-gray-600">Loading report data...</p>
         </div>
       </div>
     );
@@ -222,7 +235,7 @@ export default function ToothSlicePage() {
           <div className="text-red-500 text-lg mb-4">Error: {error}</div>
           <div className="flex gap-2 mt-4">
             <button 
-              onClick={() => retry(toothId)}
+              onClick={() => retry(report_id)}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               🔄 Try Again
@@ -291,6 +304,9 @@ export default function ToothSlicePage() {
           <div className="bg-white shadow rounded-lg p-4 flex flex-col items-center mb-2">
             {/* You can add controls or info for all 3 views here */}
             <span className="text-lg font-semibold text-gray-700">All Views Controls / Info</span>
+            {reportType && (
+              <span className="text-sm text-gray-500 mt-1">Report Type: {reportType.toUpperCase()}</span>
+            )}
           </div>
 
           
@@ -301,13 +317,13 @@ export default function ToothSlicePage() {
               const end = sliceRanges[view].end;
               const numSlices = end - start + 1;
               // Get slice thickness from voxelSizes in the store
-              const voxelSizes = useImageStore.getState().voxelSizes || dentalData?.voxelSizes || {};
+              const currentVoxelSizes = voxelSizes || dentalData?.voxelSizes || {};
               const sliceThickness =
                 view === 'axial'
-                  ? voxelSizes.z_spacing_mm || 1
+                  ? currentVoxelSizes.z_spacing_mm || 1
                   : view === 'coronal'
-                  ? voxelSizes.y_spacing_mm || 1
-                  : voxelSizes.x_spacing_mm || 1;
+                  ? currentVoxelSizes.y_spacing_mm || 1
+                  : currentVoxelSizes.x_spacing_mm || 1;
               const depthMM = (numSlices * sliceThickness).toFixed(2);
 
               return (
