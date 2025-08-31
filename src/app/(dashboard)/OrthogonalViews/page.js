@@ -63,27 +63,26 @@ export default function Page() {
 
 
   
-  // Load slice counts
+  // Load slice counts - removed fetchSlicesCount as data comes from report
   useEffect(() => {
-    const fetchSlicesCount = async () => {
+    const initializeViews = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/slices-count");
-        const data = await res.json();
-        console.log(data)
-        setNumSlicesAxial(data.axial || 1); // This line is removed as per the edit hint
-        setNumSlicesCoronal(data.coronal || 1); // This line is removed as per the edit hint
-        setNumSlicesSagittal(data.sagittal || 1); // This line is removed as per the edit hint
-        await loadAllViews(data);
+        // Use default slice counts or get from store
+        const defaultCounts = { axial: 200, coronal: 200, sagittal: 200 };
+        setNumSlicesAxial(defaultCounts.axial);
+        setNumSlicesCoronal(defaultCounts.coronal);
+        setNumSlicesSagittal(defaultCounts.sagittal);
+        await loadAllViews();
       } catch (err) {
-        console.error("Failed to fetch slice counts", err);
+        console.error("Failed to initialize views", err);
         setError("Failed to load slices.");
       } finally {
         setLoading(false);
       }
       console.log(getVoxelSizes())
     };
-    fetchSlicesCount();
+    initializeViews();
   }, [loadAllViews]);
 
   // Worker

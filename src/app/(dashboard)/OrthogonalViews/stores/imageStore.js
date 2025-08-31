@@ -37,16 +37,7 @@ const fetchVoxelSizes = async (basePath) => {
   }
 };
 
-const fetchSlicesCount = async (basePath) => {
-  try {
-    const res = await fetch(`${basePath}/slices-count`);
-    if (!res.ok) throw new Error('Failed to fetch slice counts');
-    return await res.json(); // { axial: ..., coronal: ..., sagittal: ... }
-  } catch (err) {
-    console.error("Error fetching slice counts:", err);
-    return null;
-  }
-};
+
 
 export const useImageStore = create((set, get) => ({
   // Base path configuration
@@ -126,12 +117,7 @@ export const useImageStore = create((set, get) => ({
     }
   },
 
-  fetchSlicesCount: async () => {
-    const { basePath } = get();
-    const counts = await fetchSlicesCount(basePath);
-    if (counts) get().setSliceCounts(counts);
-    return counts;
-  },
+
 
   loadViewImages: async (view, numSlices) => {
     const state = get();
@@ -182,14 +168,19 @@ export const useImageStore = create((set, get) => ({
   },
 
   loadAllViews: async () => {
-    const { fetchSlicesCount, loadViewImages, loadVoxelSizes } = get();
+    const { loadViewImages, loadVoxelSizes, sliceCounts } = get();
 
-    const counts = await fetchSlicesCount();
-    if (!counts) return;
+    // Use existing slice counts from state instead of fetching
+    if (!sliceCounts || Object.values(sliceCounts).every(count => count <= 1)) {
+      console.log('⚠️ No slice counts available, skipping loadAllViews');
+      return;
+    }
+
+    console.log('🔄 Loading all views with slice counts:', sliceCounts);
 
     const voxelPromise = loadVoxelSizes();
 
-    const imagePromises = Object.entries(counts).map(([view, count]) =>
+    const imagePromises = Object.entries(sliceCounts).map(([view, count]) =>
       loadViewImages(view, count)
     );
 
@@ -214,12 +205,13 @@ export const useImageStore = create((set, get) => ({
 
   // Setup function that takes report data and initializes everything
   setupFromReport: async (reportData) => {
-    console.log("✅ Data fetched successfully report data", reportData)
+    console.log("🔄 Setting up image store with report data:", reportData)
     try {
       // Extract base path from report data_url
       let newBasePath = get().basePath; // Keep current as default
       if (reportData?.data_url) {
         newBasePath = reportData.data_url;
+        console.log('🔗 Using data URL from report:', newBasePath);
       }
 
       // Extract voxel sizes from scan data
@@ -232,12 +224,16 @@ export const useImageStore = create((set, get) => ({
         error: null
       };
 
+      console.log('📏 Extracted voxel sizes from report:', voxelSizes);
+
       // Extract slice counts for each view
       const sliceCounts = {
         axial: reportData.scan?.dimensions?.axial_slices || 200,
         coronal: reportData.scan?.dimensions?.coronal_slices || 200,
         sagittal: reportData.scan?.dimensions?.sagittal_slices || 200
       };
+
+      console.log('📊 Extracted slice counts from report:', sliceCounts);
 
       // Update the state with new values
       set({
@@ -250,19 +246,22 @@ export const useImageStore = create((set, get) => ({
         loadingCount: { axial: 0, coronal: 0, sagittal: 0 }
       });
 
+      console.log('🏪 Updated image store state with new values');
+
       // Start loading images for all views
       const { loadViewImages } = get();
-      console.log("✅ Data fetched successfully report data","Start loading images for all views ")
+      console.log("✅ Starting to load images for all views with counts:", sliceCounts);
       const imagePromises = Object.entries(sliceCounts).map(([view, count]) =>
         loadViewImages(view, count)
       );
 
       await Promise.all(imagePromises);
       
+      console.log('✅ Setup completed successfully for all views');
       return { success: true, message: 'Setup completed successfully' };
       
     } catch (error) {
-      console.error('Error setting up from report:', error);
+      console.error('❌ Error setting up from report:', error);
       return { success: false, error: error.message };
     }
   },
