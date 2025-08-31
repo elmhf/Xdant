@@ -214,10 +214,8 @@ export const useImageStore = create((set, get) => ({
 
   // Setup function that takes report data and initializes everything
   setupFromReport: async (reportData) => {
-    console.log("✅ Data fetched successfully report data",reportData)
+    console.log("✅ Data fetched successfully report data", reportData)
     try {
-      const { reportData } = reportData;
-      console.log("✅ Data fetched successfully  data",data)
       // Extract base path from report data_url
       let newBasePath = get().basePath; // Keep current as default
       if (reportData?.data_url) {
@@ -226,9 +224,9 @@ export const useImageStore = create((set, get) => ({
 
       // Extract voxel sizes from scan data
       const voxelSizes = {
-        x_spacing_mm: data.scan?.dimensions?.x_spacing_mm || 1,
-        y_spacing_mm: data.scan?.dimensions?.y_spacing_mm || 1, 
-        z_spacing_mm: data.scan?.dimensions?.z_spacing_mm || 1,
+        x_spacing_mm: reportData.scan?.dimensions?.x_spacing_mm || 1,
+        y_spacing_mm: reportData.scan?.dimensions?.y_spacing_mm || 1, 
+        z_spacing_mm: reportData.scan?.dimensions?.z_spacing_mm || 1,
         unit: 'mm',
         loading: false,
         error: null
@@ -236,9 +234,9 @@ export const useImageStore = create((set, get) => ({
 
       // Extract slice counts for each view
       const sliceCounts = {
-        axial: data.scan?.dimensions?.axial_slices || 50,
-        coronal: data.scan?.dimensions?.coronal_slices || 50,
-        sagittal: data.scan?.dimensions?.sagittal_slices || 50
+        axial: reportData.scan?.dimensions?.axial_slices || 50,
+        coronal: reportData.scan?.dimensions?.coronal_slices || 50,
+        sagittal: reportData.scan?.dimensions?.sagittal_slices || 50
       };
 
       // Update the state with new values
