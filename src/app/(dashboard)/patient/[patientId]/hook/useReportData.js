@@ -56,7 +56,7 @@ async function fetchReportDataByPost(reportId, abortSignal) {
     const setupFromReport = useImageStore.getState().setupFromReport;
     if (setupFromReport) {
       console.log("✅ Data fetched successfully")
-      await setupFromReport(data);
+      await setupFromReport(data.report);
     }
     
     return data;

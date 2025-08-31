@@ -11,8 +11,8 @@ const generateHash = async (text) => {
 };
 
 const generateCDNUrl = async (view, index, basePath, w = 700, q = 100) => {
-  console.log("✅ Data fetched successfully path ",`${basePath}/${view}/${index}`)
-  return `${basePath}/${view}/${index}`;
+  console.log("✅ Data fetched successfully path ",`${basePath}${view}/${index}.jpg`)
+  return `${basePath}${view}/${index}.jpg`;
 };
 
 const loadImage = (url) => {
