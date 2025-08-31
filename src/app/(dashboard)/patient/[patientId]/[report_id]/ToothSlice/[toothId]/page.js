@@ -47,11 +47,26 @@ const CroppedSlice = React.memo(({ view, index }) => {
 
   useEffect(() => {
     if (img && img.width && img.height && !region) {
+      console.log(`🎯 Setting region for ${view} slice ${index}, image size: ${img.width}x${img.height}`);
       setRegion(getRandomRegion(img.width, img.height));
     }
-  }, [img, region]);
+  }, [img, region, view, index]);
 
-  const croppedUrl = useSliceRegion(view, index, region);
+  // Show loading state if no image yet
+  if (!img) {
+    return (
+      <div className="flex flex-col items-center">
+        <div
+          style={{ width: 140, height: displayHeight }}
+          className="border-3 overflow-hidden relative rounded-[0.5vw] bg-gradient-to-r from-gray-100 to-gray-200 animate-pulse flex items-center justify-center"
+        >
+          <div className="text-gray-400 text-xs">Loading image...</div>
+        </div>
+      </div>
+    );
+  }
+
+  const { croppedUrl, isLoading } = useSliceRegion(view, index, region);
 
   // تحسين 5: تحسين حسابات الأبعاد
   const displayHeight = 140;
@@ -60,6 +75,20 @@ const CroppedSlice = React.memo(({ view, index }) => {
       ? Math.round(displayHeight * (region.width / region.height))
       : 140;
   }, [region, displayHeight]);
+
+  // Show loading state if no region yet
+  if (!region) {
+    return (
+      <div className="flex flex-col items-center">
+        <div
+          style={{ width: 140, height: displayHeight }}
+          className="border-3 overflow-hidden relative rounded-[0.5vw] bg-gradient-to-r from-gray-100 to-gray-200 animate-pulse flex items-center justify-center"
+        >
+          <div className="text-gray-400 text-xs">Setting region...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -84,7 +113,7 @@ const CroppedSlice = React.memo(({ view, index }) => {
           </span>
         </span>
         
-        {croppedUrl ? (
+        {croppedUrl && !isLoading ? (
           <img
             src={croppedUrl}
             alt={`${view} Slice ${index}`}
@@ -92,6 +121,7 @@ const CroppedSlice = React.memo(({ view, index }) => {
             loading="lazy" // تحسين 7: Lazy loading للصور
             onError={(e) => {
               // تحسين 8: معالجة أخطاء تحميل الصور
+              console.error('Failed to load cropped image:', e);
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'block';
             }}
@@ -101,11 +131,13 @@ const CroppedSlice = React.memo(({ view, index }) => {
         {/* تحسين 9: تحسين Placeholder */}
         <div
           className={`w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 animate-pulse rounded flex items-center justify-center ${
-            croppedUrl ? 'hidden' : 'block'
+            croppedUrl && !isLoading ? 'hidden' : 'block'
           }`}
           style={{ width: displayWidth, height: displayHeight }}
         >
-          <div className="text-gray-400 text-xs">Loading...</div>
+          <div className="text-gray-400 text-xs">
+            {isLoading ? 'Processing...' : croppedUrl ? 'Loading...' : 'No image available'}
+          </div>
         </div>
       </div>
     </div>
@@ -196,6 +228,16 @@ export default function ToothSlicePage() {
     }
   }, [reportData, hasData, setupFromReport]);
 
+  // Auto-load all views when slice counts are available
+  useEffect(() => {
+    if (Object.values(sliceCounts).some(count => count > 1)) {
+      console.log('🔄 Auto-loading all views with slice counts:', sliceCounts);
+      loadAllViews().catch(error => {
+        console.error('❌ Failed to load all views:', error);
+      });
+    }
+  }, [sliceCounts, loadAllViews]);
+
   // تحسين 13: تحسين context value
   const contextValue = useMemo(() => ({
     data: {},
@@ -254,6 +296,23 @@ export default function ToothSlicePage() {
     );
   }
 
+  // Show loading state if no data yet
+  if (!hasData && !loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-gray-500 text-lg mb-4">No report data available</div>
+          <button 
+            onClick={() => fetchData(report_id)}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            🔄 Load Report Data
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DataContext.Provider value={contextValue}>
       <motion.div 
@@ -272,9 +331,10 @@ export default function ToothSlicePage() {
             {tooth ? (
               <ToothDiagnosis idCard={toothNumber} showDiagnosisDetails={true} />
             ) : (
-              <div className="text-red-500 bg-red-50 p-4 rounded-lg border border-red-200">
-                <strong>Tooth not found</strong>
-                <p className="text-sm mt-1">Tooth number {toothNumber} could not be found in the system.</p>
+              <div className="text-yellow-600 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <strong>Tooth data not loaded</strong>
+                <p className="text-sm mt-1">Tooth number {toothNumber} data is being loaded from report...</p>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-500 mt-2"></div>
               </div>
             )}
           </motion.div>
@@ -333,16 +393,26 @@ export default function ToothSlicePage() {
                 </div>
                   <div className="flex gap-4 items-center text-sm mb-2">
                     <span>Slices: <strong>{numSlices}</strong> </span>
-                    <span>Slice Thickness <strong>{sliceThickness} mm:</strong></span>
-                    <span>Tooth Depth:<strong> {depthMM} mm</strong></span>
+                    <span>Slice Thickness <strong>{sliceThickness} mm</strong></span>
+                    <span>Tooth Depth: <strong>{depthMM} mm</strong></span>
+                    {sliceCounts[view] === 0 && (
+                      <span className="text-yellow-600 text-xs">⚠️ Loading slices...</span>
+                    )}
                   </div>
   
-                  <SlicesSection
-                    view={view}
-                    count={sliceCounts[view] || storeSliceCounts[view] || 1}
-                    start={start}
-                    end={end}
-                  />
+                  {sliceCounts[view] > 0 ? (
+                    <SlicesSection
+                      view={view}
+                      count={sliceCounts[view] || storeSliceCounts[view] || 1}
+                      start={start}
+                      end={end}
+                    />
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                      <p>Loading {view} slices...</p>
+                    </div>
+                  )}
                 </div>
               );
             })}
