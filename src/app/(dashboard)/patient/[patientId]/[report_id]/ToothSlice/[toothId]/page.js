@@ -140,9 +140,9 @@ export default function ToothSlicePage() {
   const toothNumber = parseInt(toothId, 10);
   const stageRef = useRef(null);
   const [sliceRanges, setSliceRanges] = useState({
-    axial: { start: 50, end: 70 },
-    coronal: { start: 20, end: 59 },
-    sagittal: { start: 100, end: 129 }
+    axial: { start: 0, end: 200 },
+    coronal: { start: 0, end: 200 },
+    sagittal: { start: 0, end: 200 }
   });
 
   // Use the report data hook instead of tooth slice data

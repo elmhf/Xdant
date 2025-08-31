@@ -234,9 +234,9 @@ export const useImageStore = create((set, get) => ({
 
       // Extract slice counts for each view
       const sliceCounts = {
-        axial: reportData.scan?.dimensions?.axial_slices || 50,
-        coronal: reportData.scan?.dimensions?.coronal_slices || 50,
-        sagittal: reportData.scan?.dimensions?.sagittal_slices || 50
+        axial: reportData.scan?.dimensions?.axial_slices || 200,
+        coronal: reportData.scan?.dimensions?.coronal_slices || 200,
+        sagittal: reportData.scan?.dimensions?.sagittal_slices || 200
       };
 
       // Update the state with new values
