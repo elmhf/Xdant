@@ -25,20 +25,6 @@ const loadImage = (url) => {
   });
 };
 
-const fetchVoxelSizes = async (basePath) => {
-  try {
-    const response = await fetch(`${basePath}/voxel-sizes`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching voxel sizes:', error);
-    return null;
-  }
-};
-
-
-
 export const useImageStore = create((set, get) => ({
   // Base path configuration
   basePath: 'http://localhost:5000',
@@ -69,36 +55,6 @@ export const useImageStore = create((set, get) => ({
     set({ sliceCounts: counts });
   },
 
-  loadVoxelSizes: async () => {
-    const { basePath } = get();
-    
-    set(state => ({
-      voxelSizes: { ...state.voxelSizes, loading: true, error: null }
-    }));
-
-    try {
-      const voxelData = await fetchVoxelSizes(basePath);
-      if (voxelData && voxelData.status === 'success') {
-        set({
-          voxelSizes: {
-            x_spacing_mm: voxelData.x_spacing_mm,
-            y_spacing_mm: voxelData.y_spacing_mm,
-            z_spacing_mm: voxelData.z_spacing_mm,
-            unit: voxelData.unit,
-            loading: false,
-            error: null
-          }
-        });
-      } else {
-        throw new Error('Failed to fetch voxel sizes');
-      }
-    } catch (error) {
-      set(state => ({
-        voxelSizes: { ...state.voxelSizes, loading: false, error: error.message }
-      }));
-    }
-  },
-
   getVoxelSizes: () => get().voxelSizes,
 
   calculateRealSize: (pixelSize, view) => {
@@ -116,8 +72,6 @@ export const useImageStore = create((set, get) => ({
         return pixelSize;
     }
   },
-
-
 
   loadViewImages: async (view, numSlices) => {
     const state = get();
@@ -168,9 +122,9 @@ export const useImageStore = create((set, get) => ({
   },
 
   loadAllViews: async () => {
-    const { loadViewImages, loadVoxelSizes, sliceCounts } = get();
+    const { loadViewImages, sliceCounts } = get();
 
-    // Use existing slice counts from state instead of fetching
+    // Use existing slice counts from state
     if (!sliceCounts || Object.values(sliceCounts).every(count => count <= 1)) {
       console.log('⚠️ No slice counts available, skipping loadAllViews');
       return;
@@ -178,13 +132,11 @@ export const useImageStore = create((set, get) => ({
 
     console.log('🔄 Loading all views with slice counts:', sliceCounts);
 
-    const voxelPromise = loadVoxelSizes();
-
     const imagePromises = Object.entries(sliceCounts).map(([view, count]) =>
       loadViewImages(view, count)
     );
 
-    await Promise.all([voxelPromise, ...imagePromises]);
+    await Promise.all(imagePromises);
   },
 
   getViewImages: (view) => get().images[view] || [],
