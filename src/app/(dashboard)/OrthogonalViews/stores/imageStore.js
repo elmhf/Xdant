@@ -11,6 +11,7 @@ const generateHash = async (text) => {
 };
 
 const generateCDNUrl = async (view, index, basePath, w = 700, q = 100) => {
+  console.log("✅ Data fetched successfully path ",`${basePath}/${view}/${index}`)
   return `${basePath}/${view}/${index}`;
 };
 
@@ -213,13 +214,14 @@ export const useImageStore = create((set, get) => ({
 
   // Setup function that takes report data and initializes everything
   setupFromReport: async (reportData) => {
+    console.log("✅ Data fetched successfully report data",reportData)
     try {
-      const { data } = reportData;
-      
+      const { reportData } = reportData;
+      console.log("✅ Data fetched successfully  data",data)
       // Extract base path from report data_url
       let newBasePath = get().basePath; // Keep current as default
-      if (data.report?.data_url) {
-        newBasePath = data.report.data_url;
+      if (reportData?.data_url) {
+        newBasePath = reportData.data_url;
       }
 
       // Extract voxel sizes from scan data
@@ -252,6 +254,7 @@ export const useImageStore = create((set, get) => ({
 
       // Start loading images for all views
       const { loadViewImages } = get();
+      console.log("✅ Data fetched successfully report data","Start loading images for all views ")
       const imagePromises = Object.entries(sliceCounts).map(([view, count]) =>
         loadViewImages(view, count)
       );
