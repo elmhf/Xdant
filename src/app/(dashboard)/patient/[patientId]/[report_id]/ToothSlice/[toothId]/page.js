@@ -45,6 +45,14 @@ const CroppedSlice = React.memo(({ view, index }) => {
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
+  // تحسين 5: تحسين حسابات الأبعاد - تعريف displayHeight أولاً
+  const displayHeight = 140;
+  const displayWidth = useMemo(() => {
+    return region
+      ? Math.round(displayHeight * (region.width / region.height))
+      : 140;
+  }, [region, displayHeight]);
+
   useEffect(() => {
     if (img && img.width && img.height && !region) {
       console.log(`🎯 Setting region for ${view} slice ${index}, image size: ${img.width}x${img.height}`);
@@ -67,14 +75,6 @@ const CroppedSlice = React.memo(({ view, index }) => {
   }
 
   const { croppedUrl, isLoading } = useSliceRegion(view, index, region);
-
-  // تحسين 5: تحسين حسابات الأبعاد
-  const displayHeight = 140;
-  const displayWidth = useMemo(() => {
-    return region
-      ? Math.round(displayHeight * (region.width / region.height))
-      : 140;
-  }, [region, displayHeight]);
 
   // Show loading state if no region yet
   if (!region) {
