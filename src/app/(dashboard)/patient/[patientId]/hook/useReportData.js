@@ -197,6 +197,170 @@ function loadDataToStore(loadPatientData, data, reportId, source = 'fresh') {
   }
 }
 
+// Function to get slice ranges for a specific tooth and view
+function getToothSliceRanges(data, toothNumber, view = null) {
+  if (!data || !toothNumber) {
+    console.warn('⚠️ Missing data or toothNumber for slice ranges');
+    return null;
+  }
+
+  // Find the tooth in the teeth array
+  const tooth = findToothByNumber(data, toothNumber);
+  
+  if (!tooth) {
+    console.warn(`⚠️ Tooth ${toothNumber} not found in data`);
+    return null;
+  }
+
+  if (!tooth.sliceRanges) {
+    console.warn(`⚠️ No slice ranges found for tooth ${toothNumber}`);
+    return null;
+  }
+
+  // If specific view is requested, return only that view
+  if (view) {
+    const normalizedView = view.toLowerCase();
+    const validViews = ['axial', 'sagittal', 'coronal'];
+    
+    if (!validViews.includes(normalizedView)) {
+      console.warn(`⚠️ Invalid view '${view}'. Valid views: ${validViews.join(', ')}`);
+      return null;
+    }
+
+    const sliceRange = tooth.sliceRanges[normalizedView];
+    if (!sliceRange) {
+      console.warn(`⚠️ No ${normalizedView} slice range found for tooth ${toothNumber}`);
+      return null;
+    }
+
+    console.log(`📍 Slice range for tooth ${toothNumber} (${normalizedView}):`, sliceRange);
+    return {
+      view: normalizedView,
+      start: sliceRange.start,
+      end: sliceRange.end,
+      range: sliceRange.end - sliceRange.start + 1
+    };
+  }
+
+  // Return all available slice ranges
+  console.log(`📍 All slice ranges for tooth ${toothNumber}:`, tooth.sliceRanges);
+  return tooth.sliceRanges;
+}
+
+// Function to get all slice ranges for all teeth
+function getAllTeethSliceRanges(data, view = null) {
+  if (!data) {
+    console.warn('⚠️ No data provided for getAllTeethSliceRanges');
+    return {};
+  }
+
+  const teeth = findAllTeeth(data);
+  if (!teeth || teeth.length === 0) {
+    console.warn('⚠️ No teeth found in data');
+    return {};
+  }
+
+  const allRanges = {};
+
+  teeth.forEach(tooth => {
+    if (!tooth.toothNumber) return;
+    
+    const ranges = getToothSliceRanges(data, tooth.toothNumber, view);
+    if (ranges) {
+      allRanges[tooth.toothNumber] = ranges;
+    }
+  });
+
+  console.log(`📍 Slice ranges for all teeth${view ? ` (${view} view)` : ''}:`, allRanges);
+  return allRanges;
+}
+
+// Function to find tooth by number in data
+function findToothByNumber(data, toothNumber) {
+  if (!data || !toothNumber) return null;
+
+  // Check in multiple possible locations
+  const places = [
+    data.teeth,
+    data.data?.teeth,
+    data.report?.teeth,
+    data.fetchedData?.teeth
+  ];
+
+  for (const teethArray of places) {
+    if (Array.isArray(teethArray)) {
+      const tooth = teethArray.find(t => t.toothNumber === toothNumber || String(t.toothNumber) === String(toothNumber));
+      if (tooth) {
+        return tooth;
+      }
+    }
+  }
+
+  return null;
+}
+
+// Function to find all teeth in data
+function findAllTeeth(data) {
+  if (!data) return [];
+
+  // Check in multiple possible locations
+  const places = [
+    data.teeth,
+    data.data?.teeth,
+    data.report?.teeth,
+    data.fetchedData?.teeth
+  ];
+
+  for (const teethArray of places) {
+    if (Array.isArray(teethArray) && teethArray.length > 0) {
+      return teethArray;
+    }
+  }
+
+  return [];
+}
+
+// Function to get slice range boundaries for a view
+function getViewSliceBoundaries(data, view) {
+  if (!data || !view) return null;
+
+  const allRanges = getAllTeethSliceRanges(data, view);
+  const ranges = Object.values(allRanges);
+  
+  if (ranges.length === 0) return null;
+
+  const starts = ranges.map(r => r.start);
+  const ends = ranges.map(r => r.end);
+
+  return {
+    view: view.toLowerCase(),
+    minStart: Math.min(...starts),
+    maxEnd: Math.max(...ends),
+    totalRange: Math.max(...ends) - Math.min(...starts) + 1,
+    teethCount: ranges.length
+  };
+}
+
+// Function to check if a slice number is within any tooth's range for a view
+function isSliceInToothRange(data, sliceNumber, view) {
+  if (!data || typeof sliceNumber !== 'number' || !view) return [];
+
+  const allRanges = getAllTeethSliceRanges(data, view);
+  const matchingTeeth = [];
+
+  Object.entries(allRanges).forEach(([toothNumber, range]) => {
+    if (sliceNumber >= range.start && sliceNumber <= range.end) {
+      matchingTeeth.push({
+        toothNumber: parseInt(toothNumber),
+        range: range,
+        relativePosition: sliceNumber - range.start + 1
+      });
+    }
+  });
+
+  return matchingTeeth;
+}
+
 /**
  * Hook with single report caching and automatic type detection
  */
@@ -252,6 +416,31 @@ export function useReportData(options = {}) {
       });
     }
   }, []);
+
+  // Slice range functions
+  const getToothSliceRange = useCallback((toothNumber, view = null) => {
+    return getToothSliceRanges(state.data, toothNumber, view);
+  }, [state.data]);
+
+  const getAllSliceRanges = useCallback((view = null) => {
+    return getAllTeethSliceRanges(state.data, view);
+  }, [state.data]);
+
+  const getSliceBoundaries = useCallback((view) => {
+    return getViewSliceBoundaries(state.data, view);
+  }, [state.data]);
+
+  const findTeethInSlice = useCallback((sliceNumber, view) => {
+    return isSliceInToothRange(state.data, sliceNumber, view);
+  }, [state.data]);
+
+  const getTooth = useCallback((toothNumber) => {
+    return findToothByNumber(state.data, toothNumber);
+  }, [state.data]);
+
+  const getAllTeeth = useCallback(() => {
+    return findAllTeeth(state.data);
+  }, [state.data]);
 
   // Main data fetching function
   const fetchData = useCallback(async (reportId, options = {}) => {
@@ -523,6 +712,14 @@ export function useReportData(options = {}) {
     clearCache,
     reset,
     handleImageUrl,
+    
+    // Slice Range Functions
+    getToothSliceRange,
+    getAllSliceRanges,
+    getSliceBoundaries,
+    findTeethInSlice,
+    getTooth,
+    getAllTeeth,
     
     // Helpers
     isLoading: state.loading,

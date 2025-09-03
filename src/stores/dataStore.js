@@ -220,6 +220,11 @@ export const useDentalStore = create(
               position: tooth.position ? { ...tooth.position } : { x: 0, y: 0 },
               boundingBox: tooth.boundingBox ? [...tooth.boundingBox] : [],
               teeth_mask: tooth.teeth_mask ? [...tooth.teeth_mask] : [],
+              sliceRanges: tooth.sliceRanges ? {
+                axial: tooth.sliceRanges.axial ? { ...tooth.sliceRanges.axial } : null,
+                sagittal: tooth.sliceRanges.sagittal ? { ...tooth.sliceRanges.sagittal } : null,
+                coronal: tooth.sliceRanges.coronal ? { ...tooth.sliceRanges.coronal } : null
+              } : null,
               problems: tooth.problems ? tooth.problems.map(problem => ({
                 ...problem,
                 mask: problem.mask ? [...problem.mask] : [],
@@ -345,6 +350,210 @@ export const useDentalStore = create(
           });
         }
       },
+
+      // === دوال Slice Ranges الجديدة ===
+
+      // الحصول على slice ranges لسن معين
+      getToothSliceRanges: (toothNumber, view = null) => {
+        const tooth = get().getToothByNumber(toothNumber);
+        
+        if (!tooth || !tooth.sliceRanges) {
+          console.warn(`No slice ranges found for tooth ${toothNumber}`);
+          return null;
+        }
+
+        // إذا تم تحديد view معين
+        if (view) {
+          const normalizedView = view.toLowerCase();
+          const validViews = ['axial', 'sagittal', 'coronal'];
+          
+          if (!validViews.includes(normalizedView)) {
+            console.warn(`Invalid view '${view}'. Valid views: ${validViews.join(', ')}`);
+            return null;
+          }
+
+          const sliceRange = tooth.sliceRanges[normalizedView];
+          if (!sliceRange) {
+            console.warn(`No ${normalizedView} slice range found for tooth ${toothNumber}`);
+            return null;
+          }
+
+          return {
+            view: normalizedView,
+            start: sliceRange.start,
+            end: sliceRange.end,
+            range: sliceRange.end - sliceRange.start + 1
+          };
+        }
+
+        // إرجاع جميع الـ views
+        return tooth.sliceRanges;
+      },
+
+      // الحصول على slice ranges لجميع الأسنان
+      getAllTeethSliceRanges: (view = null) => {
+        const teeth = get().data.teeth;
+        if (!teeth || teeth.length === 0) {
+          console.warn('No teeth found in data');
+          return {};
+        }
+
+        const allRanges = {};
+
+        teeth.forEach(tooth => {
+          if (!tooth.toothNumber || !tooth.sliceRanges) return;
+          
+          const ranges = get().getToothSliceRanges(tooth.toothNumber, view);
+          if (ranges) {
+            allRanges[tooth.toothNumber] = ranges;
+          }
+        });
+
+        return allRanges;
+      },
+
+      // الحصول على الحدود العامة للـ slices في view معين
+      getViewSliceBoundaries: (view) => {
+        if (!view) return null;
+
+        const allRanges = get().getAllTeethSliceRanges(view);
+        const ranges = Object.values(allRanges);
+        
+        if (ranges.length === 0) return null;
+
+        const starts = ranges.map(r => r.start);
+        const ends = ranges.map(r => r.end);
+
+        return {
+          view: view.toLowerCase(),
+          minStart: Math.min(...starts),
+          maxEnd: Math.max(...ends),
+          totalRange: Math.max(...ends) - Math.min(...starts) + 1,
+          teethCount: ranges.length
+        };
+      },
+
+      // البحث عن الأسنان الموجودة في slice معين
+      findTeethInSlice: (sliceNumber, view) => {
+        if (typeof sliceNumber !== 'number' || !view) return [];
+
+        const allRanges = get().getAllTeethSliceRanges(view);
+        const matchingTeeth = [];
+
+        Object.entries(allRanges).forEach(([toothNumber, range]) => {
+          if (sliceNumber >= range.start && sliceNumber <= range.end) {
+            matchingTeeth.push({
+              toothNumber: parseInt(toothNumber),
+              range: range,
+              relativePosition: sliceNumber - range.start + 1
+            });
+          }
+        });
+
+        return matchingTeeth;
+      },
+
+      // تحديث slice ranges لسن معين
+      updateToothSliceRanges: (toothNumber, sliceRanges) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+        
+        if (toothIndex !== -1) {
+          currentData.teeth[toothIndex].sliceRanges = {
+            ...currentData.teeth[toothIndex].sliceRanges,
+            ...sliceRanges
+          };
+          
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+          
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
+        }
+      },
+
+      // تحديث slice range لـ view معين لسن معين
+      updateToothViewSliceRange: (toothNumber, view, rangeData) => {
+        const normalizedView = view.toLowerCase();
+        const validViews = ['axial', 'sagittal', 'coronal'];
+        
+        if (!validViews.includes(normalizedView)) {
+          console.warn(`Invalid view '${view}'. Valid views: ${validViews.join(', ')}`);
+          return;
+        }
+
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+        
+        if (toothIndex !== -1) {
+          if (!currentData.teeth[toothIndex].sliceRanges) {
+            currentData.teeth[toothIndex].sliceRanges = {};
+          }
+          
+          currentData.teeth[toothIndex].sliceRanges[normalizedView] = {
+            start: rangeData.start,
+            end: rangeData.end
+          };
+          
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+          
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
+        }
+      },
+
+      // الحصول على إحصائيات الـ slice ranges
+      getSliceRangesStatistics: () => {
+        const teeth = get().data.teeth;
+        if (!teeth || teeth.length === 0) return null;
+
+        const stats = {
+          totalTeeth: teeth.length,
+          teethWithSliceRanges: 0,
+          viewsAvailable: {
+            axial: 0,
+            sagittal: 0,
+            coronal: 0
+          },
+          rangesByView: {
+            axial: { min: null, max: null, total: 0 },
+            sagittal: { min: null, max: null, total: 0 },
+            coronal: { min: null, max: null, total: 0 }
+          }
+        };
+
+        teeth.forEach(tooth => {
+          if (tooth.sliceRanges) {
+            stats.teethWithSliceRanges++;
+
+            ['axial', 'sagittal', 'coronal'].forEach(view => {
+              if (tooth.sliceRanges[view]) {
+                stats.viewsAvailable[view]++;
+                
+                const range = tooth.sliceRanges[view];
+                const currentStats = stats.rangesByView[view];
+                
+                if (currentStats.min === null || range.start < currentStats.min) {
+                  currentStats.min = range.start;
+                }
+                if (currentStats.max === null || range.end > currentStats.max) {
+                  currentStats.max = range.end;
+                }
+                currentStats.total += (range.end - range.start + 1);
+              }
+            });
+          }
+        });
+
+        return stats;
+      },
+
+      // === نهاية دوال Slice Ranges ===
 
       // إدارة خطط العلاج
       addTreatmentPlan: (newPlan) => {

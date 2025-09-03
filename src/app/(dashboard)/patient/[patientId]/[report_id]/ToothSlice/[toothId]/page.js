@@ -152,7 +152,7 @@ const CroppedSlice = React.memo(({ view, index }) => {
 CroppedSlice.displayName = 'CroppedSlice';
 
 // تحسين 10: تحسين مكون SlicesSection
-const SlicesSection = React.memo(({ view, count, start, end }) => {
+const SlicesSection = React.memo(({ view, count, start, end, toothNumber, onRangeChange }) => {
   return (
     <motion.div 
       className="mb-6"
@@ -160,6 +160,7 @@ const SlicesSection = React.memo(({ view, count, start, end }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+
       <div className="flex flex-wrap">
         {Array.from({ length: end - start + 1 }).map((_, idx) => (
           <CroppedSlice key={`${view}-${start + idx}`} view={view} index={start + idx} />
@@ -175,10 +176,30 @@ export default function ToothSlicePage() {
   // FIXED: Always call all hooks at the top level first
   const { toothId, report_id } = useParams();
   const stageRef = useRef(null);
-  const [sliceRanges, setSliceRanges] = useState({
-    axial: { start: 0, end: 200 },
-    coronal: { start: 0, end: 200 },
-    sagittal: { start: 0, end: 200 }
+  
+  // Get tooth slice ranges from store
+  const toothNumber = parseInt(toothId, 10);
+  const getToothSliceRanges = useDentalStore(state => state.getToothSliceRanges);
+  const updateToothViewSliceRange = useDentalStore(state => state.updateToothViewSliceRange);
+  const tooth = useDentalStore(state =>
+    (state.data?.teeth || []).find(t => t.toothNumber === toothNumber)
+  );
+
+  // Get slice ranges from store or use defaults
+  const storedRanges = getToothSliceRanges(toothNumber);
+  const [sliceRanges, setSliceRanges] = useState(() => {
+    if (storedRanges && typeof storedRanges === 'object') {
+      return {
+        axial: storedRanges.axial || { start: 180, end: 200 },
+        coronal: storedRanges.coronal || { start: 300, end: 350 },
+        sagittal: storedRanges.sagittal || { start: 20, end: 30 }
+      };
+    }
+    return {
+      axial: { start: 180, end: 200 },
+      coronal: { start: 300, end: 350 },
+      sagittal: { start: 20, end: 30 }
+    };
   });
 
   // FIXED: Always call all hooks regardless of conditions
@@ -194,10 +215,6 @@ export default function ToothSlicePage() {
     reportType
   } = useReportData();
 
-  const tooth = useDentalStore(state =>
-    (state.data?.teeth || []).find(t => t.toothNumber === parseInt(toothId, 10))
-  );
-
   const {
     getViewImages,
     loadAllViews,
@@ -209,8 +226,46 @@ export default function ToothSlicePage() {
   const dentalData = useDentalStore(state => state.data);
   const { settings, SettingChange, setSettings } = useDentalSettings();
 
-  // FIXED: Calculate toothNumber after hooks
-  const toothNumber = parseInt(toothId, 10);
+  // Handle range changes
+  const handleRangeChange = useCallback((view, action, value) => {
+    if (action === 'reset') {
+      const defaultRanges = {
+        axial: { start: 180, end: 200 },
+        coronal: { start: 300, end: 350 },
+        sagittal: { start: 20, end: 30 }
+      };
+      setSliceRanges(prev => ({
+        ...prev,
+        [view]: defaultRanges[view]
+      }));
+    } else if (action === 'save') {
+      // Save to store
+      updateToothViewSliceRange(toothNumber, view, value);
+      console.log(`💾 Saved ${view} range for tooth ${toothNumber}:`, value);
+    } else if (action === 'start' || action === 'end') {
+      setSliceRanges(prev => ({
+        ...prev,
+        [view]: {
+          ...prev[view],
+          [action]: Math.max(1, Math.min(value, sliceCounts[view] || 1000))
+        }
+      }));
+    }
+  }, [toothNumber, updateToothViewSliceRange, sliceCounts]);
+
+  // Update local state when store changes
+  useEffect(() => {
+    const newStoredRanges = getToothSliceRanges(toothNumber);
+    if (newStoredRanges && typeof newStoredRanges === 'object') {
+      setSliceRanges({
+        axial: newStoredRanges.axial || { start: 0, end: 0 },
+        coronal: newStoredRanges.coronal || { start: 0, end: 0 },
+        sagittal: newStoredRanges.sagittal || { start: 0, end: 0 }
+      });
+    }
+  }, [getToothSliceRanges, toothNumber]);
+
+  // Calculate toothNumber after hooks
   const storeSliceCounts = dentalData?.sliceCounts || {};
 
   // تحسين 13: تحسين context value
@@ -232,36 +287,6 @@ export default function ToothSlicePage() {
     toothNumberSelect: null,
     setToothNumberSelect: () => {}
   }), []);
-
-  // Fetch report data when component mounts
-  useEffect(() => {
-    if (report_id && !hasData) {
-      console.log('🚀 Fetching report data for report:', report_id);
-      fetchData(report_id).catch(error => {
-        console.error('❌ Failed to fetch report data:', error);
-      });
-    }
-  }, [report_id, hasData, fetchData]);
-
-  // // Setup image store when report data is available
-  // useEffect(() => {
-  //   if (reportData && hasData) {
-  //     console.log('🔄 Setting up image store with report data');
-  //     setupFromReport(reportData).catch(error => {
-  //       console.error('❌ Failed to setup image store:', error);
-  //     });
-  //   }
-  // }, [reportData, hasData, setupFromReport]);
-
-  // Auto-load all views when slice counts are available
-  // useEffect(() => {
-  //   if (Object.values(sliceCounts).some(count => count > 1)) {
-  //     console.log('🔄 Auto-loading all views with slice counts:', sliceCounts);
-  //     loadAllViews().catch(error => {
-  //       console.error('❌ Failed to load all views:', error);
-  //     });
-  //   }
-  // }, [sliceCounts, loadAllViews]);
 
   // FIXED: All conditional rendering happens after hooks
 
@@ -298,23 +323,6 @@ export default function ToothSlicePage() {
               </button>
             )}
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading state if no data yet
-  if (!hasData && !loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="text-gray-500 text-lg mb-4">No report data available</div>
-          <button 
-            onClick={() => fetchData(report_id)}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            🔄 Load Report Data
-          </button>
         </div>
       </div>
     );
@@ -369,9 +377,12 @@ export default function ToothSlicePage() {
         >
           {/* Top card for all 3 views controls/info - outside the scrollable area */}
           <div className="bg-white shadow rounded-lg p-4 flex flex-col items-center mb-2">
-            <span className="text-lg font-semibold text-gray-700">All Views Controls / Info</span>
+            <span className="text-lg font-semibold text-gray-700">Tooth {toothNumber} Slice Ranges</span>
             {reportType && (
               <span className="text-sm text-gray-500 mt-1">Report Type: {reportType.toUpperCase()}</span>
+            )}
+            {storedRanges && (
+              <div className="text-xs text-green-600 mt-1">✅ Ranges loaded from store</div>
             )}
           </div>
 
@@ -396,6 +407,11 @@ export default function ToothSlicePage() {
                 <div key={view} className="mb-8">
                   <div className="font-black text-2xl mb-3 capitalize text-gray-800 flex items-center gap-2">
                     {view} View
+                    {storedRanges?.[view] && (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                        Stored
+                      </span>
+                    )}
                   </div>
                   <div className="flex gap-4 items-center text-sm mb-2">
                     <span>Slices: <strong>{numSlices}</strong> </span>
@@ -412,6 +428,8 @@ export default function ToothSlicePage() {
                       count={sliceCounts[view] || storeSliceCounts[view] || 1}
                       start={start}
                       end={end}
+                      toothNumber={toothNumber}
+                      onRangeChange={handleRangeChange}
                     />
                   ) : (
                     <div className="text-center py-8 text-gray-500">
