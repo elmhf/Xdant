@@ -407,11 +407,6 @@ export default function ToothSlicePage() {
                 <div key={view} className="mb-8">
                   <div className="font-black text-2xl mb-3 capitalize text-gray-800 flex items-center gap-2">
                     {view} View
-                    {storedRanges?.[view] && (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                        Stored
-                      </span>
-                    )}
                   </div>
                   <div className="flex gap-4 items-center text-sm mb-2">
                     <span>Slices: <strong>{numSlices}</strong> </span>
