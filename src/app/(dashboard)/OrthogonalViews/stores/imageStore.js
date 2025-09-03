@@ -168,9 +168,9 @@ export const useImageStore = create((set, get) => ({
 
       // Extract voxel sizes from scan data
       const voxelSizes = {
-        x_spacing_mm: reportData.scan?.dimensions?.x_spacing_mm || 1,
-        y_spacing_mm: reportData.scan?.dimensions?.y_spacing_mm || 1, 
-        z_spacing_mm: reportData.scan?.dimensions?.z_spacing_mm || 1,
+        x_spacing_mm: reportData.report?.metadata?.slice_count?.x_spacing_mm || 1,
+        y_spacing_mm: reportData.report?.metadata?.slice_count?.y_spacing_mm || 1, 
+        z_spacing_mm: reportData.report?.metadata?.slice_count?.z_spacing_mm || 1,
         unit: 'mm',
         loading: false,
         error: null
@@ -180,9 +180,9 @@ export const useImageStore = create((set, get) => ({
 
       // Extract slice counts for each view
       const sliceCounts = {
-        axial: reportData.scan?.dimensions?.axial_slices || 200,
-        coronal: reportData.scan?.dimensions?.coronal_slices || 200,
-        sagittal: reportData.scan?.dimensions?.sagittal_slices || 200
+        axial: reportData.metadata?.slice_count?.axial || 2,
+        coronal: reportData.metadata?.slice_count?.coronal || 2,
+        sagittal: reportData.metadata?.slice_count?.sagittal || 2
       };
 
       console.log('📊 Extracted slice counts from report:', sliceCounts);

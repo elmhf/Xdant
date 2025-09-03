@@ -36,23 +36,31 @@ function getRandomRegion(imgWidth, imgHeight, minSize = 60, maxSize = 100) {
   return region;
 }
 
+// FIXED: CroppedSlice component with proper hook usage
 const CroppedSlice = React.memo(({ view, index }) => {
-  const img = useSliceImage(view, index);
+  // FIXED: Always call all hooks at the top level in the same order
   const [region, setRegion] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
+  
+  // FIXED: Always call these hooks
+  const img = useSliceImage(view, index);
+  const { croppedUrl, isLoading } = useSliceRegion(view, index, region);
 
-  // تحسين 4: استخدام useCallback لتحسين الأداء
+  // FIXED: Use useCallback to prevent unnecessary re-renders
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
-  // تحسين 5: تحسين حسابات الأبعاد - تعريف displayHeight أولاً
+  // FIXED: Define displayHeight as constant
   const displayHeight = 140;
+  
+  // FIXED: Memoize displayWidth calculation
   const displayWidth = useMemo(() => {
     return region
       ? Math.round(displayHeight * (region.width / region.height))
       : 140;
   }, [region, displayHeight]);
 
+  // Effect to set region when image is loaded
   useEffect(() => {
     if (img && img.width && img.height && !region) {
       console.log(`🎯 Setting region for ${view} slice ${index}, image size: ${img.width}x${img.height}`);
@@ -60,6 +68,8 @@ const CroppedSlice = React.memo(({ view, index }) => {
     }
   }, [img, region, view, index]);
 
+  // FIXED: All conditional rendering happens after hooks
+  
   // Show loading state if no image yet
   if (!img) {
     return (
@@ -73,8 +83,6 @@ const CroppedSlice = React.memo(({ view, index }) => {
       </div>
     );
   }
-
-  const { croppedUrl, isLoading } = useSliceRegion(view, index, region);
 
   // Show loading state if no region yet
   if (!region) {
@@ -94,18 +102,16 @@ const CroppedSlice = React.memo(({ view, index }) => {
     <div className="flex flex-col items-center">
       <div
         style={{ width: displayWidth, height: displayHeight }}
-        className={` border-3 overflow-hidden relative cursor-pointer rounded-[0.5vw] transition-all duration-200 ${
+        className={`border-3 overflow-hidden relative cursor-pointer rounded-[0.5vw] transition-all duration-200 ${
           isHovered 
-            ? 'border-blue-500  shadow-blue-200' 
+            ? 'border-blue-500 shadow-blue-200' 
             : 'border-white'
         }`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* تحسين 6: تحسين عرض رقم الشريحة */}
-        <span 
-          className="absolute top-1 right-1 pointer-events-none z-10"
-        >
+        <span className="absolute top-1 right-1 pointer-events-none z-10">
           <span className={`text-white text-xs font-bold px-1.5 py-0.5 rounded shadow transition-colors duration-200 ${
             isHovered ? 'bg-blue-500 bg-opacity-90' : 'bg-black bg-opacity-70'
           }`}>
@@ -118,9 +124,8 @@ const CroppedSlice = React.memo(({ view, index }) => {
             src={croppedUrl}
             alt={`${view} Slice ${index}`}
             className="w-full h-full object-cover"
-            loading="lazy" // تحسين 7: Lazy loading للصور
+            loading="lazy"
             onError={(e) => {
-              // تحسين 8: معالجة أخطاء تحميل الصور
               console.error('Failed to load cropped image:', e);
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'block';
@@ -151,11 +156,10 @@ const SlicesSection = React.memo(({ view, count, start, end }) => {
   return (
     <motion.div 
       className="mb-6"
-      initial={{ opacity: 0, }}
+      initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-    
       <div className="flex flex-wrap">
         {Array.from({ length: end - start + 1 }).map((_, idx) => (
           <CroppedSlice key={`${view}-${start + idx}`} view={view} index={start + idx} />
@@ -168,8 +172,8 @@ const SlicesSection = React.memo(({ view, count, start, end }) => {
 SlicesSection.displayName = 'SlicesSection';
 
 export default function ToothSlicePage() {
+  // FIXED: Always call all hooks at the top level first
   const { toothId, report_id } = useParams();
-  const toothNumber = parseInt(toothId, 10);
   const stageRef = useRef(null);
   const [sliceRanges, setSliceRanges] = useState({
     axial: { start: 0, end: 200 },
@@ -177,7 +181,7 @@ export default function ToothSlicePage() {
     sagittal: { start: 0, end: 200 }
   });
 
-  // Use the report data hook instead of tooth slice data
+  // FIXED: Always call all hooks regardless of conditions
   const {
     data: reportData,
     loading,
@@ -191,7 +195,7 @@ export default function ToothSlicePage() {
   } = useReportData();
 
   const tooth = useDentalStore(state =>
-    (state.data?.teeth || []).find(t => t.toothNumber === toothNumber)
+    (state.data?.teeth || []).find(t => t.toothNumber === parseInt(toothId, 10))
   );
 
   const {
@@ -202,41 +206,12 @@ export default function ToothSlicePage() {
     setupFromReport
   } = useImageStore();
 
-  // Get slice counts from dental store if available
   const dentalData = useDentalStore(state => state.data);
-  const storeSliceCounts = dentalData?.sliceCounts || {};
-
   const { settings, SettingChange, setSettings } = useDentalSettings();
 
-  // Fetch report data when component mounts
-  useEffect(() => {
-    if (report_id && !hasData) {
-      console.log('🚀 Fetching report data for report:', report_id);
-      fetchData(report_id).catch(error => {
-        console.error('❌ Failed to fetch report data:', error);
-      });
-    }
-  }, [report_id, hasData, fetchData]);
-
-  // Setup image store when report data is available
-  useEffect(() => {
-    if (reportData && hasData) {
-      console.log('🔄 Setting up image store with report data');
-      setupFromReport(reportData).catch(error => {
-        console.error('❌ Failed to setup image store:', error);
-      });
-    }
-  }, [reportData, hasData, setupFromReport]);
-
-  // Auto-load all views when slice counts are available
-  useEffect(() => {
-    if (Object.values(sliceCounts).some(count => count > 1)) {
-      console.log('🔄 Auto-loading all views with slice counts:', sliceCounts);
-      loadAllViews().catch(error => {
-        console.error('❌ Failed to load all views:', error);
-      });
-    }
-  }, [sliceCounts, loadAllViews]);
+  // FIXED: Calculate toothNumber after hooks
+  const toothNumber = parseInt(toothId, 10);
+  const storeSliceCounts = dentalData?.sliceCounts || {};
 
   // تحسين 13: تحسين context value
   const contextValue = useMemo(() => ({
@@ -257,6 +232,38 @@ export default function ToothSlicePage() {
     toothNumberSelect: null,
     setToothNumberSelect: () => {}
   }), []);
+
+  // Fetch report data when component mounts
+  useEffect(() => {
+    if (report_id && !hasData) {
+      console.log('🚀 Fetching report data for report:', report_id);
+      fetchData(report_id).catch(error => {
+        console.error('❌ Failed to fetch report data:', error);
+      });
+    }
+  }, [report_id, hasData, fetchData]);
+
+  // // Setup image store when report data is available
+  // useEffect(() => {
+  //   if (reportData && hasData) {
+  //     console.log('🔄 Setting up image store with report data');
+  //     setupFromReport(reportData).catch(error => {
+  //       console.error('❌ Failed to setup image store:', error);
+  //     });
+  //   }
+  // }, [reportData, hasData, setupFromReport]);
+
+  // Auto-load all views when slice counts are available
+  // useEffect(() => {
+  //   if (Object.values(sliceCounts).some(count => count > 1)) {
+  //     console.log('🔄 Auto-loading all views with slice counts:', sliceCounts);
+  //     loadAllViews().catch(error => {
+  //       console.error('❌ Failed to load all views:', error);
+  //     });
+  //   }
+  // }, [sliceCounts, loadAllViews]);
+
+  // FIXED: All conditional rendering happens after hooks
 
   // تحسين 14: تحسين عرض حالة التحميل والأخطاء
   if (loading) {
@@ -319,14 +326,14 @@ export default function ToothSlicePage() {
         className="flex w-[90vw] flex-row gap-8 h-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5}}
+        transition={{ duration: 0.5 }}
       >
         {/* LEFT PANEL */}
         <div className="flex flex-col h-[60%] no-scrollbar gap-8 flex-1 min-w-[350px] max-w-[30%]">
           <motion.div
-            initial={{ opacity: 0,  }}
-            animate={{ opacity: 1,}}
-            transition={{ duration: 0.5}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
           >
             {tooth ? (
               <ToothDiagnosis idCard={toothNumber} showDiagnosisDetails={true} />
@@ -341,8 +348,8 @@ export default function ToothSlicePage() {
           
           <motion.div 
             className="min-h-[350px]"
-            initial={{ opacity: 0,  }}
-            animate={{ opacity: 1, }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <ImageCard
@@ -355,27 +362,26 @@ export default function ToothSlicePage() {
 
         {/* RIGHT PANEL */}
         <motion.div 
-          className="flex flex-col gap-3 min-w-[350px]  no-scrollbar overflow-auto flex-1"
+          className="flex flex-col gap-3 min-w-[350px] no-scrollbar overflow-auto flex-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           {/* Top card for all 3 views controls/info - outside the scrollable area */}
           <div className="bg-white shadow rounded-lg p-4 flex flex-col items-center mb-2">
-            {/* You can add controls or info for all 3 views here */}
             <span className="text-lg font-semibold text-gray-700">All Views Controls / Info</span>
             {reportType && (
               <span className="text-sm text-gray-500 mt-1">Report Type: {reportType.toUpperCase()}</span>
             )}
           </div>
 
-          
-          <div className="bg-white shadow-lg rounded-lg p-8 min-w-[350px] flex-1 ">
+          <div className="bg-white shadow-lg rounded-lg p-8 min-w-[350px] flex-1">
             {/* Range controls and SlicesSection for each view */}
             {['axial', 'coronal', 'sagittal'].map(view => {
               const start = sliceRanges[view].start;
               const end = sliceRanges[view].end;
               const numSlices = end - start + 1;
+              
               // Get slice thickness from voxelSizes in the store
               const currentVoxelSizes = voxelSizes || dentalData?.voxelSizes || {};
               const sliceThickness =
@@ -388,9 +394,9 @@ export default function ToothSlicePage() {
 
               return (
                 <div key={view} className="mb-8">
-                <div className="font-black text-2xl mb-3 capitalize text-gray-800 flex items-center gap-2">
-                  {view} View
-                </div>
+                  <div className="font-black text-2xl mb-3 capitalize text-gray-800 flex items-center gap-2">
+                    {view} View
+                  </div>
                   <div className="flex gap-4 items-center text-sm mb-2">
                     <span>Slices: <strong>{numSlices}</strong> </span>
                     <span>Slice Thickness <strong>{sliceThickness} mm</strong></span>
@@ -399,7 +405,7 @@ export default function ToothSlicePage() {
                       <span className="text-yellow-600 text-xs">⚠️ Loading slices...</span>
                     )}
                   </div>
-  
+
                   {sliceCounts[view] > 0 ? (
                     <SlicesSection
                       view={view}

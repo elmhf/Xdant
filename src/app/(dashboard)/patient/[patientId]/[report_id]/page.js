@@ -16,23 +16,15 @@ export default function ReportPage() {
   // Extract report ID and type from params
   const reportId = params.report_id;
   const patientId = params.patientId;
-  
-  // Detect report type from URL or query parameters
   const reportType = params.report_type || 'unknown';
 
-  // Initialize imageCard separately to avoid stageRef issues
+  // FIXED: Always call all hooks at the top level, never conditionally
   const imageCardHook = useImageCard();
+  const reportDataHook = useReportData({ imageCard });
+  const toothSliceDataHook = useToothSliceData();
 
-  // Set imageCard only when it's properly initialized
-  useEffect(() => {
-    if (imageCardHook && !imageCard) {
-      console.log('🖼️ ImageCard initialized');
-      setImageCard(imageCardHook);
-    }
-  }, [imageCardHook, imageCard]);
-
-  // Use different hooks based on report type
-  const reportDataHook = reportType === 'toothSlice' ? useToothSliceData() : useReportData({ imageCard });
+  // Choose which hook's data to use based on report type (but both hooks are always called)
+  const activeHook = reportType === 'toothSlice' ? toothSliceDataHook : reportDataHook;
   
   const {
     data,
@@ -44,17 +36,25 @@ export default function ReportPage() {
     hasData,
     hasError,
     reportType: detectedReportType
-  } = reportDataHook;
+  } = activeHook;
 
-  // Simple effect - only triggers on reportId change
+  // Set imageCard when it's properly initialized
   useEffect(() => {
-         console.log('📊 Effect triggered:', {
-       reportId,
-       patientId,
-       reportType,
-       lastProcessed: lastProcessedId.current,
-       hasImageCard: !!imageCard
-     });
+    if (imageCardHook && !imageCard) {
+      console.log('🖼️ ImageCard initialized');
+      setImageCard(imageCardHook);
+    }
+  }, [imageCardHook, imageCard]);
+
+  // Effect for fetching data
+  useEffect(() => {
+    console.log('📊 Effect triggered:', {
+      reportId,
+      patientId,
+      reportType,
+      lastProcessed: lastProcessedId.current,
+      hasImageCard: !!imageCard
+    });
 
     // Skip if no reportId or same as last processed
     if (!reportId || reportId === lastProcessedId.current) {
@@ -67,17 +67,17 @@ export default function ReportPage() {
       return;
     }
 
-         console.log('🚀 Fetching new report:', reportId, 'Patient:', patientId, 'Type:', reportType);
-     lastProcessedId.current = reportId;
+    console.log('🚀 Fetching new report:', reportId, 'Patient:', patientId, 'Type:', reportType);
+    lastProcessedId.current = reportId;
 
-    // Simple fetch without complex state management
+    // Fetch data
     fetchData(reportId).catch(error => {
       console.error('❌ Fetch failed:', error);
     });
 
   }, [reportId, reportType, imageCard, fetchData]);
 
-  // Get appropriate loading message and icon based on report type
+  // Helper functions for UI messages
   const getLoadingConfig = () => {
     switch (reportType) {
       case 'pano':
@@ -93,7 +93,6 @@ export default function ReportPage() {
     }
   };
 
-  // Get appropriate error message based on report type
   const getErrorConfig = () => {
     switch (reportType) {
       case 'pano':
@@ -109,7 +108,6 @@ export default function ReportPage() {
     }
   };
 
-  // Get appropriate no data message based on report type
   const getNoDataConfig = () => {
     switch (reportType) {
       case 'pano':
@@ -145,6 +143,29 @@ export default function ReportPage() {
     }
   };
 
+  // Event handlers
+  const handleRetry = () => {
+    console.log('🔄 Retrying...');
+    lastProcessedId.current = null;
+    retry(reportId);
+  };
+
+  const handleClearCache = () => {
+    clearCache();
+    lastProcessedId.current = null;
+    console.log('🗑️ Cache cleared');
+  };
+
+  const handleLoadReport = () => {
+    console.log('📄 Manual load requested');
+    lastProcessedId.current = null;
+    if (reportId && imageCard) {
+      fetchData(reportId);
+    }
+  };
+
+  // FIXED: All conditional rendering happens after all hooks are called
+
   // Loading state
   if (loading) {
     const { message, icon } = getLoadingConfig();
@@ -162,18 +183,6 @@ export default function ReportPage() {
   if (hasError) {
     const { title, icon } = getErrorConfig();
     
-    const handleRetry = () => {
-      console.log('🔄 Retrying...');
-      lastProcessedId.current = null; // Reset to allow refetch
-      retry(reportId);
-    };
-
-    const handleClearCache = () => {
-      clearCache();
-      lastProcessedId.current = null;
-      console.log('🗑️ Cache cleared');
-    };
-
     return (
       <div className="flex w-full flex-col items-center justify-center min-h-screen gap-4 p-6 max-w-md mx-auto">
         <div className="text-red-500 text-6xl animate-bounce">{icon}</div>
@@ -183,15 +192,15 @@ export default function ReportPage() {
         <p className="text-red-500 text-center text-sm bg-red-50 p-3 rounded-lg">
           {error}
         </p>
-                 <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
-           Report ID: {reportId}
-         </div>
-         <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
-           Patient ID: {patientId}
-         </div>
-         <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
-           Type: {reportType}
-         </div>
+        <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
+          Report ID: {reportId}
+        </div>
+        <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
+          Patient ID: {patientId}
+        </div>
+        <div className="text-xs text-gray-500 text-center bg-gray-50 px-3 py-2 rounded">
+          Type: {reportType}
+        </div>
         <div className="flex gap-3 mt-4">
           <button 
             onClick={handleRetry}
@@ -225,9 +234,8 @@ export default function ReportPage() {
     );
   }
 
-  // Special handling for toothSlice - now it uses the unified data system
+  // Special handling for toothSlice
   if (reportType === 'toothSlice') {
-    // Import and render the ToothSlice component with unified data
     const ToothSliceComponent = React.lazy(() => import("./ToothSlice/[toothId]/page"));
     
     return (
@@ -249,14 +257,6 @@ export default function ReportPage() {
   // No data state
   const { title, description, icon } = getNoDataConfig();
   
-  const handleLoadReport = () => {
-    console.log('📄 Manual load requested');
-    lastProcessedId.current = null;
-    if (reportId && imageCard) {
-      fetchData(reportId);
-    }
-  };
-
   return (
     <div className="flex flex-col w-screen items-center justify-center min-h-screen gap-6 p-6">
       <div className="text-gray-400 text-6xl">{icon}</div>
@@ -268,15 +268,15 @@ export default function ReportPage() {
           {description}
         </p>
       </div>
-             <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
-         Report ID: {reportId}
-       </div>
-       <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
-         Patient ID: {patientId}
-       </div>
-       <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
-         Type: {reportType}
-       </div>
+      <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
+        Report ID: {reportId}
+      </div>
+      <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
+        Patient ID: {patientId}
+      </div>
+      <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
+        Type: {reportType}
+      </div>
       <button 
         onClick={handleLoadReport}
         disabled={!imageCard}

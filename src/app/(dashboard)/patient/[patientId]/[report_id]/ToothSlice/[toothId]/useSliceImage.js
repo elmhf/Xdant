@@ -1,18 +1,24 @@
 import { useImageStore } from "@/app/(dashboard)/OrthogonalViews/stores/imageStore";
 import { useDentalStore } from "@/stores/dataStore";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 
 export function useSliceImage(view, index) {
+  // FIXED: Always call all hooks in the same order, no conditional calls
   const getViewImages = useImageStore(state => state.getViewImages);
   const loadViewImages = useImageStore(state => state.loadViewImages);
   const sliceCounts = useImageStore(state => state.sliceCounts);
   const loading = useImageStore(state => state.loading);
-  const images = getViewImages(view);
-  
-  // Also try to get images from the dental store if available
   const dentalData = useDentalStore(state => state.data);
+  
+  // FIXED: Always call these hooks, regardless of conditions
+  const images = getViewImages(view);
   const sliceImages = dentalData?.slices?.[view] || dentalData?.sliceImages?.[view];
   
+  // FIXED: Memoize the result to avoid unnecessary re-renders
+  const resultImage = useMemo(() => {
+    return images?.[index] || sliceImages?.[index];
+  }, [images, sliceImages, index]);
+
   // Auto-load images if not loaded yet
   useEffect(() => {
     const sliceCount = sliceCounts[view] || 1;
@@ -21,23 +27,23 @@ export function useSliceImage(view, index) {
       loadViewImages(view, sliceCount);
     }
   }, [view, sliceCounts, images.length, loading, loadViewImages]);
-  
-  // Return image from image store first, then from dental store
-  return images?.[index] || sliceImages?.[index];
+
+  return resultImage;
 }
 
 /**
  * useSliceRegion - returns a data URL for a cropped region of a slice image (with caching)
  */
 export function useSliceRegion(view, index, region) {
+  // FIXED: Always call all hooks at the top level
   const getViewImages = useImageStore(state => state.getViewImages);
   const loadViewImages = useImageStore(state => state.loadViewImages);
   const sliceCounts = useImageStore(state => state.sliceCounts);
   const loading = useImageStore(state => state.loading);
   const images = getViewImages(view);
+  
   const [croppedUrl, setCroppedUrl] = useState();
   const [isLoading, setIsLoading] = useState(false);
-
   const cache = useRef(new Map());
 
   // Auto-load images if not loaded yet
@@ -50,17 +56,20 @@ export function useSliceRegion(view, index, region) {
   }, [view, sliceCounts, images.length, loading, loadViewImages]);
 
   useEffect(() => {
+    // FIXED: Handle early returns properly without breaking hooks rule
     if (!images || !images[index] || !region) {
       setCroppedUrl(undefined);
+      setIsLoading(false);
       return;
     }
 
     const img = images[index];
     const key = `${view}-${index}-${region.x}-${region.y}-${region.width}-${region.height}`;
 
-    // لو موجود في الكاش
+    // Check cache first
     if (cache.current.has(key)) {
       setCroppedUrl(cache.current.get(key));
+      setIsLoading(false);
       return;
     }
 
@@ -85,7 +94,7 @@ export function useSliceRegion(view, index, region) {
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
         const url = canvas.toDataURL();
-        cache.current.set(key, url); // خزنه
+        cache.current.set(key, url);
         setCroppedUrl(url);
         setIsLoading(false);
       } catch (error) {
@@ -99,12 +108,12 @@ export function useSliceRegion(view, index, region) {
       img.onload = cropAndSet;
       img.onerror = () => {
         console.error('Failed to load image for cropping');
+        setCroppedUrl(undefined);
         setIsLoading(false);
       };
-      return;
+    } else {
+      cropAndSet();
     }
-
-    cropAndSet();
   }, [images, index, region, view]);
 
   return { croppedUrl, isLoading };
