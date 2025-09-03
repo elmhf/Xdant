@@ -9,6 +9,9 @@ import { DataContext } from "../dashboard";
 import ToothDiagnosis from "./card/ToothCard";
 import styles from './modern-side.module.css';
 import { Switch } from '@/components/ui/switch';
+import { Button } from "@/components/ui/button";
+import { useRouter, usePathname } from "next/navigation";
+// import { Router } from "express"; // Remove this - it's for server-side Express, not Next.js client
 
 // Translation keys for the component
 const translationKeys = {
@@ -23,14 +26,18 @@ const translationKeys = {
   adjustSearchOrFilter: 'side.adjustSearchOrFilter',
   resetAllFilters: 'side.resetAllFilters',
   searchByProblemOrComment: 'side.searchByProblemOrComment',
-  clearSearch: 'side.clearSearch'
+  clearSearch: 'side.clearSearch',
+  orthogonalViews: 'side.orthogonalViews' // Add translation key
 };
 
-const SideCardes = ({ layoutKey,toothNumberSelect, setToothNumberSelect }) => {
+const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
   const { t, i18n } = useTranslation();
-  useEffect(()=>{
-console.log(toothNumberSelect,"toothNumberSelect")
-  },[toothNumberSelect])
+  const router = useRouter(); // Initialize router for navigation
+  
+  useEffect(() => {
+    console.log(toothNumberSelect, "toothNumberSelect")
+  }, [toothNumberSelect])
+  
   // const { toothNumberSelect, setToothNumberSelect } = useContext(DataContext);
   const isRTL = i18n.language === 'ar';
   
@@ -42,6 +49,19 @@ console.log(toothNumberSelect,"toothNumberSelect")
   const searchInputRef = useRef(null);
   const [visibleImages, setVisibleImages] = useState({});
   const [showDiagnosisDetails, setShowDiagnosisDetails] = useState(true);
+  const pathname = usePathname();
+  // Handle OrthogonalViews button click
+  const handleOrthogonalViewsClick = useCallback(() => {
+    try {
+      // Option 1: Navigate to a specific route
+      router.push(`${pathname}/OrthogonalViews`);
+      
+      
+    } catch (error) {
+      console.error('Error navigating to OrthogonalViews:', error);
+      // Fallback: you could show a toast notification or handle the error
+    }
+  }, [router, toothNumberSelect, statusFilter, searchTerm]);
 
   // فلترة الأسنان مباشرة من dentalData.teeth
   const filteredChart = useMemo(() => {
@@ -112,7 +132,6 @@ console.log(toothNumberSelect,"toothNumberSelect")
   ], [dentalData, t]);
 
   useEffect(() => {
-    
     if (toothNumberSelect) {
       const el = document.getElementById(`Tooth-Card-${toothNumberSelect}`);
       if (el) {
@@ -132,6 +151,14 @@ console.log(toothNumberSelect,"toothNumberSelect")
     <div className="flex no-scrollbar p-1 flex-col h-full bg-transparent from-gray-50 to-white">
       {/* العنوان وسويتش Diagnosis details وزر الفلتر في نفس السطر */}
       <div className="flex items-center justify-end gap-2 mb-2 px-2">
+        <Button 
+          onClick={handleOrthogonalViewsClick}
+          variant="outline"
+          className="transition-all duration-200 hover:bg-blue-50 hover:border-blue-200"
+        >
+          {t(translationKeys.orthogonalViews) || 'OrthogonalViews'}
+        </Button>
+
         <span className="text-sm text-gray-700">Diagnosis details</span>
         <Switch
           checked={showDiagnosisDetails}
@@ -147,6 +174,7 @@ console.log(toothNumberSelect,"toothNumberSelect")
           <Filter className="w-5 h-5 text-gray-700" />
         </button>
       </div>
+      
       {/* الفلاتر */}
       {showFilters && (
         <div className={styles.filterCard}>
@@ -206,6 +234,7 @@ console.log(toothNumberSelect,"toothNumberSelect")
           </div>
         </div>
       )}
+      
       {/* قائمة الكروت */}
       <div
         className={

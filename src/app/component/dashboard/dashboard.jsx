@@ -165,7 +165,7 @@ const Dashboard = ({ reportType }) => {
                 </div>
               </div>
               <div className="flex-none w-[50%] ">
-                <SideCardes toothNumberSelect={toothNumberSelect} setToothNumberSelect={setToothNumberSelect} layoutKey={layoutKey} />
+                <SideCardes toothNumberSelect={toothNumberSelect} setToothNumberSelect={setToothNumberSelect} layoutKey={layoutKey}  />
               </div>
             </>
           )}

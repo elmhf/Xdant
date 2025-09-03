@@ -23,7 +23,7 @@ import { useDentalStore } from '@/stores/dataStore';
 import { Badge } from "@/components/ui/badge";
 import { useRouter, usePathname } from "next/navigation";
 
-const ToothDiagnosis = memo(({ idCard, setToothNumberSelect, isSelected, showImage, onToggleImage, showDiagnosisDetails, layoutKey }) => {
+const ToothDiagnosis = memo(({ idCard, setToothNumberSelect=()=>{}, isSelected, showImage, onToggleImage, showDiagnosisDetails, layoutKey }) => {
   const { applyLayout } = useLayout();
   const [viewMode, setViewMode] = useState('grid');
   const { t } = useTranslation();

@@ -190,15 +190,15 @@ export default function ToothSlicePage() {
   const [sliceRanges, setSliceRanges] = useState(() => {
     if (storedRanges && typeof storedRanges === 'object') {
       return {
-        axial: storedRanges.axial || { start: 180, end: 200 },
-        coronal: storedRanges.coronal || { start: 300, end: 350 },
-        sagittal: storedRanges.sagittal || { start: 20, end: 30 }
+        axial: storedRanges.axial || { start: 0, end: 0 },
+        coronal: storedRanges.coronal || { start: 0, end: 0 },
+        sagittal: storedRanges.sagittal || { start: 0, end: 0 }
       };
     }
     return {
-      axial: { start: 180, end: 200 },
-      coronal: { start: 300, end: 350 },
-      sagittal: { start: 20, end: 30 }
+      axial: { start: 0, end: 0 },
+      coronal: { start: 0, end: 0 },
+      sagittal: { start: 0, end: 0 }
     };
   });
 
@@ -230,9 +230,9 @@ export default function ToothSlicePage() {
   const handleRangeChange = useCallback((view, action, value) => {
     if (action === 'reset') {
       const defaultRanges = {
-        axial: { start: 180, end: 200 },
-        coronal: { start: 300, end: 350 },
-        sagittal: { start: 20, end: 30 }
+        axial: { start: 0, end: 0 },
+        coronal: { start: 0, end: 0 },
+        sagittal: { start: 0, end: 0 }
       };
       setSliceRanges(prev => ({
         ...prev,
@@ -344,7 +344,7 @@ export default function ToothSlicePage() {
             transition={{ duration: 0.5 }}
           >
             {tooth ? (
-              <ToothDiagnosis idCard={toothNumber} showDiagnosisDetails={true} />
+              <ToothDiagnosis idCard={toothNumber} showDiagnosisDetails={true}  />
             ) : (
               <div className="text-yellow-600 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                 <strong>Tooth data not loaded</strong>
@@ -355,7 +355,7 @@ export default function ToothSlicePage() {
           </motion.div>
           
           <motion.div 
-            className="min-h-[350px]"
+        className="flex-none min-h-[350px] w-[100%] flex items-center justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
