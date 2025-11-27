@@ -2,4 +2,5 @@
 export { useOrderReport } from './useOrderReport';
 export { useReports } from './useReports';
 export { useWebSocket } from './useWebSocket';
-export { usePatientWebSocket } from './usePatientWebSocket'; 
+export { usePatientWebSocket } from './usePatientWebSocket';
+export { useUpdateReportData } from './useUpdateReportData'; 

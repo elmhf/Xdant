@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["100","200","300","400","500","600","700","800","900"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-poppins",
   display: "swap"
 });
@@ -36,9 +36,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <LayoutProvider>
-      <html lang="en" className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
-        <body>
-          
+      <html lang="en" className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased font-sans`} suppressHydrationWarning>
+        <body suppressHydrationWarning>
+
           <ClientProviders>
             {children}
           </ClientProviders>

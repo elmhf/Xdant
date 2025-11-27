@@ -152,7 +152,7 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={onBack}
-                className="flex items-center px-6 py-2 rounded-full border bg-white text-black border-gray-300 hover:bg-gray-50"
+                className="flex items-center px-6 py-2 rounded-full border bg-white text-[#0d0c22] border-gray-300 hover:bg-gray-50"
               >
                 <span className="mr-2">&#8592;</span> Go back
               </motion.button>
@@ -161,7 +161,7 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
                 whileTap={{ scale: 0.95 }}
                 onClick={onNext}
                 type="button"
-                className="px-6 py-2 rounded-full bg-black text-white font-semibold hover:bg-gray-900 transition"
+                className="px-6 py-2 rounded-full bg-[#0d0c22] text-white font-semibold hover:bg-gray-900 transition"
               >
                 Next step
               </motion.button>
@@ -181,7 +181,7 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute top-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg flex items-center space-x-4 shadow-lg"
+            className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#0d0c22] bg-opacity-80 text-white px-4 py-2 rounded-lg flex items-center space-x-4 shadow-lg"
           >
             <span className="text-lg font-semibold">Lat: {location.lat.toFixed(5)}</span>
             <span className="text-lg font-semibold">Lng: {location.lng.toFixed(5)}</span>

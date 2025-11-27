@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import useUserStore from '../../../component/profile/store/userStore';
+import useUserStore from '@/components/features/profile/store/userStore';
 
 export const useClinicMembers = () => {
   const [clinicMembers, setClinicMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Get current clinic from userStore
   const currentClinic = useUserStore(state => state.getCurrentClinic());
   const currentClinicId = useUserStore(state => state.currentClinicId);
@@ -23,13 +23,13 @@ export const useClinicMembers = () => {
 
     try {
       const clinics = await useUserStore.getState().fetchMyClinics();
-      
-      
+
+
       const result = await useUserStore.getState().fetchClinicMembers(currentClinic.id);
-      
+
       if (result.success) {
-        
-        
+
+
         // Transform server data to match our table format
         const transformedMembers = result.members.map(member => ({
           id: member.id,
@@ -45,7 +45,7 @@ export const useClinicMembers = () => {
           invitedBy: member.invitedBy,
           createdAt: member.createdAt
         }));
-        
+
         setClinicMembers(transformedMembers);
       } else {
         console.error('Failed to fetch clinic members:', result.message);

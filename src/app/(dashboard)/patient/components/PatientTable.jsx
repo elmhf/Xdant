@@ -1,8 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import useUserStore from "@/components/features/profile/store/userStore";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ChevronUp, ChevronDown, Filter, Edit, Trash2, Heart, Loader2 } from "lucide-react";
+import { ChevronUp, ChevronDown, Filter, Edit, Trash2, Heart, Loader2, Folder, Info } from "lucide-react";
 import {
   formatPatientName,
   formatPatientId,
@@ -10,20 +11,39 @@ import {
   getPatientAvatarInitials,
   getGenderAvatarInitials
 } from '../utils/patientUtils';
-
-const PatientTable = ({ 
-  patients, 
-  sorting, 
-  onSort, 
-  searchQuery, 
-  filterDoctor, 
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty"
+const PatientTable = ({
+  patients,
+  sorting,
+  onSort,
+  searchQuery,
+  filterDoctor,
   activeTab,
   onEditPatient,
   onDeletePatient,
   onToggleFavorite,
+  onViewInfo,
   favoriteLoadingStates = {}
 }) => {
   const router = useRouter();
+
+  // Get user info and current clinic from store
+  const user = useUserStore(state => state.userInfo);
+  const currentClinic = useUserStore(state => state.currentClinicId);
+
+  // Get user role for the current clinic from rolesByClinic
+  const userRole = currentClinic && user?.rolesByClinic?.[currentClinic];
+
+  // Check if user can edit/delete (admin or full_access)
+  console.log(userRole, user, currentClinic, "userRole***");
+  const canEditDelete = userRole === 'admin' || userRole === 'full_access';
 
   const handlePatientClick = (patient) => {
     router.push(`/patient/${patient.id}`);
@@ -46,9 +66,16 @@ const PatientTable = ({
     }
   };
 
+  const handleInfoClick = (e, patient) => {
+    e.stopPropagation();
+    if (onViewInfo) {
+      onViewInfo(patient);
+    }
+  };
+
   return (
     <div className="border border-gray-200 rounded-lg overflow-x-auto">
-      <div className="max-h-96 overflow-y-auto">
+      <div className="max-h-[60vh] overflow-y-auto">
         <table className="w-full">
           <thead className="bg-white border-b border-gray-200 sticky top-0 z-10">
             <tr>
@@ -77,17 +104,16 @@ const PatientTable = ({
                   </div>
                 </div>
               </th>
-              
+
               <th className="min-w-80 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg hidden md:table-cell bg-white">
                 <div className="flex items-center space-x-1">
                   <span>Doctors treating</span>
-                  <Filter className="w-4 h-4 text-gray-400" />
                 </div>
               </th>
               <th className="min-w-70 text-right py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg hidden lg:table-cell bg-white">
                 <div className="flex items-center space-x-1 justify-start">
                   <span className="truncate max-w-60">Email</span>
-                  <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" />
+
                 </div>
               </th>
               <th className="min-w-32 text-center py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">
@@ -98,8 +124,8 @@ const PatientTable = ({
           <tbody>
             {patients.length > 0 ? (
               patients.map((patient, index) => (
-                <tr 
-                  key={patient.id || index} 
+                <tr
+                  key={patient.id || index}
                   className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                   onClick={() => handlePatientClick(patient)}
                 >
@@ -121,7 +147,7 @@ const PatientTable = ({
                       {formatDateOfBirth(patient.date_of_birth)}
                     </span>
                   </td>
-                  
+
                   <td className="min-w-80 py-4 px-4 hidden md:table-cell">
                     <div className="flex items-center gap-2">
                       {patient.treating_doctors && patient.treating_doctors.length > 0 ? (
@@ -129,7 +155,7 @@ const PatientTable = ({
                           <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10 shadow-lg">
                               <AvatarFallback className="bg-gradient-to-br from-purple-500 to-purple-600 text-white text-sm font-semibold">
-                                {((patient.treating_doctors[0].first_name || '').slice(0, 1) + 
+                                {((patient.treating_doctors[0].first_name || '').slice(0, 1) +
                                   (patient.treating_doctors[0].last_name || '').slice(0, 2)).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
@@ -142,7 +168,7 @@ const PatientTable = ({
                             {patient.treating_doctors.map((doctor, index) => (
                               <Avatar key={doctor.id || index} className="h-10 w-10 border-3 border-white">
                                 <AvatarFallback className="bg-gradient-to-br from-purple-500 to-purple-600 text-white text-sm font-semibold">
-                                  {((doctor.first_name || '').slice(0, 1) + 
+                                  {((doctor.first_name || '').slice(0, 1) +
                                     (doctor.last_name || '').slice(0, 2)).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
@@ -167,44 +193,71 @@ const PatientTable = ({
                         variant="ghost"
                         size="sm"
                         onClick={(e) => handleFavoriteClick(e, patient)}
-                        className={`h-8 w-8 p-0 ${
-                          patient.isFavorite 
-                            ? 'text-red-500 hover:bg-red-100' 
-                            : 'text-gray-400 hover:bg-gray-100'
-                        }`}
+                        className={`h-8 w-8 p-0 ${patient.isFavorite
+                          ? 'text-[#ff254e] hover:bg-gray-100'
+                          : 'text-gray-400 hover:text-[#ff254e] hover:bg-gray-100'
+                          }`}
                         title={patient.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
                         disabled={favoriteLoadingStates[patient.id] || false}
                       >
                         {favoriteLoadingStates[patient.id] ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <Loader2 className="h-5 w-5 animate-spin" />
                         ) : (
-                          <Heart className={`h-4 w-4 ${patient.isFavorite ? 'fill-current' : ''}`} />
+                          <Heart className={`h-5 w-5 ${patient.isFavorite ? 'fill-current' : ''}`} />
                         )}
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={(e) => handleEditClick(e, patient)}
-                        className="h-8 w-8 p-0 hover:bg-purple-100"
+                        onClick={(e) => handleInfoClick(e, patient)}
+                        className="h-8 w-8 p-0 text-gray-400 hover:text-[#7564ed] hover:bg-gray-100"
+                        title="View patient info"
                       >
-                        <Edit className="h-4 w-4 text-purple-600" />
+                        <Info className="h-5 w-5" />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => handleDeleteClick(e, patient)}
-                        className="h-8 w-8 p-0 hover:bg-red-100"
-                      >
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
+                      {canEditDelete && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleEditClick(e, patient)}
+                            className="h-8 w-8 p-0 stroke-[2.5] text-gray-400 hover:text-[#7564ed] hover:bg-gray-100"
+                          >
+                            <Edit className="h-5 w-5  stroke-[2.5] hover:text-[#7564ed] hover:bg-gray-100" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleDeleteClick(e, patient)}
+                            className="h-8 w-8 p-0 hover:bg-gray-100"
+                          >
+                            <Trash2 className="h-5 w-5 text-gray-400  hover:text-[#ff254e]" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
               ))
             ) : (
-              <tr className="w-full">
-                <td colSpan="5" className="text-center py-8 text-gray-500 text-lg">
-                  Aucun patient trouvé.
+              <tr>
+                <td colSpan="5" className="">
+                  <Empty>
+                    <EmptyHeader>
+                      <EmptyMedia variant="icon">
+                        <Folder className="h-10 w-10 text-gray-400" />
+                      </EmptyMedia>
+
+                      <EmptyTitle className="text-xl font-semibold">
+                        Aucun patient trouvé
+                      </EmptyTitle>
+
+                      <EmptyDescription className="text-gray-600 text-base">
+                        Aucun patient ne correspond à votre recherche ou vos filtres.
+                      </EmptyDescription>
+                    </EmptyHeader>
+
+                  </Empty>
                 </td>
               </tr>
             )}

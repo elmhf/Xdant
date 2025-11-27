@@ -800,7 +800,7 @@ export const useZoomMouseEvents = (coreState) => {
     onTouchEnd: handleTouchEnd(viewType),
     tabIndex: 0,
     style: { 
-      background: "black", 
+      background: "[#0d0c22]", 
       cursor: cursors[viewType],
       outline: 'none',
       touchAction: 'none', // منع التمرير الافتراضي في اللمس

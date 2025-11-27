@@ -38,7 +38,7 @@ async function fetchToothSliceData(toothId, abortSignal) {
       }),
       signal: abortSignal
     });
-
+    console.log('response:::::', response);
     if (!response.ok) {
       let errorMessage = `HTTP ${response.status}`;
       

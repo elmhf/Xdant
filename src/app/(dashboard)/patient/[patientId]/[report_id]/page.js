@@ -2,11 +2,11 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import Dashboard from '@/app/component/dashboard/dashboard';
+import Dashboard from '@/components/features/dashboard/dashboard';
 import { useReportData } from "../hook/useReportData";
 import { useToothSliceData } from "../hook/useToothSliceData";
-import useImageCard from "@/app/component/dashboard/main/ImageXRay/component/useImageCard";
-import ReportLoading from '@/app/component/utils/ReportLoading';
+import useImageCard from "@/components/features/dashboard/main/ImageXRay/component/useImageCard";
+import ReportLoading from '@/components/shared/report-loading/ReportLoading';
 
 export default function ReportPage() {
   const params = useParams();
@@ -25,7 +25,7 @@ export default function ReportPage() {
 
   // Choose which hook's data to use based on report type (but both hooks are always called)
   const activeHook = reportType === 'toothSlice' ? toothSliceDataHook : reportDataHook;
-  
+
   const {
     data,
     loading,
@@ -41,20 +41,14 @@ export default function ReportPage() {
   // Set imageCard when it's properly initialized
   useEffect(() => {
     if (imageCardHook && !imageCard) {
-      console.log('🖼️ ImageCard initialized');
+
       setImageCard(imageCardHook);
     }
   }, [imageCardHook, imageCard]);
 
   // Effect for fetching data
   useEffect(() => {
-    console.log('📊 Effect triggered:', {
-      reportId,
-      patientId,
-      reportType,
-      lastProcessed: lastProcessedId.current,
-      hasImageCard: !!imageCard
-    });
+
 
     // Skip if no reportId or same as last processed
     if (!reportId || reportId === lastProcessedId.current) {
@@ -62,12 +56,8 @@ export default function ReportPage() {
     }
 
     // Skip if imageCard not ready (to avoid stageRef errors)
-    if (!imageCard) {
-      console.log('⏳ Waiting for imageCard to initialize...');
-      return;
-    }
 
-    console.log('🚀 Fetching new report:', reportId, 'Patient:', patientId, 'Type:', reportType);
+
     lastProcessedId.current = reportId;
 
     // Fetch data
@@ -111,31 +101,31 @@ export default function ReportPage() {
   const getNoDataConfig = () => {
     switch (reportType) {
       case 'pano':
-        return { 
+        return {
           title: "No Panoramic Report Data Available",
           description: "The panoramic report could not be loaded. This might be due to network issues or the report may not exist.",
           icon: "🦷"
         };
       case 'threeDModel':
-        return { 
+        return {
           title: "No 3D Model Report Data Available",
           description: "The 3D model report could not be loaded. This might be due to network issues or the report may not exist.",
           icon: "🎯"
         };
       case 'cbct':
-        return { 
+        return {
           title: "No CBCT Report Data Available",
           description: "The CBCT report could not be loaded. This might be due to network issues or the report may not exist.",
           icon: "📄"
         };
       case 'toothSlice':
-        return { 
+        return {
           title: "No Tooth Slice Data Available",
           description: "The tooth slice data could not be loaded. This might be due to network issues or the tooth data may not exist.",
           icon: "🦷"
         };
       default:
-        return { 
+        return {
           title: "No Report Data Available",
           description: "The report could not be loaded. This might be due to network issues or the report may not exist.",
           icon: "📊"
@@ -145,7 +135,7 @@ export default function ReportPage() {
 
   // Event handlers
   const handleRetry = () => {
-    console.log('🔄 Retrying...');
+
     lastProcessedId.current = null;
     retry(reportId);
   };
@@ -153,13 +143,14 @@ export default function ReportPage() {
   const handleClearCache = () => {
     clearCache();
     lastProcessedId.current = null;
-    console.log('🗑️ Cache cleared');
+
   };
 
   const handleLoadReport = () => {
-    console.log('📄 Manual load requested');
+
     lastProcessedId.current = null;
     if (reportId && imageCard) {
+      console.log('🚀 fetchData called:', imageCard);
       fetchData(reportId);
     }
   };
@@ -170,11 +161,11 @@ export default function ReportPage() {
   if (loading) {
     const { message, icon } = getLoadingConfig();
     return (
-      <ReportLoading 
-        message={message} 
-        reportId={reportId} 
-        imageCard={imageCard} 
-        icon={icon} 
+      <ReportLoading
+        message={message}
+        reportId={reportId}
+        imageCard={imageCard}
+        icon={icon}
       />
     );
   }
@@ -182,7 +173,7 @@ export default function ReportPage() {
   // Error state
   if (hasError) {
     const { title, icon } = getErrorConfig();
-    
+
     return (
       <div className="flex w-full flex-col items-center justify-center min-h-screen gap-4 p-6 max-w-md mx-auto">
         <div className="text-red-500 text-6xl animate-bounce">{icon}</div>
@@ -202,14 +193,14 @@ export default function ReportPage() {
           Type: {reportType}
         </div>
         <div className="flex gap-3 mt-4">
-          <button 
+          <button
             onClick={handleRetry}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium shadow-sm"
           >
             🔄 Try Again
           </button>
           {process.env.NODE_ENV === 'development' && (
-            <button 
+            <button
               onClick={handleClearCache}
               className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-sm transition-colors shadow-sm"
             >
@@ -223,12 +214,12 @@ export default function ReportPage() {
 
   // Success state
   if (hasData && data) {
-    console.log('✅ Rendering Dashboard with data, type:', detectedReportType || reportType);
+
     return (
-      <div className="w-full max-h-full mx-auto max-w-[90%] sm:w-full">
-        <Dashboard 
-          reportType={detectedReportType || reportType} 
-          reportData={data} 
+      <div className="w-full max-h-full  sm:w-full">
+        <Dashboard
+          reportType={detectedReportType || reportType}
+          reportData={data}
         />
       </div>
     );
@@ -237,7 +228,7 @@ export default function ReportPage() {
   // Special handling for toothSlice
   if (reportType === 'toothSlice') {
     const ToothSliceComponent = React.lazy(() => import("./ToothSlice/[toothId]/page"));
-    
+
     return (
       <div className="w-full max-h-full mx-auto max-w-[90%] sm:w-full">
         <React.Suspense fallback={
@@ -256,7 +247,7 @@ export default function ReportPage() {
 
   // No data state
   const { title, description, icon } = getNoDataConfig();
-  
+
   return (
     <div className="flex flex-col w-screen items-center justify-center min-h-screen gap-6 p-6">
       <div className="text-gray-400 text-6xl">{icon}</div>
@@ -277,7 +268,7 @@ export default function ReportPage() {
       <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">
         Type: {reportType}
       </div>
-      <button 
+      <button
         onClick={handleLoadReport}
         disabled={!imageCard}
         className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium shadow-sm disabled:opacity-50"

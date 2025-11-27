@@ -39,7 +39,7 @@ export const AccessDenied = ({ userRole, requiredRole = "Administrateur", messag
         </div>
         <Button 
           onClick={() => window.location.href = "/"}
-          className="bg-[#7c5cff] hover:bg-[#6a4fd8] text-white border-2 border-[#7c5cff] h-12 text-base font-semibold px-8"
+          className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed] h-12 text-base font-semibold px-8"
         >
           Retour au Dashboard
         </Button>

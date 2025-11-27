@@ -1,12 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import useUserStore from '../../../component/profile/store/userStore';
+import useUserStore from '@/components/features/profile/store/userStore';
 
 export const useTableUtils = () => {
   const renderMemberAvatar = (member) => {
     return (
       <Avatar className="h-8 w-8 flex-shrink-0">
-        <AvatarImage 
-          src={member.profilePhotoUrl ? useUserStore.getState().getImageFromCache(member.profilePhotoUrl)?.src || member.profilePhotoUrl : `https://api.dicebear.com/7.x/initials/svg?seed=${member.name}`} 
+        <AvatarImage
+          src={member.profilePhotoUrl ? useUserStore.getState().getImageFromCache(member.profilePhotoUrl)?.src || member.profilePhotoUrl : `https://api.dicebear.com/7.x/initials/svg?seed=${member.name}`}
         />
         <AvatarFallback className="bg-purple-100 text-purple-600 text-sm font-semibold">
           {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}

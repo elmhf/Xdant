@@ -155,7 +155,7 @@ const ForgotPasswordPage = () => {
       setSuccess(true);
       // You can redirect to login page here
       setTimeout(() => {
-        console.log('Redirect to login page');
+        
         // window.location.href = '/login';
       }, 2000);
     } catch (err) {
@@ -218,7 +218,7 @@ const ForgotPasswordPage = () => {
         {step === 1 && (
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#7c5cff] text-white">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#7564ed] text-white">
                 1
               </div>
               <span className="ml-2 text-sm font-medium text-gray-600">Email</span>
@@ -256,7 +256,7 @@ const ForgotPasswordPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="pl-10 pr-4 h-12 w-full border-2 border-[#7c5cff] rounded-lg focus:border-[#6a4fd8]"
+                  className="pl-10 pr-4 h-12 w-full border-2 border-[#7564ed] rounded-lg focus:border-[#6a4fd8]"
                 />
               </div>
             </div>
@@ -269,7 +269,7 @@ const ForgotPasswordPage = () => {
 
             <Button
               onClick={handleEmailSubmit}
-              className="w-full h-12 bg-[#7c5cff] hover:bg-[#6a4fd8] text-white font-bold text-lg rounded-lg shadow-md"
+              className="w-full h-12 bg-[#7564ed] hover:bg-[#6a4fd8] text-white font-bold text-lg rounded-lg shadow-md"
               disabled={loading}
             >
               {loading ? (
@@ -320,7 +320,7 @@ const ForgotPasswordPage = () => {
 
             <Button
               onClick={handleOtpSubmit}
-              className="w-full h-12 bg-black hover:bg-gray-800 text-white font-bold text-lg rounded-lg"
+              className="w-full h-12 bg-[#0d0c22] hover:bg-gray-800 text-white font-bold text-lg rounded-lg"
               disabled={loading || otp.join('').length !== 6}
             >
               {loading ? (
@@ -372,7 +372,7 @@ const ForgotPasswordPage = () => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
-                  className="h-12 w-full border-2 border-[#7c5cff] rounded-lg focus:border-[#6a4fd8]"
+                  className="h-12 w-full border-2 border-[#7564ed] rounded-lg focus:border-[#6a4fd8]"
                 />
               </div>
 
@@ -387,7 +387,7 @@ const ForgotPasswordPage = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="h-12 w-full border-2 border-[#7c5cff] rounded-lg focus:border-[#6a4fd8]"
+                  className="h-12 w-full border-2 border-[#7564ed] rounded-lg focus:border-[#6a4fd8]"
                 />
               </div>
             </div>
@@ -408,7 +408,7 @@ const ForgotPasswordPage = () => {
 
             <Button
               onClick={handlePasswordSubmit}
-              className="w-full h-12 bg-[#7c5cff] hover:bg-[#6a4fd8] text-white font-bold text-lg rounded-lg shadow-md"
+              className="w-full h-12 bg-[#7564ed] hover:bg-[#6a4fd8] text-white font-bold text-lg rounded-lg shadow-md"
               disabled={loading || !newPassword || !confirmPassword}
             >
               {loading ? (

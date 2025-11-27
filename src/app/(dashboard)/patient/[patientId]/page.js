@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ArrowLeft, Edit, Trash2, User, Mail, Phone, MapPin, Calendar, Users, Heart, Loader2, Plus, Wifi, WifiOff } from "lucide-react";
-import useUserStore from "@/app/component/profile/store/userStore";
+import useUserStore from "@/components/features/profile/store/userStore";
 import { formatPatientName, formatDateOfBirth, getPatientAvatarInitials } from '../utils/patientUtils';
 import AddDoctorDialog from '../components/AddDoctorDialog';
 import { DeleteDoctorDialog } from '../components/DeleteDoctorDialog';
@@ -15,28 +15,29 @@ import EditPatientDialog from '../components/EditPatientDialog';
 import OrderAIReport from '../components/OrderAIReport';
 import AIOrdersList from '../components/AIOrdersList';
 import { usePatientWebSocket } from '../hooks/usePatientWebSocket';
-import { 
-  usePatientStore, 
-  useCurrentPatient, 
-  useReports as useReportsSelector, 
+import Lottie from "lottie-react";
+import {
+  usePatientStore,
+  useCurrentPatient,
+  useReports as useReportsSelector,
   useReportsLoading,
   useWsConnection,
   useReportsStats,
   useFilteredReports
 } from '@/stores/patientStore';
+import ReportComments from '../components/ReportComments';
 
-// Helper function to calculate age from date of birth
 const calculateAge = (dateOfBirth) => {
-  if (!dateOfBirth) return 'Unknown'; 
+  if (!dateOfBirth) return 'Unknown';
   const today = new Date();
   const birthDate = new Date(dateOfBirth);
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  
+
   return age;
 };
 
@@ -46,10 +47,10 @@ export default function PatientDetailPage() {
   const params = useParams();
   const router = useRouter();
   const patientId = params.patientId;
-  
   // استخدام selectors محسنة للأداء
   const currentPatient = useCurrentPatient();
   const reports = useReportsSelector();
+  console.log(reports, "reportsreports")
   const loading = usePatientStore(state => state.loading);
   const error = usePatientStore(state => state.error);
   const reportsLoading = useReportsLoading();
@@ -60,18 +61,18 @@ export default function PatientDetailPage() {
   const isDeleteDoctorOpen = usePatientStore(state => state.isDeleteDoctorOpen);
   const isEditPatientOpen = usePatientStore(state => state.isEditPatientOpen);
   const doctorToDelete = usePatientStore(state => state.doctorToDelete);
-  
+
   // استخدام actions من store
   const store = usePatientStore();
-  
+
   // WebSocket setup
   const user = useUserStore.getState().user;
   const userId = user?.id || 'anonymous';
   const clinicId = user?.clinic_id || 'default-clinic';
-  
-  console.log('🏥 Patient Page - WebSocket Setup:', { 
-    patientId, 
-    userId, 
+
+  console.log('🏥 Patient Page - WebSocket Setup:', {
+    patientId,
+    userId,
     clinicId,
     user: user ? 'User found' : 'No user'
   });
@@ -129,20 +130,12 @@ export default function PatientDetailPage() {
     });
 
     if (wsPatientReports.length > 0) {
-      console.log('📊 Syncing WebSocket reports with store',wsPatientReports);
-      
+
       // دمج تقارير WebSocket مع التقارير المحلية مع تحديث الحالات
       const updatedReports = reports.map(localReport => {
-        console.log('🔄 Syncing Checking local report:', localReport);
         // البحث عن التقرير المقابل في WebSocket reports
         const wsReport = wsPatientReports.find(ws => ws.id === localReport.id);
         if (wsReport) {
-          console.log('🔄 Updating report status from WebSocket:', {
-            id: localReport.id,
-            oldStatus: localReport.status,
-            newStatus: wsReport.status,
-            type: localReport.type || localReport.raport_type
-          });
           return {
             ...localReport,
             status: wsReport.status,
@@ -157,23 +150,23 @@ export default function PatientDetailPage() {
         }
         return localReport;
       });
-      
+
       // إضافة التقارير الجديدة من WebSocket
       const existingReportIds = new Set(reports.map(r => r.id));
       const newReports = wsPatientReports.filter(report => !existingReportIds.has(report.id));
-      
+
       console.log('📋 Reports sync:', {
         existingCount: reports.length,
         updatedCount: updatedReports.length,
         newReportsCount: newReports.length,
         totalAfterSync: updatedReports.length + newReports.length
       });
-      
+
       // تحديث التقارير في الـ store
       const finalReports = [...updatedReports, ...newReports];
-      if (finalReports.length !== reports.length || 
-          JSON.stringify(finalReports.map(r => ({ id: r.id, status: r.status }))) !== 
-          JSON.stringify(reports.map(r => ({ id: r.id, status: r.status })))) {
+      if (finalReports.length !== reports.length ||
+        JSON.stringify(finalReports.map(r => ({ id: r.id, status: r.status }))) !==
+        JSON.stringify(reports.map(r => ({ id: r.id, status: r.status })))) {
         usePatientStore.getState().setReports(finalReports);
       }
     }
@@ -187,10 +180,10 @@ export default function PatientDetailPage() {
         timestamp: wsLastUpdate.timestamp,
         data: wsLastUpdate.data
       });
-      
+
       // معالجة خاصة لتحديث الحالة
       if (
-        wsLastUpdate.type === 'report_status_changed_realtime' || 
+        wsLastUpdate.type === 'report_status_changed_realtime' ||
         wsLastUpdate.type === 'report_status_changed_detailed_realtime' ||
         wsLastUpdate.type === 'report_status_changed_notification' ||
         wsLastUpdate.type === 'report_status'
@@ -206,10 +199,10 @@ export default function PatientDetailPage() {
           updatedAt: wsLastUpdate.timestamp
         });
       }
-      
+
       // معالجة خاصة لحذف التقارير (شامل جميع الأنواع)
       if (
-        wsLastUpdate.type === 'report_deleted_realtime' || 
+        wsLastUpdate.type === 'report_deleted_realtime' ||
         wsLastUpdate.type === 'report_deleted' ||
         wsLastUpdate.type === 'report_deleted_detailed_realtime'
       ) {
@@ -299,7 +292,7 @@ export default function PatientDetailPage() {
 
     const newFavoriteStatus = !currentPatient.isFavorite;
     const result = await store.toggleFavorite(currentPatient.id, newFavoriteStatus);
-    
+
     if (!result.success) {
       console.error('Error toggling favorite:', result.message);
       alert(`Error: ${result.message}`);
@@ -311,7 +304,8 @@ export default function PatientDetailPage() {
       <div className="flex items-center justify-center min-h-screen w-full bg-transparent">
         <div className="text-center max-w-md mx-auto p-6">
           <div className="mb-6">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7c5cff] mx-auto mb-4"></div>
+
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7564ed] mx-auto mb-4"></div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Chargement du patient
             </h2>
@@ -335,7 +329,7 @@ export default function PatientDetailPage() {
             <p className="text-gray-600 text-lg mb-4">
               {error}
             </p>
-            <Button onClick={handleBack} className="bg-[#7c5cff] hover:bg-[#6a4fd879] text-white">
+            <Button onClick={handleBack} className="bg-[#7564ed] hover:bg-[#6a4fd879] text-white">
               Retour aux patients
             </Button>
           </div>
@@ -355,7 +349,7 @@ export default function PatientDetailPage() {
             <p className="text-gray-600 text-lg mb-4">
               Le patient demandé n'existe pas.
             </p>
-            <Button onClick={handleBack} className="bg-[#7c5cff] hover:bg-[#6a4fd8] text-white">
+            <Button onClick={handleBack} className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white">
               Retour aux patients
             </Button>
           </div>
@@ -365,136 +359,119 @@ export default function PatientDetailPage() {
   }
 
   return (
-    <div className="min-h-full w-full bg-transparent ">
+    <div className="min-h-full w-full bg-transparent max-h-[calc(100vh-max(7vh,50px))] overflow-y-auto overflow-x-hidden p-2 scrollbar-hide" style={{
+      scrollbarWidth: 'none', /* Firefox */
+      msOverflowStyle: 'none', /* IE and Edge */
+    }}>
+      <style jsx>{`
+        div::-webkit-scrollbar {
+          display: none; /* Chrome, Safari and Opera */
+        }
+      `}</style>
       {/* WebSocket Connection Status */}
 
       {/* Main Content */}
-      <div className="px-4 py-6 max-w-7xl mx-auto">
+      <div className="">
         {/* Profile Header */}
-        <div className="mb-6">
+        <div className="mb-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-5xl font-[800] text-gray-900 mb-2">
+              <h3 className="text-4xl font-[700] text-gray-900">
                 {formatPatientName(currentPatient)}
-              </h2>
-              <div className="flex items-center space-x-3 text-gray-900">
+              </h3>
+              <div className="flex items-center font-[500] space-x-3 text-gray-900">
                 <span>{calculateAge(currentPatient.date_of_birth)} years</span>
-                <span className="capitalize">{currentPatient.gender || 'Unknown'}</span>   <Button 
-              onClick={store.openEditPatientDialog}
-              variant="ghost" 
-              size="sm" 
-              className="p-2 text-gray-400 hover:text-gray-600"
-            >
-              <Edit className="w-4 h-4" />
-            </Button>
+                <span className="capitalize">{currentPatient.gender || 'Unknown'}</span>
+                <span className="capitalize">{currentPatient.email || 'Unknown'}</span>
+                <Button
+                  onClick={store.openEditPatientDialog}
+                  variant="ghost"
+                  size="sm"
+                  className="p-2 text-gray-400 hover:text-gray-600"
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
               </div>
             </div>
-         
+
           </div>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 ">
           {/* Left Column - Cards */}
           <div className="lg:col-span-2">
             <div className="space-y-6">
               {/* Top Row - Doctor Cards */}
-              <div className="grid grid-cols-2 gap-4 ">
-                {/* Treating doctors card */}
-                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-3xl font-bold text-gray-900">Treating doctors</h2>
-                    <Button 
-                      onClick={handleAddDoctor}
-                      variant="ghost"
-                      size="sm"
-                      className="p-2 border-0 border-white  text-gray-400 hover:text-purple-600"
-                    >
-                      <Plus className="w-8 h-8 stroke-3 " />
-                    </Button>
-                  </div>
-                  
-                  <div className="space-y-0">
-                    {currentPatient.treating_doctors && currentPatient.treating_doctors.length > 0 ? (
-                      currentPatient.treating_doctors.map((doctor, index) => (
-                        <div key={doctor.id || index} className="flex items-center justify-between p-1 rounded-lg hover:bg-gray-50 transition-colors">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
-                              <span className="text-white font-semibold text-sm">
-                                {((doctor.first_name || '').slice(0, 1) + 
-                                  (doctor.last_name || '').slice(0, 1)).toUpperCase()}
-                              </span>
-                            </div>
-                            <div>
-                              <h5 className="font-medium text-gray-900 text-sm">
-                                {doctor.first_name || ""} {doctor.last_name || ""}
-                              </h5>
-                              <p className="text-gray-500 text-xs"></p>
-                            </div>
-                          </div>
-                          <Button 
-                            onClick={() => handleDeleteDoctor(doctor)}
-                            variant="ghost" 
-                            size="sm" 
-                            className="p-1 border-0 text-gray-400 hover:text-red-500 transition-colors"
-                          >
-                            <Trash2 className="w-6 h-6" />
-                          </Button>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-6 text-gray-500 text-sm">
-                        No doctors assigned
-                      </div>
-                    )}
-                  </div>
+              {/* Treating doctors card */}
+              <div className="bg-white rounded-lg p-[12px] shadow-sm border border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-3xl font-bold text-gray-950">Treating doctors</h2>
+                  <Button
+                    onClick={handleAddDoctor}
+                    variant="ghost"
+                    size="sm"
+                    className=" p-0 border-0 border-white  text-[#7564ed] "
+                  >
+                    <Plus className="w-7 h-7 stroke-4 " />
+                  </Button>
                 </div>
 
-                {/* Personal Info card */}
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-3xl font-bold text-gray-900">Personal Info</h2>
-                  </div>
-                  <div className="mt-2 space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <Mail className="w-5 h-5 text-[#7564ed]" />
-                      <span className="text-gray-700 text-md max-w-[180px] truncate overflow-hidden whitespace-nowrap block" title={currentPatient.email}>
-                        {currentPatient.email || "No email"}
-                      </span>
+                <div className="space-y-0">
+                  {currentPatient.treating_doctors && currentPatient.treating_doctors.length > 0 ? (
+                    currentPatient.treating_doctors.map((doctor, index) => (
+                      <div key={doctor.id || index} className="flex items-center justify-between p-1 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
+                            <span className="text-white font-semibold text-sm">
+                              {((doctor.first_name || '').slice(0, 1) +
+                                (doctor.last_name || '').slice(0, 1)).toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <h5 className="font-medium text-gray-900 text-l">
+                              {doctor.first_name || ""} {doctor.last_name || ""}
+                            </h5>
+                            <p className="text-gray-500 text-xs"></p>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => handleDeleteDoctor(doctor)}
+                          variant="ghost"
+                          size="sm"
+                          className="p-1 border-0 text-gray-400 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 className="w-6 h-6" />
+                        </Button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-6 text-gray-500 text-sm">
+                      No doctors assigned
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <Phone className="w-5 h-5 text-[#7564ed]" />
-                      <span className="text-gray-700 text-md">
-                        {currentPatient.phone || "No phone"}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="w-5 h-5 text-[#7564ed]" />
-                      <span className="text-gray-700 text-md">
-                        {currentPatient.address || "No address"}
-                      </span>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
+              <ReportComments></ReportComments>
               {/* Bottom Row - Order AI Report */}
               <div className="">
-                <OrderAIReport 
-                  patient={currentPatient} 
+                <OrderAIReport
+                  patient={currentPatient}
                   onReportCreated={handleReportCreated}
                   addReportToState={handleReportCreated}
                 />
               </div>
+
             </div>
           </div>
 
           {/* Right Column - AI Orders List */}
           <div className="lg:col-span-2">
-            <AIOrdersList 
-              patient={currentPatient} 
-              reports={reports} 
-              loading={reportsLoading} 
+            <AIOrdersList
+              patient={currentPatient}
+              reports={reports}
+              loading={reportsLoading}
               onReportDeleted={store.removeReport}
               wsConnected={wsConnected}
               wsConnectionStatus={wsConnectionStatus}
@@ -526,9 +503,13 @@ export default function PatientDetailPage() {
       <DeleteDoctorDialog
         open={isDeleteDoctorOpen}
         onOpenChange={(open) => {
+          console.log(open, "openopen")
           if (!open) {
             store.closeDeleteDoctorDialog();
           }
+        }}
+        close={() => {
+          store.closeDeleteDoctorDialog();
         }}
         doctor={doctorToDelete}
         patient={currentPatient}

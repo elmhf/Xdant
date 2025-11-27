@@ -1,51 +1,51 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import useUserStore from "@/app/component/profile/store/userStore";
+import useUserStore from "@/components/features/profile/store/userStore";
 
 // Initial state structure
 const initialState = {
   // Patient data
   currentPatient: null,
   patients: [],
-  
+
   // Reports data
   reports: [],
   reportsLoading: false,
   reportsError: null,
-  
+
   // WebSocket state
   wsConnected: false,
   wsConnectionStatus: 'disconnected',
   wsLastUpdate: null,
   wsNotifications: [],
-  
+
   // UI state
   loading: false,
   error: null,
-  
+
   // Dialog states
   isAddDoctorOpen: false,
   isDeleteDoctorOpen: false,
   isEditPatientOpen: false,
   isDeleteReportOpen: false,
-  
+
   // Selected items
   doctorToDelete: null,
   reportToDelete: null,
-  
+
   // Loading states
   favoriteLoading: false,
   deleteDoctorLoading: false,
   deleteReportLoading: false,
-  
+
   // Messages
   deleteDoctorMessage: "",
   deleteReportMessage: "",
-  
+
   // Filters
   dateFilter: '',
   typeFilter: 'all',
-  
+
   // Pagination
   currentPage: 1,
   itemsPerPage: 10,
@@ -59,7 +59,7 @@ export const usePatientStore = create(
       ...initialState,
 
       // ===== PATIENT MANAGEMENT =====
-      
+
       // Set current patient
       setCurrentPatient: (patient) => {
         set(state => {
@@ -82,14 +82,14 @@ export const usePatientStore = create(
       updatePatient: (updates) => {
         set(state => {
           if (!state.currentPatient) return state;
-          
+
           // تحقق من أن التحديثات مختلفة فعلاً
-          const hasChanges = Object.keys(updates).some(key => 
+          const hasChanges = Object.keys(updates).some(key =>
             state.currentPatient[key] !== updates[key]
           );
-          
+
           if (!hasChanges) return state;
-          
+
           return {
             currentPatient: { ...state.currentPatient, ...updates }
           };
@@ -110,11 +110,11 @@ export const usePatientStore = create(
         set(state => {
           const patientIndex = state.patients.findIndex(p => p.id === patientId);
           if (patientIndex === -1) return state;
-          
+
           const updatedPatient = { ...state.patients[patientIndex], ...updates };
           const updatedPatients = [...state.patients];
           updatedPatients[patientIndex] = updatedPatient;
-          
+
           return { patients: updatedPatients };
         });
       },
@@ -146,7 +146,7 @@ export const usePatientStore = create(
           // تحقق من أن التقرير غير موجود بالفعل
           const existingReport = state.reports.find(r => r.id === report.id);
           if (existingReport) return state;
-          
+
           return { reports: [...state.reports, report] };
         });
       },
@@ -156,11 +156,11 @@ export const usePatientStore = create(
         set(state => {
           const reportIndex = state.reports.findIndex(report => report.id === reportId);
           if (reportIndex === -1) return state;
-          
+
           const updatedReport = { ...state.reports[reportIndex], ...updates, updatedAt: new Date().toISOString() };
           const updatedReports = [...state.reports];
           updatedReports[reportIndex] = updatedReport;
-          
+
           return { reports: updatedReports };
         });
       },
@@ -170,7 +170,7 @@ export const usePatientStore = create(
         set(state => {
           const filteredReports = state.reports.filter(report => report.id !== reportId);
           if (filteredReports.length === state.reports.length) return state;
-          
+
           return { reports: filteredReports };
         });
       },
@@ -199,9 +199,9 @@ export const usePatientStore = create(
           if (state.wsConnected === connected && state.wsConnectionStatus === status) {
             return state;
           }
-          return { 
-            wsConnected: connected, 
-            wsConnectionStatus: status 
+          return {
+            wsConnected: connected,
+            wsConnectionStatus: status
           };
         });
       },
@@ -291,8 +291,8 @@ export const usePatientStore = create(
           if (state.isDeleteDoctorOpen && JSON.stringify(state.doctorToDelete) === JSON.stringify(doctor)) {
             return state;
           }
-          return { 
-            isDeleteDoctorOpen: true, 
+          return {
+            isDeleteDoctorOpen: true,
             doctorToDelete: doctor,
             deleteDoctorMessage: ""
           };
@@ -302,8 +302,8 @@ export const usePatientStore = create(
       closeDeleteDoctorDialog: () => {
         set(state => {
           if (!state.isDeleteDoctorOpen) return state;
-          return { 
-            isDeleteDoctorOpen: false, 
+          return {
+            isDeleteDoctorOpen: false,
             doctorToDelete: null,
             deleteDoctorMessage: ""
           };
@@ -331,8 +331,8 @@ export const usePatientStore = create(
           if (state.isDeleteReportOpen && JSON.stringify(state.reportToDelete) === JSON.stringify(report)) {
             return state;
           }
-          return { 
-            isDeleteReportOpen: true, 
+          return {
+            isDeleteReportOpen: true,
             reportToDelete: report,
             deleteReportMessage: ""
           };
@@ -342,8 +342,8 @@ export const usePatientStore = create(
       closeDeleteReportDialog: () => {
         set(state => {
           if (!state.isDeleteReportOpen) return state;
-          return { 
-            isDeleteReportOpen: false, 
+          return {
+            isDeleteReportOpen: false,
             reportToDelete: null,
             deleteReportMessage: ""
           };
@@ -440,15 +440,15 @@ export const usePatientStore = create(
       // Get filtered reports
       getFilteredReports: () => {
         const { reports, dateFilter, typeFilter } = get();
-        
+
         return reports.filter(report => {
-          const matchesDate = !dateFilter || 
+          const matchesDate = !dateFilter ||
             new Date(report.createdAt || report.created_at).toISOString().split('T')[0] === dateFilter;
-          
-          const matchesType = !typeFilter || 
-            typeFilter === 'all' || 
+
+          const matchesType = !typeFilter ||
+            typeFilter === 'all' ||
             (report.type || report.raport_type || '').toLowerCase().includes(typeFilter.toLowerCase());
-          
+
           return matchesDate && matchesType;
         });
       },
@@ -465,7 +465,7 @@ export const usePatientStore = create(
 
       // Get active reports
       getActiveReports: () => {
-        return get().reports.filter(report => 
+        return get().reports.filter(report =>
           report.status === 'pending' || report.status === 'processing'
         );
       },
@@ -496,29 +496,29 @@ export const usePatientStore = create(
         try {
           const result = await useUserStore.getState().getPatient(patientId);
           if (result.success) {
-            set({ 
+            set({
               currentPatient: result.patient,
-              loading: false 
+              loading: false
             });
-            
+
             // Initialize reports from patient data
             if (result.patient.reports) {
               set({ reports: result.patient.reports });
             }
-            
+
             return { success: true, patient: result.patient };
           } else {
-            set({ 
-              error: result.message || "Error fetching patient", 
-              loading: false 
+            set({
+              error: result.message || "Error fetching patient",
+              loading: false
             });
             return { success: false, message: result.message };
           }
         } catch (error) {
           console.error('Error fetching patient:', error);
-          set({ 
-            error: 'Network error while fetching patient', 
-            loading: false 
+          set({
+            error: 'Network error while fetching patient',
+            loading: false
           });
           return { success: false, message: 'Network error while fetching patient' };
         }
@@ -541,7 +541,7 @@ export const usePatientStore = create(
           if (response.ok) {
             const data = await response.json();
             const serverReports = data.reports || [];
-            
+
             // Merge server reports with existing reports, avoiding duplicates
             set(state => {
               const existingReportIds = new Set(state.reports.map(r => r.id));
@@ -565,10 +565,10 @@ export const usePatientStore = create(
         set({ favoriteLoading: true });
         try {
           const result = await useUserStore.getState().toggleFavorite(patientId, newStatus);
-          
+
           if (result.success) {
             set(state => ({
-              currentPatient: state.currentPatient 
+              currentPatient: state.currentPatient
                 ? { ...state.currentPatient, isFavorite: newStatus }
                 : null,
               favoriteLoading: false
@@ -608,7 +608,7 @@ export const usePatientStore = create(
             address: currentPatient.address || "",
             treating_doctor_id: treating_doctor_ids
           };
-          
+
           const response = await fetch(`http://localhost:5000/api/patients/update`, {
             method: 'PUT',
             headers: {
@@ -625,16 +625,16 @@ export const usePatientStore = create(
           }
 
           set({ deleteDoctorMessage: "Doctor removed successfully" });
-          
+
           // Refresh patient data
           const result = await useUserStore.getState().getPatient(currentPatient.id);
           if (result.success) {
             set({ currentPatient: result.patient });
           }
-          
-          set({ 
-            isDeleteDoctorOpen: false, 
-            doctorToDelete: null, 
+
+          set({
+            isDeleteDoctorOpen: false,
+            doctorToDelete: null,
             deleteDoctorMessage: "",
             deleteDoctorLoading: false
           });
@@ -642,7 +642,7 @@ export const usePatientStore = create(
           return { success: true };
         } catch (error) {
           console.error('Error removing doctor:', error);
-          set({ 
+          set({
             deleteDoctorMessage: error.message || 'Failed to remove doctor',
             deleteDoctorLoading: false
           });
@@ -677,7 +677,7 @@ export const usePatientStore = create(
 
           if (response.status === 200) {
             console.log('✅ Report deleted successfully from server');
-            
+
             // Remove the report from local state immediately
             set(state => ({
               reports: state.reports.filter(report => report.id !== reportToDelete.id),
@@ -686,11 +686,11 @@ export const usePatientStore = create(
               deleteReportMessage: "",
               deleteReportLoading: false
             }));
-            
+
             return { success: true };
           } else {
             console.error('❌ Failed to delete report from server');
-            set({ 
+            set({
               deleteReportMessage: 'Failed to delete report from server',
               deleteReportLoading: false
             });
@@ -698,7 +698,7 @@ export const usePatientStore = create(
           }
         } catch (error) {
           console.error('❌ Error deleting report:', error);
-          set({ 
+          set({
             deleteReportMessage: error.message || 'Error deleting report',
             deleteReportLoading: false
           });

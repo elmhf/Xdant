@@ -243,14 +243,14 @@ export default function ProfileSetup({ onBack, onNext, isFirstStep, isLastStep }
             <button
               type="button"
               onClick={onBack}
-              className="flex items-center px-6 py-2 rounded-full border bg-white text-black border-gray-300 hover:bg-gray-50 transition-all duration-200"
+              className="flex items-center px-6 py-2 rounded-full border bg-white text-[#0d0c22] border-gray-300 hover:bg-gray-50 transition-all duration-200"
             >
               <span className="mr-2">&#8592;</span> Go back
             </button>
             <button
               type="submit"
               onClick={onNext}
-              className="px-6 py-2 rounded-full bg-black text-white font-semibold hover:bg-gray-900 transition-all duration-200"
+              className="px-6 py-2 rounded-full bg-[#0d0c22] text-white font-semibold hover:bg-gray-900 transition-all duration-200"
             >
               Finish
             </button>

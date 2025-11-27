@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useUserStore from '../../../component/profile/store/userStore';
+import useUserStore from '@/components/features/profile/store/userStore';
 
 export const useInviteMember = (onSuccess) => {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
@@ -35,7 +35,7 @@ export const useInviteMember = (onSuccess) => {
         setInviteEmail("");
         setInviteRole("staff");
         setInviteDialogOpen(false);
-        
+
         // Call success callback if provided
         if (onSuccess) {
           onSuccess();

@@ -149,41 +149,40 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
             <div className="relative">
               <Select onValueChange={addDoctor} value={selectedDoctors.map(doctor => doctor.id).join(',')}>
                 <SelectTrigger className={`h-fit w-full text-base border-2 ${
-                  selectedDoctors.length === 0 && formError ? 'border-red-500' : 'border-[#7564ed]'
-                } focus:border-[#7564ed] rounded-lg bg-white p-2`}>
+                  selectedDoctors.length === 0 && formError ? 'border-red-500' : ''
+                }  rounded-lg bg-white p-2`}>
                   <div className="flex flex-wrap gap-2 items-center w-full">
                     {selectedDoctors.length > 0 ? (
                       selectedDoctors.map((doctor) => (
-                        <div
-                          key={doctor.id}
-                          className="flex items-center gap-2 bg-[#7564ed] text-white px-3 py-1.5 rounded-full border border-[#7564ed]"
-                        >
-                          <Avatar className="h-5 w-5">
-                            <AvatarFallback className="bg-purple-500 text-white text-xs">
-                              {((doctor.first_name || '').slice(0, 1) + 
-                                (doctor.last_name || '').slice(0, 2)).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm font-medium">
-                            {doctor.first_name || ""} {doctor.last_name || ""}
-                          </span>
-                          <div
-                            onPointerDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeDoctor(doctor.id);
-                            }}
-                            className="text-[#7564ed] hover:text-purple-800 ml-1 cursor-pointer p-1 rounded-full hover:bg-purple-100 transition-colors"
-                          >
-                            <X className="w-3 h-3" />
-                          </div>
-                        </div>
+         <div
+                              key={doctor.id}
+                              className="flex items-center gap-2 bg-[#e4e7eb86]  text-[#0d0c22] px-3 py-3.5 rounded-full border border-purple-200"
+                            >
+                                                           <Avatar className="h-10 w-10">
+                                 <AvatarFallback className="bg-[#7564ed] w-full h-full text-white text-xs">
+                                   {((doctor.first_name || '').slice(0, 1) + 
+                                     (doctor.last_name || '').slice(0, 2)).toUpperCase()}
+                                 </AvatarFallback>
+                               </Avatar>
+                                                           <span className="text-sm font-medium">
+                                 {doctor.first_name || ""} {doctor.last_name || ""}
+                               </span>
+                                                           <div
+                              onPointerDown ={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  removeDoctor(doctor.id);
+                                }}
+                                 className="text-gray-400 hover:text-[#ff254e] ml-1 cursor-pointer p-1 rounded-full transition-colors"
+                               >
+                                 <X className="w-5 h-5 stroke-[3.5] hover:text-[#ff254e] " />
+                               </div>
+                            </div>
                       ))
                     ) : (
                       <span className="text-gray-500 text-base">Select doctors</span>
                     )}
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-500 ml-2 flex-shrink-0" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
                   {availableDoctors.length > 0 ? (
@@ -191,7 +190,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
                       <SelectItem key={doctor.id} value={doctor.id}>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarFallback className="bg-purple-500 text-white text-xs">
+                            <AvatarFallback className="bg-[#7558db] text-white text-xs">
                               {((doctor.first_name || '').slice(0, 1) + 
                                 (doctor.last_name || '').slice(0, 2)).toUpperCase()}
                             </AvatarFallback>
@@ -224,7 +223,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
               type="button"
               onClick={onClose}
               variant="outline"
-              className="flex-1 h-12 text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg"
+              className="flex-1 h-12 text-base"
             >
               Cancel
             </Button>
@@ -232,7 +231,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || selectedDoctors.length === 0}
-              className="flex-1 bg-[#7564ed] hover:bg-[#7558db] disabled:bg-purple-300 text-white h-12 text-base font-medium rounded-lg transition-colors"
+              className="flex-1 bg-[#7564ed] hover:bg-[#7558db] disabled:bg-[#7558db] text-white h-12 text-base font-medium rounded-lg transition-colors"
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">

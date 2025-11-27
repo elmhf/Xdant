@@ -3,10 +3,10 @@ let lastBrightness = null;
 
 export const BrightnessActivity = {
   onMouseDown(e, state) {
-    console.log("okkkkk")
+    
     if (e.evt.button !== 0) return;
-    console.log(state)
-    console.log(state.brightness ,"state.brightness ")
+    
+    
     lastBrightness = state.brightness ?? 1;
     state.setIsAdjustingBrightness?.(true);
     state.setBrightness?.(lastBrightness);

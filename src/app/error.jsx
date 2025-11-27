@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { AlertCircle } from 'lucide-react'
 import Lottie from 'lottie-react'
-import errorAnimation from './Lottie/error.json'
+import errorAnimation from '@/components/shared/lottie/error.json'
 
 export default function Error({ error, reset }) {
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function Error({ error, reset }) {
         <p className="text-muted-foreground">
           Désolé, une erreur s'est produite lors du chargement de la page. Veuillez réessayer.
         </p>
-        <Button onClick={() => reset()} className="w-full bg-[#7c5cff] text-white hover:bg-[#6a4ed8]">
+        <Button onClick={() => reset()} className="w-full bg-[#7564ed] text-white hover:bg-[#6a4ed8]">
 
           Réessayer
         </Button>

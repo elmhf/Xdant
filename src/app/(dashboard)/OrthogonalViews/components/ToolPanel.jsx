@@ -107,8 +107,8 @@ export default function ToolPanel(props) {
 
     const isActive = activeActivities.includes(toolKey);
     const baseClasses = "w-12 h-12 flex items-center justify-center rounded-xl text-2xl shadow-sm transition-transform duration-200";
-    const activeClasses = extraProps.activeClasses || "bg-black text-white border border-black";
-    const inactiveClasses = extraProps.inactiveClasses || "bg-white text-black border border-gray-300";
+    const activeClasses = extraProps.activeClasses || "bg-[#0d0c22] text-white border border-[#0d0c22]";
+    const inactiveClasses = extraProps.inactiveClasses || "bg-white text-[#0d0c22] border border-gray-300";
     const popClass = animatingTool === toolKey ? "scale-110" : "";
 
     return (
@@ -134,8 +134,8 @@ export default function ToolPanel(props) {
       {/* Objects button */}
       <button
         className={`flex items-center gap-2 px-4 h-12 rounded-xl font-medium shadow-sm transition-transform duration-200 ${activeActivities.includes("objects") 
-          ? `bg-black text-white border border-black ${animatingTool === "objects" ? "scale-110" : ""}`
-          : "bg-white text-black border border-gray-300"}`}
+          ? `bg-[#0d0c22] text-white border border-[#0d0c22] ${animatingTool === "objects" ? "scale-110" : ""}`
+          : "bg-white text-[#0d0c22] border border-gray-300"}`}
         onClick={() => handleAnimatedToggle("objects")}
       >
         {renderIcon("FaLayerGroup", { className: "text-xl" })}

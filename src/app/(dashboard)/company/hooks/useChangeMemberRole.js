@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useUserStore from '@/app/component/profile/store/userStore';
+import useUserStore from '@/components/features/profile/store/userStore';
 
 export const useChangeMemberRole = (refetchMembers, clinicId) => {
   const [changing, setChanging] = useState(false);
@@ -11,13 +11,13 @@ export const useChangeMemberRole = (refetchMembers, clinicId) => {
   const { changeMemberRole, mapRoleToAPI, mapAPIToDisplay } = useUserStore();
 
   const openChangeDialog = (member) => {
-    
+
     setMemberToChange(member);
-    
+
     // Map current role to valid API role using store function
     const apiRole = mapRoleToAPI(member.role);
     setNewRole(apiRole);
-    
+
     setShowChangeDialog(true);
     setChangeMessage('');
   };
@@ -34,9 +34,9 @@ export const useChangeMemberRole = (refetchMembers, clinicId) => {
 
     setChanging(true);
     setChangeMessage('');
-    
-    
-    
+
+
+
     try {
       const result = await changeMemberRole(
         clinicId,

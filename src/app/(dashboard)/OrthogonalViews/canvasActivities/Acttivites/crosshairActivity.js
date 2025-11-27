@@ -299,11 +299,11 @@ function updateCrosshairFromDelta(state, delta) {
   const validatedWorld = CoordinateUtils.validateCoordinates(newWorldPoint, global);
 
   // Debug log to verify correct conversion
-  console.log(`[${viewType}] updateCrosshairFromDelta`);
-  console.log('  newCanvas:', newCanvas);
-  console.log('  params:', params);
-  console.log('  newWorldPoint:', newWorldPoint);
-  console.log('  validatedWorld:', validatedWorld);
+  
+  
+  
+  
+  
 
   // Update world + slices + crosshair
   if (typeof updateWorldAndSlices === "function") {

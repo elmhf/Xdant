@@ -165,14 +165,14 @@ export default function PinVerification({ onNext, onBack, email }) {
             Didn't get a code? {waitTime > 0 ? (
               <span className="text-gray-400">Resend in {waitTime}s</span>
             ) : (
-              <button type="button" className="text-black font-semibold hover:underline" onClick={handleResend} disabled={resendLoading}>
+              <button type="button" className="text-[#0d0c22] font-semibold hover:underline" onClick={handleResend} disabled={resendLoading}>
                 {resendLoading ? "Sending..." : "Click to resend"}
               </button>
             )}
           </div>
           <Button
             type="submit"
-            className="w-full bg-black hover:bg-white hover:text-black  rounded-lg font-bold text-base py-3 mt-2"
+            className="w-full bg-[#0d0c22] hover:bg-white hover:text-[#0d0c22]  rounded-lg font-bold text-base py-3 mt-2"
             disabled={loading}
           >
             {loading ? (

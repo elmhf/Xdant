@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 export function useSliceImage(view, index) {
   // FIXED: Always call all hooks in the same order, no conditional calls
   const getViewImages = useImageStore(state => state.getViewImages);
+  const isViewLoaded=useImageStore(state => state.isViewLoaded)
   const loadViewImages = useImageStore(state => state.loadViewImages);
   const sliceCounts = useImageStore(state => state.sliceCounts);
   const loading = useImageStore(state => state.loading);
@@ -18,16 +19,15 @@ export function useSliceImage(view, index) {
   const resultImage = useMemo(() => {
     return images?.[index] || sliceImages?.[index];
   }, [images, sliceImages, index]);
-
   // Auto-load images if not loaded yet
   useEffect(() => {
     const sliceCount = sliceCounts[view] || 1;
     if (sliceCount > 0 && images.length === 0 && !loading[view]) {
-      console.log(`🔄 Auto-loading ${view} images, count: ${sliceCount}`);
+      
       loadViewImages(view, sliceCount);
     }
-  }, [view, sliceCounts, images.length, loading, loadViewImages]);
-
+  }, []);
+  
   return resultImage;
 }
 
@@ -35,6 +35,7 @@ export function useSliceImage(view, index) {
  * useSliceRegion - returns a data URL for a cropped region of a slice image (with caching)
  */
 export function useSliceRegion(view, index, region) {
+  
   // FIXED: Always call all hooks at the top level
   const getViewImages = useImageStore(state => state.getViewImages);
   const loadViewImages = useImageStore(state => state.loadViewImages);
@@ -50,7 +51,7 @@ export function useSliceRegion(view, index, region) {
   useEffect(() => {
     const sliceCount = sliceCounts[view] || 1;
     if (sliceCount > 0 && images.length === 0 && !loading[view]) {
-      console.log(`🔄 Auto-loading ${view} images for region, count: ${sliceCount}`);
+      
       loadViewImages(view, sliceCount);
     }
   }, [view, sliceCounts, images.length, loading, loadViewImages]);

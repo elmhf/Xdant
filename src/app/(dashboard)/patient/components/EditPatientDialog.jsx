@@ -5,9 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Plus, X, ChevronDown } from "lucide-react";
+import { X } from "lucide-react";
 import { useClinicMembers } from "@/app/(dashboard)/company/hooks";
-import useUserStore from "@/app/component/profile/store/userStore";
+import useUserStore from "@/components/features/profile/store/userStore";
 import { validatePatientForm, getInitialFormData, resetFormData } from '../utils/formUtils';
 
 const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTreatingDoctors = false }) => {
@@ -38,24 +38,24 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
     email: member.email || ''
   }));
 
-     // Load patient data when dialog opens
-   useEffect(() => {
-     if (patient && isOpen) {
-       
-       setFormData({
-         first_name: String(patient.first_name || ""),
-         last_name: String(patient.last_name || ""),
-         gender: String(patient.gender || ""),
-         date_of_birth: String(patient.date_of_birth || ""),
-         email: String(patient.email || ""),
-         phone: String(patient.phone || ""),
-         address: String(patient.address || ""),
-         treating_doctors: patient.treating_doctors || []
-       });
-       setFormError("");
-       setFormSuccess("");
-     }
-   }, [patient, isOpen, hideTreatingDoctors]);
+  // Load patient data when dialog opens
+  useEffect(() => {
+    if (patient && isOpen) {
+
+      setFormData({
+        first_name: String(patient.first_name || ""),
+        last_name: String(patient.last_name || ""),
+        gender: String(patient.gender || ""),
+        date_of_birth: String(patient.date_of_birth || ""),
+        email: String(patient.email || ""),
+        phone: String(patient.phone || ""),
+        address: String(patient.address || ""),
+        treating_doctors: patient.treating_doctors || []
+      });
+      setFormError("");
+      setFormSuccess("");
+    }
+  }, [patient, isOpen, hideTreatingDoctors]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -79,21 +79,21 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
   };
 
   const removeTreatingDoctor = (doctorId) => {
-    
-    
+
+
     setFormData(prev => {
       const updated = {
         ...prev,
         treating_doctors: prev.treating_doctors.filter(d => d.id !== doctorId)
       };
-      
+
       return updated;
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const validation = validatePatientForm(formData);
     if (!validation.isValid) {
       setFormError(validation.errors[0]);
@@ -104,23 +104,23 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
     setFormError("");
     setFormSuccess("");
 
-         try {
-       // Convert treating_doctors array to treating_doctor_id array (always include)
-       const treating_doctor_ids = (formData.treating_doctors || []).map(doctor => doctor.id);
+    try {
+      // Convert treating_doctors array to treating_doctor_id array (always include)
+      const treating_doctor_ids = (formData.treating_doctors || []).map(doctor => doctor.id);
 
-       const patientData = {
-         patientId: patient.id,
-         first_name: formData.first_name,
-         last_name: formData.last_name,
-         gender: formData.gender,
-         date_of_birth: formData.date_of_birth,
-         email: formData.email || "",
-         phone: formData.phone || "",
-         address: formData.address || "",
-         clinicId: currentClinic?.id,
-         treating_doctor_id: treating_doctor_ids
-       };
-      
+      const patientData = {
+        patientId: patient.id,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        gender: formData.gender,
+        date_of_birth: formData.date_of_birth,
+        email: formData.email || "",
+        phone: formData.phone || "",
+        address: formData.address || "",
+        clinicId: currentClinic?.id,
+        treating_doctor_id: treating_doctor_ids
+      };
+
       const response = await fetch(`http://localhost:5000/api/patients/update`, {
         method: 'PUT',
         headers: {
@@ -137,12 +137,12 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
       }
 
       setFormSuccess("Patient updated successfully!");
-      
+
       // Close dialog after success
-        onClose();
-        if (onPatientUpdated) {
-          onPatientUpdated();
-        }
+      onClose();
+      if (onPatientUpdated) {
+        onPatientUpdated();
+      }
 
     } catch (error) {
       console.error('Error updating patient:', error);
@@ -162,7 +162,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
         email: String(patient.email || ""),
         phone: String(patient.phone || ""),
         address: String(patient.address || ""),
-        treating_doctors: patient.treating_doctors || [] 
+        treating_doctors: patient.treating_doctors || []
       });
     }
     setFormError("");
@@ -173,10 +173,10 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-5xl mb-2 font-[800] text-gray-900">
-            Edit patient information
+          <DialogTitle className="text-2xl font-bold text-gray-900">
+            Edit patient
           </DialogTitle>
         </DialogHeader>
 
@@ -196,36 +196,34 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
           {/* Name Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="first_name" className="text-sm text-gray-300">
-                First Name  <span className="text-red-500">*</span>
+              <Label htmlFor="first_name" className="text-sm text-gray-600">
+                First Name <span className="text-red-500">*</span>
               </Label>
-                             <Input
-                 id="first_name"
-                 type="text"
-                 value={formData.first_name|| ''}
-                 onChange={(e) => handleInputChange('first_name', e.target.value)}
-                 className={`h-12 w-full text-base border-2 text-gray-300 hover:border-[#7564ed] transition-colors ${
-                   !formData.first_name && formError ? 'border-red-500' : 'border-[#7564ed]'
-                 } focus:border-[#7564ed] rounded-lg`}
-               />
+              <Input
+                id="first_name"
+                type="text"
+                value={formData.first_name || ''}
+                onChange={(e) => handleInputChange('first_name', e.target.value)}
+                className={`h-12 w-full text-base border-1 ${!formData.first_name && formError ? 'border-red-500' : 'border-gray-200'
+                  } focus:border-[#7564ed] rounded-lg`}
+              />
               {!formData.first_name && formError && (
                 <p className="text-red-500 text-sm">Field is required</p>
               )}
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="last_name" className="text-sm text-gray-300">
+              <Label htmlFor="last_name" className="text-sm text-gray-600">
                 Last Name <span className="text-red-500">*</span>
               </Label>
-                             <Input
-                 id="last_name"
-                 type="text"
-                 value={formData.last_name|| ''}
-                 onChange={(e) => handleInputChange('last_name', e.target.value)}
-                 className={`h-12 w-full text-base border-2 text-gray-300 hover:border-[#7564ed] transition-colors ${
-                   !formData.last_name && formError ? 'border-red-500' : 'border-gray-200'
-                 } focus:border-[#7564ed] rounded-lg`}
-               />
+              <Input
+                id="last_name"
+                type="text"
+                value={formData.last_name || ''}
+                onChange={(e) => handleInputChange('last_name', e.target.value)}
+                className={`h-12 w-full text-base border-1 ${!formData.last_name && formError ? 'border-red-500' : 'border-gray-200'
+                  } focus:border-[#7564ed] rounded-lg`}
+              />
               {!formData.last_name && formError && (
                 <p className="text-red-500 text-sm">Field is required</p>
               )}
@@ -234,171 +232,192 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
 
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm text-gray-300">
-              Email 
+            <Label htmlFor="email" className="text-sm text-gray-600">
+              Email
             </Label>
-                         <Input
-               id="email"
-               type="email"
-               value={formData.email|| ''}
-               onChange={(e) => handleInputChange('email', e.target.value)}
-               placeholder="Enter email address (optional)"
-               className="h-12 w-full text-base border-2 border-gray-200 hover:border-[#7564ed] focus:border-[#7564ed] rounded-lg text-gray-300 transition-colors"
-             />
+            <Input
+              id="email"
+              type="email"
+              value={formData.email || ''}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              className="h-12 w-full text-base border-1 border-gray-300  rounded-lg"
+            />
           </div>
 
           {/* Phone and Address */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-sm text-gray-300">
-                Phone Number 
+              <Label htmlFor="phone" className="text-sm text-gray-600">
+                Phone Number
               </Label>
-                             <Input
-                 id="phone"
-                 type="tel"
-                 value={formData.phone|| ''}
-                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                 placeholder="Enter phone number (optional)"
-                 className="h-12 w-full text-base border-2 border-gray-200 hover:border-[#7564ed] focus:border-[#7564ed] rounded-lg text-gray-300 transition-colors"
-               />
+              <Input
+                id="phone"
+                type="tel"
+                value={formData.phone || ''}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-lg"
+              />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="address" className="text-sm text-gray-300">
-                Address 
+              <Label htmlFor="address" className="text-sm text-gray-600">
+                Address
               </Label>
-                             <Input
-                 id="address"
-                 type="text"
-                 value={formData.address|| ''}
-                 onChange={(e) => handleInputChange('address', e.target.value)}
-                 placeholder="Enter address (optional)"
-                 className="h-12 w-full text-base border-2 border-gray-200 hover:border-[#7564ed] focus:border-[#7564ed] rounded-lg text-gray-300 transition-colors"
-               />
+              <Input
+                id="address"
+                type="text"
+                value={formData.address || ''}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-lg"
+              />
             </div>
           </div>
 
-          {/* Date of Birth */}
-          <div className="space-y-2">
-            <Label htmlFor="date_of_birth" className="text-sm text-gray-300">
-              Date of birth <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-                                               <Input
-                   id="date_of_birth"
-                   type="date"
-                   value={formData.date_of_birth|| ''}
-                   onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
-                   max={new Date().toISOString().split('T')[0]}
-                   className={`h-12 w-full text-base border-2 text-gray-300 hover:border-[#7564ed] transition-colors ${
-                     !formData.date_of_birth && formError ? 'border-red-500' : 'border-gray-200'
-                   } focus:border-[#7564ed] rounded-lg`}
-                 />
+          {/* Date of Birth and Gender */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Gender */}
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-600">
+                Gender <span className="text-red-500">*</span>
+              </Label>
+              <div className="flex gap-2">
+                {['Male', 'Female', 'Other'].map((gender) => (
+                  <Button
+                    key={gender}
+                    type="button"
+                    onClick={() => handleInputChange('gender', gender.toLowerCase())}
+                    className={`px-6 py-2 rounded-lg text-sm font-[500] transition-colors ${formData.gender === gender.toLowerCase()
+                      ? 'bg-[#7564ed] text-white border-[#7564ed]'
+                      : 'bg-gray-100 text-gray-700 hover:border-[#7564ed]'
+                      }`}
+                  >
+                    {gender}
+                  </Button>
+                ))}
+              </div>
+              {!formData.gender && formError && (
+                <p className="text-red-500 text-sm">Field is required</p>
+              )}
             </div>
-            {!formData.date_of_birth && formError && (
-              <p className="text-red-500 text-sm">Field is required</p>
-            )}
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="date_of_birth" className="text-sm text-gray-600">
+                Date of birth <span className="text-red-500">*</span>
+              </Label>
+              <div className="relative">
+                <Input
+                  id="date_of_birth"
+                  type="date"
+                  value={formData.date_of_birth || ''}
+                  onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                  className={`h-12 w-full text-base border-1 ${!formData.date_of_birth && formError ? 'border-red-500' : 'border-gray-200'
+                    } focus:border-[#7564ed] rounded-lg`}
+                />
+              </div>
+              {!formData.date_of_birth && formError && (
+                <p className="text-red-500 text-sm">Field is required</p>
+              )}
+            </div>
 
-                     {/* Gender */}
-           <div className="space-y-2">
-             <Label className="text-sm text-gray-300">
-               Gender <span className="text-red-500">*</span>
-             </Label>
-             <div className="flex gap-2">
-               {['Male', 'Female'].map((gender) => (
-                 <button
-                   key={gender}
-                   type="button"
-                   onClick={() => handleInputChange('gender', gender.toLowerCase())}
-                   className={`px-6 py-2 rounded-lg border-2 text-sm font-medium transition-colors ${
-                     formData.gender === gender.toLowerCase()
-                       ? 'bg-[#7564ed] text-white border-[#7564ed]'
-                       : 'bg-gray-100 text-gray-700 border-gray-200 hover:border-[#7564ed] hover:bg-[#6a4fd8] hover:text-white'
-                   }`}
-                 >
-                   {gender}
-                 </button>
-               ))}
-             </div>
-             {!formData.gender && formError && (
-               <p className="text-red-500 text-sm">Field is required</p>
-             )}
-           </div>
+          </div>
 
           {/* Treating Doctors */}
           {!hideTreatingDoctors && (
             <div className="space-y-2">
-              <Label className="text-sm text-gray-300">
+              <Label className="text-sm text-gray-400">
                 Treating doctor <span className="text-red-500">*</span>
               </Label>
-              
+
               <div className="relative">
                 {/* Dropdown for selecting doctors with selected ones shown as tags */}
                 <div className="relative">
                   <Select onValueChange={addTreatingDoctor}>
-                                           <SelectTrigger className={`h-fit w-full text-base border-2 ${
-                        formData.treating_doctors.length === 0 && formError ? 'border-red-500' : 'border-[#7564ed]'
-                      } focus:border-[#7564ed] rounded-lg bg-white p-2`}>
-                       <div className="flex flex-wrap gap-2 items-center w-full">
+                    <SelectTrigger className={`min-h-[60px] h-fit w-full text-base border-1 ${formData.treating_doctors.length === 0 && formError ? 'border-red-500' : 'border-gray-200'
+                      } hover:border-[#7564ed] rounded-xl p-1  transition-colors`}>
+                      <div className="flex flex-wrap gap-2 items-center w-full">
                         {formData.treating_doctors.length > 0 ? (
-                          formData.treating_doctors.map((doctor) => (
-                                                         <div
-                               key={doctor.id}
-                               className="flex items-center gap-2 bg-[#7564ed]/10 text-[#7564ed] px-3 py-1.5 rounded-full border border-[#7564ed]/30"
-                             >
-                                                                                            <Avatar className="h-5 w-5">
-                                   <AvatarFallback className="bg-[#7564ed] text-white text-xs">
-                                     {((doctor.first_name || '').slice(0, 1) + 
-                                       (doctor.last_name || '').slice(0, 2)).toUpperCase()}
-                                   </AvatarFallback>
-                                 </Avatar>
-                                                           <span className="text-sm font-medium">
-                                 {doctor.first_name || ""} {doctor.last_name || ""}
-                               </span>
-                                                           <div
-                              onPointerDown ={(e) => {
-                                  
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  removeTreatingDoctor(doctor.id);
-                                }}
-                                 className="text-[#7564ed] hover:text-[#6a4fd8] ml-1 cursor-pointer p-1 rounded-full hover:bg-[#7564ed]/10 transition-colors"
-                               >
-                                 <X className="w-3 h-3" />
-                               </div>
-                            </div>
-                          ))
+                          formData.treating_doctors.map((doctor, index) => {
+                            // Color palette for avatars
+                            const colors = [
+                              'bg-[#a855f7]', // purple
+                              'bg-[#22c55e]', // green
+                              'bg-[#3b82f6]', // blue
+                              'bg-[#f59e0b]', // amber
+                              'bg-[#ec4899]', // pink
+                              'bg-[#14b8a6]', // teal
+                            ];
+                            const avatarColor = colors[index % colors.length];
+
+                            return (
+                              <div
+                                key={doctor.id}
+                                className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 pl-1.5 pr-3 py-1.5 rounded-full border border-gray-200 transition-all"
+                              >
+                                <Avatar className="h-14 w-14">
+                                  <AvatarFallback className={`${avatarColor} w-full h-full text-white text-sm font-semibold`}>
+                                    {((doctor.first_name || '').slice(0, 1) +
+                                      (doctor.last_name || '').slice(0, 1)).toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm font-medium">
+                                  {doctor.first_name || ""} {doctor.last_name || ""}
+                                </span>
+                                <button
+                                  type="button"
+                                  onPointerDown={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    removeTreatingDoctor(doctor.id);
+                                  }}
+                                  className="text-gray-400 hover:text-gray-600 hover:bg-gray-200 ml-1 cursor-pointer p-0.5 rounded-full transition-all"
+                                >
+                                  <X className="w-7 h-7 stroke-[2.5]" />
+                                </button>
+                              </div>
+                            );
+                          })
                         ) : (
-                          <span className="text-gray-500 text-base">Select doctor</span>
+                          <span className="text-gray-400 text-sm">Select doctor</span>
                         )}
                       </div>
-                      <ChevronDown className="w-4 h-4 text-gray-500 ml-2 flex-shrink-0" />
                     </SelectTrigger>
-                                       <SelectContent className="max-h-60">
+                    <SelectContent className="max-h-60">
                       {availableDoctors
                         .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
                         .length > 0 ? (
                         availableDoctors
                           .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
-                          .map((doctor) => (
-                            <SelectItem key={doctor.id} value={doctor.id}>
-                              <div className="flex items-center gap-2">
-                                                                                          <Avatar className="h-6 w-6">
-                               <AvatarFallback className="bg-[#7564ed] text-white text-xs">
-                                 {((doctor.first_name || '').slice(0, 1) + 
-                                   (doctor.last_name || '').slice(0, 2)).toUpperCase()}
-                               </AvatarFallback>
-                             </Avatar>
-                                <div>
-                                                                   <div className="font-medium text-sm">
-                                     {doctor.first_name || ""} {doctor.last_name || ""}
-                                   </div>
-                                  <div className="text-xs text-gray-500">{doctor.email}</div>
+                          .map((doctor, index) => {
+                            // Use same color logic for dropdown
+                            const colors = [
+                              'bg-[#a855f7]', // purple
+                              'bg-[#22c55e]', // green
+                              'bg-[#3b82f6]', // blue
+                              'bg-[#f59e0b]', // amber
+                              'bg-[#ec4899]', // pink
+                              'bg-[#14b8a6]', // teal
+                            ];
+                            const avatarColor = colors[index % colors.length];
+
+                            return (
+                              <SelectItem key={doctor.id} value={doctor.id}>
+                                <div className="flex items-center gap-3 py-1">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarFallback className={`${avatarColor} text-white text-sm font-semibold`}>
+                                      {((doctor.first_name || '').slice(0, 1) +
+                                        (doctor.last_name || '').slice(0, 1)).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <div className="font-medium text-sm">
+                                      {doctor.first_name || ""} {doctor.last_name || ""}
+                                    </div>
+                                    <div className="text-xs text-gray-500">{doctor.email}</div>
+                                  </div>
                                 </div>
-                              </div>
-                            </SelectItem>
-                          ))
+                              </SelectItem>
+                            );
+                          })
                       ) : (
                         <div className="p-2 text-sm text-gray-500 text-center">
                           All doctors have been selected
@@ -415,28 +434,27 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-6 border-t border-gray-200">
-                         <Button
-               type="button"
-               onClick={onClose}
-               variant="outline"
-               className="flex-1 h-12 text-base border-2 border-gray-200 text-[#7564ed] hover:bg-[#7564ed]/10 rounded-lg"
-             >
-               Cancel
-             </Button>
-             <Button
-               type="button"
-               onClick={handleSubmit}
-               disabled={isSubmitting}
-               className="flex-1 bg-[#7564ed] hover:bg-[#6a4fd8] disabled:bg-[#7564ed]/50 text-white h-12 text-base font-medium rounded-lg transition-colors"
-             >
+          <div className="flex gap-3 w-72 items-end">
+            <Button
+              type="button"
+              onClick={onClose}
+              className="flex-1 w-10 h-12 text-base   text-gray-600 hover:bg-gray-50 rounded-lg"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="flex-1 bg-[#7564ed] hover:bg-[#7553db] disabled:bg-purple-300 text-white h-12 text-base font-medium rounded-lg transition-colors"
+            >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
+                  <div className="w-4 h-4 border-1 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Updating...
                 </div>
               ) : (
-                "Save"
+                "Update"
               )}
             </Button>
           </div>

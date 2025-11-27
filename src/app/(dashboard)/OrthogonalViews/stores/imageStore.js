@@ -11,7 +11,7 @@ const generateHash = async (text) => {
 };
 
 const generateCDNUrl = async (view, index, basePath, w = 700, q = 100) => {
-  console.log("✅ Data fetched successfully path ",`${basePath}${view}/${index}.jpg`)
+  
   return `${basePath}${view}/${index}.jpg`;
 };
 
@@ -32,7 +32,7 @@ export const useImageStore = create((set, get) => ({
   images: { axial: [], coronal: [], sagittal: [] },
   loading: { axial: false, coronal: false, sagittal: false },
   loadingCount: { axial: 0, coronal: 0, sagittal: 0 },
-  sliceCounts: { axial: 1, coronal: 1, sagittal: 1 },
+  sliceCounts: { axial: 0, coronal: 0, sagittal: 0 },
 
   voxelSizes: {
     x_spacing_mm: 0,
@@ -78,7 +78,7 @@ export const useImageStore = create((set, get) => ({
     const { basePath } = state;
     
     if (state.loading[view]) return;
-    if (state.images[view].length === numSlices && numSlices > 0) return;
+    if (state.images[view]?.length === numSlices && numSlices > 0) return;
 
     set(state => ({
       loading: { ...state.loading, [view]: true },
@@ -145,13 +145,13 @@ export const useImageStore = create((set, get) => ({
 
   isViewLoaded: (view) => {
     const state = get();
-    return state.images[view].length === state.sliceCounts[view] && state.sliceCounts[view] > 0;
+    return state.images[view]?.length === state.sliceCounts[view] && state.sliceCounts[view] > 0;
   },
 
   areAllViewsLoaded: () => {
     const state = get();
     return Object.keys(state.sliceCounts).every(view =>
-      state.images[view].length === state.sliceCounts[view] && state.sliceCounts[view] > 0
+      state.images[view]?.length === state.sliceCounts[view] && state.sliceCounts[view] > 0
     );
   },
 
@@ -180,9 +180,9 @@ export const useImageStore = create((set, get) => ({
 
       // Extract slice counts for each view
       const sliceCounts = {
-        axial: reportData.metadata?.slice_count?.axial || 2,
-        coronal: reportData.metadata?.slice_count?.coronal || 2,
-        sagittal: reportData.metadata?.slice_count?.sagittal || 2
+        axial: reportData.metadata?.slice_count?.axial || 0,
+        coronal: reportData.metadata?.slice_count?.coronal || 0,
+        sagittal: reportData.metadata?.slice_count?.sagittal ||0
       };
 
       console.log('📊 Extracted slice counts from report:', sliceCounts);
@@ -225,7 +225,7 @@ export const useImageStore = create((set, get) => ({
       images: { axial: [], coronal: [], sagittal: [] },
       loading: { axial: false, coronal: false, sagittal: false },
       loadingCount: { axial: 0, coronal: 0, sagittal: 0 },
-      sliceCounts: { axial: 1, coronal: 1, sagittal: 1 },
+      sliceCounts: { axial: 0, coronal: 0, sagittal: 0 },
       voxelSizes: {
         x_spacing_mm: 0,
         y_spacing_mm: 0,

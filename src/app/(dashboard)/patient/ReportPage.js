@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
-import Dashboard from '@/app/component/dashboard/dashboard';
-import { useReportData } from '@/app/hooks/useReportData';
+import Dashboard from '@/components/features/dashboard/dashboard';
+import { useReportData } from '@/hooks/useReportData';
 
 export default function ReportPage({ reportType }) {
   const params = useParams();

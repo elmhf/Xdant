@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useUserStore from '../../../component/profile/store/userStore';
+import useUserStore from '@/components/features/profile/store/userStore';
 
 export const useLeaveClinic = () => {
   const [leaving, setLeaving] = useState(false);
@@ -23,19 +23,19 @@ export const useLeaveClinic = () => {
         credentials: 'include',
         body: JSON.stringify({ clinicId })
       });
-      
+
       const data = await res.json();
-      
-      
+
+
       if (res.ok) {
         setLeaveMessage("Vous avez quitté la clinique avec succès");
-        
+
         // Remove clinic from userStore
         const currentClinics = useUserStore.getState().clinicsInfo;
         const updatedClinics = currentClinics.filter(clinic => clinic.id !== clinicId);
-        
+
         useUserStore.getState().setClinicsInfo(updatedClinics);
-        
+
         // If this was the current clinic, set another clinic as current
         const currentClinicId = useUserStore.getState().currentClinicId;
         if (currentClinicId === clinicId && updatedClinics.length > 0) {
@@ -43,10 +43,10 @@ export const useLeaveClinic = () => {
         } else if (updatedClinics.length === 0) {
           useUserStore.getState().setCurrentClinicId(null);
         }
-        
+
         setShowLeaveDialog(false);
         setClinicToLeave(null);
-        
+
         return { success: true, message: "Vous avez quitté la clinique avec succès" };
       } else {
         setLeaveMessage(data.message || "Erreur lors de la sortie de la clinique");
@@ -75,7 +75,7 @@ export const useLeaveClinic = () => {
 
   const confirmLeaveClinic = async () => {
     if (!clinicToLeave) return;
-    
+
     const result = await leaveClinic(clinicToLeave.id, clinicToLeave.clinic_name);
     return result;
   };

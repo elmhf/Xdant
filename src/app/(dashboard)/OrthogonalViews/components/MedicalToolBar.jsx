@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 import { useSettingsStore } from "../stores/useSettingsStore";
-import SideCardes from "../../../component/dashboard/side/sideToothCard";
+import SideCardes from "@/components/features/dashboard/side/sideToothCard";
 
 // Custom Tooth SVG Component
 
@@ -44,7 +44,7 @@ export default function MedicalToolBar() {
   const [selectedView, setSelectedView] = useState("main");
 
   return (
-    <div className="flex flex-row "style={{fontFamily:'poppins'}} >
+    <div className="flex flex-row " style={{ fontFamily: 'poppins' }} >
       <div className="flex flex-col border-r p-2 border-gray-200 bg-gray-50">
         <CBCTToolBar />
         <div className="flex flex-col items-center mt-4 gap-2">

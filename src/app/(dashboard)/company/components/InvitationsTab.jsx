@@ -108,7 +108,7 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
               <div className="flex items-center justify-center py-8">
                 <div className="text-center">
                   <p className="text-red-600 mb-4">{error}</p>
-                  <Button onClick={() => window.location.reload()} className="bg-[#7c5cff] hover:bg-[#6a4fd8] text-white border-2 border-[#7c5cff]">
+                  <Button onClick={() => window.location.reload()} className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]">
                     Réessayer
                   </Button>
                 </div>

@@ -20,7 +20,7 @@ export function middleware(req) {
 
   // إذا المستخدم عنده توكن وحاول يدخل صفحة login → redirect لل dashboard
   if (pathname === "/login" && token) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   // غير ذلك، خلّي الطلب يمشي عادي

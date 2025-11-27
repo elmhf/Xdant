@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import useUserStore from "@/app/component/profile/store/userStore";
+import useUserStore from '@/components/features/profile/store/userStore';
 
 // ===============================
 // Constants
@@ -36,10 +36,10 @@ const CLINIC_EDIT_ROLES = [
 
 const normalizeRole = (role) => {
   if (!role) return null;
-  
+
   // Handle different role formats
   const normalized = role.toLowerCase().replace(/[^a-z_]/g, '');
-  
+
   // Map common role variations
   const roleMapping = {
     'full_access': 'full_access',
@@ -55,7 +55,7 @@ const normalizeRole = (role) => {
     'limitedaccess': 'limited_access',
     'staff': 'limited_access'
   };
-  
+
   return roleMapping[normalized] || role;
 };
 
@@ -99,7 +99,7 @@ export const usePermissions = (clinicId, options = {}) => {
   const userInfo = useUserStore(state => state.userInfo);
   const getUserInfo = useUserStore(state => state.getUserInfo);
 
-  console.log("userInfo", userInfo);
+  
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [error, setError] = useState(null);
@@ -112,9 +112,9 @@ export const usePermissions = (clinicId, options = {}) => {
     }
     const rawRole = userInfo.rolesByClinic[clinicId] || null;
     const normalizedRole = normalizeRole(rawRole);
+
     
-    console.log("Role normalization:", { rawRole, normalizedRole, clinicId });
-    
+
     return normalizedRole;
   }, [userInfo?.rolesByClinic, clinicId]);
 
@@ -162,16 +162,16 @@ export const usePermissions = (clinicId, options = {}) => {
     }
 
     const result = getPermissionsByRole(userRole, customPermissions);
-    
+
     // Debug logs
-    console.log("=== usePermissions Debug ===");
-    console.log("userRole:", userRole);
-    console.log("userInfo?.rolesByClinic:", userInfo?.rolesByClinic);
-    console.log("clinicId:", clinicId);
-    console.log("calculatedUserRole:", calculatedUserRole);
-    console.log("permissions result:", result);
-    console.log("===========================");
     
+    
+    
+    
+    
+    
+    
+
     return result;
   }, [isDataLoaded, userRole, customPermissions, strictMode, userInfo?.rolesByClinic, clinicId, calculatedUserRole]);
 

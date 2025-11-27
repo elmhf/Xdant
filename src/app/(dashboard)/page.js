@@ -6,9 +6,9 @@ const SimpleLoadingScreen = () => (
   <div className="fixed top-0 left-0 w-screen h-screen bg-white flex flex-col items-center justify-center font-Poppins z-[9999]">
     {/* Logo */}
     <div className="flex items-center justify-center ">
-      <img 
-        src="/XDENTAL.png" 
-        alt="Logo" 
+      <img
+        src="/XDENTAL.png"
+        alt="Logo"
         className="w-52 h-auto max-h-52 rounded-3xl object-contain"
         onError={(e) => {
           // في حالة عدم وجود الصورة، عرض نص بديل
@@ -37,13 +37,13 @@ const useRealLoading = () => {
   const markCheckComplete = (checkName) => {
     setLoadingChecks(prev => {
       const newChecks = { ...prev, [checkName]: true };
-      
+
       // التحقق من اكتمال جميع الفحوصات
       const allComplete = Object.values(newChecks).every(Boolean);
       if (allComplete) {
         setIsLoading(false);
       }
-      
+
       return newChecks;
     });
   };
@@ -129,17 +129,13 @@ const Home = () => {
 
   const { isLoading, markDashboardReady } = useRealLoading();
 
-  if (typeof window === "undefined") {
-    return null;
-  }
-
   return (
     <>
 
       {isLoading && <SimpleLoadingScreen />}
 
-      <div 
-        className="font-Poppins h-full w-[95%]"
+      <div
+        className="font-Poppins h-full w-full"
         style={{
           display: isLoading ? 'none' : 'block'
         }}

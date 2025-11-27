@@ -3,8 +3,9 @@ import { useRouter, useParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, XCircle, Download, Eye, MoreVertical, Info, Download as DownloadIcon, Filter, X, Trash2, AlertTriangle, Wifi, WifiOff, Plus } from "lucide-react";
+import { CheckCircle, XCircle, Download, Eye, MoreVertical, Info, Download as DownloadIcon, Filter, X, Trash2, AlertTriangle, Wifi, WifiOff, Plus, MessageSquare } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { convertReportsToOrders, getReportIcon, getAIReportName, getAIReportDescription, formatReportDate, getStatusBadgeConfig } from '../utils/reportUtils';
-import { 
+import {
   usePatientStore,
   useFilteredReports,
   useReportsStats
@@ -30,12 +31,13 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Lottie from 'lottie-react';
-import liquidLoader from "@/app/Lottie/liquid loader.json";
+import liquidLoader from '@/components/shared/lottie/liquid_loader.json'
+import { toast } from "sonner";
 
-const AIOrdersList = ({ 
-  patient, 
-  reports = [], 
-  loading = false, 
+const AIOrdersList = ({
+  patient,
+  reports = [],
+  loading = false,
   onReportDeleted,
   wsConnected = false,
   wsConnectionStatus = 'disconnected',
@@ -52,13 +54,19 @@ const AIOrdersList = ({
   const reportToDelete = usePatientStore(state => state.reportToDelete);
   const deleteReportLoading = usePatientStore(state => state.deleteReportLoading);
   const deleteReportMessage = usePatientStore(state => state.deleteReportMessage);
-  
+
+  // Report Issue State
+  const [isReportIssueOpen, setIsReportIssueOpen] = useState(false);
+  const [reportToIssue, setReportToIssue] = useState(null);
+  const [issueMessage, setIssueMessage] = useState("");
+  const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
+
   // استخدام store للـ actions
   const store = usePatientStore();
 
   // Convert reports to orders format
   const orders = convertReportsToOrders(reports);
-  console.log('Converted orders:', orders,reports);
+  console.log('Converted orders:', orders);
   // ترتيب الطلبات حسب الوقت (الأحدث أولاً)
   const sortedOrders = useMemo(() => {
     return [...orders].sort((a, b) => {
@@ -71,6 +79,7 @@ const AIOrdersList = ({
   // Filter orders based on date and type filters
   const filteredOrders = useMemo(() => {
     return sortedOrders.filter(order => {
+      console.log(order, "orderorderorder")
       let orderDateStr = order.createdAt || order.created_at;
       let matchesDate = true;
       if (dateFilter) {
@@ -82,8 +91,8 @@ const AIOrdersList = ({
         }
         matchesDate = orderDate && !isNaN(orderDate) && orderDate.toISOString().split('T')[0] === dateFilter;
       }
-      const matchesType = !typeFilter || 
-        typeFilter === 'all' || 
+      const matchesType = !typeFilter ||
+        typeFilter === 'all' ||
         (order.type || order.raport_type || '').toLowerCase().includes(typeFilter.toLowerCase());
       return matchesDate && matchesType;
     });
@@ -134,7 +143,7 @@ const AIOrdersList = ({
 
   const confirmDelete = async () => {
     if (!reportToDelete) return;
-    
+
     const result = await store.deleteReport(reportToDelete.id);
     if (result.success) {
       store.closeDeleteReportDialog();
@@ -147,6 +156,38 @@ const AIOrdersList = ({
     store.closeDeleteReportDialog();
   };
 
+  const handleReportIssue = (order) => {
+    setReportToIssue(order);
+    setIssueMessage("");
+    setIsReportIssueOpen(true);
+  };
+
+  const submitReportIssue = async () => {
+    if (!issueMessage.trim()) {
+      toast.error("Please enter a message describing the issue");
+      return;
+    }
+
+    setIsSubmittingIssue(true);
+    try {
+      // TODO: Replace with actual API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log("Report Issue Submitted:", {
+        reportId: reportToIssue.id,
+        message: issueMessage
+      });
+      toast.success("Issue reported successfully");
+      setIsReportIssueOpen(false);
+      setReportToIssue(null);
+      setIssueMessage("");
+    } catch (error) {
+      console.error("Failed to report issue:", error);
+      toast.error("Failed to report issue");
+    } finally {
+      setIsSubmittingIssue(false);
+    }
+  };
+
   const hasActiveFilters = dateFilter || (typeFilter && typeFilter !== 'all');
 
   if (loading) {
@@ -154,10 +195,10 @@ const AIOrdersList = ({
       <div className="bg-transparent">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-gray-900">AI Orders</h1>
-          
+
         </div>
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7564ed]"></div>
         </div>
       </div>
     );
@@ -167,116 +208,83 @@ const AIOrdersList = ({
     <>
       <div className="space-y-6 ">
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h2 className="text-4xl font-bold text-gray-900">AI Reports </h2>
-            <div className="flex items-center gap-3 ml-4">
-              <div className={`border-3 rounded-2xl flex ${dateFilter ? '' : 'border'} rounded p-0.5 items-center gap-2`} style={dateFilter ? { borderColor: '#7564ed' } : {}}>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <div className="relative h-8 w-35 min-w-fit ">
-                      <button
-                        className={`h-8 w-full text-xs px-2 py-1 border rounded bg-white text-left ${dateFilter ? 'border-purple-600' : 'border'} ${dateFilter ? 'text-black' : 'text-gray-400'}`}
-                        type="button"
-                      >
-                        {dateFilter ? format(new Date(dateFilter), "yyyy-MM-dd") : "Pick a date"}
-                      </button>
-                      {dateFilter && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                           onPointerDown={(e) => {
-                                e.preventDefault();
-                                store.setDateFilter("");
-                              }}
-                          className="absolute right-0 top-1/2 -translate-y-1/2 h-6 px-1 text-xs"
-                          style={{ color: '#7564ed' }}
-                        >
-                          Clear
-                        </Button>
-                      )}
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateFilter ? new Date(dateFilter) : undefined}
-                      onSelect={date => date ? store.setDateFilter(format(date, "yyyy-MM-dd")) : store.setDateFilter("")}
-                      initialFocus
-                      captionLayout="dropdown"
-                      fromYear={2000}
-                      toYear={new Date().getFullYear() + 1}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              {/* Type Filter */}
-              <div className="flex items-center gap-2">
-                <div className={` relative h-10 w-32 border-3 rounded-2xl flex ${typeFilter!='all' ? '' : 'border'} rounded p-0.5 items-center gap-2`} style={typeFilter!='all' ? { borderColor: '#7564ed' } : {}}>
-                  <Select value={typeFilter} className='bg-white' onValueChange={store.setTypeFilter}>
-                    <SelectTrigger
-                      className={`h-8 w-full bg-white  text-xs ${typeFilter && typeFilter !== 'all' ? 'text-black' : 'text-gray-400'}`}
-                      style={typeFilter && typeFilter !== 'all' ? { borderColor: '#7564ed', borderWidth: '1px', borderStyle: 'solid' } : {}}
-                    >
-                      <SelectValue placeholder="All types" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All types</SelectItem>
-                      {reportTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              {/* Clear Filters Button */}
-              {hasActiveFilters && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={store.clearFilters}
-                  className="h-8 px-2 text-xs text-gray-500 hover:text-gray-700"
-                >
-                  <X className="w-3 h-3 mr-1" />
-                  Clear
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
 
 
-        
+
+
         {filteredOrders.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-500 text-sm">
+            {/* <p className="text-gray-500 text-sm">
               {hasActiveFilters ? 'No orders match your filters' : 'No AI orders yet'}
             </p>
             <p className="text-gray-400 text-xs mt-1">
               {hasActiveFilters ? 'Try adjusting your filters' : 'Orders will appear here once created'}
-            </p>
+            </p> */}
           </div>
         ) : (
-          <div className="space-y-4 max-h-[70%] overflow-y-auto">
+          <div className="space-y-4 max-h-[100%] ">
             {filteredOrders.map((order) => (
+
               <div
-                onClick={() =>{    {order.status === 'completed' &&  handleViewReport(order) }  }}
+                onClick={() => { { order.status === 'completed' && handleViewReport(order) } }}
                 key={order.id}
-                className={`relative ${order.status === 'completed' &&  'cursor-pointer'} bg-white aspect-[2/1] rounded-2xl overflow-hidden shadow-sm border border-gray-200 transition-all duration-200
-                  hover:border-3 hover:border-purple-600
+                className={`relative ${order.status === 'completed' && 'cursor-pointer'} bg-white aspect-[2/1] rounded-2xl overflow-hidden hover:outline-6 hover:outline-[#7564ed] hover:outline-offset-0 group shadow-sm border border-gray-200 transition-all duration-200
+                  hover:border-3 hover:border-[#7564ed]
                   ${new Date(order.date).getTime() > Date.now() - 60000 ? 'ring-2 ring-green-500 animate-pulse' : ''}
                 `}
               >
-                {order.status === 'error' ? (
+                {order.status === 'error' || order.status === 'failed' ? (
                   <div className="flex flex-col items-center justify-center h-full bg-white relative">
                     <div className="absolute top-4 left-4 text-left">
-                      <h3 className="text-xl font-bold text-red-600">{order.type}</h3>
+                      <h3 className="text-xl font-bold text-gray-900">{order.type}</h3>
                       <p className="text-sm text-gray-500">{formatReportDate(order.date)}</p>
                     </div>
-                    <XCircle className="w-20 h-20 text-red-500 mb-2" />
-                    <div className="mt-0 text-lg font-[500] text-red-600">فما خطأ في التقرير</div>
+
+                    {/* Error Icon */}
+                    <div className="w-24 h-24 rounded-full border-4 border-red-500 flex items-center justify-center mb-4">
+                      <XCircle className="w-12 h-12 text-red-500" strokeWidth={2.5} />
+                    </div>
+
+                    {/* Error Message */}
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">Ooops!</h3>
+                    <spam className="text-gray-400 text-center ">Something went wrong !</spam>
+                    <spam className="text-gray-400 text-center mb-6 ">Report failed to generate</spam>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // TODO: Implement retry/regenerate logic
+                          console.log('Retry report:', order.id);
+                        }}
+                        className="bg-[#6366f1] hover:bg-[#5558e3] text-white px-6 py-2 rounded-lg font-medium"
+                      >
+                        Retry
+                      </Button>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleReportIssue(order);
+                        }}
+                        variant="outline"
+                        className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-lg font-medium"
+                      >
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Report
+                      </Button>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteReport(order);
+                        }}
+                        variant="outline"
+                        className="border-red-500 text-red-500 hover:bg-red-50 px-6 py-2 rounded-lg font-medium"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </Button>
+                    </div>
                   </div>
                 ) : order.status !== 'completed' ? (
                   <div className="flex flex-col items-center justify-center h-full bg-white relative">
@@ -291,20 +299,31 @@ const AIOrdersList = ({
                     <div className="mt-0 text-lg font-[700] text-gray-700">Generating CBCT report...</div>
                   </div>
                 ) : (
-                  <div className="relative h-full bg-gradient-to-br from-blue-900  to-blue-700">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-blue-600/20"></div>
-                    <div className="absolute  top-4 left-4 text-white">
+                  <div className="relative h-full rounded-xl 
+ transition-all duration-300 ease-in-out   ">
+                    {/* الصورة */}
+                    <img
+                      src={order.image_url}
+                      alt={order.type}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                    />
+
+                    {/* overlay خفيف باش النص يبان أكثر */}
+                    <div className="absolute inset-0 bg-[#0d0c22]/20"></div>
+
+                    {/* المحتوى */}
+                    <div className="absolute top-4 left-4 text-white z-10">
                       <h3 className="text-xl font-bold mb-1">{order.type}</h3>
                       <p className="text-sm opacity-90">{formatReportDate(order.date)}</p>
                       {new Date(order.date).getTime() > Date.now() - 60000 && (
                         <div className="mt-2">
-                          <Badge className="bg-green-500 text-white text-xs">
-                            New Report
-                          </Badge>
+                          <Badge className="bg-green-500 text-white text-xs">New Report</Badge>
                         </div>
                       )}
                     </div>
-                    <div className="absolute top-4 right-4">
+
+                    {/* الزر متاع القائمة */}
+                    <div className="absolute top-4 right-4 z-10">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -316,18 +335,18 @@ const AIOrdersList = ({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem >
-                            <Info className="w-4 h-4 mr-2 text-purple-600" />
+                          <DropdownMenuItem>
+                            <Info className="w-4 h-4 mr-2 text-[#7564ed]" />
                             Informações
                           </DropdownMenuItem>
-                          {order.status === 'completed' && (
+                          {order.status === "completed" && (
                             <DropdownMenuItem onPointerDown={() => handleDownloadReport(order)}>
-                              <DownloadIcon className="w-4 h-4 mr-2 text-purple-600" />
+                              <DownloadIcon className="w-4 h-4 mr-2 text-[#7564ed]" />
                               Descarregar
                             </DropdownMenuItem>
                           )}
-                          {order.status !== 'pending' && (
-                            <DropdownMenuItem 
+                          {order.status !== "pending" && (
+                            <DropdownMenuItem
                               onPointerDown={() => handleDeleteReport(order)}
                               className="text-red-600 hover:text-red-700 hover:bg-red-50"
                             >
@@ -338,11 +357,14 @@ const AIOrdersList = ({
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
-                    {/* Status Badge */}
-                    <div className="absolute bottom-4 left-4">
+
+                    {/* الـ Status Badge */}
+                    <div className="absolute bottom-4 left-4 z-10">
                       {getStatusBadge(order.status)}
                     </div>
                   </div>
+
+
                 )}
               </div>
             ))}
@@ -359,7 +381,7 @@ const AIOrdersList = ({
               Delete Report
             </DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this {reportToDelete?.type} report? 
+              Are you sure you want to delete this {reportToDelete?.type} report?
               This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
@@ -391,8 +413,56 @@ const AIOrdersList = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Report Issue Dialog */}
+      <Dialog open={isReportIssueOpen} onOpenChange={setIsReportIssueOpen}>
+        <DialogContent className="sm:max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-[#6366f1]" />
+              Report Issue
+            </DialogTitle>
+            <DialogDescription>
+              Describe the problem you encountered with this report. Our team will investigate.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Textarea
+              className="w-full min-h-[120px] p-3 rounded-lg border border-gray-400 focus:border-[#6366f1] focus:ring-0 outline-none resize-none text-sm"
+              placeholder="Describe the issue here..."
+              value={issueMessage}
+              onChange={(e) => setIssueMessage(e.target.value)}
+            />
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsReportIssueOpen(false)}
+              disabled={isSubmittingIssue}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={submitReportIssue}
+              disabled={isSubmittingIssue || !issueMessage.trim()}
+              className="bg-[#6366f1] hover:bg-[#5558e3] text-white"
+            >
+              {isSubmittingIssue ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Sending...
+                </>
+              ) : (
+                <>
+                  Send Report
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
- };
+};
 
 export default AIOrdersList;

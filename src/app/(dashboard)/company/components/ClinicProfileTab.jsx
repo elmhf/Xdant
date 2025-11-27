@@ -1,5 +1,5 @@
 import React from 'react';
-import ClinicProfile from "../../../component/clinic_Profile/ClinicProfile";
+import ClinicProfile from "@/components/features/clinic-profile/ClinicProfile";
 
 export const ClinicProfileTab = ({ currentClinic, userRole, canEditClinic }) => {
   return (

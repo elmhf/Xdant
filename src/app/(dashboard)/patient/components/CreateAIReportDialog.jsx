@@ -9,29 +9,29 @@ import { Play, X, Upload, FileText, AlertCircle, Trash2 } from "lucide-react";
 import UploadToast, { useUploadToast } from './UploadToast';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { fetchWithAuth } from '@/app/utils/fetchWithAuth';
+import { fetchWithAuth } from '@/utils/utils/fetchWithAuth';
 
-const CreateAIReportDialog = ({ 
-  isOpen, 
-  onClose, 
-  patient, 
-  selectedReport, 
-  onReportCreated 
+const CreateAIReportDialog = ({
+  isOpen,
+  onClose,
+  patient,
+  selectedReport,
+  onReportCreated
 }) => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isOrdering, setIsOrdering] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState(null);
-  
+
   // Enhanced upload toast hook
-  const { 
-    uploads, 
-    isToastVisible, 
-    addUpload, 
-    updateProgress, 
-    setUploadError, 
-    cancelUpload, 
-    closeToast 
+  const {
+    uploads,
+    isToastVisible,
+    addUpload,
+    updateProgress,
+    setUploadError,
+    cancelUpload,
+    closeToast
   } = useUploadToast();
 
   // Get accepted file types for each report type
@@ -111,31 +111,31 @@ const CreateAIReportDialog = ({
       formData.append('patient_id', patient.id);
       formData.append('report_type', selectedReport.id);
       formData.append('file', uploadedFiles[0]);
-      console.log('file+++++',uploadedFiles[0])
+      console.log('file+++++', uploadedFiles[0])
       const response = await fetchWithAuth({
         method: 'post',
         url: 'http://localhost:5000/api/reports/create',
         data: formData,
         withCredentials: true,
-        headers: { 
-          'Content-Type': 'multipart/form-data' 
+        headers: {
+          'Content-Type': 'multipart/form-data'
         },
         onUploadProgress: (e) => {
           const percent = Math.round((e.loaded * 100) / e.total);
           const currentTime = Date.now();
           const timeDiff = (currentTime - lastTime) / 1000; // seconds
           const bytesDiff = e.loaded - lastLoaded;
-          
+
           // Calculate instantaneous speed (MB/s)
           let speed = 0;
           if (timeDiff > 0) {
             speed = (bytesDiff / 1024 / 1024) / timeDiff;
           }
-          
+
           // Update for next calculation
           lastLoaded = e.loaded;
           lastTime = currentTime;
-          
+
           // Update progress in shared toast
           updateProgress(uploadId, percent, Math.max(speed, 0));
         },
@@ -149,10 +149,10 @@ const CreateAIReportDialog = ({
 
     } catch (error) {
       console.error('Error creating AI report:', error);
-      
+
       // Handle different types of errors
       let errorMessage = 'An error occurred while creating the AI report.';
-      
+
       if (error.response) {
         // Server responded with error status
         if (error.response.data && error.response.data.error) {
@@ -173,7 +173,7 @@ const CreateAIReportDialog = ({
         // Other errors
         errorMessage = error.message || 'An unexpected error occurred.';
       }
-      
+
       // Set error in shared toast
       setUploadError(uploadId);
     }
@@ -210,7 +210,7 @@ const CreateAIReportDialog = ({
               <Label className="text-lg font-bold text-gray-700 mb-3 block">
                 Upload {selectedReport?.name || 'CBCT'}
               </Label>
-              
+
               {/* File Upload Area */}
               {uploadedFiles.length === 0 ? (
                 <div className="relative">

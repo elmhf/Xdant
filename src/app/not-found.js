@@ -7,7 +7,7 @@ const LottiePlayer = dynamic(
   () => import("@lottiefiles/react-lottie-player").then(mod => mod.Player),
   { ssr: false }
 );
-import animationData from "./Lottie/404.json";
+import animationData from "@/components/shared/lottie/404.json";
 
 export default function NotFound() {
   return (

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { getTokenFromRequest, isTokenExpired } from "@/utils/jwtUtils"
 
 export function middleware(req) {
-  console.log(req,"req---------------------------------------------------")
+  
   const { pathname } = req.nextUrl
 
   // نجيب التوكن من الكوكيز

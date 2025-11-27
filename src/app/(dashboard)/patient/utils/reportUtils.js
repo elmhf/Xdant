@@ -156,7 +156,9 @@ export const convertReportsToOrders = (reports) => {
       image: '/public/Axialview.png', // Placeholder image
       hasAnnotations: report.status === 'completed',
       report_url: report.report_url,
-      data_url: report.data_url
+      data_url: report.data_url,
+      image_url:report.image_url
+      
     };
     
     return order;

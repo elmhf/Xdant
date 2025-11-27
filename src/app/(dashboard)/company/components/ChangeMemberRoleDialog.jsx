@@ -10,17 +10,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertTriangle, UserCheck, Users } from "lucide-react";
-import useUserStore from "@/app/component/profile/store/userStore";
+import useUserStore from "@/components/features/profile/store/userStore";
 
-export const ChangeMemberRoleDialog = ({ 
-  open, 
-  onOpenChange, 
-  member, 
+export const ChangeMemberRoleDialog = ({
+  open,
+  onOpenChange,
+  member,
   newRole,
   setNewRole,
-  onConfirm, 
-  loading, 
-  message 
+  onConfirm,
+  loading,
+  message
 }) => {
   if (!member) return null;
 
@@ -46,7 +46,7 @@ export const ChangeMemberRoleDialog = ({
             Modifiez le rôle de ce membre dans la clinique. Les permissions seront mises à jour en conséquence.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="py-6">
           <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
             <div className="flex items-center gap-4">
@@ -60,20 +60,20 @@ export const ChangeMemberRoleDialog = ({
                 <p className="text-gray-600 text-base mt-1">
                   {member.email}
                 </p>
-                                 <p className="text-gray-500 text-sm mt-1">
-                   Rôle actuel: {mapRoleToAPI(member.role)}
-                 </p>
+                <p className="text-gray-500 text-sm mt-1">
+                  Rôle actuel: {mapRoleToAPI(member.role)}
+                </p>
               </div>
             </div>
           </div>
-          
+
           <div className="mt-6 space-y-4">
             <div>
               <label className="block text-base font-semibold text-gray-700 mb-2">
                 Nouveau rôle
               </label>
               <Select value={newRole} onValueChange={setNewRole}>
-                <SelectTrigger className="h-12 text-base border-2 border-gray-300 focus:border-[#7c5cff] focus:ring-2 focus:ring-[#7c5cff]/20">
+                <SelectTrigger className="h-12 text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20">
                   <SelectValue placeholder="Sélectionner un rôle" />
                 </SelectTrigger>
                 <SelectContent>
@@ -86,7 +86,7 @@ export const ChangeMemberRoleDialog = ({
               </Select>
             </div>
           </div>
-          
+
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-4">
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
@@ -109,34 +109,33 @@ export const ChangeMemberRoleDialog = ({
               </div>
             </div>
           </div>
-          
+
           {message && (
-            <div className={`mt-4 p-4 rounded-xl text-base font-medium border-2 ${
-              message.includes('succès') 
-                ? 'bg-green-50 text-green-800 border-green-200' 
+            <div className={`mt-4 p-4 rounded-xl text-base font-medium border-2 ${message.includes('succès')
+                ? 'bg-green-50 text-green-800 border-green-200'
                 : 'bg-red-50 text-red-800 border-red-200'
-            }`}>
+              }`}>
               {message}
             </div>
           )}
         </div>
-        
+
         <DialogFooter className="pt-4">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onOpenChange}
             disabled={loading}
             className="flex-1 h-12 text-base font-semibold border-2"
           >
             Annuler
           </Button>
-                     <Button 
-             onClick={onConfirm}
-             disabled={loading || !newRole || newRole === mapRoleToAPI(member.role)}
-             className="flex-1 h-12 text-base font-semibold bg-[#7c5cff] hover:bg-[#6a4fd8] text-white border-2 border-[#7c5cff]"
-           >
-            {loading 
-              ? "Mise à jour..." 
+          <Button
+            onClick={onConfirm}
+            disabled={loading || !newRole || newRole === mapRoleToAPI(member.role)}
+            className="flex-1 h-12 text-base font-semibold bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]"
+          >
+            {loading
+              ? "Mise à jour..."
               : "Mettre à jour le rôle"
             }
           </Button>

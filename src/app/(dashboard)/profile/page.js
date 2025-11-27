@@ -1,4 +1,4 @@
-import AccountInfoCard from "../../component/profile/profile"
+import AccountInfoCard from "@/components/features/profile/profile"
 
 export default function Page() {
   return (

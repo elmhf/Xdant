@@ -140,7 +140,7 @@ const ViewComponent = React.memo(({
       className='w-full h-full border border-gray-600 bg-gray-800 flex flex-col'
     >
       {/* Zoom Controls */}
-      <div className="absolute top-2 left-2 z-20 flex gap-2 bg-black/60 rounded p-1">
+      <div className="absolute top-2 left-2 z-20 flex gap-2 bg-[#0d0c22]/60 rounded p-1">
         <button
           className="text-white px-2 py-1 rounded hover:bg-blue-600 bg-blue-500 text-xs"
           onClick={() => {zoomHook?.zoomIn?.(viewType);console.log(zoomHook.currentPans?.[viewType]?.x ,zoomHook.currentZooms?.[viewType] ,"ooooooookllll")}}
@@ -199,7 +199,7 @@ const ViewComponent = React.memo(({
         </Stage>
         
         {/* World coordinates display */}
-        <div className="absolute bottom-2 right-2 text-xs text-gray-400 bg-black bg-opacity-75 px-2 py-1 rounded">
+        <div className="absolute bottom-2 right-2 text-xs text-gray-400 bg-[#0d0c22] bg-opacity-75 px-2 py-1 rounded">
           <div>World Position:</div>
           <div>X: {crosshairHook.worldPosition?.x?.toFixed(2) || '0.00'} mm</div>
           <div>Y: {crosshairHook.worldPosition?.y?.toFixed(2) || '0.00'} mm</div>
@@ -208,7 +208,7 @@ const ViewComponent = React.memo(({
 
         {/* Debug info (can be removed in production) */}
         {process.env.NODE_ENV === 'development' && (
-          <div className="absolute top-2 left-2 text-xs text-gray-400 bg-black bg-opacity-75 px-2 py-1 rounded">
+          <div className="absolute top-2 left-2 text-xs text-gray-400 bg-[#0d0c22] bg-opacity-75 px-2 py-1 rounded">
             <div>View: {viewType}</div>
             <div>Cursor: {crosshairHook.cursors?.[viewType] || 'default'}</div>
             <div>Dragging: {crosshairHook.dragState?.isDragging ? 'Yes' : 'No'}</div>
@@ -248,7 +248,7 @@ const FullViewButton = React.memo(({ isFullView, onFullView, onExitFullView }) =
     {isFullView ? (
       <motion.button
         onClick={onExitFullView}
-        className="text-white hover:text-red-400 p-2 bg-black bg-opacity-50 rounded"
+        className="text-white hover:text-red-400 p-2 bg-[#0d0c22] bg-opacity-50 rounded"
         title="Exit Full View"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
@@ -258,7 +258,7 @@ const FullViewButton = React.memo(({ isFullView, onFullView, onExitFullView }) =
     ) : (
       <motion.button
         onClick={onFullView}
-        className="text-white hover:text-blue-400 p-2 bg-black bg-opacity-50 rounded"
+        className="text-white hover:text-blue-400 p-2 bg-[#0d0c22] bg-opacity-50 rounded"
         title="Enter Full View"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
@@ -414,7 +414,7 @@ const MedicalImageViewer = () => {
         </div>
       ) : (
         <div className="w-full h-full flex items-center justify-center">
-          <div className="max-h-[90vh] max-w-[90vw] w-full h-full flex items-center justify-center overflow-hidden rounded-xl bg-black/90 shadow-xl mx-auto relative">
+          <div className="max-h-[90vh] max-w-[90vw] w-full h-full flex items-center justify-center overflow-hidden rounded-xl bg-[#0d0c22]/90 shadow-xl mx-auto relative">
             <FullViewButton
               isFullView={true}
               onExitFullView={handleExitFullView}

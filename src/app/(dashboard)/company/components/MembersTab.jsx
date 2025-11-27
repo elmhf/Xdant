@@ -128,7 +128,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
             </div>
             <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="px-4 h-12 flex items-center justify-center rounded-full bg-white text-[#7c5cff] border-2 border-[#7c5cff] text-xl font-medium hover:bg-[#7c5cff] hover:text-white transition-all duration-200"
+                <Button className="px-4 h-12 flex items-center justify-center rounded-full bg-white text-[#7564ed] border-2 border-[#7564ed] text-xl font-medium hover:bg-[#7564ed] hover:text-white transition-all duration-200"
                 >
                   <UserPlus className="mr-2 h-5 w-5" />
                   Inviter un membre
@@ -136,7 +136,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px] bg-white border-2 border-gray-200">
                 <DialogHeader className="pb-4">
-                  <DialogTitle className="flex items-center gap-3 text-[#7c5cff] text-xl font-bold">
+                  <DialogTitle className="flex items-center gap-3 text-[#7564ed] text-xl font-bold">
                     <UserPlus className="h-6 w-6" />
                     Inviter un nouveau membre
                   </DialogTitle>
@@ -155,7 +155,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                       placeholder="exemple@email.com"
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}
-                      className="w-full h-12 text-base border-2 border-gray-300 focus:border-[#7c5cff] focus:ring-2 focus:ring-[#7c5cff]/20"
+                      className="w-full h-12 text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
                     />
                   </div>
                   <div className="space-y-3">
@@ -163,7 +163,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                       Rôle
                     </Label>
                     <Select value={inviteRole} onValueChange={setInviteRole}>
-                      <SelectTrigger className="h-12 text-base border-2 border-gray-300 focus:border-[#7c5cff] focus:ring-2 focus:ring-[#7c5cff]/20">
+                      <SelectTrigger className="h-12 text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20">
                         <SelectValue placeholder="Sélectionner un rôle" />
                       </SelectTrigger>
                       <SelectContent>
@@ -189,7 +189,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                     type="submit"
                     onClick={handleInviteMember}
                     disabled={inviteLoading}
-                    className="flex-1 h-12 text-base font-semibold bg-[#7c5cff] hover:bg-[#6a4fd8] text-white border-2 border-[#7c5cff]"
+                    className="flex-1 h-12 text-base font-semibold bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]"
                   >
                     {inviteLoading ? "Envoi..." : "Envoyer l'invitation"}
                   </Button>

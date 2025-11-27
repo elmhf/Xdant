@@ -3,29 +3,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { 
-  Building2, 
-  MapPin, 
-  Users, 
-  LogOut, 
+import {
+  Building2,
+  MapPin,
+  Users,
+  LogOut,
   Settings,
   Plus,
   AlertTriangle
 } from "lucide-react";
 import { useLeaveClinic } from '../hooks';
 import { LeaveClinicDialog } from './LeaveClinicDialog';
-import useUserStore from '../../../component/profile/store/userStore';
+import useUserStore from "@/components/features/profile/store/userStore";
 
 export const ClinicsManager = () => {
-  const { 
-    leaving, 
-    leaveMessage, 
-    showLeaveDialog, 
-    setShowLeaveDialog, 
-    clinicToLeave, 
-    openLeaveDialog, 
-    closeLeaveDialog, 
-    confirmLeaveClinic 
+  const {
+    leaving,
+    leaveMessage,
+    showLeaveDialog,
+    setShowLeaveDialog,
+    clinicToLeave,
+    openLeaveDialog,
+    closeLeaveDialog,
+    confirmLeaveClinic
   } = useLeaveClinic();
 
   const clinicsInfo = useUserStore(state => state.clinicsInfo);
@@ -36,13 +36,13 @@ export const ClinicsManager = () => {
   const renderClinicLogo = (clinic, size = "h-12 w-12") => {
     const logoUrl = clinic?.logoUrl || clinic?.logo_url;
     const clinicName = clinic?.clinic_name || clinic?.clinicName || clinic?.name;
-    
+
     return (
       <Avatar className={size}>
         {logoUrl ? (
-          <img 
-            src={getImageFromCache(logoUrl)?.src || logoUrl} 
-            alt="Clinic Logo" 
+          <img
+            src={getImageFromCache(logoUrl)?.src || logoUrl}
+            alt="Clinic Logo"
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.style.display = 'none';
@@ -51,7 +51,7 @@ export const ClinicsManager = () => {
           />
         ) : null}
         <AvatarFallback className="bg-gradient-to-br from-blue-400 to-cyan-400 text-white text-sm font-medium">
-          {clinicName 
+          {clinicName
             ? clinicName.split(' ').map(n => n[0]).join('').slice(0, 2)
             : "CL"}
         </AvatarFallback>
@@ -99,11 +99,10 @@ export const ClinicsManager = () => {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {clinicsInfo.map((clinic) => (
-            <Card 
-              key={clinic.id} 
-              className={`relative transition-all duration-200 hover:shadow-lg ${
-                currentClinicId === clinic.id ? 'ring-2 ring-purple-500' : ''
-              }`}
+            <Card
+              key={clinic.id}
+              className={`relative transition-all duration-200 hover:shadow-lg ${currentClinicId === clinic.id ? 'ring-2 ring-purple-500' : ''
+                }`}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -126,13 +125,13 @@ export const ClinicsManager = () => {
                   )}
                 </div>
               </CardHeader>
-              
+
               <CardContent className="pt-0">
                 <div className="space-y-3">
                   {/* Role Info */}
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Votre rôle :</span>
-                    <Badge 
+                    <Badge
                       variant={clinic.role === 'owner' || clinic.role === 'admin' ? 'default' : 'secondary'}
                       className={
                         clinic.role === 'owner' || clinic.role === 'admin'
@@ -158,8 +157,8 @@ export const ClinicsManager = () => {
                   {/* Actions */}
                   <div className="flex gap-2 pt-2">
                     {currentClinicId !== clinic.id && (
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         className="flex-1"
                         onClick={() => setCurrentClinicId(clinic.id)}
@@ -167,18 +166,18 @@ export const ClinicsManager = () => {
                         Activer
                       </Button>
                     )}
-                    
-                    <Button 
-                      variant="outline" 
+
+                    <Button
+                      variant="outline"
                       size="sm"
                       className="flex-1"
-                      onClick={() => {/* Navigate to clinic settings */}}
+                      onClick={() => {/* Navigate to clinic settings */ }}
                     >
                       <Settings className="h-4 w-4" />
                     </Button>
-                    
-                    <Button 
-                      variant="outline" 
+
+                    <Button
+                      variant="outline"
                       size="sm"
                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       onClick={() => openLeaveDialog(clinic)}

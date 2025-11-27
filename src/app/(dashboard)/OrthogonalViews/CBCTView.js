@@ -91,17 +91,17 @@ export default function CBCTProgressiveViewer() {
   useEffect(() => {
     fetch('http://localhost:5000/slices-count')
       .then(res => {
-        console.log("Response status:", res.status);
+        
         return res.json();
       })
       .then(data => {
-        console.log("Slices data:", data);
+        
         setNumSlicesAxial(data.axial || 1);
         setNumSlicesCoronal(data.coronal || 1);
         setNumSlicesSagittal(data.sagittal || 1);
       })
       .catch((err) => {
-        console.log("fetch error", err);
+        
         setNumSlicesAxial(1);
         setNumSlicesCoronal(1);
         setNumSlicesSagittal(1);

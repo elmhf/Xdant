@@ -27,18 +27,18 @@ async function fetchReportDataByPost(reportId, abortSignal) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         report_id: cleanReportId,
-        patient_id: patientId 
+        patient_id: patientId
       }),
       signal: abortSignal
     });
-    
+
     console.log('Response:', response);
-    
+
     if (!response.ok) {
       let errorMessage = `HTTP ${response.status}`;
-      
+
       try {
         const errorData = await response.json();
         errorMessage = errorData.error || errorData.message || errorMessage;
@@ -51,18 +51,18 @@ async function fetchReportDataByPost(reportId, abortSignal) {
 
     const data = await response.json();
     console.log('✅ Data fetched successfully', data);
-    
+
     // Setup image store data
     const setupFromReport = useImageStore.getState().setupFromReport;
     if (setupFromReport) {
-      console.log("✅ Data fetched successfully",data.report)
+      console.log("✅ Data fetched successfully", data.report)
       await setupFromReport(data.report);
     }
-    
+
     return data;
   } catch (error) {
     if (error.name === 'AbortError') {
-      console.log('🚫 Request aborted');
+      console.log('🚫 Request aborted', error);
       return null;
     }
     console.error('❌ Network error:', error);
@@ -80,7 +80,7 @@ function detectReportType(reportData) {
   // Check in multiple places for image URLs and data
   const places = [
     reportData.data,
-    reportData.report, 
+    reportData.report,
     reportData.fetchedData,
     reportData
   ];
@@ -101,7 +101,7 @@ function detectReportType(reportData) {
       console.log('📋 Report type detected: PANO (found pano_image_url)');
       return 'pano';
     }
-    
+
     // Check for CBCT image URL
     if (dataToCheck.cbct_image_url) {
       console.log('📋 Report type detected: CBCT (found cbct_image_url)');
@@ -137,30 +137,33 @@ function getReportUrl(reportData, detectedType) {
   };
 
   const url = urlMap[detectedType] || report.report_url;
-  
+
   if (url) {
     console.log(`🔗 ${detectedType?.toUpperCase() || 'DEFAULT'} report - using URL:`, url.substring(0, 50) + '...');
   }
-  
+
   return url;
 }
 
 // Function to get the appropriate image URL based on report type
 function getImageUrl(data, reportType) {
   if (!data || !reportType) return null;
-  
+
   const places = [data, data.report, data.data];
-  
+  console.log('🔍 Getting image URL for detected type:', places);
+
   for (const source of places) {
     if (!source) continue;
-    
+
     if (reportType === 'pano' && source.pano_image_url) {
+      console.log('✅ Found PANO image URL:', source.pano_image_url); 
       return source.pano_image_url;
     } else if (reportType === 'cbct' && source.cbct_image_url) {
+      console.log('✅ Found CBCT image URL:', source.cbct_image_url); 
       return source.cbct_image_url;
     }
   }
-  
+
   return null;
 }
 
@@ -170,12 +173,12 @@ function validateDataForStore(data, reportId) {
     console.error('❌ No data to load to store for report:', reportId);
     return false;
   }
-  
+
   if (typeof data !== 'object') {
     console.error('❌ Data is not an object for report:', reportId, 'Type:', typeof data);
     return false;
   }
-  
+
   console.log('✅ Data validation passed for store loading:', reportId);
   return true;
 }
@@ -206,7 +209,7 @@ function getToothSliceRanges(data, toothNumber, view = null) {
 
   // Find the tooth in the teeth array
   const tooth = findToothByNumber(data, toothNumber);
-  
+
   if (!tooth) {
     console.warn(`⚠️ Tooth ${toothNumber} not found in data`);
     return null;
@@ -221,7 +224,7 @@ function getToothSliceRanges(data, toothNumber, view = null) {
   if (view) {
     const normalizedView = view.toLowerCase();
     const validViews = ['axial', 'sagittal', 'coronal'];
-    
+
     if (!validViews.includes(normalizedView)) {
       console.warn(`⚠️ Invalid view '${view}'. Valid views: ${validViews.join(', ')}`);
       return null;
@@ -264,7 +267,7 @@ function getAllTeethSliceRanges(data, view = null) {
 
   teeth.forEach(tooth => {
     if (!tooth.toothNumber) return;
-    
+
     const ranges = getToothSliceRanges(data, tooth.toothNumber, view);
     if (ranges) {
       allRanges[tooth.toothNumber] = ranges;
@@ -326,7 +329,7 @@ function getViewSliceBoundaries(data, view) {
 
   const allRanges = getAllTeethSliceRanges(data, view);
   const ranges = Object.values(allRanges);
-  
+
   if (ranges.length === 0) return null;
 
   const starts = ranges.map(r => r.start);
@@ -367,14 +370,14 @@ function isSliceInToothRange(data, sliceNumber, view) {
 export function useReportData(options = {}) {
   const { imageCard } = options;
   const { loadPatientData } = useDentalStore();
-  
+
   const [state, setState] = useState({
     data: null,
     loading: false,
     error: null,
     reportType: null
   });
-  
+
   const abortControllerRef = useRef(null);
   const currentReportRef = useRef(null);
   const lastProcessedUrlRef = useRef(null);
@@ -388,7 +391,7 @@ export function useReportData(options = {}) {
 
     console.log('🖼️ Processing image URL from hook:', imageUrl.substring(0, 50) + '...');
     lastProcessedUrlRef.current = imageUrl;
-    
+
     try {
       if (typeof imageCard.handleUrlUpload === 'function') {
         console.log("🖼️ Processing image URL:", imageUrl);
@@ -446,7 +449,7 @@ export function useReportData(options = {}) {
   const fetchData = useCallback(async (reportId, options = {}) => {
     const { forceRefresh = false } = options;
     console.log('🚀 fetchData called:', { reportId, forceRefresh, currentReport: currentReportRef.current });
-    
+
     if (!reportId) {
       console.warn('⚠️ No reportId provided');
       updateState({ data: null, loading: false, error: 'No report ID provided', reportType: null });
@@ -458,19 +461,19 @@ export function useReportData(options = {}) {
       console.log('ℹ️ Same report with existing data, skipping fetch');
       return state.data;
     }
-    
+
     // If different report, cancel previous requests
     if (currentReportRef.current !== reportId) {
       console.log('🔄 Different report detected, cleaning up');
-      
+
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
         abortControllerRef.current = null;
       }
-      
+
       lastProcessedUrlRef.current = null;
     }
-    
+
     currentReportRef.current = reportId;
 
     // Check cache first (unless force refresh)
@@ -478,13 +481,13 @@ export function useReportData(options = {}) {
       const { data: cachedData, createdAt } = singleReportCache;
       const timePassed = Date.now() - createdAt;
       const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-      
+
       if (timePassed < CACHE_DURATION) {
         console.log('💾 Using cached data for same report');
-        
+
         loadDataToStore(loadPatientData, cachedData, reportId, 'cached');
         const cachedReportType = singleReportCache.metadata?.reportType;
-        
+
         updateState({
           data: cachedData,
           loading: false,
@@ -493,11 +496,12 @@ export function useReportData(options = {}) {
         });
 
         // Process image URL from cache
+        console.log('🔍 Getting image URL for detected type:', cachedReportType?.toUpperCase());
         const imageUrl = getImageUrl(cachedData, cachedReportType);
         if (imageUrl) {
           setTimeout(() => handleImageUrl(imageUrl), 100);
         }
-        
+
         return cachedData;
       }
     }
@@ -522,13 +526,13 @@ export function useReportData(options = {}) {
 
     try {
       const reportData = await fetchReportDataByPost(reportId, abortControllerRef.current.signal);
-      
+
       // Handle aborted request
       if (!reportData) {
         console.log('🚫 Request was aborted');
         return null;
       }
-      
+
       // Check if request is still current
       if (currentReportRef.current !== reportId || !isMountedRef.current) {
         console.log('🚫 Request obsolete or component unmounted');
@@ -544,11 +548,11 @@ export function useReportData(options = {}) {
       // Try to get data directly first
       if (reportData?.data) {
         fetchedData = reportData.data;
-        console.log('✅ Direct data found');
+        console.log('✅ Direct data found',reportData);
       } else {
         // Fallback to URL fetching
         const reportUrl = getReportUrl(reportData, detectedReportType);
-        
+
         if (reportUrl) {
           try {
             const { fetchJsonFromUrl } = await import('@/stores/dataStore');
@@ -590,9 +594,10 @@ export function useReportData(options = {}) {
         });
 
         // Process image URL
-        const imageUrl = getImageUrl(fetchedData, detectedReportType) || 
-                         getImageUrl(reportData?.report, detectedReportType);
-        
+        console.log('🔍 Getting image URL for detected type: reportData', reportData);
+        const imageUrl = getImageUrl(reportData, detectedReportType) ||
+          getImageUrl(reportData?.report, detectedReportType);
+
         if (imageUrl) {
           setTimeout(() => handleImageUrl(imageUrl), 100);
         }
@@ -605,9 +610,9 @@ export function useReportData(options = {}) {
         console.log('🚫 Fetch aborted');
         return null;
       }
-      
+
       console.error('❌ Fetch failed:', error);
-      
+
       if (currentReportRef.current === reportId && isMountedRef.current) {
         updateState({
           data: null,
@@ -616,7 +621,7 @@ export function useReportData(options = {}) {
           reportType: null
         });
       }
-      
+
       throw error;
     }
   }, [loadPatientData, handleImageUrl, updateState]);
@@ -647,17 +652,17 @@ export function useReportData(options = {}) {
   // Reset state and URL tracking
   const reset = useCallback(() => {
     console.log('🔄 Resetting hook state');
-    
+
     // Cancel any ongoing requests
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-    
+
     // Reset refs
     currentReportRef.current = null;
     lastProcessedUrlRef.current = null;
-    
+
     // Reset state only if component is still mounted
     if (isMountedRef.current) {
       updateState({
@@ -704,7 +709,7 @@ export function useReportData(options = {}) {
     loading: state.loading,
     error: state.error,
     reportType: state.reportType,
-    
+
     // Actions
     fetchData,
     retry,
@@ -712,7 +717,7 @@ export function useReportData(options = {}) {
     clearCache,
     reset,
     handleImageUrl,
-    
+
     // Slice Range Functions
     getToothSliceRange,
     getAllSliceRanges,
@@ -720,7 +725,7 @@ export function useReportData(options = {}) {
     findTeethInSlice,
     getTooth,
     getAllTeeth,
-    
+
     // Helpers
     isLoading: state.loading,
     hasData: !!state.data,
@@ -729,7 +734,7 @@ export function useReportData(options = {}) {
     isPanoReport: isReportType('pano'),
     isCbctReport: isReportType('cbct'),
     isReportType,
-    
+
     // Debug
     getCacheInfo
   };

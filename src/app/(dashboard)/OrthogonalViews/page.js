@@ -80,7 +80,7 @@ export default function Page() {
       } finally {
         setLoading(false);
       }
-      console.log(getVoxelSizes())
+      
     };
     initializeViews();
   }, [loadAllViews]);

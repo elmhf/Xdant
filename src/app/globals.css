@@ -21,12 +21,7 @@
   --tooth-unhealthy-border: #FF254E;
 }
 
-:root input { 
-  border-radius: 7px;
 
-  border: 1px solid #94949430;
-  color: var(--text-color);
-}
 
 :root h2 { 
   border-radius: 7px;
@@ -38,19 +33,12 @@
   color: var(--text-color);
 }
 
-:root textarea {
+/* :root textarea {
   border-radius: 7px;
   background-color: var(--input-background);
   border: 1px solid #94949430;
   color: var(--text-color);
-}
-
-:root button {
-  font-weight: 700;
-  border-radius: 7px;
-
-  border: 1px solid #94949430;
-}
+} */
 
 .border {
   border-width: 0;
@@ -212,7 +200,7 @@
   --color-UNKNOWN-filter: invert(39%) sepia(52%) saturate(651%) hue-rotate(315deg) brightness(90%) contrast(99%);
   --color-Treated: 82,65,204;
   --color-Missing: 255, 37, 78;
-  --color-Unhealthy: 255, 37, 78;
+  --color-Unhealthy: 255,37,78;
   --color-UNKNOWN-Tooth: 200, 200, 200;
   --NavBarBackGroundColor: #f1f5f9;
 }
@@ -401,4 +389,23 @@ html, body, * {
 }
 .notes-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #a1a1aa;
+}
+
+/* Custom scrollbar for notifications */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #e2e8f0;
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #cbd5e1;
 }

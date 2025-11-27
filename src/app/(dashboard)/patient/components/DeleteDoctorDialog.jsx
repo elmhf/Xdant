@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export const DeleteDoctorDialog = ({ 
   open, 
+  close,
   onOpenChange, 
   doctor, 
   patient,
@@ -96,17 +97,17 @@ export const DeleteDoctorDialog = ({
         
         <DialogFooter className="pt-4">
           <Button 
-            variant="outline" 
-            onClick={onOpenChange}
+         
+            onClick={close}
             disabled={loading}
-            className="flex-1 h-12 text-base font-semibold border-2"
+            className="flex-1 h-12 font-semibold text-[#0d0c22]"
           >
             Cancel
           </Button>
           <Button 
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 h-12 text-base font-semibold bg-[#ff254e] hover:bg-[#e01e3e] text-white border-2 border-[#ff254e]"
+            className="flex-1 h-12  font-semibold bg-[#ff254e] hover:bg-[#e01e3e] text-white border-2 border-[#ff254e]"
           >
             {loading 
               ? "Removing..." 

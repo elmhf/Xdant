@@ -5,13 +5,16 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, UserPlus } from "lucide-react";
+import { Search, Plus, UserPlus, X } from "lucide-react";
 import { useClinicMembers } from "@/app/(dashboard)/company/hooks";
-import useUserStore from "@/app/component/profile/store/userStore";
+import useUserStore from "@/components/features/profile/store/userStore";
 import PatientTable from './components/PatientTable';
 import AddPatientDialog from './components/AddPatientDialog';
 import EditPatientDialog from './components/EditPatientDialog';
 import { DeletePatientDialog } from './components/DeletePatientDialog';
+import PatientInfoDialog from './components/PatientInfoDialog';
+import PatientsLoadingState from './components/PatientsLoadingState';
+import NoClinicState from './components/NoClinicState';
 import {
   filterPatientsBySearch,
   filterPatientsByTab,
@@ -23,7 +26,7 @@ export default function PatientPage() {
   const router = useRouter();
   // Get current clinic from the same hook used in company page
   const { currentClinic } = useClinicMembers();
-  
+
   const [activeTab, setActiveTab] = useState("my");
   const [searchQuery, setSearchQuery] = useState("");
   const [sorting, setSorting] = useState({ column: 'name', direction: 'asc' });
@@ -42,6 +45,10 @@ export default function PatientPage() {
   const [patientsLoading, setPatientsLoading] = useState(false);
   const [patientsError, setPatientsError] = useState(null);
   const [favoriteLoadingStates, setFavoriteLoadingStates] = useState({});
+
+  // Info dialog state
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
+  const [patientToView, setPatientToView] = useState(null);
 
   // Fetch patients when clinic changes
   useEffect(() => {
@@ -131,10 +138,10 @@ export default function PatientPage() {
 
     try {
       const result = await useUserStore.getState().deletePatient(patientToDelete.id);
-      
+
       if (result.success) {
         setDeleteMessage("Patient supprimé avec succès");
-        
+
         // Refresh patients list
         if (currentClinic?.id) {
           const patientsResult = await useUserStore.getState().getPatients(currentClinic.id);
@@ -142,12 +149,12 @@ export default function PatientPage() {
             setPatients(patientsResult.patients || []);
           }
         }
-        
+
         // Close dialog after success
 
-          setIsDeletePatientOpen(false);
-          setPatientToDelete(null);
-          setDeleteMessage("");
+        setIsDeletePatientOpen(false);
+        setPatientToDelete(null);
+        setDeleteMessage("");
 
       } else {
         setDeleteMessage(result.message || "Erreur lors de la suppression du patient");
@@ -178,13 +185,13 @@ export default function PatientPage() {
 
     try {
       const newFavoriteStatus = !patient.isFavorite;
-      
+
       const result = await useUserStore.getState().toggleFavorite(patient.id, newFavoriteStatus);
-      
+
       if (result.success) {
         // Update the patient in the local state
-        setPatients(prev => prev.map(p => 
-          p.id === patient.id 
+        setPatients(prev => prev.map(p =>
+          p.id === patient.id
             ? { ...p, isFavorite: newFavoriteStatus }
             : p
         ));
@@ -202,73 +209,38 @@ export default function PatientPage() {
     }
   };
 
+  const handleViewInfo = (patient) => {
+    setPatientToView(patient);
+    setIsInfoDialogOpen(true);
+  };
+
   // Loading state
   if (patientsLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen w-full bg-transparent">
-        <div className="text-center max-w-md mx-auto p-6">
-          <div className="mb-6">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7c5cff] mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Chargement des patients
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Veuillez patienter pendant le chargement des patients...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <PatientsLoadingState />;
   }
 
   // No clinic state
   if (!currentClinic?.id) {
-    return (
-      <div className="flex items-center justify-center min-h-screen w-full bg-transparent">
-        <div className="text-center max-w-md mx-auto p-6">
-          <div className="mb-6">
-            <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Aucune clinique trouvée
-            </h2>
-            <p className="text-gray-600 text-lg mb-6">
-              Vous devez créer une clinique ou rejoindre une clinique existante pour gérer les patients.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button 
-                onClick={() => router.push('/welcome')}
-                className="bg-[#7c5cff] hover:bg-[#6a4fd8] text-white border-2 border-[#7c5cff] h-12 font-semibold px-6"
-              >
-                Créer une clinique
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <NoClinicState />;
   }
 
   return (
-    <div className="bg-transparent w-full">
+    <div className="bg-transparent w-full h-full">
       {/* Header Section */}
-      <div className="bg-transparent">
-        <div className="max-w-7xl mx-auto px-0 sm:px-0 lg:px-0 py-2">
+      <div className="bg-transparent flex-wrap">
+        <div className="px-0 sm:px-0 lg:px-0 py-2">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl md:text-4xl font-[900] text-gray-900">
-              Patients
+            <h1 className="text-3xl md:text-4xl font-[500] text-gray-900">
+              <span className="text-8xl md:text-8xl font-[700]">Patients</span>
               <span className="text-lg md:text-xl font-bold text-gray-600 ml-2">
                 {currentClinic?.clinic_name || 'Clinic'}
               </span>
             </h1>
-            
+
             {/* Add Patient Button */}
-            <Button 
+            <Button
               onClick={() => setIsAddPatientOpen(true)}
-              className="bg-[#7c5cff] hover:bg-[#6a4fd8] text-xl text-white border-2 border-[#7c5cff] h-12 font-semibold px-6"
+              className="bg-[#7564ed] hover:bg-[#6a4fd8] text-xl text-white border-2 border-[#7564ed] h-12 font-semibold px-6"
             >
               <Plus className="mr-2 text-xl h-5 w-5" />
               Add new patient
@@ -278,23 +250,22 @@ export default function PatientPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-0 sm:px-0 lg:px-0 py-1">
+      <div className=" px-0 sm:px-0 lg:px-0 py-1">
         {/* Filter Bar Above Table */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
           {/* Tabs */}
-          <div className="flex space-x-1 p-1 rounded-lg min-w-fit overflow-x-auto">
+          <div className="flex font-[500] space-x-1 p-1 rounded-lg min-w-fit overflow-x-auto">
             {tabs.map((tab) => (
-              <button
+              <Button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-3 py-2 rounded-lg text-sm md:text-xl font-semibold transition-all duration-200 whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "bg-[#7c5cff] text-white border-2 border-[#7c5cff]"
-                    : "bg-[#979eb033] text-gray-500 border-2 border-[#7c5cff] hover:bg-[#7c5cff] hover:text-white"
-                }`}
+                className={`px-3 py-2.5 rounded-lg text md:text-[18px]  ${activeTab === tab.id
+                  ? "bg-[#7564ed] text-white"
+                  : "bg-[#979eb02d] text-gray-700  hover:bg-[#7564ed] hover:text-white"
+                  }`}
               >
                 {tab.label} {tab.count}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -307,13 +278,23 @@ export default function PatientPage() {
                 placeholder="Buscar por nombre o email del paciente"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 h-12 w-full"
+                className="pl-10 pr-10 h-12 w-full"
               />
+
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-7 h-7 cursor-pointer" />
+                </button>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow p-4 border border-gray-100 max-w-full mx-auto">
+        <div className="bg-white  rounded-xl shadow  max-w-full mx-auto">
           {/* Patient Table Component */}
           <PatientTable
             patients={sortedPatients}
@@ -324,6 +305,7 @@ export default function PatientPage() {
             onEditPatient={handleEditPatient}
             onDeletePatient={handleDeletePatient}
             onToggleFavorite={handleToggleFavorite}
+            onViewInfo={handleViewInfo}
             favoriteLoadingStates={favoriteLoadingStates}
           />
         </div>
@@ -361,6 +343,16 @@ export default function PatientPage() {
         onConfirm={handleConfirmDelete}
         loading={deleteLoading}
         message={deleteMessage}
+      />
+
+      {/* Patient Info Dialog */}
+      <PatientInfoDialog
+        isOpen={isInfoDialogOpen}
+        onClose={() => {
+          setIsInfoDialogOpen(false);
+          setPatientToView(null);
+        }}
+        patient={patientToView}
       />
     </div>
   );

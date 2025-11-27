@@ -4,8 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { LogOut, Building, AlertTriangle } from "lucide-react";
-import { 
-  useClinicMembers, 
+import {
+  useClinicMembers,
   useLeaveClinicWithVerification,
   usePermissions
 } from "./hooks";
@@ -15,25 +15,25 @@ import { MembersTab } from "./components/MembersTab";
 import { InvitationsTab } from "./components/InvitationsTab";
 import { AccessDenied } from "./components/AccessDenied";
 import { BillingTab } from "./components/BillingTab";
-import useUserStore from "@/app/component/profile/store/userStore";
+import useUserStore from "@/components/features/profile/store/userStore";
 
 export default function page() {
   // Use custom hooks
   const { clinicMembers, loading, error, refetch, currentClinic } = useClinicMembers();
-  const { 
+  const {
     step,
     password,
     setPassword,
-    leaving, 
-    leaveMessage, 
-    showLeaveDialog, 
-    setShowLeaveDialog, 
-    clinicToLeave, 
+    leaving,
+    leaveMessage,
+    showLeaveDialog,
+    setShowLeaveDialog,
+    clinicToLeave,
     error: passwordError,
     verifyPassword,
     leaveClinic,
-    openLeaveDialog, 
-    closeLeaveDialog, 
+    openLeaveDialog,
+    closeLeaveDialog,
     handleBack
   } = useLeaveClinicWithVerification();
 
@@ -86,19 +86,19 @@ export default function page() {
   } = useMemo(() => permissions, [permissions]);
 
   // Debug logging
-  
-  console.log("permissions", permissions);
-  console.log("hasCompanyAccess", hasCompanyAccess);
-  console.log("hasMemberManagement", hasMemberManagement);
-  console.log("hasInvitationManagement", hasInvitationManagement);
-  console.log("hasClinicSettings", hasClinicSettings);
-  console.log("canEditClinic", canEditClinic);
-  console.log("isDataLoaded", isDataLoaded);
-  
-  console.log("currentClinic", currentClinic);
 
   
   
+  
+  
+  
+  
+  
+
+  
+
+
+
 
   // Loading and error states
   if (loading || !isDataLoaded) {
@@ -106,14 +106,14 @@ export default function page() {
       <div className="flex items-center justify-center min-h-screen w-full bg-transparent">
         <div className="text-center max-w-md mx-auto p-6">
           <div className="mb-6">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7c5cff] mx-auto mb-4"></div>
+            <div className="animate-spin rounded-2xl h-16 w-16 border-b-2 border-[#7564ed] mx-auto mb-4"></div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Chargement des données
             </h2>
             <p className="text-gray-600 text-lg">
               Veuillez patienter pendant le chargement des informations de la clinique...
             </p>
-      </div>
+          </div>
         </div>
       </div>
     );
@@ -125,7 +125,7 @@ export default function page() {
       <div className="flex items-center justify-center min-h-screen w-full  bg-transparent">
         <div className="text-center max-w-md mx-auto p-6">
           <div className="mb-6">
-            <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <div className="h-16 w-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
               <Building className="h-8 w-8 text-gray-400" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -135,9 +135,9 @@ export default function page() {
               Vous n'êtes actuellement membre d'aucune clinique. Veuillez contacter votre administrateur pour être ajouté à une clinique.
             </p>
           </div>
-          <Button 
+          <Button
             onClick={() => window.location.href = "/"}
-            className="bg-[#7c5cff] hover:bg-[#6a4fd8] text-white border-2 border-[#7c5cff] h-12 text-base font-semibold px-8"
+            className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed] h-12 text-base font-semibold px-8"
           >
             Aller au Dashboard
           </Button>
@@ -149,9 +149,9 @@ export default function page() {
   // Check if user has access to company settings
   // Only block access if data is loaded and user doesn't have access
   if (isDataLoaded && !hasCompanyAccess) {
-    
+
     return (
-      <AccessDenied 
+      <AccessDenied
         userRole={userRole}
         requiredRole="Membre de la clinique"
         message="Vous n'êtes pas membre de cette clinique ou n'avez pas les permissions nécessaires pour accéder aux informations de la clinique."
@@ -160,12 +160,12 @@ export default function page() {
   }
 
   return (
-    <div className="bg-transparent w-full">
+    <div className="bg-transparent w-full space-y-2">
       {/* Header Section */}
       <div className="bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <div className="">
           <div className="text-start">
-            <h2 className="text-3xl md:text-4xl font-[900] text-gray-900 mb-2">
+            <h2 className="text-3xl md:text-4xl font-[650] text-gray-900 mb-2">
               Paramètres de la clinique
             </h2>
             {userRole && (
@@ -178,47 +178,47 @@ export default function page() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1">
+      <div className="">
         <Tabs defaultValue="profile" className="w-full">
           <div className="flex items-center justify-between mb-2">
             <TabsList className="flex flex-row space-x-2 bg-transparent h-fit items-center">
               <TabsTrigger
                 value="profile"
-                className="px-4 h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7c5cff] data-[state=active]:!bg-[#7c5cff] data-[state=active]:!text-white"
+                className="px-4 h-12 flex items-center justify-center rounded-2xl bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7564ed] data-[state=active]:!bg-[#7564ed] data-[state=active]:!text-white"
               >
                 Clinic info
               </TabsTrigger>
               {hasMemberManagement && (
-              <TabsTrigger
-                value="members"
-                className="px-4 h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7c5cff] data-[state=active]:!bg-[#7c5cff] data-[state=active]:!text-white"
-              >
-                Team
-              </TabsTrigger>
+                <TabsTrigger
+                  value="members"
+                  className="px-4 h-12 flex items-center justify-center rounded-2xl bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7564ed] data-[state=active]:!bg-[#7564ed] data-[state=active]:!text-white"
+                >
+                  Team
+                </TabsTrigger>
               )}
               {hasInvitationManagement && (
                 <>
-                <TabsTrigger
-                  value="invitations"
-                  className="px-4 h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7c5cff] data-[state=active]:!bg-[#7c5cff] data-[state=active]:!text-white"
-                >
-                  Invitations
-                </TabsTrigger>
-                            <TabsTrigger
-              value="billing"
-              className="px-4 h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7c5cff] data-[state=active]:!bg-[#7c5cff] data-[state=active]:!text-white"
-            >
-              Billing
-            </TabsTrigger></>
-                
+                  <TabsTrigger
+                    value="invitations"
+                    className="px-4 h-12 flex items-center justify-center rounded-2xl bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7564ed] data-[state=active]:!bg-[#7564ed] data-[state=active]:!text-white"
+                  >
+                    Invitations
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="billing"
+                    className="px-4 h-12 flex items-center justify-center rounded-2xl bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7564ed] data-[state=active]:!bg-[#7564ed] data-[state=active]:!text-white"
+                  >
+                    Billing
+                  </TabsTrigger></>
+
               )}
 
-          </TabsList>
-            
+            </TabsList>
+
             {currentClinic && (
-              <Button 
-                variant="outline" 
-                className="px-4 h-12 flex items-center justify-center rounded-full bg-gray-100 text-xl font-medium text-[#ff254e] border-2 border-[#ff254e] hover:bg-[#ff254e] hover:text-white transition-all duration-200"
+              <Button
+                variant="outline"
+                className="px-4 h-12 flex items-center justify-center rounded-2xl bg-gray-100 text-xl font-medium text-[#ff254e] border-2 border-[#ff254e] hover:bg-[#ff254e] hover:text-white transition-all duration-200"
                 onClick={() => openLeaveDialog(currentClinic)}
               >
                 <LogOut className="h-4 w-4 mr-2" />
@@ -226,11 +226,11 @@ export default function page() {
               </Button>
             )}
           </div>
-          
+
           <TabsContent value="profile" className="">
             <ClinicProfileTab currentClinic={currentClinic} userRole={userRole} canEditClinic={canEditClinic} />
           </TabsContent>
-          
+
           {hasMemberManagement && (
             <TabsContent value="members" className="">
               <MembersTab currentClinic={currentClinic} clinicMembers={clinicMembers} loading={loading} error={error} />
@@ -241,7 +241,7 @@ export default function page() {
             <TabsContent value="invitations" className="">
               <InvitationsTab currentClinic={currentClinic} invitations={invitations} loading={invitationsLoading} error={invitationsError} />
             </TabsContent>
-            
+
           )}
 
           <TabsContent value="billing" className="">

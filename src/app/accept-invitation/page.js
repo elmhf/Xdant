@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Mail, Building, User, Clock, AlertTriangle } from "lucide-react";
-import useUserStore from "../component/profile/store/userStore";
+import useUserStore from "@/components/features/profile/store/userStore";
 
 export default function AcceptInvitation() {
   const searchParams = useSearchParams();
@@ -240,11 +240,10 @@ export default function AcceptInvitation() {
           )}
 
           {message && (
-            <div className={`p-4 mx-6 mb-6 rounded-xl text-base font-medium border-2 ${
-              message.includes('succès') || message.includes('acceptée')
-                ? 'bg-green-50 text-green-800 border-green-200' 
+            <div className={`p-4 mx-6 mb-6 rounded-xl text-base font-medium border-2 ${message.includes('succès') || message.includes('acceptée')
+                ? 'bg-green-50 text-green-800 border-green-200'
                 : 'bg-red-50 text-red-800 border-red-200'
-            }`}>
+              }`}>
               {message}
             </div>
           )}

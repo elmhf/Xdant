@@ -8,12 +8,17 @@ export function useActivityManager(state) {
   // Handler functions for Konva events
   // These handlers are now sourced from crosshairHandlers.js via activityManager.js
   const handleMouseDown = (e) => {
+    
     activities.forEach((activity) => activity.onMouseDown?.(e, state));
   };
   const handleMouseMove = (e) => {
+        
+
     activities.forEach((activity) => activity.onMouseMove?.(e, state));
   };
   const handleMouseUp = (e) => {
+        
+
     activities.forEach((activity) => activity.onMouseUp?.(e, state));
   };
   const handleWheel = (e) => {
@@ -26,6 +31,7 @@ export function useActivityManager(state) {
     activities.forEach((activity) => activity.onMouseLeave?.(e, state));
   };
   const handleClick = (e) => {
+        
     activities.forEach((activity) => activity.onClick?.(e, state));
   };
   return {

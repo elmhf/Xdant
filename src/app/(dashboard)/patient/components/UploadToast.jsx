@@ -46,7 +46,7 @@ const UploadToast = ({
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-white">
         <div className="flex items-center gap-3">
-          <h3 className="font-bold text-black text-lg">Uploads</h3>
+          <h3 className="font-bold text-[#0d0c22] text-lg">Uploads</h3>
           <div className="bg-[#6366f1] text-white text-sm rounded-full w-6 h-6 flex items-center justify-center font-semibold">
             {totalUploads}
           </div>
