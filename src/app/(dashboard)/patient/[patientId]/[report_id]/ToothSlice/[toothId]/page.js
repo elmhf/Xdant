@@ -76,7 +76,7 @@ const MissingToothMessage = React.memo(({ toothNumber }) => (
 MissingToothMessage.displayName = "MissingToothMessage";
 
 // ✅ slice واحد
-const CroppedSlice = React.memo(({ view, index }) => {
+const CroppedSlice = React.memo(({ view, index, isSelected = false }) => {
   const [region, setRegion] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const img = useSliceImage(view, index);
@@ -118,21 +118,36 @@ const CroppedSlice = React.memo(({ view, index }) => {
     <div
       style={{ width: displayWidth, height: displayHeight }}
       className={`border-3 overflow-hidden relative cursor-pointer rounded-[0.5vw] transition-all duration-200 ${isHovered
-          ? "border-[#7564ed] shadow-blue-200"
-          : "border-white"
+        ? "border-[#7564ed] shadow-blue-200"
+        : "border-white"
         }`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <span className="absolute top-1 right-1 pointer-events-none z-10">
-        <span
-          className={`text-white text-xs font-bold px-1.5 py-0.5 rounded shadow ${isHovered
-              ? "bg-[#7564ed] bg-opacity-90"
-              : "bg-[#0d0c22] bg-opacity-70"
-            }`}
-        >
-          {index}
-        </span>
+      <span className="absolute top-1 right-1 pointer-events-none z-10 flex items-center gap-1">
+  
+  <span className={`
+      ${!isSelected ? 
+        (isHovered
+        ? "bg-[#7564ed] text-white"
+         : "bg-[#0d0c22] text-white" ) : "bg-yellow-300"}
+       
+      text-black 
+      text-[0.7rem] 
+      font-[500] 
+      px-1.5 
+      py-0.5 
+      rounded-[0.2vw] 
+      shadow 
+      flex 
+      items-center 
+      gap-1
+    `}  
+  >
+      {isSelected && (<span className="text-sm">✔</span>)}
+    {index}
+  </span>
+
       </span>
 
       {croppedUrl && !isLoading && (
@@ -158,11 +173,16 @@ const CroppedSlice = React.memo(({ view, index }) => {
   );
 });
 
-function DraggableSliceWrapper({ view, index, dragerstate }) {
+function DraggableSliceWrapper({ view, index, dragerstate, toothNumber }) {
   const [isDragging, setIsDragging] = useState(false);
   const { setIfDragging, setslicedrager } = dragerstate
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const dragRef = useRef(null);
+
+  // Get selected slices from store
+  const getToothSlices = useDentalStore(state => state.getToothSlices);
+  const selectedSlices = getToothSlices(toothNumber, view) || [];
+  const isSelected = selectedSlices.includes(index);
 
   const handleDragStart = useCallback((event) => {
     setIsDragging(true);
@@ -217,7 +237,7 @@ function DraggableSliceWrapper({ view, index, dragerstate }) {
         borderRadius: '0.5vw'
       }}
     >
-      <CroppedSlice view={view} index={index} />
+      <CroppedSlice view={view} index={index} isSelected={isSelected} />
     </div>,
     document.body
   );
@@ -226,13 +246,13 @@ function DraggableSliceWrapper({ view, index, dragerstate }) {
     <>
       <div
         className={`transition-all duration-200 ${isDragging
-            ? "opacity-40 border-2 border-dashed border-gray-400"
-            : ""
+          ? "opacity-40 border-2 border-dashed border-gray-400"
+          : ""
           }`}
         onMouseDown={handleDragStart}
         style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
-        <CroppedSlice view={view} index={index} />
+        <CroppedSlice view={view} index={index} isSelected={isSelected} />
       </div>
       {floatingSlice}
     </>
@@ -240,7 +260,7 @@ function DraggableSliceWrapper({ view, index, dragerstate }) {
 }
 
 // ✅ section متاع slices
-const SlicesSection = React.memo(({ view, count, start, end, dragerstate }) => {
+const SlicesSection = React.memo(({ view, count, start, end, dragerstate, toothNumber }) => {
   const numSlices = start > 0 && end > 0 ? end - start + 1 : 0;
   if (numSlices === 0) return <NoSliceDataMessage view={view} />;
 
@@ -250,13 +270,14 @@ const SlicesSection = React.memo(({ view, count, start, end, dragerstate }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-0.5">
         {Array.from({ length: numSlices }).map((_, idx) => (
           <DraggableSliceWrapper
             dragerstate={dragerstate}
             key={`${view}-${start + idx}`}
             view={view}
             index={start + idx}
+            toothNumber={toothNumber}
           />
         ))}
       </div>
@@ -503,7 +524,7 @@ export default function ToothSlicePage() {
 
                 return (
                   <div key={view} className="">
-                    <div className="font-[#0d0c22] text-2xl  capitalize text-gray-800 flex items-center gap-2">
+                    <div className="font-[500] text-2xl  capitalize text-gray-800 flex items-center gap-2">
                       {view} View
                     </div>
 
@@ -520,10 +541,10 @@ export default function ToothSlicePage() {
                       <SlicesSection
                         dragerstate={{ setslicedrager, setIfDragging }}
                         view={view}
+                        toothNumber={toothNumber}
                         count={sliceCounts[view] || storeSliceCounts[view] || 0}
                         start={start}
                         end={end}
-                        toothNumber={toothNumber}
                         onRangeChange={handleRangeChange}
                       /></>
                     )}
