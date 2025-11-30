@@ -117,22 +117,28 @@ const CroppedSlice = React.memo(({ view, index, isSelected = false }) => {
   return (
     <div
       style={{ width: displayWidth, height: displayHeight }}
-      className={`border-3 overflow-hidden relative cursor-pointer rounded-[0.5vw] transition-all duration-200 ${isHovered
-        ? "border-[#7564ed] shadow-blue-200"
-        : "border-white"
-        }`}
+className={`
+  overflow-hidden 
+  relative 
+  cursor-pointer 
+  rounded-[0.5vw] 
+  transition-all 
+  duration-200 
+  ${isHovered ? "outline-[5px] outline-[#7564ed] z-20" : "z-10"}
+`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <span className="absolute top-1 right-1 pointer-events-none z-10 flex items-center gap-1">
   
   <span className={`
-      ${!isSelected ? 
-        (isHovered
-        ? "bg-[#7564ed] text-white"
-         : "bg-[#0d0c22] text-white" ) : "bg-yellow-300"}
+      ${isHovered ? "bg-[#7564ed] text-white" : "text-white"}
+
+      ${isSelected ? `${view === 'axial' ? 'bg-yellow-400 text-black' :
+                view === 'sagittal' ? 'bg-cyan-400 text-black' :
+                  view === 'coronal' ? 'bg-purple-500 text-black' :
+                    'bg-[#0d0c22] text-white bg-opacity-70'}` : "text-white"}
        
-      text-black 
       text-[0.7rem] 
       font-[500] 
       px-1.5 
@@ -188,7 +194,6 @@ function DraggableSliceWrapper({ view, index, dragerstate, toothNumber }) {
     setIsDragging(true);
     setIfDragging(true)
     setslicedrager({ 'view': view, 'index': index })
-    console.log("ooooooooooooooooooooooo ", { 'view': view, 'index': index })
     // Set initial position based on mouse position
     setPosition({
       x: event.clientX - 70, // Center the image on cursor
@@ -270,7 +275,7 @@ const SlicesSection = React.memo(({ view, count, start, end, dragerstate, toothN
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-wrap gap-0.5">
+      <div className="flex flex-wrap gap-1">
         {Array.from({ length: numSlices }).map((_, idx) => (
           <DraggableSliceWrapper
             dragerstate={dragerstate}
@@ -499,18 +504,6 @@ export default function ToothSlicePage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          {/* Top card for all 3 views controls/info - outside the scrollable area */}
-          {!isMissingTooth && (<div className="bg-white shadow rounded-lg p-4 flex flex-col items-center mb-2">
-            <span className="text-lg font-semibold text-gray-700">Tooth {toothNumber} Slice Ranges</span>
-
-
-            {reportType && (
-              <span className="text-sm text-gray-500 mt-1">Report Type: {reportType.toUpperCase()}</span>
-            )}
-            {storedRanges && (
-              <div className="text-xs text-green-600 mt-1">✅ Ranges loaded from store</div>
-            )}
-          </div>)}
 
           <div className="bg-white shadow-lg rounded-lg p-5 min-w-[350px] flex-1">
             {/* إذا كان السن مفقوداً، اعرض رسالة بدلاً من الشرائح */}
@@ -523,11 +516,16 @@ export default function ToothSlicePage() {
                 const end = sliceRanges[view].end;
 
                 return (
-                  <div key={view} className="">
-                    <div className="font-[500] text-2xl  capitalize text-gray-800 flex items-center gap-2">
+                  <div key={view} className=" mb-5">
+                    <div className="font-[800] text-3xl  capitalize text-gray-800 flex items-center gap-2">
                       {view} View
                     </div>
-
+   
+                    {start > 0 && end > 0 && (
+                      <div className="text-sm font-[600] text-gray-500 mt-1 mb-3">
+                        Slice Range: <span className="text-black">{start}</span> to <span className="text-black">{end}</span> Slices: <span className="text-black">{end - start + 1}</span>
+                      </div>
+                    )}
                     {start === 0 && end === 0 ? (
                       <NoSliceDataMessage view={view} />
                     ) : (<>

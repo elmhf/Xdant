@@ -105,8 +105,7 @@ export const CroppedSlice = React.memo(({ view, index, onDelete, ToothSlicemode 
     <div className="flex flex-col items-center">
       <div
         style={{ width: displayWidth, height: displayHeight }}
-        className={`border-3 overflow-hidden relative cursor-pointer rounded-[0.5vw] transition-all duration-200 ${isHovered ? "border-[#7564ed] shadow-blue-200" : "border-white"
-          }`}
+        className={`border overflow-hidden relative cursor-pointer rounded-[0.5vw] transition-all duration-200 ${isHovered ? "outline-[5px] outline-[#7564ed] z-20" : "z-10"}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -127,10 +126,10 @@ export const CroppedSlice = React.memo(({ view, index, onDelete, ToothSlicemode 
         {isHovered && ToothSlicemode && (
           <button
             onClick={handleDelete}
-            className="absolute bottom-2 left-2 z-20 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-md transition-colors duration-200 flex items-center justify-center"
+            className="absolute bottom-2 left-2 z-20 bg-[#7564ed] text-white rounded-[0.5vw] p-1.5 transition-colors duration-200 flex items-center justify-center"
             aria-label="Delete slice"
           >
-            <Trash size={14} />
+            <Trash size={16} className="stroke-3" />
           </button>
         )}
 

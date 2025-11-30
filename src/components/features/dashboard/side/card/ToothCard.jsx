@@ -284,7 +284,7 @@ const ToothDiagnosis = memo(({
                           setEditIdx(null);
                           setEditText('');
                         }}
-                        className="text-red-500"
+                        className="text-white"
                       >
                         Remove
                       </Button>

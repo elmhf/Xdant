@@ -39,7 +39,7 @@ function RenderAllSlices({ teeth, isDragging, sliceDrager, ToothSlicemode }) {
           addToothSlice(tooth.toothNumber, sliceselectlocal.view, sliceselectlocal.index);
         }
       }}
-      className="relative h-fit   flex flex-wrap gap-0.5 ">
+      className="relative h-fit   flex flex-wrap gap-1 ">
       {allSlices.map((slice) => (
         <div
           key={`${slice.view}-${slice.index}`}
