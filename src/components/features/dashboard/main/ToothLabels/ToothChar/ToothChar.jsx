@@ -38,8 +38,8 @@ const TOOTH_CATEGORIES = {
     bg: 'rgba(var(--color-Unhealthy), 0.2)'
   },
   Unknown: {
-    color: 'white',
-    border: '1px solid rgba(var(--color-UNKNOWN-Tooth), 0.5)',
+    color: '#0d0c22',
+    border: '1px solid gray',
     bg: 'rgba(var(--color-UNKNOWN-Tooth), 0)'
   }
 };
@@ -295,7 +295,7 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
                 whileHover={{ borderColor: "#6366f1", borderWidth: "2px" }}
                 transition={{ type: "spring", stiffness: 100, damping: 5 }}
               >
-                <div className="text-sm font-medium tracking-wide" style={{ color: styles.color }}>{number}</div>
+                <div className="text-sm font-medium tracking-wide text-[#0d0c22]" style={{ color: styles.color }}>{number}</div>
               </motion.div>
             </TooltipTrigger>
             <TooltipContent>

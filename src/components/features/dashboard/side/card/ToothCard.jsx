@@ -162,7 +162,7 @@ const ToothDiagnosis = memo(({
         <div className="flex justify-between items-end pt-4 border-t border-gray-100">
           <div className="flex gap-3 w-full flex-wrap ">
             <AddConditionDialog toothNumber={idCard}>
-              <Button variant="outline" size="sm" className="text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-[#0d0c22] flex items-center">
+              <Button variant="outline" size="sm" className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-[#0d0c22] flex items-center">
                 <PlusCircle className="w-4 h-4 mr-2" />
                 {t('side.card.Condition')}
               </Button>
@@ -171,7 +171,7 @@ const ToothDiagnosis = memo(({
             <Button
               variant="outline"
               size="sm"
-              className="text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center"
+              className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center"
               onClick={(e) => {
                 e.stopPropagation();
                 setShowCommentBox(v => !v);
@@ -187,7 +187,7 @@ const ToothDiagnosis = memo(({
               <Button
                 variant="outline"
                 size="sm"
-                className="text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center ml-2"
+                className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center ml-2"
                 onClick={() => {
                   router.push(`${pathname}/ToothSlice/${idCard}`);
                 }}
@@ -199,8 +199,8 @@ const ToothDiagnosis = memo(({
             <Button
               variant={isApproved ? "success" : "outline"}
               size="sm"
-              className="text-sm font-medium bg-white border border-gray-300 shadow-sm transition-all duration-150 px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center min-w-[6vw] font-semibold"
-              style={{ color: isApproved ? '#16a34a' : undefined }}
+              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg  flex items-center min-w-[6vw] "
+              style={{ color: isApproved ? '#16a34a' : undefined , backgroundColor: isApproved ? '#E9FCF0' : undefined }}
               onClick={() => updateToothApproval(idCard, !isApproved)}
             >
               {isApproved ? "Approved" : "Approve"}
@@ -306,7 +306,7 @@ const ToothDiagnosis = memo(({
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-sm text-gray-600 hover:text-[#0d0c22] w-full"
+                className="text-lg text-gray-600 hover:text-[#0d0c22] w-full"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowAllNotes(!showAllNotes);
