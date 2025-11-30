@@ -33,14 +33,14 @@ const translationKeys = {
 const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
   const { t, i18n } = useTranslation();
   const router = useRouter(); // Initialize router for navigation
-  
+
   useEffect(() => {
-    
+
   }, [toothNumberSelect])
-  
+
   // const { toothNumberSelect, setToothNumberSelect } = useContext(DataContext);
   const isRTL = i18n.language === 'ar';
-  
+
   const { data: dentalData, hasTeethData } = useDentalStore();
   const [statusFilter, setStatusFilter] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
@@ -50,14 +50,14 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
   const [visibleImages, setVisibleImages] = useState({});
   const [showDiagnosisDetails, setShowDiagnosisDetails] = useState(true);
   const pathname = usePathname();
-  
+
   // Handle OrthogonalViews button click
   const handlePDFReportViewsClick = useCallback(() => {
     try {
       // Option 1: Navigate to a specific route
       router.push(`${pathname}/PDFReport`);
-      
-      
+
+
     } catch (error) {
       console.error('Error navigating to PDFReport:', error);
       // Fallback: you could show a toast notification or handle the error
@@ -66,9 +66,9 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
 
   // فلترة الأسنان مباشرة من dentalData.teeth
   const filteredChart = useMemo(() => {
-    
+
     let result = dentalData?.teeth || [];
-    
+
     // Apply search filter
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
@@ -93,7 +93,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
         }
       });
     }
-    
+
     return result;
   }, [dentalData, statusFilter, searchTerm]);
 
@@ -154,7 +154,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
     <div className="flex no-scrollbar p-1 flex-col h-full bg-transparent from-gray-50 to-white">
       {/* العنوان وسويتش Diagnosis details وزر الفلتر في نفس السطر */}
       <div className="flex items-center justify-end gap-2 mb-2 px-2">
-        <Button 
+        <Button
           onClick={handlePDFReportViewsClick}
           variant="outline"
           className="transition-all  duration-200 bg-[#7558db] text-white"
@@ -177,7 +177,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
           <Filter className="h-6 w-6 text-gray-700" />
         </Button>
       </div>
-      
+
       {/* الفلاتر */}
       {showFilters && (
         <div className={styles.filterCard}>
@@ -237,7 +237,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
           </div>
         </div>
       )}
-      
+
       {/* قائمة الكروت */}
       <div
         className={
@@ -263,7 +263,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  transition={{ 
+                  transition={{
                     duration: 0.3,
                     ease: "easeOut"
                   }}
@@ -284,7 +284,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
             </AnimatePresence>
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             className="flex flex-col items-center justify-center h-64 text-center "
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

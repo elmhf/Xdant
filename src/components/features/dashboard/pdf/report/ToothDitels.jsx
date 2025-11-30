@@ -82,7 +82,7 @@ const ProblemTags = ({ problems }) => {
   const { t } = useTranslation(); // ✅ Hook correctly placed here
 
   if (!problems || problems.length === 0) {
-    return <span>{t("side.card.NoProblemsDetected")}</span>;
+    return <span className="text-xs font-medium px-2.5 py-1 rounded-md whitespace-nowrap bg-gray-100 text-gray-700 border border-gray-300">{t("side.card.NoProblemsDetected")}</span>;
   }
 
   const allTags = problems.flatMap(p => [p.type, ...(p.tags || [])]);

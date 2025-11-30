@@ -10,7 +10,7 @@ export default function useImageCard() {
   const context = useContext(DataContext);
   const stageRef = context?.stageRef;
   if (!stageRef) {
-    console.warn('stageRef is undefined! Make sure you are inside <DataContext.Provider value={{ stageRef }}>');
+    console.debug('stageRef is undefined! Make sure you are inside <DataContext.Provider value={{ stageRef }}>');
   }
 
   const imageListRef = useRef([]);

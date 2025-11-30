@@ -62,7 +62,7 @@ async function fetchReportDataByPost(reportId, abortSignal) {
     return data;
   } catch (error) {
     if (error.name === 'AbortError') {
-      console.log('🚫 Request aborted', error);
+      console.debug('🚫 Request aborted (normal behavior when navigating)', error);
       return null;
     }
     console.error('❌ Network error:', error);
@@ -156,10 +156,10 @@ function getImageUrl(data, reportType) {
     if (!source) continue;
 
     if (reportType === 'pano' && source.pano_image_url) {
-      console.log('✅ Found PANO image URL:', source.pano_image_url); 
+      console.log('✅ Found PANO image URL:', source.pano_image_url);
       return source.pano_image_url;
     } else if (reportType === 'cbct' && source.cbct_image_url) {
-      console.log('✅ Found CBCT image URL:', source.cbct_image_url); 
+      console.log('✅ Found CBCT image URL:', source.cbct_image_url);
       return source.cbct_image_url;
     }
   }
@@ -464,7 +464,7 @@ export function useReportData(options = {}) {
 
     // If different report, cancel previous requests
     if (currentReportRef.current !== reportId) {
-      console.log('🔄 Different report detected, cleaning up');
+      console.log('🔄 Different report detected, cleaning up', currentReportRef, reportId);
 
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -529,7 +529,7 @@ export function useReportData(options = {}) {
 
       // Handle aborted request
       if (!reportData) {
-        console.log('🚫 Request was aborted');
+        console.debug('🚫 Request was aborted (normal behavior)');
         return null;
       }
 
@@ -548,7 +548,7 @@ export function useReportData(options = {}) {
       // Try to get data directly first
       if (reportData?.data) {
         fetchedData = reportData.data;
-        console.log('✅ Direct data found',reportData);
+        console.log('✅ Direct data found', reportData);
       } else {
         // Fallback to URL fetching
         const reportUrl = getReportUrl(reportData, detectedReportType);
@@ -607,7 +607,7 @@ export function useReportData(options = {}) {
 
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.log('🚫 Fetch aborted');
+        console.debug('🚫 Fetch aborted (normal behavior)');
         return null;
       }
 

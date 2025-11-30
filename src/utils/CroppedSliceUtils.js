@@ -1,7 +1,7 @@
 "use client";
 import { useSliceImage } from "@/app/(dashboard)/patient/[patientId]/[report_id]/ToothSlice/[toothId]/useSliceImage";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Trash } from 'lucide-react'; // يجب استيرادها بحرف كبير
+import { Trash } from 'lucide-react';
 
 // 🟢 Cache للـ random regions
 const regionCache = new Map();
@@ -52,7 +52,7 @@ export function cropImageToDataURL(img, region) {
 }
 
 // 🟢 CroppedSlice component
-export const CroppedSlice = React.memo(({ view, index, onDelete ,ToothSlicemode}) => {
+export const CroppedSlice = React.memo(({ view, index, onDelete, ToothSlicemode }) => {
   const [region, setRegion] = useState(null);
   const [croppedUrl, setCroppedUrl] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -105,44 +105,42 @@ export const CroppedSlice = React.memo(({ view, index, onDelete ,ToothSlicemode}
     <div className="flex flex-col items-center">
       <div
         style={{ width: displayWidth, height: displayHeight }}
-        className={`border-3 overflow-hidden relative cursor-pointer rounded-[0.5vw] transition-all duration-200 ${
-          isHovered ? "border-[#7564ed] shadow-blue-200" : "border-white"
-        }`}
+        className={`border-3 overflow-hidden relative cursor-pointer rounded-[0.5vw] transition-all duration-200 ${isHovered ? "border-[#7564ed] shadow-blue-200" : "border-white"
+          }`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* رقم الشريحة */}
         <span className="absolute top-1 right-1 pointer-events-none z-10">
           <span
-            className={`text-white text-xs font-bold px-1.5 py-0.5 rounded shadow transition-colors duration-200 ${
-              isHovered
-                ? "bg-[#7564ed] bg-opacity-90"
-                : "bg-[#0d0c22] bg-opacity-70"
-            }`}
+            className={`text-xs font-bold px-1.5 py-0.5 rounded shadow transition-colors duration-200 ${view === 'axial' ? 'bg-yellow-400 text-black' :
+                view === 'sagittal' ? 'bg-cyan-400 text-black' :
+                  view === 'coronal' ? 'bg-purple-500 text-white' :
+                    'bg-[#0d0c22] text-white bg-opacity-70'
+              }`}
           >
-            {index}
+            ✓ {index}
           </span>
         </span>
 
         {/* زر الحذف - يظهر فقط عند التمرير */}
-{isHovered && ToothSlicemode && (
-  <button
-    onClick={handleDelete}
-    className="absolute bottom-2 left-2 z-20 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-md transition-colors duration-200 flex items-center justify-center"
-    aria-label="Delete slice"
-  >
-    <Trash size={14} />
-  </button>
-)}
+        {isHovered && ToothSlicemode && (
+          <button
+            onClick={handleDelete}
+            className="absolute bottom-2 left-2 z-20 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-md transition-colors duration-200 flex items-center justify-center"
+            aria-label="Delete slice"
+          >
+            <Trash size={14} />
+          </button>
+        )}
 
         {/* الصورة المقطوعة */}
         <img
-        
           src={croppedUrl}
           alt={`${view} Slice ${index}`}
           className="w-full h-full object-cover select-none"
           loading="lazy"
-          draggable={false} 
+          draggable={false}
         />
       </div>
     </div>

@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect, memo, useRef } from "react";
-import styles from './ToothCaard.module.css'
 import RenderAllSlices from "./randerSlice";
 import { useTranslation } from "react-i18next";
 import { useLayout } from "@/stores/setting";
@@ -75,24 +74,35 @@ const ToothDiagnosis = memo(({
   const ProblemTags = ({ problems }) => {
     if (!problems || problems.length === 0) {
       return (
-        <span className={`${styles.tag} ${styles.noProblemTag}`}>
+        <span className="text-xs font-medium px-3 py-2 rounded-md whitespace-nowrap border-2 border-gray-200 bg-white text-black">
           {t("side.card.NoProblemsDetected")}
         </span>
       );
     }
 
-    const allTags = problems.flatMap(p => [
-      p.type,
-      ...(p.tags || [])
-    ]);
+    return problems.map((p, index) => {
+      const confidenceDisplay = p.confidence ? ` ${Math.round(p.confidence * 100)}%` : '';
+      const tagText = `${p.type}${confidenceDisplay}`;
+      const tagKey = `${idCard}-problem-${index}`;
 
-    return allTags.map((tag, index) => {
-      const tagKey = `${idCard}-tag-${index}`;
-      const tagStyle = index % 2 === 0 ? styles.tagPurple : styles.tagRed;
+      // Determine style based on problem type or severity if needed, 
+      // currently alternating colors based on index as per original code
+      const tagStyle = index % 2 === 0
+        ? "bg-[#EDEBFA] text-[#5241cc]"
+        : "bg-red-100 text-red-700";
+
       return (
-        <span key={tagKey} className={`${styles.tag} ${tagStyle}`}>
-          {tag}
-        </span>
+        <React.Fragment key={tagKey}>
+          <span className={`text-xs font-medium px-3 py-2 rounded-md whitespace-nowrap ${tagStyle}`}>
+            {tagText}
+          </span>
+          {/* Render additional tags if any, without confidence for now as they are likely secondary */}
+          {p.tags && p.tags.map((extraTag, extraIndex) => (
+            <span key={`${tagKey}-extra-${extraIndex}`} className={`text-xs font-medium px-3 py-2 rounded-md whitespace-nowrap ${tagStyle}`}>
+              {extraTag}
+            </span>
+          ))}
+        </React.Fragment>
       );
     });
   };
@@ -101,9 +111,9 @@ const ToothDiagnosis = memo(({
     <div
       onClick={() => setToothNumberSelect(idCard)}
       ref={cardRef}
-      className={`bg-white justify-between  border-3 min-h-fit rounded-xl transition-all duration-200 flex flex-col w-full p-[1vw] 
-        ${isReallyCompact ? styles.compactCard : ''} 
-        ${isExtraCompact ? styles.extraCompactCard : ''} 
+      className={`bg-white justify-between border-3 min-h-fit rounded-xl transition-all duration-200 flex flex-col w-full p-[1vw] 
+        ${isReallyCompact ? 'p-2 text-[0.85rem] [&_*]:text-[0.85rem] [&_button]:text-[0.7rem] [&_button]:px-2 [&_button]:py-1 [&_button]:min-w-7 [&_button]:h-7 [&_button_svg]:w-4 [&_button_svg]:h-4' : ''} 
+        ${isExtraCompact ? 'text-[0.7rem] [&_*]:text-[0.7rem] [&_button]:text-[0.6rem] [&_button]:px-1 [&_button]:py-0.5 [&_button]:min-w-5 [&_button]:h-5 [&_button_svg]:w-3 [&_button_svg]:h-3' : ''} 
         ${isSelected ? 'border-2 border-[#5241cc] shadow-lg' : 'border-2 border-gray-200 hover:border-gray-300 '}`}
       id={`Tooth-Card-${idCard}`}
       style={{ boxSizing: 'border-box' }}
@@ -113,34 +123,38 @@ const ToothDiagnosis = memo(({
         {/* ===== Header ===== */}
         <div className="flex justify-between items-center ">
           <div className="flex items-center gap-2">
-            <h2 className="text-[1.5rem] font-bold text-gray-900 m-0">
+            <h2 className="text-[1.8rem] font-bold text-gray-900 m-0">
               {t('side.card.Tooth')} {idCard}
             </h2>
 
-            {!ToothSlicemode && (
-              <>
-                <Badge className="text-xs custom-badge" style={{ backgroundColor: '#E5E7EB', color: '#4B5563' }}>
-                  {roots} roots
-                </Badge>
-                <Badge className="text-xs custom-badge" style={{ backgroundColor: '#E5E7EB', color: '#4B5563' }}>
-                  {canals} canals
-                </Badge>
-              </>
-            )}
+
+            <>
+              <spam className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent ">
+                {roots} roots
+              </spam>
+              <spam className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent " >
+                {canals} canals
+              </spam>
+            </>
+
           </div>
         </div>
 
         {/* ✅ tags */}
-        {!ToothSlicemode && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            <ProblemTags problems={tooth?.problems} />
-          </div>
-        )}
+
+        <div className="flex flex-wrap gap-1 mb-2">
+          <ProblemTags problems={tooth?.problems} />
+        </div>
+
 
         {/* ===== Images ===== */}
         {showDiagnosisDetails && tooth && (
           <div className="mb-2 min-h-fit">
-            {isCbct && <RenderAllSlices teeth={tooth} isDragging={isDragging} ToothSlicemode={ToothSlicemode} sliceDrager={sliceDrager} />}
+            {isCbct && (
+              <>
+                <RenderAllSlices teeth={tooth} isDragging={isDragging} ToothSlicemode={ToothSlicemode} sliceDrager={sliceDrager} />
+              </>
+            )}
           </div>
         )}
 
