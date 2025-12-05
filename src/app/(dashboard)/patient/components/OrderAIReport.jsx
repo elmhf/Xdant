@@ -24,13 +24,13 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
     existingReports.find((report) => report.raport_type === reportType);
 
   return (
-    <div className="bg-white py-4 rounded-2xl shadow-sm border border-gray-100">
+    <div className="bg-white py-4 rounded-2xl shadow-sm border border-gray-100 p-4">
       {/* Header */}
-      <h3 className="text-2xl font-bold text-gray-950 mb-4 px-6">Order AI Report</h3>
+      <h3 className="text-2xl font-bold text-gray-950 mb-4 ">Order AI Report</h3>
 
       {/* Content */}
       <div>
-        <div className="p-6">
+        <div className="">
           <div className="grid grid-cols-3 gap-2">
             {reportTypes.map((report) => (
               <div
@@ -39,17 +39,17 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
                   setSelectedReport(report);
                   setIsDialogOpen(true);
                 }}
-                className={`relative cursor-pointer flex items-center justify-center aspect-[1/1] bg-[#7464ed23] rounded-md p-4 transition-all duration-200 border-3 ${selectedReport?.id === report.id
+                className={`relative cursor-pointer flex items-center justify-center aspect-[1/1] bg-[#7464ed23] rounded-md  transition-all duration-200 border-3 ${selectedReport?.id === report.id
                     ? 'border-[#7564ed] bg-purple-50'
                     : 'border-white'
                   } hover:border-[#7564ed]`}
               >
                 <div className="flex flex-col items-center justify-center space-y-2">
                   {React.createElement(report.icon, {
-                    strokeWidth: 1,
-                    className: `w-10 h-10 text-[#7564ed]`,
+                    strokeWidth: 1.3,
+                    className: `w-18 h-18 text-[#7564ed]`,
                   })}
-                  <span className="text-lg font-medium text-[#7564ed]">
+                  <span className="text-lg font-[600] text-[#7564ed]">
                     {report.name}
                   </span>
                 </div>

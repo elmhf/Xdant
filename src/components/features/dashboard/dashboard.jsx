@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import styles from './dachbord.module.css'
 import Toothlabels from './main/ToothLabels/Toothlabels'
 import ImageCard from './main/ImageXRay/ImageXRay'
@@ -25,12 +25,13 @@ const Dashboard = ({ reportType }) => {
   const [toothEditData, setToothEditData] = useState([])
   const [selectedTooth, setSelectedTooth] = useState(null)
   const [isChangingLayout, setIsChangingLayout] = useState(false)
+  const [selectedTeeth, setSelectedTeeth] = useState([]) // Track selected teeth for filtering
   const stageRef = useRef(null)
   const router = useRouter()
 
   const { layoutKey, setLayout, allLayouts } = useLayout()
   const { settings, SettingChange, updateSettingProblem, setSettings } = useDentalSettings()
-  // تحسين الحالات المشتقة
+  // ØªØ­Ø³ÙŠÙ† Ø§Ù„Ø­Ø§Ù„Ø§Øª Ø§Ù„Ù…Ø´ØªÙ‚Ø©
   const layoutModes = useMemo(() => ({
     detailsMode: layoutKey === 'DETAILS_VIEW',
     comparisonMode: layoutKey === 'COMPARISON',
@@ -39,7 +40,7 @@ const Dashboard = ({ reportType }) => {
     viewMode: layoutKey === 'VIEW'
   }), [layoutKey])
 
-  // تحسين Context Value
+  // ØªØ­Ø³ÙŠÙ† Context Value
   const contextValue = useMemo(() => ({
     data,
     setData,
@@ -52,47 +53,50 @@ const Dashboard = ({ reportType }) => {
     selectedTooth,
     setSelectedTooth,
     toothNumberSelect,
-    setToothNumberSelect
+    setToothNumberSelect,
+    selectedTeeth,
+    setSelectedTeeth
   }), [
-    data, 
-    image, 
-    toothEditData, 
-    layoutModes, 
-    selectedTooth, 
-    toothNumberSelect
+    data,
+    image,
+    toothEditData,
+    layoutModes,
+    selectedTooth,
+    toothNumberSelect,
+    selectedTeeth
   ])
 
-  // استخدام useCallback لتحسين الأداء
+  // Ø§Ø³ØªØ®Ø¯Ø§Ù… useCallback Ù„ØªØ­Ø³ÙŠÙ† Ø§Ù„Ø£Ø¯Ø§Ø¡
   const handleLayoutChange = useCallback(async (layout) => {
     setIsChangingLayout(true)
-    
+
     if (layout !== 'DETAILS_VIEW' && layoutModes.detailsMode) {
       setSelectedTooth(null)
     }
-    
+
     await new Promise(resolve => setTimeout(resolve, 200))
     setLayout(layout)
     setIsChangingLayout(false)
   }, [layoutModes.detailsMode, setLayout])
 
 
-  // تحسين layoutConfig
-  const layoutConfig = useMemo(() => 
-    allLayouts[layoutKey] || allLayouts['COMPACT'], 
+  // ØªØ­Ø³ÙŠÙ† layoutConfig
+  const layoutConfig = useMemo(() =>
+    allLayouts[layoutKey] || allLayouts['COMPACT'],
     [layoutKey, allLayouts]
   )
 
-  // تحديد المكونات المرئية حسب التخطيط
+  // ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙƒÙˆÙ†Ø§Øª Ø§Ù„Ù…Ø±Ø¦ÙŠØ© Ø­Ø³Ø¨ Ø§Ù„ØªØ®Ø·ÙŠØ·
   const getVisibleComponents = useCallback(() => {
     const currentLayoutObj = allLayouts[layoutKey] || allLayouts['DEFAULT']
     if (!currentLayoutObj) return {}
-    
+
     const areas = currentLayoutObj.template.match(/"([^"]+)"/g)
       ?.join(' ')
       .replace(/"/g, '')
       .split(/\s+/)
       .filter(area => area !== '.')
-    
+
     return {
       showSettings: areas?.includes('settings'),
       showXray: areas?.includes('xray'),
@@ -105,7 +109,7 @@ const Dashboard = ({ reportType }) => {
 
   const visibleComponents = useMemo(() => getVisibleComponents(), [getVisibleComponents])
 
-  // تحسين الأنماط
+  // ØªØ­Ø³ÙŠÙ† Ø§Ù„Ø£Ù†Ù…Ø§Ø·
   const containerStyle = useMemo(() => ({
     gridTemplateAreas: layoutConfig.template,
     gridTemplateColumns: layoutConfig.columns,
@@ -114,20 +118,20 @@ const Dashboard = ({ reportType }) => {
     transition: 'opacity 0.2s ease'
   }), [layoutConfig, isChangingLayout])
 
-  // دالة التوجيه لصفحة تقرير CBCT
+  // Ø¯Ø§Ù„Ø© Ø§Ù„ØªÙˆØ¬ÙŠÙ‡ Ù„ØµÙØ­Ø© ØªÙ‚Ø±ÙŠØ± CBCT
   const handleViewCBCTReport = useCallback((reportId) => {
     if (reportId) {
       router.push(`/patient/${patientId}/cbctReport/${cbctReportid}`);
     }
   }, [router]);
 
-  // تخصيص تخطيط صفحة Pano
+  // ØªØ®ØµÙŠØµ ØªØ®Ø·ÙŠØ· ØµÙØ­Ø© Pano
   const isPanoType = reportType === 'pano ai' || reportType === 'pano';
 
   useEffect(() => {
     if (reportType) {
       console.log(`Report type set to: ${reportType}`);
-      // تحديث نوع التقرير في الستيت
+      // ØªØ­Ø¯ÙŠØ« Ù†ÙˆØ¹ Ø§Ù„ØªÙ‚Ø±ÙŠØ± ÙÙŠ Ø§Ù„Ø³ØªÙŠØª
       useDentalStore.getState().setReportType(reportType);
     }
   }, [reportType]);
@@ -138,11 +142,11 @@ const Dashboard = ({ reportType }) => {
         <div className="flex flex-row gap-2 h-[90vh]">
           {isPanoType ? (
             <>
-               {/* ImageCard على اليمين */}
+              {/* ImageCard Ø¹Ù„Ù‰ Ø§Ù„ÙŠÙ…ÙŠÙ† */}
               <div className="flex-none w-[60%] flex items-center justify-center">
                 <ImageCard settings={settings} SettingChange={SettingChange} setSettings={setSettings} />
               </div>
-              {/* Toothlabels فوق SideCardes */}
+              {/* Toothlabels ÙÙˆÙ‚ SideCardes */}
               <div className="flex flex-col w-[40%]">
                 <div className="flex-none">
                   <Toothlabels NumberOnlyMode={false} />
@@ -151,10 +155,10 @@ const Dashboard = ({ reportType }) => {
                   <SideCardes toothNumberSelect={toothNumberSelect} setToothNumberSelect={setToothNumberSelect} layoutKey={layoutKey} />
                 </div>
               </div>
-           
+
             </>
           ) : (
-            // التخطيط الافتراضي
+            // Ø§Ù„ØªØ®Ø·ÙŠØ· Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ
             <>
               <div className="flex overflow-scroll gap-5 no-scrollbar flex-col flex-1 w-fitt">
                 <div className="flex-1 flex gap-1 h-[40%] max-h-[500px]">
@@ -165,7 +169,7 @@ const Dashboard = ({ reportType }) => {
                 </div>
               </div>
               <div className="flex-none w-[50%] ">
-                <SideCardes toothNumberSelect={toothNumberSelect} setToothNumberSelect={setToothNumberSelect} layoutKey={layoutKey}  />
+                <SideCardes toothNumberSelect={toothNumberSelect} setToothNumberSelect={setToothNumberSelect} layoutKey={layoutKey} />
               </div>
             </>
           )}

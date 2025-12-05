@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect, useMemo, useCallback, useRef, useContext } from "react";
 import { X, Loader2, Smile, RotateCcw, Filter, Search, Star, Share2, MoreVertical, MessageCircle, Heart, Eye, EyeOff } from "lucide-react";
@@ -33,6 +33,7 @@ const translationKeys = {
 const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
   const { t, i18n } = useTranslation();
   const router = useRouter(); // Initialize router for navigation
+  const { selectedTeeth } = useContext(DataContext); // Get selectedTeeth from context
 
   useEffect(() => {
 
@@ -64,7 +65,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
     }
   }, [router, toothNumberSelect, statusFilter, searchTerm]);
 
-  // فلترة الأسنان مباشرة من dentalData.teeth
+  // ÙÙ„ØªØ±Ø© Ø§Ù„Ø£Ø³Ù†Ø§Ù† Ù…Ø¨Ø§Ø´Ø±Ø© Ù…Ù† dentalData.teeth
   const filteredChart = useMemo(() => {
 
     let result = dentalData?.teeth || [];
@@ -94,8 +95,13 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
       });
     }
 
+    // Apply selectedTeeth filter from tooth chart
+    if (selectedTeeth && selectedTeeth.length > 0) {
+      result = result.filter(item => selectedTeeth.includes(item.toothNumber));
+    }
+
     return result;
-  }, [dentalData, statusFilter, searchTerm]);
+  }, [dentalData, statusFilter, searchTerm, selectedTeeth]);
 
   // Loading state only on first load
   useEffect(() => {
@@ -152,7 +158,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
 
   return (
     <div className="flex no-scrollbar p-1 flex-col h-full bg-transparent from-gray-50 to-white">
-      {/* العنوان وسويتش Diagnosis details وزر الفلتر في نفس السطر */}
+      {/* Ø§Ù„Ø¹Ù†ÙˆØ§Ù† ÙˆØ³ÙˆÙŠØªØ´ Diagnosis details ÙˆØ²Ø± Ø§Ù„ÙÙ„ØªØ± ÙÙŠ Ù†ÙØ³ Ø§Ù„Ø³Ø·Ø± */}
       <div className="flex items-center justify-end gap-2 mb-2 px-2">
         <Button
           onClick={handlePDFReportViewsClick}
@@ -178,7 +184,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
         </Button>
       </div>
 
-      {/* الفلاتر */}
+      {/* Ø§Ù„ÙÙ„Ø§ØªØ± */}
       {showFilters && (
         <div className={styles.filterCard}>
           <div className="flex items-center gap-2 mb-2">
@@ -238,7 +244,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
         </div>
       )}
 
-      {/* قائمة الكروت */}
+      {/* Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„ÙƒØ±ÙˆØª */}
       <div
         className={
           layoutKey === 'XRAY_SIDE'

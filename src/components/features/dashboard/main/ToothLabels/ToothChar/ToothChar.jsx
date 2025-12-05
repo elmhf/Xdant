@@ -38,8 +38,8 @@ const TOOTH_CATEGORIES = {
     bg: 'rgba(var(--color-Unhealthy), 0.2)'
   },
   Unknown: {
-    color: '#0d0c22',
-    border: '1px solid gray',
+    color: '#f2f2f2',
+    border: '1px solid #f2f2f2',
     bg: 'rgba(var(--color-UNKNOWN-Tooth), 0)'
   }
 };
@@ -50,7 +50,7 @@ let globalToothSVGsPromise = null;
 const fetchToothSVGs = async () => {
   if (globalToothSVGs) return globalToothSVGs;
   if (globalToothSVGsPromise) return globalToothSVGsPromise;
-  
+
   globalToothSVGsPromise = fetch("/data/tooth_svgs.json")
     .then(res => {
       if (!res.ok) throw new Error("Failed to load SVG data");
@@ -65,7 +65,7 @@ const fetchToothSVGs = async () => {
       globalToothSVGsPromise = null;
       throw err;
     });
-    
+
   return globalToothSVGsPromise;
 };
 
@@ -145,7 +145,7 @@ function ToothSVG({ toothNumber, className, toothSVGs, color, strokeColor }) {
     <svg
       ref={svgRef}
       height={200}
-      
+
       viewBox="0 0 1300 1600"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -158,7 +158,7 @@ function ToothSVG({ toothNumber, className, toothSVGs, color, strokeColor }) {
 
 const createSafeCache = () => {
   if (typeof window === 'undefined') {
-    return { get: () => null, set: () => {}, clear: () => {} };
+    return { get: () => null, set: () => { }, clear: () => { } };
   }
   let cache = null;
   return {
@@ -226,7 +226,14 @@ const useDentalChart = () => {
 };
 
 // ⬇️ الكومبوننت الرئيسي مع فلترة الأسنان حسب الفك ⬇️
-const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
+// ⬇️ الكومبوننت الرئيسي مع فلترة الأسنان حسب الفك ⬇️
+const ToothChar = ({
+  NumberOnlyMode = false,
+  settings = {},
+  isSelectionMode = false,
+  selectedTeeth = [],
+  toggleTooth = () => { }
+}) => {
   const data = useDentalStore(state => state.data);
   const { toothNumberSelect, setToothNumberSelect } = useContext(DataContext) || useState(0);
   const { dentalChart, loading: chartLoading, error: chartError, retry } = useDentalChart();
@@ -249,6 +256,18 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
 
   const handleToothClick = useCallback((event) => {
     const id = event.currentTarget.getAttribute("name");
+
+    // If in selection mode, toggle individual tooth selection
+    if (isSelectionMode) {
+      // Only allow selecting teeth that exist in the data
+      const toothExists = (data.teeth || []).some(t => t?.toothNumber === Number(id));
+      if (toothExists) {
+        toggleTooth(Number(id));
+      }
+      return;
+    }
+
+    // Normal mode behavior
     if (setToothNumberSelect) setToothNumberSelect(id);
 
     if (NumberOnlyMode) {
@@ -264,7 +283,7 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
         if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       } catch (err) { console.error("Scroll error:", err); }
     }
-  }, [setToothNumberSelect, NumberOnlyMode, router]);
+  }, [setToothNumberSelect, NumberOnlyMode, router, isSelectionMode, toggleTooth, data.teeth]);
 
   const renderNumberOnlyMode = useCallback(() => {
     const numbers = [...Array(8).keys()].map(i => 11 + i)
@@ -275,6 +294,13 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
     return numbers.filter(shouldShowTooth).map(number => {
       const toothData = (data.teeth || []).find(t => t?.toothNumber === number);
       const category = toothData?.category || 'Unknown';
+      const toothExists = !!toothData;
+
+      // 🔹 تحديد ما إذا كان السن مخفيًا في وضع الاختيار
+      // If in selection mode, show tooth only if it's in selectedTeeth
+      const isFiltered = isSelectionMode && !selectedTeeth.includes(number);
+      const isNonSelectable = isSelectionMode && !toothExists;
+
       const styles = TOOTH_CATEGORIES[category] || TOOTH_CATEGORIES.Unknown;
       const selected = toothNumberSelect == number;
 
@@ -286,14 +312,27 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
                 onClick={handleToothClick}
                 id={`Tooth-${number}`}
                 name={number}
-                className="flex items-center justify-center rounded-md text-center transition-all duration-200 cursor-pointer aspect-square relative bg-clip-padding"
+                className="flex items-center justify-center rounded-md text-center aspect-square relative bg-clip-padding"
                 style={{
                   backgroundColor: styles.bg,
                   borderColor: selected ? "#6366f1" : styles.border,
+                  opacity: isFiltered || isNonSelectable ? 0.3 : 1,
+                  cursor: isNonSelectable ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s ease'
                 }}
-                animate={{ borderColor: selected ? "#6366f1" : styles.border, borderWidth: selected ? "2px" : "1px" }}
-                whileHover={{ borderColor: "#6366f1", borderWidth: "2px" }}
-                transition={{ type: "spring", stiffness: 100, damping: 5 }}
+                animate={{
+                  borderColor: selected ? "#6366f1" : styles.border,
+                  borderWidth: selected ? "2px" : "1px",
+                  scale: selectedTeeth.includes(number) && isSelectionMode ? 1.05 : 1
+                }}
+                whileHover={isFiltered || isNonSelectable ? {} : {
+                  borderColor: "#6366f1",
+                  borderWidth: "2px",
+                  scale: 1.1,
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+                }}
+                whileTap={isNonSelectable ? {} : { scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
                 <div className="text-sm font-medium tracking-wide text-[#0d0c22]" style={{ color: styles.color }}>{number}</div>
               </motion.div>
@@ -306,7 +345,7 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
         </TooltipProvider>
       );
     });
-  }, [data.teeth, toothNumberSelect, handleToothClick, settings]);
+  }, [data.teeth, toothNumberSelect, handleToothClick, settings, isSelectionMode, selectedTeeth]);
 
   const renderNormalMode = useCallback(() => {
     if (!Array.isArray(dentalChart)) return <div className="text-red-500 text-center">Invalid dental chart format</div>;
@@ -319,6 +358,13 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
 
         const toothData = (data.teeth || []).find(t => t?.toothNumber === number);
         const category = toothData?.category || 'Unknown';
+        const toothExists = !!toothData;
+
+        // 🔹 تحديد ما إذا كان السن مخفيًا في وضع الاختيار
+        // If in selection mode, show tooth only if it's in selectedTeeth
+        const isFiltered = isSelectionMode && !selectedTeeth.includes(number);
+        const isNonSelectable = isSelectionMode && !toothExists;
+
         const styles = TOOTH_CATEGORIES[category] || TOOTH_CATEGORIES.Unknown;
         const selected = toothNumberSelect == number;
 
@@ -335,11 +381,13 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
                     justifyContent: number < 30 ? 'end' : 'start',
                     flexDirection: number > 30 ? 'column-reverse' : "column",
                     backgroundColor: styles.bg,
-                    stroke: styles.color
+                    stroke: styles.color,
+                    opacity: isFiltered ? 0.5 : 1,
+                    cursor: 'pointer'
                   }}
-                  className="flex flex-col items-center justify-cente rounded-[0.5vw] text-center transition-all duration-200 cursor-pointer aspect-[1/2.4] box-border relative bg-clip-padding"
+                  className="flex flex-col items-center justify-cente rounded-[0.5vw] text-center transition-all duration-200 aspect-[1/2.4] box-border relative bg-clip-padding"
                   animate={{ borderColor: selected ? "#6366f1" : styles.bg, borderWidth: "0.2vw" }}
-                  whileHover={{ borderColor: "#6366f1", borderWidth: "0.2vw" }}
+                  whileHover={isFiltered ? {} : { borderColor: "#6366f1", borderWidth: "0.2vw" }}
                   transition={{ type: "spring", stiffness: 100, damping: 5 }}
                 >
                   <div className="w-full h-[60%] flex items-center justify-center">
@@ -352,10 +400,10 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
                         toothSVGs={toothSVGs}
                         color={styles.color}
                         strokeColor={
-    ["Missing", "Unhealthy", "Treated"].includes(category)
-      ? "#ffff"
-      : "#000"
-  }
+                          ["Missing", "Unhealthy", "Treated"].includes(category)
+                            ? "#ffff"
+                            : category === 'Unknown' ? "#000" : "#0000"
+                        }
                       />
                     )}
                   </div>
@@ -370,9 +418,9 @@ const ToothChar = ({ NumberOnlyMode = false, settings = {} }) => {
             </Tooltip>
           </TooltipProvider>
         );
-      }).filter(Boolean);
+      });
     });
-  }, [dentalChart, data.teeth, handleToothClick, toothSVGs, toothNumberSelect, settings]);
+  }, [dentalChart, data.teeth, handleToothClick, toothSVGs, toothNumberSelect, settings, isSelectionMode, selectedTeeth]);
 
   const loading = chartLoading || svgLoading;
   const error = chartError || svgError;

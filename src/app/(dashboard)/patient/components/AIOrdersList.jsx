@@ -229,7 +229,6 @@ const AIOrdersList = ({
                 onClick={() => { { order.status === 'completed' && handleViewReport(order) } }}
                 key={order.id}
                 className={`relative ${order.status === 'completed' && 'cursor-pointer'} bg-white aspect-[2/1] rounded-2xl overflow-hidden hover:outline-6 hover:outline-[#7564ed] hover:outline-offset-0 group shadow-sm border border-gray-200 transition-all duration-200
-                  hover:border-3 hover:border-[#7564ed]
                   ${new Date(order.date).getTime() > Date.now() - 60000 ? 'ring-2 ring-green-500 animate-pulse' : ''}
                 `}
               >

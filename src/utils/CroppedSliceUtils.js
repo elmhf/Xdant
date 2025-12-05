@@ -110,7 +110,7 @@ export const CroppedSlice = React.memo(({ view, index, onDelete, ToothSlicemode 
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* رقم الشريحة */}
-        <span className="absolute top-1 right-1 pointer-events-none z-10">
+{ToothSlicemode && (        <span className="absolute top-1 right-1 pointer-events-none z-10">
           <span
             className={`text-xs font-bold px-1.5 py-0.5 rounded shadow transition-colors duration-200 ${view === 'axial' ? 'bg-yellow-400 text-black' :
                 view === 'sagittal' ? 'bg-cyan-400 text-black' :
@@ -120,7 +120,7 @@ export const CroppedSlice = React.memo(({ view, index, onDelete, ToothSlicemode 
           >
             ✓ {index}
           </span>
-        </span>
+        </span>)}
 
         {/* زر الحذف - يظهر فقط عند التمرير */}
         {isHovered && ToothSlicemode && (
