@@ -18,9 +18,9 @@ import { useRouter } from "next/navigation";
 
 const TOOTH_CATEGORIES = {
   Healthy: {
-    color: 'rgb(var(--color-Healthy))',
-    border: '1px solid rgb(var(--color-Healthy))',
-    bg: 'rgba(var(--color-Healthy), 0.2)'
+    color: 'white',
+    border: '1px solid black ',
+    bg: 'white'
   },
   Treated: {
     color: 'rgb(var(--color-Treated))',
@@ -38,8 +38,8 @@ const TOOTH_CATEGORIES = {
     bg: 'rgba(var(--color-Unhealthy), 0.2)'
   },
   Unknown: {
-    color: '#f2f2f2',
-    border: '1px solid #f2f2f2',
+    color: '#e5e7eb',
+    border: '1px solid #4b5563',
     bg: 'rgba(var(--color-UNKNOWN-Tooth), 0)'
   }
 };
@@ -146,7 +146,7 @@ function ToothSVG({ toothNumber, className, toothSVGs, color, strokeColor }) {
       ref={svgRef}
       height={200}
 
-      viewBox="0 0 1300 1600"
+      viewBox="0 0 500 800"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       style={{ color }}
@@ -297,8 +297,8 @@ const ToothChar = ({
       const toothExists = !!toothData;
 
       // 🔹 تحديد ما إذا كان السن مخفيًا في وضع الاختيار
-      // If in selection mode, show tooth only if it's in selectedTeeth
-      const isFiltered = isSelectionMode && !selectedTeeth.includes(number);
+      // Show tooth with reduced opacity if filter is active (selectedTeeth !== null) and tooth is not selected
+      const isFiltered = selectedTeeth !== null && !selectedTeeth.includes(number);
       const isNonSelectable = isSelectionMode && !toothExists;
 
       const styles = TOOTH_CATEGORIES[category] || TOOTH_CATEGORIES.Unknown;
@@ -334,7 +334,7 @@ const ToothChar = ({
                 whileTap={isNonSelectable ? {} : { scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
-                <div className="text-sm font-medium tracking-wide text-[#0d0c22]" style={{ color: styles.color }}>{number}</div>
+                <div className="text-sm font-medium tracking-wide" style={{ color: ['Unknown', 'Healthy'].includes(category) ? '#000' : styles.color }}>{number}</div>
               </motion.div>
             </TooltipTrigger>
             <TooltipContent>
@@ -361,8 +361,8 @@ const ToothChar = ({
         const toothExists = !!toothData;
 
         // 🔹 تحديد ما إذا كان السن مخفيًا في وضع الاختيار
-        // If in selection mode, show tooth only if it's in selectedTeeth
-        const isFiltered = isSelectionMode && !selectedTeeth.includes(number);
+        // Show tooth with reduced opacity if filter is active (selectedTeeth !== null) and tooth is not selected
+        const isFiltered = selectedTeeth !== null && !selectedTeeth.includes(number);
         const isNonSelectable = isSelectionMode && !toothExists;
 
         const styles = TOOTH_CATEGORIES[category] || TOOTH_CATEGORIES.Unknown;
@@ -390,26 +390,27 @@ const ToothChar = ({
                   whileHover={isFiltered ? {} : { borderColor: "#6366f1", borderWidth: "0.2vw" }}
                   transition={{ type: "spring", stiffness: 100, damping: 5 }}
                 >
-                  <div className="w-full h-[60%] flex items-center justify-center">
+                  <div className="w-full h-[70%] flex items-center justify-center">
                     {category === 'Missing' ? (
                       <IoMdClose className="text-5xl text-center" style={{ color: styles.color }} />
                     ) : (
                       <ToothSVG
                         toothNumber={number}
                         className="max-w-full max-h-full h-full  object-contain transition-transform duration-200"
+                        style={{ transform: 'scale(2)' }}
                         toothSVGs={toothSVGs}
                         color={styles.color}
                         strokeColor={
                           ["Missing", "Unhealthy", "Treated"].includes(category)
                             ? "#ffff"
-                            : category === 'Unknown' ? "#000" : "#0000"
+                            : ["Unknown", "Healthy"].includes(category) ? "#000" : "#0000"
                         }
                       />
                     )}
                   </div>
                   <div
                     className="font-[400] tracking-wide text-shadow"
-                    style={{ fontSize: 'clamp(15px, 0.6vw, 20px)', color: '[#0d0c22]' }}
+                    style={{ fontSize: 'clamp(15px, 0.6vw, 20px)', color: ['Unknown', 'Healthy'].includes(category) ? '#000' : styles.color }}
                   >
                     {number}
                   </div>

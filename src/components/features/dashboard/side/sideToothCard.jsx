@@ -96,8 +96,12 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
     }
 
     // Apply selectedTeeth filter from tooth chart
-    if (selectedTeeth && selectedTeeth.length > 0) {
+    console.log('🦷 SideCardes - selectedTeeth:', selectedTeeth, 'is null?', selectedTeeth === null);
+    if (selectedTeeth !== null) {
+      console.log('✅ Applying selectedTeeth filter - showing', selectedTeeth.length, 'teeth');
       result = result.filter(item => selectedTeeth.includes(item.toothNumber));
+    } else {
+      console.log('❌ No filter active - showing all teeth');
     }
 
     return result;

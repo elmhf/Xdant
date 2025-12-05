@@ -25,7 +25,7 @@ const Dashboard = ({ reportType }) => {
   const [toothEditData, setToothEditData] = useState([])
   const [selectedTooth, setSelectedTooth] = useState(null)
   const [isChangingLayout, setIsChangingLayout] = useState(false)
-  const [selectedTeeth, setSelectedTeeth] = useState([]) // Track selected teeth for filtering
+  const [selectedTeeth, setSelectedTeeth] = useState(null) // Track selected teeth for filtering (null = no filter active)
   const stageRef = useRef(null)
   const router = useRouter()
 

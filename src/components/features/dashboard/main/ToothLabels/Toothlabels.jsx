@@ -82,14 +82,19 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
   };
 
   const toggleSelectionMode = () => {
+    console.log('🔄 toggleSelectionMode called - isSelectionMode:', isSelectionMode, 'selectedTeeth:', selectedTeeth);
     if (!isSelectionMode) {
-      // Entering selection mode - select all existing teeth by default
+      // Entering selection mode - start with all existing teeth selected
       setIsSelectionMode(true);
-      setSelectedTeeth(allToothNumbers);
+      if (selectedTeeth === null) {
+        console.log('✅ Setting selectedTeeth to all teeth:', allToothNumbers);
+        setSelectedTeeth(allToothNumbers);
+      }
     } else {
-      // Exiting selection mode - reset to show all teeth
+      // Exiting selection mode - keep the filter active, just hide the selection UI
+      console.log('💾 Saving selection - keeping selectedTeeth:', selectedTeeth);
       setIsSelectionMode(false);
-      setSelectedTeeth([]);
+      // DON'T reset selectedTeeth - keep the filter active!
     }
   };
 
