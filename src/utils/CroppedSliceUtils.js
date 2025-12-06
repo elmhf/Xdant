@@ -110,12 +110,12 @@ export const CroppedSlice = React.memo(({ view, index, onDelete, ToothSlicemode 
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* رقم الشريحة */}
-{ToothSlicemode && (        <span className="absolute top-1 right-1 pointer-events-none z-10">
+        {ToothSlicemode && (<span className="absolute top-1 right-1 pointer-events-none z-10">
           <span
             className={`text-xs font-bold px-1.5 py-0.5 rounded shadow transition-colors duration-200 ${view === 'axial' ? 'bg-yellow-400 text-black' :
-                view === 'sagittal' ? 'bg-cyan-400 text-black' :
-                  view === 'coronal' ? 'bg-purple-500 text-white' :
-                    'bg-[#0d0c22] text-white bg-opacity-70'
+              view === 'sagittal' ? 'bg-cyan-400 text-black' :
+                view === 'coronal' ? 'bg-purple-500 text-white' :
+                  'bg-[#0d0c22] text-white bg-opacity-70'
               }`}
           >
             ✓ {index}
@@ -137,7 +137,7 @@ export const CroppedSlice = React.memo(({ view, index, onDelete, ToothSlicemode 
         <img
           src={croppedUrl}
           alt={`${view} Slice ${index}`}
-          className="w-full h-full object-cover select-none"
+          className="w-full h-full object-cover select-none opacity-100"
           loading="lazy"
           draggable={false}
         />

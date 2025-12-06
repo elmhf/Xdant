@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDentalStore } from "@/stores/dataStore";
 import { DataContext } from "../../../dashboard";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 const TOOTH_CATEGORIES = {
   Healthy: {
@@ -239,6 +239,7 @@ const ToothChar = ({
   const { dentalChart, loading: chartLoading, error: chartError, retry } = useDentalChart();
   const { toothSVGs, loading: svgLoading, error: svgError } = useToothSVGs();
   const router = useRouter();
+  const params = useParams();
 
   // 🔹 دوال الفلترة حسب الفك
   const isUpperTooth = (num) =>
@@ -271,19 +272,19 @@ const ToothChar = ({
     if (setToothNumberSelect) setToothNumberSelect(id);
 
     if (NumberOnlyMode) {
-      const currentPath = window.location.pathname;
-      const parts = currentPath.split('/').filter(Boolean);
-      if (parts[0] === "patient" && parts[1] && parts[2]) {
-        const newPath = `/patient/${parts[1]}/${parts[2]}/ToothSlice/${id}`;
+      if (params?.patientId && params?.report_id) {
+        const newPath = `/patient/${params.patientId}/${params.report_id}/ToothSlice/${id}`;
         router.push(newPath);
-      } else console.warn("⚠️ Path parsing failed:", parts);
+      } else {
+        console.warn("⚠️ Params missing:", params);
+      }
     } else {
       try {
         const el = document.getElementById(`TooTh-Card-${id}`);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       } catch (err) { console.error("Scroll error:", err); }
     }
-  }, [setToothNumberSelect, NumberOnlyMode, router, isSelectionMode, toggleTooth, data.teeth]);
+  }, [setToothNumberSelect, NumberOnlyMode, router, isSelectionMode, toggleTooth, data.teeth, params]);
 
   const renderNumberOnlyMode = useCallback(() => {
     const numbers = [...Array(8).keys()].map(i => 11 + i)
@@ -296,10 +297,9 @@ const ToothChar = ({
       const category = toothData?.category || 'Unknown';
       const toothExists = !!toothData;
 
-      // 🔹 تحديد ما إذا كان السن مخفيًا في وضع الاختيار
-      // Show tooth with reduced opacity if filter is active (selectedTeeth !== null) and tooth is not selected
-      const isFiltered = selectedTeeth !== null && !selectedTeeth.includes(number);
-      const isNonSelectable = isSelectionMode && !toothExists;
+      // 🔹 في وضع NumberOnlyMode: نتجاهل فلتر الاختيار و نطبق opacity فقط على الأسنان غير الموجودة
+      // Only apply reduced opacity to non-existent teeth, ignore selection filter
+      const isNonExistent = !toothExists;
 
       const styles = TOOTH_CATEGORIES[category] || TOOTH_CATEGORIES.Unknown;
       const selected = toothNumberSelect == number;
@@ -309,29 +309,30 @@ const ToothChar = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <motion.div
-                onClick={handleToothClick}
+                onClick={isNonExistent ? undefined : handleToothClick}
                 id={`Tooth-${number}`}
                 name={number}
                 className="flex items-center justify-center rounded-md text-center aspect-square relative bg-clip-padding"
                 style={{
                   backgroundColor: styles.bg,
                   borderColor: selected ? "#6366f1" : styles.border,
-                  opacity: isFiltered || isNonSelectable ? 0.3 : 1,
-                  cursor: isNonSelectable ? 'not-allowed' : 'pointer',
+                  opacity: isNonExistent ? 0.3 : 1,
+                  cursor: isNonExistent ? 'not-allowed' : 'pointer',
+                  pointerEvents: isNonExistent ? 'none' : 'auto',
                   transition: 'all 0.3s ease'
                 }}
                 animate={{
                   borderColor: selected ? "#6366f1" : styles.border,
-                  borderWidth: selected ? "2px" : "1px",
-                  scale: selectedTeeth.includes(number) && isSelectionMode ? 1.05 : 1
+                  borderWidth: "2px",
+                  scale: 1
                 }}
-                whileHover={isFiltered || isNonSelectable ? {} : {
+                whileHover={isNonExistent ? {} : {
                   borderColor: "#6366f1",
                   borderWidth: "2px",
                   scale: 1.1,
                   boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
                 }}
-                whileTap={isNonSelectable ? {} : { scale: 0.95 }}
+                whileTap={isNonExistent ? {} : { scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
                 <div className="text-sm font-medium tracking-wide" style={{ color: ['Unknown', 'Healthy'].includes(category) ? '#000' : styles.color }}>{number}</div>
@@ -339,7 +340,11 @@ const ToothChar = ({
             </TooltipTrigger>
             <TooltipContent>
               <p>Tooth {number} - {category}</p>
-              <p>Click to view slices</p>
+              {toothExists ? (
+                <p>Click to view slices</p>
+              ) : (
+                <p className="text-red-500">Tooth does not exist</p>
+              )}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -397,7 +402,7 @@ const ToothChar = ({
                       <ToothSVG
                         toothNumber={number}
                         className="max-w-full max-h-full h-full  object-contain transition-transform duration-200"
-                        style={{ transform: 'scale(2)' }}
+
                         toothSVGs={toothSVGs}
                         color={styles.color}
                         strokeColor={
@@ -469,7 +474,7 @@ const ToothChar = ({
   return (
     <div
       className={`gap-[0.1vw] grid grid-cols-16 gap-y-2 ${!NumberOnlyMode ? "w-[80%]" : "w-[100%]"}`}
-      style={{ minWidth: 0 }}
+      style={{ minWidth: NumberOnlyMode ? "max-content" : 0 }}
     >
       {NumberOnlyMode ? renderNumberOnlyMode() : renderNormalMode()}
     </div>
