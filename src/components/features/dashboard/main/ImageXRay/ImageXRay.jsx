@@ -32,7 +32,6 @@ export default function ImageCard({ settings, SettingChange, setSettings ,showTo
   } = useImageCard();
   
   const { getImage } = useImageStore();
-  console.log(getImage(),"getImage***")
   const data = useDentalStore(state => state.data);
 
   if (error) return <ErrorState error={error} onRetry={handleReanalyze} />;

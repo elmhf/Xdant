@@ -67,287 +67,520 @@ const initialData = {
 };
 
 export const useDentalStore = create(
+  persist(
+    (set, get) => ({
 
-  (set, get) => ({
+      data: JSON.parse(JSON.stringify(initialData)),
+      history: [],
+      currentIndex: -1,
+      loading: false,
+      error: null,
 
-    data: JSON.parse(JSON.stringify(initialData)),
-    history: [],
-    currentIndex: -1,
-    loading: false,
-    error: null,
-
-    // التحقق من وجود البيانات
-    hasData: () => {
-      const state = get();
-      const data = state.data;
-      console.log("hasData data", data);
-      // التحقق من وجود معرف المريض
-      if (!data.patientInfo?.patientId || data.patientInfo.patientId.trim() === "") {
-        return false;
-      }
-
-      // التحقق من وجود اسم المريض
-      // if (!data.patientInfo?.info?.fullName || data.patientInfo.info.fullName.trim() === "") {
-      //   return false;
-      // }
-
-      return true;
-    },
-
-    // التحقق من وجود بيانات المريض الأساسية
-    hasPatientInfo: () => {
-      const data = get().data.patientInfo;
-      return !!(
-        data?.patientId &&
-        data?.info?.fullName &&
-        data?.info?.dateOfBirth
-      );
-    },
-
-    // التحقق من وجود بيانات الأسنان
-    hasTeethData: () => {
-      const teeth = get().data.teeth;
-      return teeth && teeth.length > 0;
-    },
-
-    // التحقق من وجود بيانات المسح
-    hasScanData: () => {
-      const scanInfo = get().data.scanInfo;
-      return !!(
-        scanInfo?.device ||
-        scanInfo?.scanDate ||
-        scanInfo?.scanType
-      );
-    },
-
-    // التحقق من وجود خطط العلاج
-    hasTreatmentPlans: () => {
-      const plans = get().data.treatmentPlan;
-      return plans && plans.length > 0;
-    },
-
-    // التحقق من وجود مشاكل في الأسنان
-    hasProblems: () => {
-      const teeth = get().data.teeth;
-      return teeth && teeth.some(tooth => tooth.problems && tooth.problems.length > 0);
-    },
-
-    // التحقق من حالة البيانات الشاملة
-    getDataStatus: () => {
-      const state = get();
-      return {
-        hasData: state.hasData(),
-        hasPatientInfo: state.hasPatientInfo(),
-        hasTeethData: state.hasTeethData(),
-        hasScanData: state.hasScanData(),
-        hasTreatmentPlans: state.hasTreatmentPlans(),
-        hasProblems: state.hasProblems(),
-        isEmpty: !state.hasData(),
-        teethCount: state.data.teeth?.length || 0,
-        problemsCount: state.data.teeth?.reduce((count, tooth) =>
-          count + (tooth.problems?.length || 0), 0) || 0,
-        treatmentPlansCount: state.data.treatmentPlan?.length || 0
-      };
-    },
-
-    // التحقق من صحة البيانات
-    validateData: () => {
-      const data = get().data;
-      const errors = [];
-
-      // التحقق من معلومات المريض
-      if (!data.patientInfo?.patientId) {
-        errors.push("معرف المريض مطلوب");
-      }
-
-      if (!data.patientInfo?.info?.fullName) {
-        errors.push("اسم المريض مطلوب");
-      }
-
-      if (!data.patientInfo?.info?.dateOfBirth) {
-        errors.push("تاريخ الميلاد مطلوب");
-      }
-
-      // التحقق من بيانات الأسنان
-      if (data.teeth && data.teeth.length > 0) {
-        data.teeth.forEach((tooth, index) => {
-          if (!tooth.toothNumber) {
-            errors.push(`رقم السن مفقود في السن رقم ${index + 1}`);
-          }
-        });
-      }
-
-      return {
-        isValid: errors.length === 0,
-        errors: errors
-      };
-    },
-
-    // تحميل بيانات المريض
-    loadPatientData: (patientData) => {
-      console.log("Loading patient data:", patientData);
-      set({ loading: true, error: null });
-
-      try {
-        console.log("Loading patient data:", patientData, patientData?.patientInfo?.patientId);
-        if (!patientData?.patientInfo?.patientId) {
-          console.log("Patient ID is missing");
-          throw new Error("بيانات المريض ناقصة");
-        } console.log("Formatted data:", patientData);
-        const formattedData = {
-          patientInfo: {
-            patientId: patientData?.patientInfo?.patientId,
-            info: {
-              fullName: patientData.patientInfo?.fullName || "",
-              dateOfBirth: patientData.patientInfo?.dateOfBirth || "",
-              age: patientData.patientInfo?.age || 0,
-              lastScanDate: patientData.patientInfo?.lastScanDate || "",
-              gender: patientData.patientInfo?.gender || "",
-              bloodType: patientData.patientInfo?.bloodType || "",
-              allergies: patientData.patientInfo?.allergies ? [...patientData.patientInfo.allergies] : [],
-              medicalHistory: patientData.patientInfo?.medicalHistory ? [...patientData.patientInfo.medicalHistory] : []
-            }
-          },
-          JAw: {
-            upperJaw: {
-              mask: patientData.JAw?.upperJaw?.mask ? [...patientData.JAw.upperJaw.mask] : []
-            },
-            lowerJaw: {
-              mask: patientData.JAw?.lowerJaw?.mask ? [...patientData.JAw.lowerJaw.mask] : []
-            }
-          },
-          teeth: patientData.teeth?.map(tooth => ({
-            note: tooth.note || "",
-            toothNumber: tooth.toothNumber,
-            category: tooth.category || "",
-            position: tooth.position ? { ...tooth.position } : { x: 0, y: 0 },
-            boundingBox: tooth.boundingBox ? [...tooth.boundingBox] : [],
-            teeth_mask: tooth.teeth_mask ? [...tooth.teeth_mask] : [],
-            slice: tooth.slice ? tooth.slice : [],
-            sliceRanges: tooth.sliceRanges ? {
-              axial: tooth.sliceRanges.axial ? { ...tooth.sliceRanges.axial } : null,
-              sagittal: tooth.sliceRanges.sagittal ? { ...tooth.sliceRanges.sagittal } : null,
-              coronal: tooth.sliceRanges.coronal ? { ...tooth.sliceRanges.coronal } : null
-            } : null,
-            problems: tooth.problems ? tooth.problems.map(problem => ({
-              ...problem,
-              mask: problem.mask ? [...problem.mask] : [],
-              images: problem.images ? [...problem.images] : []
-            })) : [],
-            gumHealth: tooth.gumHealth || "",
-            lastCheckup: tooth.lastCheckup || "",
-            Endo: tooth.Endo ? { mask: [...tooth.Endo.mask] } : null,
-            Root: tooth.Root ? { mask: [...tooth.Root.mask] } : null,
-            Crown: tooth.Crown ? { mask: [...tooth.Crown.mask] } : null,
-            approved: typeof tooth.approved === 'boolean' ? tooth.approved : false,
-            roots: typeof tooth.roots === 'number' ? tooth.roots : 1,
-            canals: typeof tooth.canals === 'number' ? tooth.canals : 1
-          })) || [],
-          statistics: patientData.statistics ? {
-            ...patientData.statistics,
-            cariesDistribution: {
-              ...(patientData.statistics.cariesDistribution || {})
-            }
-          } : initialData.statistics,
-          scanInfo: patientData.scan ? {
-            ...patientData.scan,
-            dimensions: {
-              ...(patientData.scan.dimensions || {})
-            }
-          } : initialData.scanInfo,
-          problemDetection: patientData.problemDetective ? [...patientData.problemDetective] : [],
-          treatmentPlan: patientData.treatmentPlan ? patientData.treatmentPlan.map(plan => ({
-            ...plan,
-            procedures: plan.procedures?.map(proc => ({
-              ...proc,
-              prescriptions: [...(proc.prescriptions || [])],
-              materials: [...(proc.materials || [])]
-            })) || [],
-            followUp: {
-              ...plan.followUp,
-              requiredTests: [...(plan.followUp?.requiredTests || [])]
-            }
-          })) : [],
-          metadata: patientData.metadata ? {
-            ...patientData.metadata,
-            clinicInfo: {
-              ...(patientData.metadata.clinicInfo || {})
-            }
-          } : initialData.metadata,
-          conclusion: patientData.conclusion || "",
-          conclusionUpdatedAt: patientData.conclusionUpdatedAt || null
-        };
-        console.log("Formatted data:", formattedData, patientData, formattedData);
-        set({
-          data: formattedData,
-          history: [formattedData],
-          currentIndex: 0,
-          loading: false
-        });
-
-        return { success: true };
-      } catch (error) {
-        set({
-          error: error.message,
-          loading: false
-        });
-        return { success: false, error: error.message };
-      }
-    },
-
-    // تحديث معلومات المريض
-    updatePatientInfo: (updatedInfo) => {
-      const currentData = get().data;
-      set({
-        data: {
-          ...currentData,
-          patientInfo: {
-            ...currentData.patientInfo,
-            info: {
-              ...currentData.patientInfo.info,
-              ...updatedInfo
-            }
-          }
+      // التحقق من وجود البيانات
+      hasData: () => {
+        const state = get();
+        const data = state.data;
+        console.log("hasData data", data);
+        // التحقق من وجود معرف المريض
+        if (!data.patientInfo?.patientId || data.patientInfo.patientId.trim() === "") {
+          return false;
         }
-      });
-    },
 
-    // إدارة الأسنان
-    getToothByNumber: (number) => {
-      return get().data.teeth.find(t => t.toothNumber === number);
-    },
+        // التحقق من وجود اسم المريض
+        // if (!data.patientInfo?.info?.fullName || data.patientInfo.info.fullName.trim() === "") {
+        //   return false;
+        // }
 
-    updateTooth: (toothNumber, updates) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+        return true;
+      },
 
-      if (toothIndex !== -1) {
-        currentData.teeth[toothIndex] = {
-          ...currentData.teeth[toothIndex],
-          ...updates
+      // التحقق من وجود بيانات المريض الأساسية
+      hasPatientInfo: () => {
+        const data = get().data.patientInfo;
+        return !!(
+          data?.patientId &&
+          data?.info?.fullName &&
+          data?.info?.dateOfBirth
+        );
+      },
+
+      // التحقق من وجود بيانات الأسنان
+      hasTeethData: () => {
+        const teeth = get().data.teeth;
+        return teeth && teeth.length > 0;
+      },
+
+      // التحقق من وجود بيانات المسح
+      hasScanData: () => {
+        const scanInfo = get().data.scanInfo;
+        return !!(
+          scanInfo?.device ||
+          scanInfo?.scanDate ||
+          scanInfo?.scanType
+        );
+      },
+
+      // التحقق من وجود خطط العلاج
+      hasTreatmentPlans: () => {
+        const plans = get().data.treatmentPlan;
+        return plans && plans.length > 0;
+      },
+
+      // التحقق من وجود مشاكل في الأسنان
+      hasProblems: () => {
+        const teeth = get().data.teeth;
+        return teeth && teeth.some(tooth => tooth.problems && tooth.problems.length > 0);
+      },
+
+      // التحقق من حالة البيانات الشاملة
+      getDataStatus: () => {
+        const state = get();
+        return {
+          hasData: state.hasData(),
+          hasPatientInfo: state.hasPatientInfo(),
+          hasTeethData: state.hasTeethData(),
+          hasScanData: state.hasScanData(),
+          hasTreatmentPlans: state.hasTreatmentPlans(),
+          hasProblems: state.hasProblems(),
+          isEmpty: !state.hasData(),
+          teethCount: state.data.teeth?.length || 0,
+          problemsCount: state.data.teeth?.reduce((count, tooth) =>
+            count + (tooth.problems?.length || 0), 0) || 0,
+          treatmentPlansCount: state.data.treatmentPlan?.length || 0
+        };
+      },
+
+      // التحقق من صحة البيانات
+      validateData: () => {
+        const data = get().data;
+        const errors = [];
+
+        // التحقق من معلومات المريض
+        if (!data.patientInfo?.patientId) {
+          errors.push("معرف المريض مطلوب");
+        }
+
+        if (!data.patientInfo?.info?.fullName) {
+          errors.push("اسم المريض مطلوب");
+        }
+
+        if (!data.patientInfo?.info?.dateOfBirth) {
+          errors.push("تاريخ الميلاد مطلوب");
+        }
+
+        // التحقق من بيانات الأسنان
+        if (data.teeth && data.teeth.length > 0) {
+          data.teeth.forEach((tooth, index) => {
+            if (!tooth.toothNumber) {
+              errors.push(`رقم السن مفقود في السن رقم ${index + 1}`);
+            }
+          });
+        }
+
+        return {
+          isValid: errors.length === 0,
+          errors: errors
+        };
+      },
+
+      // تحميل بيانات المريض
+      loadPatientData: (patientData) => {
+        console.log("Loading patient data:", patientData);
+
+        // Check if we already have data for this patient - skip loading to preserve user changes
+        const currentPatientId = get().data?.patientInfo?.patientId;
+        const newPatientId = patientData?.patientInfo?.patientId;
+
+        if (currentPatientId && currentPatientId === newPatientId) {
+          console.log("Data already loaded for this patient, skipping reload to preserve changes");
+          set({ loading: false });
+          return { success: true, skipped: true };
+        }
+
+        set({ loading: true, error: null });
+
+        try {
+          console.log("Loading patient data:", patientData, patientData?.patientInfo?.patientId);
+          if (!patientData?.patientInfo?.patientId) {
+            console.log("Patient ID is missing");
+            throw new Error("بيانات المريض ناقصة");
+          } console.log("Formatted data:", patientData);
+          const formattedData = {
+            patientInfo: {
+              patientId: patientData?.patientInfo?.patientId,
+              info: {
+                fullName: patientData.patientInfo?.fullName || "",
+                dateOfBirth: patientData.patientInfo?.dateOfBirth || "",
+                age: patientData.patientInfo?.age || 0,
+                lastScanDate: patientData.patientInfo?.lastScanDate || "",
+                gender: patientData.patientInfo?.gender || "",
+                bloodType: patientData.patientInfo?.bloodType || "",
+                allergies: patientData.patientInfo?.allergies ? [...patientData.patientInfo.allergies] : [],
+                medicalHistory: patientData.patientInfo?.medicalHistory ? [...patientData.patientInfo.medicalHistory] : []
+              }
+            },
+            JAw: {
+              upperJaw: {
+                mask: patientData.JAw?.upperJaw?.mask ? [...patientData.JAw.upperJaw.mask] : []
+              },
+              lowerJaw: {
+                mask: patientData.JAw?.lowerJaw?.mask ? [...patientData.JAw.lowerJaw.mask] : []
+              }
+            },
+            teeth: patientData.teeth?.map(tooth => ({
+              note: tooth.note || "",
+              toothNumber: tooth.toothNumber,
+              category: tooth.category || "",
+              position: tooth.position ? { ...tooth.position } : { x: 0, y: 0 },
+              boundingBox: tooth.boundingBox ? [...tooth.boundingBox] : [],
+              teeth_mask: tooth.teeth_mask ? [...tooth.teeth_mask] : [],
+              slice: tooth.slice ? tooth.slice : [],
+              sliceRanges: tooth.sliceRanges ? {
+                axial: tooth.sliceRanges.axial ? { ...tooth.sliceRanges.axial } : null,
+                sagittal: tooth.sliceRanges.sagittal ? { ...tooth.sliceRanges.sagittal } : null,
+                coronal: tooth.sliceRanges.coronal ? { ...tooth.sliceRanges.coronal } : null
+              } : null,
+              problems: tooth.problems ? tooth.problems.map(problem => ({
+                ...problem,
+                mask: problem.mask ? [...problem.mask] : [],
+                images: problem.images ? [...problem.images] : []
+              })) : [],
+              gumHealth: tooth.gumHealth || "",
+              lastCheckup: tooth.lastCheckup || "",
+              Endo: tooth.Endo ? { mask: [...tooth.Endo.mask] } : null,
+              Root: tooth.Root ? { mask: [...tooth.Root.mask] } : null,
+              Crown: tooth.Crown ? { mask: [...tooth.Crown.mask] } : null,
+              approved: typeof tooth.approved === 'boolean' ? tooth.approved : false,
+              roots: typeof tooth.roots === 'number' ? tooth.roots : 1,
+              canals: typeof tooth.canals === 'number' ? tooth.canals : 1
+            })) || [],
+            statistics: patientData.statistics ? {
+              ...patientData.statistics,
+              cariesDistribution: {
+                ...(patientData.statistics.cariesDistribution || {})
+              }
+            } : initialData.statistics,
+            scanInfo: patientData.scan ? {
+              ...patientData.scan,
+              dimensions: {
+                ...(patientData.scan.dimensions || {})
+              }
+            } : initialData.scanInfo,
+            problemDetection: patientData.problemDetective ? [...patientData.problemDetective] : [],
+            treatmentPlan: patientData.treatmentPlan ? patientData.treatmentPlan.map(plan => ({
+              ...plan,
+              procedures: plan.procedures?.map(proc => ({
+                ...proc,
+                prescriptions: [...(proc.prescriptions || [])],
+                materials: [...(proc.materials || [])]
+              })) || [],
+              followUp: {
+                ...plan.followUp,
+                requiredTests: [...(plan.followUp?.requiredTests || [])]
+              }
+            })) : [],
+            metadata: patientData.metadata ? {
+              ...patientData.metadata,
+              clinicInfo: {
+                ...(patientData.metadata.clinicInfo || {})
+              }
+            } : initialData.metadata,
+            conclusion: patientData.conclusion || "",
+            conclusionUpdatedAt: patientData.conclusionUpdatedAt || null
+          };
+          console.log("Formatted data:", formattedData, patientData, formattedData);
+          set({
+            data: formattedData,
+            history: [formattedData],
+            currentIndex: 0,
+            loading: false
+          });
+
+          return { success: true };
+        } catch (error) {
+          set({
+            error: error.message,
+            loading: false
+          });
+          return { success: false, error: error.message };
+        }
+      },
+
+      // تحديث معلومات المريض
+      updatePatientInfo: (updatedInfo) => {
+        const currentData = get().data;
+        set({
+          data: {
+            ...currentData,
+            patientInfo: {
+              ...currentData.patientInfo,
+              info: {
+                ...currentData.patientInfo.info,
+                ...updatedInfo
+              }
+            }
+          }
+        });
+      },
+
+      // إدارة الأسنان
+      getToothByNumber: (number) => {
+        return get().data.teeth.find(t => t.toothNumber === number);
+      },
+
+      updateTooth: (toothNumber, updates) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+
+        if (toothIndex !== -1) {
+          currentData.teeth[toothIndex] = {
+            ...currentData.teeth[toothIndex],
+            ...updates
+          };
+
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
+        }
+      },
+      getToothCategory: (toothNumber) => {
+        const tooth = get().data.teeth.find(t => t.toothNumber === toothNumber);
+        return tooth ? tooth.category || null : null;
+      },
+      addToothProblem: (toothNumber, problem) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+
+        if (toothIndex !== -1) {
+          currentData.teeth[toothIndex].problems = [
+            ...(currentData.teeth[toothIndex].problems || []),
+            problem
+          ];
+
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
+        }
+      },
+
+      // === دوال Slice Ranges الجديدة ===
+
+      // الحصول على slice ranges لسن معين
+      getToothSliceRanges: (toothNumber, view = null) => {
+        const tooth = get().getToothByNumber(toothNumber);
+
+        if (!tooth || !tooth.sliceRanges) {
+          console.warn(`No slice ranges found for tooth ${toothNumber}`);
+          return null;
+        }
+
+        // إذا تم تحديد view معين
+        if (view) {
+          const normalizedView = view.toLowerCase();
+          const validViews = ['axial', 'sagittal', 'coronal'];
+
+          if (!validViews.includes(normalizedView)) {
+            console.warn(`Invalid view '${view}'. Valid views: ${validViews.join(', ')}`);
+            return null;
+          }
+
+          const sliceRange = tooth.sliceRanges[normalizedView];
+          if (!sliceRange) {
+            console.warn(`No ${normalizedView} slice range found for tooth ${toothNumber}`);
+            return null;
+          }
+
+          return {
+            view: normalizedView,
+            start: sliceRange.start,
+            end: sliceRange.end,
+            range: sliceRange.end - sliceRange.start + 1
+          };
+        }
+
+        // إرجاع جميع الـ views
+        return tooth.sliceRanges;
+      },
+
+      // الحصول على slice ranges لجميع الأسنان
+      getAllTeethSliceRanges: (view = null) => {
+        const teeth = get().data.teeth;
+        if (!teeth || teeth.length === 0) {
+          console.warn('No teeth found in data');
+          return {};
+        }
+
+        const allRanges = {};
+
+        teeth.forEach(tooth => {
+          if (!tooth.toothNumber || !tooth.sliceRanges) return;
+
+          const ranges = get().getToothSliceRanges(tooth.toothNumber, view);
+          if (ranges) {
+            allRanges[tooth.toothNumber] = ranges;
+          }
+        });
+
+        return allRanges;
+      },
+
+      // الحصول على الحدود العامة للـ slices في view معين
+      getViewSliceBoundaries: (view) => {
+        if (!view) return null;
+
+        const allRanges = get().getAllTeethSliceRanges(view);
+        const ranges = Object.values(allRanges);
+
+        if (ranges.length === 0) return null;
+
+        const starts = ranges.map(r => r.start);
+        const ends = ranges.map(r => r.end);
+
+        return {
+          view: view.toLowerCase(),
+          minStart: Math.min(...starts),
+          maxEnd: Math.max(...ends),
+          totalRange: Math.max(...ends) - Math.min(...starts) + 1,
+          teethCount: ranges.length
+        };
+      },
+
+      // البحث عن الأسنان الموجودة في slice معين
+      findTeethInSlice: (sliceNumber, view) => {
+        if (typeof sliceNumber !== 'number' || !view) return [];
+
+        const allRanges = get().getAllTeethSliceRanges(view);
+        const matchingTeeth = [];
+
+        Object.entries(allRanges).forEach(([toothNumber, range]) => {
+          if (sliceNumber >= range.start && sliceNumber <= range.end) {
+            matchingTeeth.push({
+              toothNumber: parseInt(toothNumber),
+              range: range,
+              relativePosition: sliceNumber - range.start + 1
+            });
+          }
+        });
+
+        return matchingTeeth;
+      },
+
+      // تحديث slice ranges لسن معين
+      updateToothSliceRanges: (toothNumber, sliceRanges) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+
+        if (toothIndex !== -1) {
+          currentData.teeth[toothIndex].sliceRanges = {
+            ...currentData.teeth[toothIndex].sliceRanges,
+            ...sliceRanges
+          };
+
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
+        }
+      },
+
+      // تحديث slice range لـ view معين لسن معين
+      updateToothViewSliceRange: (toothNumber, view, rangeData) => {
+        const normalizedView = view.toLowerCase();
+        const validViews = ['axial', 'sagittal', 'coronal'];
+
+        if (!validViews.includes(normalizedView)) {
+          console.warn(`Invalid view '${view}'. Valid views: ${validViews.join(', ')}`);
+          return;
+        }
+
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+
+        if (toothIndex !== -1) {
+          if (!currentData.teeth[toothIndex].sliceRanges) {
+            currentData.teeth[toothIndex].sliceRanges = {};
+          }
+
+          currentData.teeth[toothIndex].sliceRanges[normalizedView] = {
+            start: rangeData.start,
+            end: rangeData.end
+          };
+
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
+        }
+      },
+
+      // الحصول على إحصائيات الـ slice ranges
+      getSliceRangesStatistics: () => {
+        const teeth = get().data.teeth;
+        if (!teeth || teeth.length === 0) return null;
+
+        const stats = {
+          totalTeeth: teeth.length,
+          teethWithSliceRanges: 0,
+          viewsAvailable: {
+            axial: 0,
+            sagittal: 0,
+            coronal: 0
+          },
+          rangesByView: {
+            axial: { min: null, max: null, total: 0 },
+            sagittal: { min: null, max: null, total: 0 },
+            coronal: { min: null, max: null, total: 0 }
+          }
         };
 
-        const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+        teeth.forEach(tooth => {
+          if (tooth.sliceRanges) {
+            stats.teethWithSliceRanges++;
 
-        set({
-          data: currentData,
-          history: newHistory,
-          currentIndex: newHistory.length - 1
+            ['axial', 'sagittal', 'coronal'].forEach(view => {
+              if (tooth.sliceRanges[view]) {
+                stats.viewsAvailable[view]++;
+
+                const range = tooth.sliceRanges[view];
+                const currentStats = stats.rangesByView[view];
+
+                if (currentStats.min === null || range.start < currentStats.min) {
+                  currentStats.min = range.start;
+                }
+                if (currentStats.max === null || range.end > currentStats.max) {
+                  currentStats.max = range.end;
+                }
+                currentStats.total += (range.end - range.start + 1);
+              }
+            });
+          }
         });
-      }
-    },
-    getToothCategory: (toothNumber) => {
-      const tooth = get().data.teeth.find(t => t.toothNumber === toothNumber);
-      return tooth ? tooth.category || null : null;
-    },
-    addToothProblem: (toothNumber, problem) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
 
-      if (toothIndex !== -1) {
-        currentData.teeth[toothIndex].problems = [
-          ...(currentData.teeth[toothIndex].problems || []),
-          problem
+        return stats;
+      },
+
+      // === نهاية دوال Slice Ranges ===
+
+      // إدارة خطط العلاج
+      addTreatmentPlan: (newPlan) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        currentData.treatmentPlan = [
+          ...(currentData.treatmentPlan || []),
+          newPlan
         ];
 
         const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
@@ -357,445 +590,235 @@ export const useDentalStore = create(
           history: newHistory,
           currentIndex: newHistory.length - 1
         });
-      }
-    },
+      },
 
-    // === دوال Slice Ranges الجديدة ===
+      updateTreatmentPlan: (planId, updates) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const planIndex = currentData.treatmentPlan.findIndex(p => p.planId === planId);
 
-    // الحصول على slice ranges لسن معين
-    getToothSliceRanges: (toothNumber, view = null) => {
-      const tooth = get().getToothByNumber(toothNumber);
+        if (planIndex !== -1) {
+          currentData.treatmentPlan[planIndex] = {
+            ...currentData.treatmentPlan[planIndex],
+            ...updates
+          };
 
-      if (!tooth || !tooth.sliceRanges) {
-        console.warn(`No slice ranges found for tooth ${toothNumber}`);
-        return null;
-      }
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
 
-      // إذا تم تحديد view معين
-      if (view) {
-        const normalizedView = view.toLowerCase();
-        const validViews = ['axial', 'sagittal', 'coronal'];
-
-        if (!validViews.includes(normalizedView)) {
-          console.warn(`Invalid view '${view}'. Valid views: ${validViews.join(', ')}`);
-          return null;
-        }
-
-        const sliceRange = tooth.sliceRanges[normalizedView];
-        if (!sliceRange) {
-          console.warn(`No ${normalizedView} slice range found for tooth ${toothNumber}`);
-          return null;
-        }
-
-        return {
-          view: normalizedView,
-          start: sliceRange.start,
-          end: sliceRange.end,
-          range: sliceRange.end - sliceRange.start + 1
-        };
-      }
-
-      // إرجاع جميع الـ views
-      return tooth.sliceRanges;
-    },
-
-    // الحصول على slice ranges لجميع الأسنان
-    getAllTeethSliceRanges: (view = null) => {
-      const teeth = get().data.teeth;
-      if (!teeth || teeth.length === 0) {
-        console.warn('No teeth found in data');
-        return {};
-      }
-
-      const allRanges = {};
-
-      teeth.forEach(tooth => {
-        if (!tooth.toothNumber || !tooth.sliceRanges) return;
-
-        const ranges = get().getToothSliceRanges(tooth.toothNumber, view);
-        if (ranges) {
-          allRanges[tooth.toothNumber] = ranges;
-        }
-      });
-
-      return allRanges;
-    },
-
-    // الحصول على الحدود العامة للـ slices في view معين
-    getViewSliceBoundaries: (view) => {
-      if (!view) return null;
-
-      const allRanges = get().getAllTeethSliceRanges(view);
-      const ranges = Object.values(allRanges);
-
-      if (ranges.length === 0) return null;
-
-      const starts = ranges.map(r => r.start);
-      const ends = ranges.map(r => r.end);
-
-      return {
-        view: view.toLowerCase(),
-        minStart: Math.min(...starts),
-        maxEnd: Math.max(...ends),
-        totalRange: Math.max(...ends) - Math.min(...starts) + 1,
-        teethCount: ranges.length
-      };
-    },
-
-    // البحث عن الأسنان الموجودة في slice معين
-    findTeethInSlice: (sliceNumber, view) => {
-      if (typeof sliceNumber !== 'number' || !view) return [];
-
-      const allRanges = get().getAllTeethSliceRanges(view);
-      const matchingTeeth = [];
-
-      Object.entries(allRanges).forEach(([toothNumber, range]) => {
-        if (sliceNumber >= range.start && sliceNumber <= range.end) {
-          matchingTeeth.push({
-            toothNumber: parseInt(toothNumber),
-            range: range,
-            relativePosition: sliceNumber - range.start + 1
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
           });
         }
-      });
+      },
 
-      return matchingTeeth;
-    },
-
-    // تحديث slice ranges لسن معين
-    updateToothSliceRanges: (toothNumber, sliceRanges) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
-
-      if (toothIndex !== -1) {
-        currentData.teeth[toothIndex].sliceRanges = {
-          ...currentData.teeth[toothIndex].sliceRanges,
-          ...sliceRanges
-        };
-
-        const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
-
-        set({
-          data: currentData,
-          history: newHistory,
-          currentIndex: newHistory.length - 1
-        });
-      }
-    },
-
-    // تحديث slice range لـ view معين لسن معين
-    updateToothViewSliceRange: (toothNumber, view, rangeData) => {
-      const normalizedView = view.toLowerCase();
-      const validViews = ['axial', 'sagittal', 'coronal'];
-
-      if (!validViews.includes(normalizedView)) {
-        console.warn(`Invalid view '${view}'. Valid views: ${validViews.join(', ')}`);
-        return;
-      }
-
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
-
-      if (toothIndex !== -1) {
-        if (!currentData.teeth[toothIndex].sliceRanges) {
-          currentData.teeth[toothIndex].sliceRanges = {};
-        }
-
-        currentData.teeth[toothIndex].sliceRanges[normalizedView] = {
-          start: rangeData.start,
-          end: rangeData.end
-        };
-
-        const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
-
-        set({
-          data: currentData,
-          history: newHistory,
-          currentIndex: newHistory.length - 1
-        });
-      }
-    },
-
-    // الحصول على إحصائيات الـ slice ranges
-    getSliceRangesStatistics: () => {
-      const teeth = get().data.teeth;
-      if (!teeth || teeth.length === 0) return null;
-
-      const stats = {
-        totalTeeth: teeth.length,
-        teethWithSliceRanges: 0,
-        viewsAvailable: {
-          axial: 0,
-          sagittal: 0,
-          coronal: 0
-        },
-        rangesByView: {
-          axial: { min: null, max: null, total: 0 },
-          sagittal: { min: null, max: null, total: 0 },
-          coronal: { min: null, max: null, total: 0 }
-        }
-      };
-
-      teeth.forEach(tooth => {
-        if (tooth.sliceRanges) {
-          stats.teethWithSliceRanges++;
-
-          ['axial', 'sagittal', 'coronal'].forEach(view => {
-            if (tooth.sliceRanges[view]) {
-              stats.viewsAvailable[view]++;
-
-              const range = tooth.sliceRanges[view];
-              const currentStats = stats.rangesByView[view];
-
-              if (currentStats.min === null || range.start < currentStats.min) {
-                currentStats.min = range.start;
-              }
-              if (currentStats.max === null || range.end > currentStats.max) {
-                currentStats.max = range.end;
-              }
-              currentStats.total += (range.end - range.start + 1);
-            }
+      // التراجع والإعادة
+      undo: () => {
+        if (get().currentIndex > 0) {
+          set({
+            data: JSON.parse(JSON.stringify(get().history[get().currentIndex - 1])),
+            currentIndex: get().currentIndex - 1
           });
         }
-      });
+      },
 
-      return stats;
-    },
-
-    // === نهاية دوال Slice Ranges ===
-
-    // إدارة خطط العلاج
-    addTreatmentPlan: (newPlan) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      currentData.treatmentPlan = [
-        ...(currentData.treatmentPlan || []),
-        newPlan
-      ];
-
-      const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
-
-      set({
-        data: currentData,
-        history: newHistory,
-        currentIndex: newHistory.length - 1
-      });
-    },
-
-    updateTreatmentPlan: (planId, updates) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const planIndex = currentData.treatmentPlan.findIndex(p => p.planId === planId);
-
-      if (planIndex !== -1) {
-        currentData.treatmentPlan[planIndex] = {
-          ...currentData.treatmentPlan[planIndex],
-          ...updates
-        };
-
-        const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
-
-        set({
-          data: currentData,
-          history: newHistory,
-          currentIndex: newHistory.length - 1
-        });
-      }
-    },
-
-    // التراجع والإعادة
-    undo: () => {
-      if (get().currentIndex > 0) {
-        set({
-          data: JSON.parse(JSON.stringify(get().history[get().currentIndex - 1])),
-          currentIndex: get().currentIndex - 1
-        });
-      }
-    },
-
-    redo: () => {
-      if (get().currentIndex < get().history.length - 1) {
-        set({
-          data: JSON.parse(JSON.stringify(get().history[get().currentIndex + 1])),
-          currentIndex: get().currentIndex + 1
-        });
-      }
-    },
-
-    // إعادة التعيين
-    resetData: () => {
-      set({
-        data: JSON.parse(JSON.stringify(initialData)),
-        history: [],
-        currentIndex: -1,
-        error: null
-      });
-    },
-
-    // إحصائيات
-    getProblemStatistics: () => {
-      return get().data.teeth.reduce((stats, tooth) => {
-        tooth.problems?.forEach(problem => {
-          stats[problem.type] = (stats[problem.type] || 0) + 1;
-        });
-        return stats;
-      }, {});
-    },
-
-
-
-    addToothSlice: (toothNumber, view, sliceNumber) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
-
-      if (toothIndex !== -1) {
-        if (!currentData.teeth[toothIndex].slice) {
-          currentData.teeth[toothIndex].slice = {};
+      redo: () => {
+        if (get().currentIndex < get().history.length - 1) {
+          set({
+            data: JSON.parse(JSON.stringify(get().history[get().currentIndex + 1])),
+            currentIndex: get().currentIndex + 1
+          });
         }
-        if (!currentData.teeth[toothIndex].slice[view]) {
-          currentData.teeth[toothIndex].slice[view] = [];
-        }
+      },
 
-        // كان موجودة نخرجو تاو
-        if (currentData.teeth[toothIndex].slice[view].includes(sliceNumber)) {
+      // إعادة التعيين
+      resetData: () => {
+        set({
+          data: JSON.parse(JSON.stringify(initialData)),
+          history: [],
+          currentIndex: -1,
+          error: null
+        });
+      },
+
+      // إحصائيات
+      getProblemStatistics: () => {
+        return get().data.teeth.reduce((stats, tooth) => {
+          tooth.problems?.forEach(problem => {
+            stats[problem.type] = (stats[problem.type] || 0) + 1;
+          });
+          return stats;
+        }, {});
+      },
+
+
+
+      addToothSlice: (toothNumber, view, sliceNumber) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+
+        if (toothIndex !== -1) {
+          if (!currentData.teeth[toothIndex].slice) {
+            currentData.teeth[toothIndex].slice = {};
+          }
+          if (!currentData.teeth[toothIndex].slice[view]) {
+            currentData.teeth[toothIndex].slice[view] = [];
+          }
+
+          // كان موجودة نخرجو تاو
+          if (currentData.teeth[toothIndex].slice[view].includes(sliceNumber)) {
+            console.log("est deja en le list ")
+            return;
+          }
+
+          currentData.teeth[toothIndex].slice[view].push(sliceNumber);
+          currentData.teeth[toothIndex].slice[view].sort((a, b) => a - b);
           console.log("est deja en le list ")
-          return;
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
+          console.log(get().data, "get().data")
+          console.log("updite la list avec succuse !!")
         }
 
-        currentData.teeth[toothIndex].slice[view].push(sliceNumber);
-        currentData.teeth[toothIndex].slice[view].sort((a, b) => a - b);
-        console.log("est deja en le list ")
-        const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
-        set({
-          data: currentData,
-          history: newHistory,
-          currentIndex: newHistory.length - 1
-        });
-        console.log("updite la list avec succuse !!")
-      }
+      },
 
-    },
+      removeToothSlice: (toothNumber, view, sliceNumber) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
 
-    removeToothSlice: (toothNumber, view, sliceNumber) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+        if (toothIndex !== -1 && currentData.teeth[toothIndex].slice?.[view]) {
+          currentData.teeth[toothIndex].slice[view] =
+            currentData.teeth[toothIndex].slice[view].filter(s => s !== sliceNumber);
 
-      if (toothIndex !== -1 && currentData.teeth[toothIndex].slice?.[view]) {
-        currentData.teeth[toothIndex].slice[view] =
-          currentData.teeth[toothIndex].slice[view].filter(s => s !== sliceNumber);
-
-        const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
-        set({
-          data: currentData,
-          history: newHistory,
-          currentIndex: newHistory.length - 1
-        });
-      }
-    },
-
-    setToothSlices: (toothNumber, view, sliceList) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
-
-      if (toothIndex !== -1) {
-        if (!currentData.teeth[toothIndex].slice) {
-          currentData.teeth[toothIndex].slice = {};
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
         }
-        currentData.teeth[toothIndex].slice[view] = [...sliceList];
+      },
 
-        const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
-        set({
-          data: currentData,
-          history: newHistory,
-          currentIndex: newHistory.length - 1
-        });
-      }
-    },
+      setToothSlices: (toothNumber, view, sliceList) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
 
-    getToothSlices: (toothNumber, view = null) => {
-      const tooth = get().getToothByNumber(toothNumber);
-      if (!tooth || !tooth.slice) return null;
+        if (toothIndex !== -1) {
+          if (!currentData.teeth[toothIndex].slice) {
+            currentData.teeth[toothIndex].slice = {};
+          }
+          currentData.teeth[toothIndex].slice[view] = [...sliceList];
 
-      if (view) {
-        return tooth.slice[view] || [];
-      }
-      return tooth.slice;
-    },
-
-    // تصدير البيانات
-    exportData: () => {
-      return JSON.parse(JSON.stringify(get().data));
-    },
-
-    // تحديث حالة الموافقة لسن معين
-    updateToothApproval: (toothNumber, approved) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
-      console.log('🚀 ~ updateToothApproval ~ data:', currentData);
-      if (toothIndex !== -1) {
-        currentData.teeth[toothIndex].approved = approved;
-        console.log('🚀 ~ updateToothApproval ~ currentData:', currentData);
-        set({ data: currentData });
-      }
-    },
-
-    addToothNote: (toothNumber, note) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
-      if (toothIndex !== -1) {
-        if (!Array.isArray(currentData.teeth[toothIndex].notes)) {
-          currentData.teeth[toothIndex].notes = [];
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
         }
-        currentData.teeth[toothIndex].notes.push({ ...note, date: new Date().toISOString() });
-        set({ data: currentData });
-      }
-    },
+      },
 
-    updateToothNote: (toothNumber, noteIndex, updatedNote) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const tooth = currentData.teeth.find(t => t.toothNumber === toothNumber);
-      if (tooth && Array.isArray(tooth.notes) && tooth.notes[noteIndex]) {
-        tooth.notes[noteIndex] = { ...tooth.notes[noteIndex], ...updatedNote, date: new Date().toISOString() };
-        set({ data: currentData });
-      }
-    },
+      getToothSlices: (toothNumber, view = null) => {
+        const tooth = get().getToothByNumber(toothNumber);
+        if (!tooth || !tooth.slice) return null;
 
-    deleteToothNote: (toothNumber, noteIndex) => {
-      const currentData = JSON.parse(JSON.stringify(get().data));
-      const tooth = currentData.teeth.find(t => t.toothNumber === toothNumber);
-      if (tooth && Array.isArray(tooth.notes) && tooth.notes[noteIndex]) {
-        tooth.notes.splice(noteIndex, 1);
-        set({ data: currentData });
-      }
-    },
-
-    // تحديث نوع التقرير
-    setReportType: (type) => {
-      set(state => ({
-        data: {
-          ...state.data,
-          reportType: type
+        if (view) {
+          return tooth.slice[view] || [];
         }
-      }));
-    },
-    getReportType: () => get().data.reportType,
-    isPano: () => get().data.reportType === 'pano ai' || get().data.reportType === 'pano',
-    isCbct: () => get().data.reportType === 'cbct ai' || get().data.reportType === 'cbct',
+        return tooth.slice;
+      },
 
-    // تحديث النتيجة
-    setConclusion: (text) => {
-      set(state => ({
-        data: {
-          ...state.data,
-          conclusion: text,
-          conclusionUpdatedAt: new Date().toISOString()
+      // تصدير البيانات
+      exportData: () => {
+        return JSON.parse(JSON.stringify(get().data));
+      },
+
+      // تحديث حالة الموافقة لسن معين
+      updateToothApproval: (toothNumber, approved) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+        console.log('🚀 ~ updateToothApproval ~ data:', currentData);
+        if (toothIndex !== -1) {
+          currentData.teeth[toothIndex].approved = approved;
+          console.log('🚀 ~ updateToothApproval ~ currentData:', currentData);
+          set({ data: currentData });
         }
-      }));
-    },
-    getConclusion: () => get().data.conclusion || "",
-    getConclusionUpdatedAt: () => get().data.conclusionUpdatedAt,
-  }),
+      },
 
+      addToothNote: (toothNumber, note) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+        if (toothIndex !== -1) {
+          if (!Array.isArray(currentData.teeth[toothIndex].notes)) {
+            currentData.teeth[toothIndex].notes = [];
+          }
+          currentData.teeth[toothIndex].notes.push({ ...note, date: new Date().toISOString() });
+          set({ data: currentData });
+        }
+      },
 
+      updateToothNote: (toothNumber, noteIndex, updatedNote) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const tooth = currentData.teeth.find(t => t.toothNumber === toothNumber);
+        if (tooth && Array.isArray(tooth.notes) && tooth.notes[noteIndex]) {
+          tooth.notes[noteIndex] = { ...tooth.notes[noteIndex], ...updatedNote, date: new Date().toISOString() };
+          set({ data: currentData });
+        }
+      },
 
+      deleteToothNote: (toothNumber, noteIndex) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const tooth = currentData.teeth.find(t => t.toothNumber === toothNumber);
+        if (tooth && Array.isArray(tooth.notes) && tooth.notes[noteIndex]) {
+          tooth.notes.splice(noteIndex, 1);
+          set({ data: currentData });
+        }
+      },
+
+      // تحديث نوع التقرير
+      setReportType: (type) => {
+        set(state => ({
+          data: {
+            ...state.data,
+            reportType: type
+          }
+        }));
+      },
+      getReportType: () => get().data.reportType,
+      isPano: () => get().data.reportType === 'pano ai' || get().data.reportType === 'pano',
+      isCbct: () => get().data.reportType === 'cbct ai' || get().data.reportType === 'cbct',
+
+      // تحديث النتيجة
+      setConclusion: (text) => {
+        set(state => ({
+          data: {
+            ...state.data,
+            conclusion: text,
+            conclusionUpdatedAt: new Date().toISOString()
+          }
+        }));
+      },
+      getConclusion: () => get().data.conclusion || "",
+      getConclusionUpdatedAt: () => get().data.conclusionUpdatedAt,
+    }),
+    {
+      name: 'dental-storage',
+      storage: {
+        getItem: (name) => {
+          const str = sessionStorage.getItem(name);
+          return str ? JSON.parse(str) : null;
+        },
+        setItem: (name, value) => {
+          sessionStorage.setItem(name, JSON.stringify(value));
+        },
+        removeItem: (name) => sessionStorage.removeItem(name),
+      },
+    }
+  )
 );
 
 // جلب بيانات JSON من رابط

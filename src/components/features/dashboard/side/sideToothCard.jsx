@@ -11,6 +11,14 @@ import ToothDiagnosis from "./card/ToothCard";
 import { Switch } from '@/components/ui/switch';
 import { Button } from "@/components/ui/button";
 import { useRouter, usePathname } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const translationKeys = {
   loadingDentalChart: 'side.loadingDentalChart',
@@ -22,12 +30,14 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const { selectedTeeth } = useContext(DataContext);
-  const { data: dentalData, setConclusion: setConclusionStore, getConclusionUpdatedAt } = useDentalStore();
+  const { data: dentalData, setConclusion: setConclusionStore, getConclusionUpdatedAt, updateToothApproval } = useDentalStore();
   const [isLoading, setIsLoading] = useState(true);
   const [visibleImages, setVisibleImages] = useState({});
   const [showDiagnosisDetails, setShowDiagnosisDetails] = useState(true);
   const [conclusion, setConclusion] = useState("");
   const [isConclusionSaved, setIsConclusionSaved] = useState(false);
+  const [showApproveDialog, setShowApproveDialog] = useState(false);
+  const [unapprovedTeeth, setUnapprovedTeeth] = useState([]);
   const pathname = usePathname();
 
   // Load conclusion from store
@@ -77,6 +87,39 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
       [toothNumber]: !prev[toothNumber]
     }));
   };
+
+  // Get unapproved teeth
+  const getUnapprovedTeeth = useCallback(() => {
+    if (!dentalData?.teeth) return [];
+    return dentalData.teeth.filter(tooth => !tooth.approved);
+  }, [dentalData]);
+
+  // Handle validate and sign click
+  const handleValidateClick = useCallback(() => {
+    const unapproved = getUnapprovedTeeth();
+    if (unapproved.length > 0) {
+      setUnapprovedTeeth(unapproved);
+      setShowApproveDialog(true);
+    } else {
+      // All teeth already approved, proceed with signing
+      console.log('All teeth approved, proceeding with signing');
+    }
+  }, [getUnapprovedTeeth]);
+
+  // Approve all teeth
+  const handleApproveAll = useCallback(() => {
+    unapprovedTeeth.forEach(tooth => {
+      updateToothApproval(tooth.toothNumber, true);
+    });
+    setShowApproveDialog(false);
+    console.log('All teeth approved and signed');
+  }, [unapprovedTeeth, updateToothApproval]);
+
+  // Check if all teeth are approved
+  const allTeethApproved = useMemo(() => {
+    if (!dentalData?.teeth || dentalData.teeth.length === 0) return false;
+    return dentalData.teeth.every(tooth => tooth.approved);
+  }, [dentalData]);
 
   return (
     <div className="flex no-scrollbar  flex-col h-auto lg:h-full bg-transparent from-gray-50 to-white">
@@ -203,33 +246,102 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
       {/* Fixed Actions Footer */}
 
       <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm flex flex-col gap-3">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-          <button
-            onClick={handlePDFReportViewsClick}
-            className="text-[#7564ed] text-md font-medium hover:underline text-left"
-          >
-            Print report without signature
-          </button>
+        {allTeethApproved ? (
+          // All teeth approved - show Diagnosis details and Print button
+          <>
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-sm text-gray-700">Diagnosis details</span>
+              <Switch
+                checked={showDiagnosisDetails}
+                onCheckedChange={setShowDiagnosisDetails}
+                className="data-[state=checked]:bg-indigo-500"
+                id="diagnosis-details-switch"
+              />
+            </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-sm text-gray-700">Diagnosis details</span>
-            <Switch
-              checked={showDiagnosisDetails}
-              onCheckedChange={setShowDiagnosisDetails}
-              className="data-[state=checked]:bg-indigo-500"
-              id="diagnosis-details-switch"
-            />
-          </div>
-        </div>
+            <Button
+              className="w-full bg-[#7564ed] text-white py-6 text-lg font-semibold rounded-xl gap-2 shadow-lg shadow-purple-200"
+              onClick={handlePDFReportViewsClick}
+            >
+              Print report
+            </Button>
+          </>
+        ) : (
+          // Not all teeth approved - show Print without signature and Diagnosis details in same row
+          <>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+              <button
+                onClick={handlePDFReportViewsClick}
+                className="text-[#7564ed] text-md font-medium hover:underline text-left"
+              >
+                Print report without signature
+              </button>
 
-        <Button
-          className="w-full bg-[#7564ed]  text-white py-6 text-lg font-semibold rounded-xl gap-2 shadow-lg shadow-purple-200"
-          onClick={() => console.log('Validate and Sign')}
-        >
-          <Check className="w-6 h-6" />
-          Valider tout et signer
-        </Button>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-sm text-gray-700">Diagnosis details</span>
+                <Switch
+                  checked={showDiagnosisDetails}
+                  onCheckedChange={setShowDiagnosisDetails}
+                  className="data-[state=checked]:bg-indigo-500"
+                  id="diagnosis-details-switch"
+                />
+              </div>
+            </div>
+
+            <Button
+              className="w-full bg-[#7564ed]  text-white py-6 text-lg font-semibold rounded-xl gap-2 shadow-lg shadow-purple-200"
+              onClick={handleValidateClick}
+            >
+              <Check className="w-6 h-6" />
+              Valider tout et signer
+            </Button>
+          </>
+        )}
       </div>
+
+      {/* Approval Confirmation Dialog */}
+      <Dialog open={showApproveDialog} onOpenChange={setShowApproveDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">Confirmer l'approbation</DialogTitle>
+            <DialogDescription className="text-gray-600">
+              Les dents suivantes ne sont pas encore approuvées. Voulez-vous les approuver toutes ?
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="max-h-[300px] overflow-y-auto my-4">
+            <div className="grid grid-cols-6 gap-2">
+              {unapprovedTeeth.map((tooth) => (
+                <div
+                  key={tooth.toothNumber}
+                  className="flex items-center justify-center p-3 bg-amber-50 border border-amber-200 rounded-lg"
+                >
+                  <span className="text-sm font-semibold text-amber-900">
+                    {tooth.toothNumber}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowApproveDialog(false)}
+              className="border-gray-300"
+            >
+              Annuler
+            </Button>
+            <Button
+              onClick={handleApproveAll}
+              className="bg-[#7564ed] hover:bg-[#6454d7] text-white"
+            >
+              <Check className="w-4 h-4 mr-2" />
+              Approuver tout ({unapprovedTeeth.length})
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
