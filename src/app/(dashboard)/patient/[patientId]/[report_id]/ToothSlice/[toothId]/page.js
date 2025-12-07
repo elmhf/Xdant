@@ -235,6 +235,7 @@ export default function ToothSlicePage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
+
         {/* LEFT PANEL - مع Scroll منفصل */}
         <div className="flex flex-col h-full no-scrollbar gap-5 flex-1 w-full lg:min-w-[350px] lg:max-w-[38%] overflow-y-auto pb-4">
           <motion.div
@@ -327,24 +328,26 @@ export default function ToothSlicePage() {
             )}
           </div>
         </motion.div>
-      </motion.div>
+      </motion.div >
 
       {/* Modal for viewing slice */}
-      {viewingSlice && (
-        <SliceViewerModal
-          view={viewingSlice.view}
-          index={viewingSlice.index}
-          toothNumber={toothNumber}
-          onClose={handleCloseModal}
-          onNavigate={handleNavigateSlice}
-          canNavPrev={viewingSlice?.index > sliceRanges[viewingSlice?.view]?.start}
-          canNavNext={viewingSlice?.index < sliceRanges[viewingSlice?.view]?.end}
-          zoom={modalZoom}
-          setZoom={setModalZoom}
-          region={modalRegion}
-          setRegion={setModalRegion}
-        />
-      )}
+      {
+        viewingSlice && (
+          <SliceViewerModal
+            view={viewingSlice.view}
+            index={viewingSlice.index}
+            toothNumber={toothNumber}
+            onClose={handleCloseModal}
+            onNavigate={handleNavigateSlice}
+            canNavPrev={viewingSlice?.index > sliceRanges[viewingSlice?.view]?.start}
+            canNavNext={viewingSlice?.index < sliceRanges[viewingSlice?.view]?.end}
+            zoom={modalZoom}
+            setZoom={setModalZoom}
+            region={modalRegion}
+            setRegion={setModalRegion}
+          />
+        )
+      }
 
       {/* Bottom Navbar */}
       <div className="fixed bottom-0 left-0 w-full z-50 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] border-t border-gray-200 px-6 py-2">
@@ -368,6 +371,6 @@ export default function ToothSlicePage() {
           </div>
         </div>
       </div>
-    </DataContext.Provider>
+    </DataContext.Provider >
   );
 }

@@ -27,6 +27,7 @@ import circleLoaderAnimation from '@/components/shared/lottie/circle-loader.json
 import { useNotificationWebSocket } from '@/hooks/useNotificationWebSocket';
 import { useUpdateReportData } from '@/app/(dashboard)/patient/hooks';
 import { useDentalStore } from '@/stores/dataStore';
+import Breadcrumb from '@/components/ui/Breadcrumb';
 
 const userData = {
   name: "Paul Fisher",
@@ -221,6 +222,8 @@ export default function Navbar() {
               <span className="text-3xl space-x-[-5px] font-[800] text-gray-900">XDent</span>
             </div>
           </div>
+
+          <Breadcrumb className="hidden md:flex ml-4" />
         </div>
 
         <div className="flex items-center gap-2">
@@ -258,24 +261,26 @@ export default function Navbar() {
             </Button>
 
             {/* Auto-save Clock Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Auto-save status"
-              onClick={performAutoSave}
-              className="relative"
-            >
-              <Clock
-                className={`h-9 w-9 transition-colors ${autoSaveStatus === 'saving' ? 'text-blue-500 animate-pulse' :
-                  autoSaveStatus === 'saved' ? 'text-green-500' :
-                    autoSaveStatus === 'error' ? 'text-red-500' :
-                      'text-gray-600'
-                  }`}
-              />
-              {autoSaveStatus === 'saving' && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full animate-ping" />
-              )}
-            </Button>
+            {(pathname?.includes('/ToothSlice') || pathname?.includes('/PDFReport') || (pathname?.match(/\/patient\/[^\/]+\/[^\/]+$/) && !pathname?.includes('/ToothSlice') && !pathname?.includes('/PDFReport'))) && (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Auto-save status"
+                onClick={performAutoSave}
+                className="relative"
+              >
+                <Clock
+                  className={`h-9 w-9 transition-colors ${autoSaveStatus === 'saving' ? 'text-blue-500 animate-pulse' :
+                    autoSaveStatus === 'saved' ? 'text-green-500' :
+                      autoSaveStatus === 'error' ? 'text-red-500' :
+                        'text-gray-600'
+                    }`}
+                />
+                {autoSaveStatus === 'saving' && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full animate-ping" />
+                )}
+              </Button>
+            )}
 
             <NotificationDropdown userId={userInfo?.user_id} />
 

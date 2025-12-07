@@ -99,9 +99,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                                 view === 'sagittal' ? 'Vue sagittale' :
                                     view === 'coronal' ? 'Vue coronale' : `${view} View`}
                         </h3>
-                        <p className="text-sm text-gray-500 font-medium">
-                            Étape de découpe: 1mm, Épaisseur de la découpe: 0.5mm
-                        </p>
+            
                     </div>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
                         <X size={24} />

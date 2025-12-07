@@ -53,6 +53,8 @@ const initialData = {
   },
   problemDetection: [],
   treatmentPlan: [],
+  conclusion: "", // نتيجة التقرير
+  conclusionUpdatedAt: null, // تاريخ آخر تحديث للنتيجة
   metadata: {
     generatedBy: "",
     lastUpdated: "",
@@ -187,11 +189,11 @@ export const useDentalStore = create(
       set({ loading: true, error: null });
 
       try {
-        console.log("Loading patient data:", patientData,patientData?.patientInfo?.patientId);
+        console.log("Loading patient data:", patientData, patientData?.patientInfo?.patientId);
         if (!patientData?.patientInfo?.patientId) {
           console.log("Patient ID is missing");
           throw new Error("بيانات المريض ناقصة");
-        }console.log("Formatted data:", patientData);
+        } console.log("Formatted data:", patientData);
         const formattedData = {
           patientInfo: {
             patientId: patientData?.patientInfo?.patientId,
@@ -271,9 +273,11 @@ export const useDentalStore = create(
             clinicInfo: {
               ...(patientData.metadata.clinicInfo || {})
             }
-          } : initialData.metadata
+          } : initialData.metadata,
+          conclusion: patientData.conclusion || "",
+          conclusionUpdatedAt: patientData.conclusionUpdatedAt || null
         };
-        console.log("Formatted data:", formattedData,patientData,formattedData);
+        console.log("Formatted data:", formattedData, patientData, formattedData);
         set({
           data: formattedData,
           history: [formattedData],
@@ -775,6 +779,19 @@ export const useDentalStore = create(
     getReportType: () => get().data.reportType,
     isPano: () => get().data.reportType === 'pano ai' || get().data.reportType === 'pano',
     isCbct: () => get().data.reportType === 'cbct ai' || get().data.reportType === 'cbct',
+
+    // تحديث النتيجة
+    setConclusion: (text) => {
+      set(state => ({
+        data: {
+          ...state.data,
+          conclusion: text,
+          conclusionUpdatedAt: new Date().toISOString()
+        }
+      }));
+    },
+    getConclusion: () => get().data.conclusion || "",
+    getConclusionUpdatedAt: () => get().data.conclusionUpdatedAt,
   }),
 
 

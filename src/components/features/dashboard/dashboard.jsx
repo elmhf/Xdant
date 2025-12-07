@@ -139,19 +139,19 @@ const Dashboard = ({ reportType }) => {
   return (
     <DataContext.Provider value={contextValue}>
       <div className={`${styles.container} ${layoutKey === 'VIEW' ? styles.fullscreen : ''}`}>
-        <div className="flex flex-row gap-2 h-[90vh]">
+        <div className="flex flex-col lg:flex-row gap-2 h-full lg:h-[90vh]  overflow-scroll no-scrollbar lg:overflow-hidden">
           {isPanoType ? (
             <>
               {/* ImageCard Ø¹Ù„Ù‰ Ø§Ù„ÙŠÙ…ÙŠÙ† */}
-              <div className="flex-none w-[60%] flex items-center justify-center">
+              <div className="flex-none w-full lg:w-[60%] h-[350px] lg:h-auto flex items-center justify-center">
                 <ImageCard settings={settings} SettingChange={SettingChange} setSettings={setSettings} />
               </div>
               {/* Toothlabels ÙÙˆÙ‚ SideCardes */}
-              <div className="flex flex-col w-[40%]">
+              <div className="flex flex-col w-full lg:w-[40%]">
                 <div className="flex-none">
                   <Toothlabels NumberOnlyMode={false} />
                 </div>
-                <div className="flex-1 overflow-scroll no-scrollbar ">
+                <div className="flex-1 lg:overflow-scroll no-scrollbar h-auto lg:h-auto">
                   <SideCardes toothNumberSelect={toothNumberSelect} setToothNumberSelect={setToothNumberSelect} layoutKey={layoutKey} />
                 </div>
               </div>
@@ -160,15 +160,15 @@ const Dashboard = ({ reportType }) => {
           ) : (
             // Ø§Ù„ØªØ®Ø·ÙŠØ· Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ
             <>
-              <div className="flex overflow-scroll gap-5 no-scrollbar flex-col flex-1 w-fitt">
-                <div className="flex-1 flex gap-1 h-[40%] max-h-[500px]">
+              <div className="flex lg:overflow-scroll gap-5 no-scrollbar flex-col flex-1 w-full h-auto lg:h-auto">
+                <div className="flex-1 flex gap-1 min-h-[350px] lg:h-[40%] lg:max-h-[500px]">
                   <ImageCard settings={settings} SettingChange={SettingChange} setSettings={setSettings} />
                 </div>
                 <div className="flex-none">
                   <Toothlabels onViewCBCTReport={handleViewCBCTReport} NumberOnlyMode={false} />
                 </div>
               </div>
-              <div className="flex-none w-[50%] ">
+              <div className="flex-none w-full lg:w-[50%] h-auto lg:h-auto">
                 <SideCardes toothNumberSelect={toothNumberSelect} setToothNumberSelect={setToothNumberSelect} layoutKey={layoutKey} />
               </div>
             </>
