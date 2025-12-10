@@ -1,3 +1,7 @@
+'use client';
+
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +19,7 @@ const ForgotPasswordPage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes = 300 seconds
-  
+
   const inputRefs = useRef([]);
 
   // Countdown timer effect
@@ -36,7 +40,7 @@ const ForgotPasswordPage = () => {
   // Handle OTP input change
   const handleOtpChange = (index, value) => {
     if (value.length > 1) return; // Prevent multiple characters
-    
+
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
@@ -59,19 +63,19 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
+
     try {
-  const response = await fetch('http://localhost:5000/api/auth/reset/sendPasswordReset', {
+      const response = await fetch('http://localhost:5000/api/auth/reset/sendPasswordReset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
-      
+
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || 'Failed to send OTP');
       }
-      
+
       // Move to step 2 (OTP verification)
       setStep(2);
       setSuccess(true);
@@ -87,27 +91,27 @@ const ForgotPasswordPage = () => {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     const otpString = otp.join('');
-    
+
     if (otpString.length !== 6) {
       setError('Please enter all 6 digits');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
-  const response = await fetch('http://localhost:5000/api/auth/reset/verifyResetOtp', {
+      const response = await fetch('http://localhost:5000/api/auth/reset/verifyResetOtp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code: otpString })
       });
-      
+
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || 'Invalid OTP');
       }
-      
+
       const data = await response.json();
       setResetToken(data.resetToken);
       setStep(3); // Move to password reset step
@@ -122,40 +126,40 @@ const ForgotPasswordPage = () => {
   // Step 3: Update Password
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-    
+
     if (newPassword.length < 6) {
       setError('Password must be at least 6 characters long');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
-  const response = await fetch('http://localhost:5000/api/auth/reset/updatePassword', {
+      const response = await fetch('http://localhost:5000/api/auth/reset/updatePassword', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email, 
-          resetToken, 
-          newPassword 
+        body: JSON.stringify({
+          email,
+          resetToken,
+          newPassword
         })
       });
-      
+
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || 'Failed to update password');
       }
-      
+
       setSuccess(true);
       // You can redirect to login page here
       setTimeout(() => {
-        
+
         // window.location.href = '/login';
       }, 2000);
     } catch (err) {
@@ -177,22 +181,22 @@ const ForgotPasswordPage = () => {
 
   const resendOtp = async () => {
     if (timeLeft > 0) return; // Don't allow resend if timer is still running
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
-  const response = await fetch('http://localhost:5000/api/auth/reset/sendPasswordReset', {
+      const response = await fetch('http://localhost:5000/api/auth/reset/sendPasswordReset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
-      
+
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || 'Failed to resend OTP');
       }
-      
+
       setSuccess(true);
       setTimeLeft(300); // Reset timer to 5 minutes
       setOtp(['', '', '', '', '', '']); // Clear previous OTP

@@ -448,7 +448,10 @@ export function useReportData(options = {}) {
   // Main data fetching function
   const fetchData = useCallback(async (reportId, options = {}) => {
     const { forceRefresh = false } = options;
-    console.log('🚀 fetchData called:', { reportId, forceRefresh, currentReport: currentReportRef.current });
+    const store = useDentalStore.getState();
+    const currentStoreReportId = store.getCurrentReportId();
+
+    console.log('🚀 fetchData called:', { reportId, forceRefresh, currentStoreReportId });
 
     if (!reportId) {
       console.warn('⚠️ No reportId provided');
@@ -456,61 +459,40 @@ export function useReportData(options = {}) {
       return null;
     }
 
-    // If same report and data exists, skip fetch unless force refresh
-    if (currentReportRef.current === reportId && state.data && !forceRefresh) {
-      console.log('ℹ️ Same report with existing data, skipping fetch');
-      return state.data;
+    // 1. Check if we already have this report loaded effectively
+    if (!forceRefresh && currentStoreReportId === reportId && store.hasData()) {
+      console.log('✅ Report already loaded in store, skipping fetch');
+      // Sync state with store data
+      const storeData = store.data;
+      updateState({
+        data: storeData,
+        loading: false,
+        error: null,
+        reportType: storeData.reportType
+      });
+      return storeData;
     }
 
-    // If different report, cancel previous requests
-    if (currentReportRef.current !== reportId) {
-      console.log('🔄 Different report detected, cleaning up', currentReportRef, reportId);
+    // 2. If different report or force refresh, reset store
+    if (currentStoreReportId !== reportId || forceRefresh) {
+      console.log('🔄 Switching reports: Clearing old data...');
 
+      // Reset store
+      if (store.resetData) store.resetData();
+
+      // Update current report ID immediately to prevent race conditions
+      if (store.setCurrentReportId) store.setCurrentReportId(reportId);
+
+      // Clear local cache variables
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
-        abortControllerRef.current = null;
       }
-
+      abortControllerRef.current = new AbortController();
       lastProcessedUrlRef.current = null;
+      singleReportCache = null;
     }
 
     currentReportRef.current = reportId;
-
-    // Check cache first (unless force refresh)
-    if (!forceRefresh && singleReportCache && singleReportCache.reportId === reportId) {
-      const { data: cachedData, createdAt } = singleReportCache;
-      const timePassed = Date.now() - createdAt;
-      const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-      if (timePassed < CACHE_DURATION) {
-        console.log('💾 Using cached data for same report');
-
-        loadDataToStore(loadPatientData, cachedData, reportId, 'cached');
-        const cachedReportType = singleReportCache.metadata?.reportType;
-
-        updateState({
-          data: cachedData,
-          loading: false,
-          error: null,
-          reportType: cachedReportType
-        });
-
-        // Process image URL from cache
-        console.log('🔍 Getting image URL for detected type:', cachedReportType?.toUpperCase());
-        const imageUrl = getImageUrl(cachedData, cachedReportType);
-        if (imageUrl) {
-          setTimeout(() => handleImageUrl(imageUrl), 100);
-        }
-
-        return cachedData;
-      }
-    }
-
-    // Clear cache for different report
-    if (singleReportCache && singleReportCache.reportId !== reportId) {
-      singleReportCache = null;
-      console.log('🗑️ Previous report cache cleared');
-    }
 
     // Set loading state
     updateState({
@@ -518,13 +500,8 @@ export function useReportData(options = {}) {
       error: null
     });
 
-    // Create new abort controller
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    abortControllerRef.current = new AbortController();
-
     try {
+      // Fetch new data
       const reportData = await fetchReportDataByPost(reportId, abortControllerRef.current.signal);
 
       // Handle aborted request
@@ -533,7 +510,7 @@ export function useReportData(options = {}) {
         return null;
       }
 
-      // Check if request is still current
+      // Check if request is still current (user didn't switch away)
       if (currentReportRef.current !== reportId || !isMountedRef.current) {
         console.log('🚫 Request obsolete or component unmounted');
         return null;
@@ -545,47 +522,32 @@ export function useReportData(options = {}) {
 
       let fetchedData = null;
 
-      // Try to get data directly first
+      // Normalize data structure
       if (reportData?.data) {
         fetchedData = reportData.data;
-        console.log('✅ Direct data found', reportData);
       } else {
-        // Fallback to URL fetching
+        // Fallback or URL fetching logic if needed
         const reportUrl = getReportUrl(reportData, detectedReportType);
-
         if (reportUrl) {
           try {
             const { fetchJsonFromUrl } = await import('@/stores/dataStore');
             fetchedData = await fetchJsonFromUrl(reportUrl);
-            console.log('✅ Data fetched from URL successfully');
-          } catch (urlError) {
-            console.warn('⚠️ Failed to fetch URL data:', urlError);
+          } catch (e) {
             fetchedData = reportData?.report || reportData;
           }
         } else {
-          console.warn('⚠️ No valid URL found, using basic report data');
           fetchedData = reportData?.report || reportData;
         }
       }
 
-      // Update cache
-      singleReportCache = {
-        reportId,
-        data: fetchedData,
-        createdAt: Date.now(),
-        metadata: {
-          reportType: detectedReportType,
-          fetchedAt: new Date().toISOString()
-        }
-      };
-
-      console.log('💾 New report cached:', reportId.slice(0, 8), 'Type:', detectedReportType);
-
       // Load data to store
-      loadDataToStore(loadPatientData, fetchedData, reportId, 'fresh');
+      const success = loadDataToStore(loadPatientData, fetchedData, reportId, 'fresh');
 
-      // Update state if still current
-      if (currentReportRef.current === reportId && isMountedRef.current) {
+      if (success) {
+        // Ensure report ID is set again (just in case)
+        if (store.setCurrentReportId) store.setCurrentReportId(reportId);
+
+        // Update hook state
         updateState({
           data: fetchedData,
           loading: false,
@@ -594,10 +556,8 @@ export function useReportData(options = {}) {
         });
 
         // Process image URL
-        console.log('🔍 Getting image URL for detected type: reportData', reportData);
         const imageUrl = getImageUrl(reportData, detectedReportType) ||
           getImageUrl(reportData?.report, detectedReportType);
-
         if (imageUrl) {
           setTimeout(() => handleImageUrl(imageUrl), 100);
         }
@@ -606,14 +566,10 @@ export function useReportData(options = {}) {
       return fetchedData;
 
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.debug('🚫 Fetch aborted (normal behavior)');
-        return null;
-      }
+      if (error.name === 'AbortError') return null;
 
       console.error('❌ Fetch failed:', error);
-
-      if (currentReportRef.current === reportId && isMountedRef.current) {
+      if (isMountedRef.current) {
         updateState({
           data: null,
           loading: false,
@@ -621,7 +577,6 @@ export function useReportData(options = {}) {
           reportType: null
         });
       }
-
       throw error;
     }
   }, [loadPatientData, handleImageUrl, updateState]);

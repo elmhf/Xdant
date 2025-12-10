@@ -132,7 +132,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
   };
 
   return (
-    <div className="p-6 pt-2 space-y-6">
+    <div className=" space-y-6">
       {step === 1 && (
         <form onSubmit={(e) => { e.preventDefault(); handleVerifyPassword(); }}>
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">

@@ -7,6 +7,7 @@ import { useLayout } from "@/stores/setting";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, MessageSquare } from 'lucide-react';
 import AddConditionDialog from './AddConditionDialog';
+import EditConditionsDialog from './EditConditionsDialog';
 import { useDentalStore } from '@/stores/dataStore';
 import { Badge } from "@/components/ui/badge";
 import { useRouter, usePathname } from "next/navigation";
@@ -21,7 +22,6 @@ const ToothDiagnosis = memo(({
   ToothSlicemode = false,
   isDragging = false,
   sliceDrager,
-  // ✅ وقت السحب
 }) => {
   const { applyLayout } = useLayout();
   const { t } = useTranslation();
@@ -72,33 +72,40 @@ const ToothDiagnosis = memo(({
   };
 
   const ProblemTags = ({ problems }) => {
-    if (!problems || problems.length === 0) {
+    // Filter out problems where targetProblem is explicitly false
+    const visibleProblems = (problems || []).filter(p => p.targetProblem !== false);
+
+    if (visibleProblems.length === 0) {
       return (
-        <span className="text-xs font-medium px-3 py-2 rounded-md whitespace-nowrap border-2 border-gray-200 bg-white text-black">
+        <span className="text-[15px] font-[600] px-3 py-2 rounded-md whitespace-nowrap border-2 border-gray-200 bg-white text-black">
           {t("side.card.NoProblemsDetected")}
         </span>
       );
     }
 
-    return problems.map((p, index) => {
+    return visibleProblems.map((p, index) => {
       const confidenceDisplay = p.confidence ? ` ${Math.round(p.confidence * 100)}%` : '';
       const tagText = `${p.type}${confidenceDisplay}`;
       const tagKey = `${idCard}-problem-${index}`;
 
-      // Determine style based on problem type or severity if needed, 
-      // currently alternating colors based on index as per original code
-      const tagStyle = index % 2 === 0
-        ? "bg-[#EDEBFA] text-[#5241cc]"
-        : "bg-red-100 text-red-700";
+      // Determine style based on problem type
+      let tagStyle = "bg-[#EDEBFA] text-[#5241cc]"; // Default: purple
+
+      const problemType = p.type?.toLowerCase() || '';
+
+      if (problemType.includes('overfilling')) {
+        tagStyle = "bg-[#FFE5EC] text-[#E11D48]"; // Pink/Red
+      } else if (problemType.includes('adequate') || problemType.includes('density')) {
+        tagStyle = "bg-[#DBEAFE] text-[#1E40AF]"; // Blue/DarkBlue
+      }
 
       return (
         <React.Fragment key={tagKey}>
-          <span className={`text-xs font-medium px-3 py-2 rounded-md whitespace-nowrap ${tagStyle}`}>
+          <span className={`text-[15px] font-[600] px-3 py-2 rounded-md whitespace-nowrap ${tagStyle}`}>
             {tagText}
           </span>
-          {/* Render additional tags if any, without confidence for now as they are likely secondary */}
           {p.tags && p.tags.map((extraTag, extraIndex) => (
-            <span key={`${tagKey}-extra-${extraIndex}`} className={`text-xs font-medium px-3 py-2 rounded-md whitespace-nowrap ${tagStyle}`}>
+            <span key={`${tagKey}-extra-${extraIndex}`} className={`text-[15px] font-[600] px-3 py-2 rounded-md whitespace-nowrap ${tagStyle}`}>
               {extraTag}
             </span>
           ))}
@@ -118,207 +125,196 @@ const ToothDiagnosis = memo(({
       id={`Tooth-Card-${idCard}`}
       style={{ boxSizing: 'border-box' }}
     >
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <h2 className="text-[1.8rem] font-bold text-gray-900 m-0">
+            {t('side.card.Tooth')} {idCard}
+          </h2>
+          <span className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent">
+            {roots} roots
+          </span>
+          <span className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent">
+            {canals} canals
+          </span>
+        </div>
+      </div>
 
-      <>
-        {/* ===== Header ===== */}
-        <div className="flex justify-between items-center ">
-          <div className="flex items-center gap-2">
-            <h2 className="text-[1.8rem] font-bold text-gray-900 m-0">
-              {t('side.card.Tooth')} {idCard}
-            </h2>
 
 
-            <>
-              <spam className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent ">
-                {roots} roots
-              </spam>
-              <spam className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent " >
-                {canals} canals
-              </spam>
-            </>
+      <div className="flex flex-wrap gap-1 mb-2">
+        <ProblemTags problems={tooth?.problems} />
+      </div>
 
-          </div>
+      {showDiagnosisDetails && tooth && (
+        <div className="mb-2 min-h-fit">
+          {isCbct && (
+            <RenderAllSlices teeth={tooth} isDragging={isDragging} ToothSlicemode={ToothSlicemode} sliceDrager={sliceDrager} />
+          )}
+        </div>
+      )}
+
+      <div className="flex justify-between items-end pt-4 border-t border-gray-100 mt-auto">
+        <div className="flex gap-3 w-full flex-wrap">
+          <EditConditionsDialog toothNumber={idCard}>
+            <Button variant="outline" size="sm" className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-[#0d0c22] flex items-center" onClick={(e) => e.stopPropagation()}>
+              <PlusCircle className="w-4 h-4 mr-2" />
+              {t('side.card.Condition')}
+            </Button>
+          </EditConditionsDialog>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowCommentBox(v => !v);
+            }}
+          >
+            <MessageSquare className="w-4 h-4 mr-2" />
+            {t('side.card.Note')}
+          </Button>
         </div>
 
-        {/* ✅ tags */}
-
-        <div className="flex flex-wrap gap-1 mb-2">
-          <ProblemTags problems={tooth?.problems} />
-        </div>
-
-
-        {/* ===== Images ===== */}
-        {showDiagnosisDetails && tooth && (
-          <div className="mb-2 min-h-fit">
-            {isCbct && (
-              <>
-                <RenderAllSlices teeth={tooth} isDragging={isDragging} ToothSlicemode={ToothSlicemode} sliceDrager={sliceDrager} />
-              </>
-            )}
-          </div>
-        )}
-
-        {/* ===== Footer actions ===== */}
-        <div className="flex justify-between items-end pt-4 border-t border-gray-100">
-          <div className="flex gap-3 w-full flex-wrap ">
-            <AddConditionDialog toothNumber={idCard}>
-              <Button variant="outline" size="sm" className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-[#0d0c22] flex items-center">
-                <PlusCircle className="w-4 h-4 mr-2" />
-                {t('side.card.Condition')}
-              </Button>
-            </AddConditionDialog>
-
+        <div className="ml-auto flex gap-2">
+          {isCbct && !ToothSlicemode && (
             <Button
               variant="outline"
               size="sm"
-              className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center"
+              className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center ml-2"
               onClick={(e) => {
                 e.stopPropagation();
-                setShowCommentBox(v => !v);
+                router.push(`${pathname}/ToothSlice/${idCard}`);
               }}
             >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              {t('side.card.Note')}
+              Slice
             </Button>
-          </div>
+          )}
 
-          <div className="ml-auto flex gap-2 ">
-            {isCbct && !ToothSlicemode && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center ml-2"
-                onClick={() => {
-                  router.push(`${pathname}/ToothSlice/${idCard}`);
-                }}
-              >
-                Slice
-              </Button>
-            )}
+          <Button
+            variant={isApproved ? "success" : "outline"}
+            size="sm"
+            className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+            style={{ color: isApproved ? '#16a34a' : undefined, backgroundColor: isApproved ? '#E9FCF0' : undefined }}
+            onClick={(e) => {
+              e.stopPropagation();
+              updateToothApproval(idCard, !isApproved);
+            }}
+          >
+            {isApproved ? "Approved" : "Approve"}
+          </Button>
+        </div>
+      </div>
 
+      {showCommentBox && (
+        <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200" onClick={(e) => e.stopPropagation()}>
+          <Textarea
+            placeholder={t('side.card.NotePlaceholder') || 'Add a note...'}
+            value={newNote}
+            onChange={(e) => setNewNote(e.target.value)}
+            className="w-full min-h-[80px] mb-2 bg-white"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                handleAddNote();
+              }
+            }}
+          />
+          <div className="flex gap-2 justify-end">
             <Button
-              variant={isApproved ? "success" : "outline"}
+              variant="outline"
               size="sm"
-              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg  flex items-center min-w-[6vw] "
-              style={{ color: isApproved ? '#16a34a' : undefined , backgroundColor: isApproved ? '#E9FCF0' : undefined }}
-              onClick={() => updateToothApproval(idCard, !isApproved)}
+              onClick={() => {
+                setShowCommentBox(false);
+                setNewNote('');
+              }}
             >
-              {isApproved ? "Approved" : "Approve"}
+              {t('side.card.Cancel') || 'Cancel'}
+            </Button>
+            <Button
+              size="sm"
+              className="bg-[#0d0c22] text-white hover:bg-gray-900"
+              onClick={handleAddNote}
+              disabled={!newNote.trim()}
+            >
+              {t('side.card.AddNote') || 'Add Note'}
             </Button>
           </div>
         </div>
+      )}
 
-        {/* Add Note Input */}
-        {showCommentBox && (
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200" onClick={(e) => e.stopPropagation()}>
-            <Textarea
-              placeholder={t('side.card.NotePlaceholder') || 'Add a note...'}
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              className="w-full min-h-[80px] mb-2 bg-white"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                  handleAddNote();
-                }
-              }}
-            />
-            <div className="flex gap-2 justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setShowCommentBox(false);
-                  setNewNote('');
-                }}
-              >
-                {t('side.card.Cancel') || 'Cancel'}
-              </Button>
-              <Button
-                size="sm"
-                className="bg-[#0d0c22] text-white hover:bg-gray-900"
-                onClick={handleAddNote}
-                disabled={!newNote.trim()}
-              >
-                {t('side.card.AddNote') || 'Add Note'}
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Notes */}
-        {notes.length > 0 && (
-          <div className="flex flex-col gap-2 mt-4 w-full">
-            {notes.slice(0, showAllNotes ? notes.length : 3).map((n, idx) => (
-              <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-base text-gray-800">
-                {editIdx === idx ? (
-                  <>
-                    <textarea
-                      className="w-full min-h-[200px] border rounded-lg p-2"
-                      value={editText}
-                      onChange={e => setEditText(e.target.value)}
-                    />
-                    <div className="flex gap-2 mt-2">
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          if (!editText.trim()) {
-                            useDentalStore.getState().deleteToothNote(idCard, idx);
-                          } else {
-                            useDentalStore.getState().updateToothNote(idCard, idx, { text: editText });
-                          }
-                          setEditIdx(null);
-                          setEditText('');
-                        }}
-                        className="bg-[#0d0c22] text-white"
-                      >
-                        Save
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => setEditIdx(null)}>
-                        Cancel
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => {
+      {notes.length > 0 && (
+        <div className="flex flex-col gap-2 mt-4 w-full">
+          {notes.slice(0, showAllNotes ? notes.length : 3).map((n, idx) => (
+            <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-base text-gray-800">
+              {editIdx === idx ? (
+                <>
+                  <textarea
+                    className="w-full min-h-[200px] border rounded-lg p-2"
+                    value={editText}
+                    onChange={e => setEditText(e.target.value)}
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!editText.trim()) {
                           useDentalStore.getState().deleteToothNote(idCard, idx);
-                          setEditIdx(null);
-                          setEditText('');
-                        }}
-                        className="text-white"
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <div
-                    onClick={() => { setEditIdx(idx); setEditText(n.text); }}
-                    className="cursor-pointer break-words line-clamp-4"
-                    title={n.text}
-                  >
-                    {n.text}
+                        } else {
+                          useDentalStore.getState().updateToothNote(idCard, idx, { text: editText });
+                        }
+                        setEditIdx(null);
+                        setEditText('');
+                      }}
+                      className="bg-[#0d0c22] text-white"
+                    >
+                      Save
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setEditIdx(null); }}>
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        useDentalStore.getState().deleteToothNote(idCard, idx);
+                        setEditIdx(null);
+                        setEditText('');
+                      }}
+                      className="text-white"
+                    >
+                      Remove
+                    </Button>
                   </div>
-                )}
-              </div>
-            ))}
+                </>
+              ) : (
+                <div
+                  onClick={(e) => { e.stopPropagation(); setEditIdx(idx); setEditText(n.text); }}
+                  className="cursor-pointer break-words line-clamp-4"
+                  title={n.text}
+                >
+                  {n.text}
+                </div>
+              )}
+            </div>
+          ))}
 
-            {notes.length > 3 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-lg text-gray-600 hover:text-[#0d0c22] w-full"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowAllNotes(!showAllNotes);
-                }}
-              >
-                {showAllNotes ? `Show less` : `Show ${notes.length - 3} more note${notes.length - 3 > 1 ? 's' : ''}`}
-              </Button>
-            )}
-          </div>
-        )}
-      </>
-
+          {notes.length > 3 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-lg text-gray-600 hover:text-[#0d0c22] w-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowAllNotes(!showAllNotes);
+              }}
+            >
+              {showAllNotes ? `Show less` : `Show ${notes.length - 3} more note${notes.length - 3 > 1 ? 's' : ''}`}
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 });

@@ -19,7 +19,7 @@ async function fetchToothSliceData(toothId, abortSignal) {
   const urlParams = new URLSearchParams(window.location.search);
   const patientId = window.location.pathname.split('/')[2]; // Extract from /patient/[patientId]/
   const reportId = urlParams.get('reportId') || urlParams.get('report_id') || cleanToothId;
-  
+
   console.log('🔗 URL Parameters:', { patientId, reportId, toothId: cleanToothId });
 
   try {
@@ -31,17 +31,17 @@ async function fetchToothSliceData(toothId, abortSignal) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         report_id: reportId,
         patient_id: patientId,
-        tooth_id: cleanToothId 
+        tooth_id: cleanToothId
       }),
       signal: abortSignal
     });
     console.log('response:::::', response);
     if (!response.ok) {
       let errorMessage = `HTTP ${response.status}`;
-      
+
       try {
         const errorData = await response.json();
         errorMessage = errorData.error || errorData.message || errorMessage;
@@ -62,8 +62,8 @@ async function fetchToothSliceData(toothId, abortSignal) {
     // Get tooth data from dental store or from the report data
     const dentalStore = useDentalStore.getState();
     const toothData = dentalStore.data?.teeth?.find(t => t.toothNumber === parseInt(cleanToothId, 10)) ||
-                     reportData.data?.tooth ||
-                     { toothNumber: parseInt(cleanToothId, 10) };
+      reportData.data?.tooth ||
+      { toothNumber: parseInt(cleanToothId, 10) };
 
     // Combine all data
     const combinedData = {
@@ -94,17 +94,17 @@ function validateToothSliceData(data, toothId) {
     console.error('❌ No tooth slice data to validate for tooth:', toothId);
     return false;
   }
-  
+
   if (!data.tooth) {
     console.error('❌ No tooth data found for tooth:', toothId);
     return false;
   }
-  
+
   if (!data.slices) {
     console.error('❌ No slices data found for tooth:', toothId);
     return false;
   }
-  
+
   console.log('✅ Tooth slice data validation passed for tooth:', toothId);
   return true;
 }
@@ -117,7 +117,7 @@ function loadToothSliceDataToStore(loadPatientData, data, toothId) {
 
   try {
     console.log('🏪 Loading tooth slice data to store for tooth:', toothId);
-    
+
     // Load the tooth data and slices data to the dental store
     const storeData = {
       teeth: [data.tooth],
@@ -126,15 +126,15 @@ function loadToothSliceDataToStore(loadPatientData, data, toothId) {
       sliceCounts: data.slices?.counts || {},
       voxelSizes: data.slices?.voxelSizes || {}
     };
-    
+
     loadPatientData(storeData);
-    
+
     // Load slices data to image store if it has the method
     const imageStore = useImageStore.getState();
     if (imageStore.loadAllViews && data.slices) {
       imageStore.loadAllViews(data.slices);
     }
-    
+
     console.log('✅ Tooth slice data loaded to stores successfully');
     return true;
   } catch (storeError) {
@@ -149,14 +149,14 @@ function loadToothSliceDataToStore(loadPatientData, data, toothId) {
 export function useToothSliceData(options = {}) {
   const { autoFetch = true } = options;
   const { loadPatientData } = useDentalStore();
-  
+
   const [state, setState] = useState({
     data: null,
     loading: false,
     error: null,
     reportType: 'toothSlice'
   });
-  
+
   const abortControllerRef = useRef(null);
   const currentToothIdRef = useRef(null);
   const isMountedRef = useRef(true);
@@ -171,57 +171,75 @@ export function useToothSliceData(options = {}) {
   // Main data fetching function for tooth slice
   const fetchData = useCallback(async (toothId, options = {}) => {
     const { forceRefresh = false } = options;
-    console.log('🚀 fetchToothSliceData called:', { toothId, forceRefresh, currentTooth: currentToothIdRef.current });
-    
+    const store = useDentalStore.getState();
+    const currentStoreReportId = store.getCurrentReportId(); // Get active report ID
+
+    console.log('🚀 fetchToothSliceData called:', { toothId, forceRefresh, currentTooth: currentToothIdRef.current, currentReport: currentStoreReportId });
+
     if (!toothId) {
       console.warn('⚠️ No toothId provided');
       return null;
     }
 
-    // If same tooth with existing data, skip fetch
+    // If same tooth with existing data AND same report, skip fetch
+    // Note: We check if store has data too, to ensure we are in sync
     if (currentToothIdRef.current === toothId && state.data && !forceRefresh) {
+      // Validate that the data belongs to the current report if possible
+      // But currentToothIdRef reset on unmount, so this is mostly for local component re-renders
       console.log('ℹ️ Same tooth with existing data, skipping fetch');
       return state.data;
     }
-    
+
     // If different tooth, cancel previous requests
     if (currentToothIdRef.current !== toothId) {
       console.log('🔄 Different tooth detected, cleaning up');
-      
+
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
         abortControllerRef.current = null;
       }
     }
-    
+
     currentToothIdRef.current = toothId;
 
     // Check cache first (unless force refresh)
+    // CRITICAL: Check if cache belongs to the CURRENT REPORT
     if (!forceRefresh && toothSliceCache && toothSliceCache.toothId === toothId) {
-      const { data: cachedData, createdAt } = toothSliceCache;
-      const timePassed = Date.now() - createdAt;
-      const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-      
-      if (timePassed < CACHE_DURATION) {
-        console.log('💾 Using cached tooth slice data for same tooth');
-        
-        loadToothSliceDataToStore(loadPatientData, cachedData, toothId);
-        
-        updateState({
-          data: cachedData,
-          loading: false,
-          error: null,
-          reportType: 'toothSlice'
-        });
-        
-        return cachedData;
+      // If we know the current report ID, ensure cache matches it
+      if (currentStoreReportId && toothSliceCache.reportId && toothSliceCache.reportId !== currentStoreReportId) {
+        console.log('🗑️ Cache belongs to different report, ignoring');
+        toothSliceCache = null;
+      } else {
+        const { data: cachedData, createdAt } = toothSliceCache;
+        const timePassed = Date.now() - createdAt;
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+        if (timePassed < CACHE_DURATION) {
+          console.log('💾 Using cached tooth slice data for same tooth');
+
+          loadToothSliceDataToStore(loadPatientData, cachedData, toothId);
+
+          updateState({
+            data: cachedData,
+            loading: false,
+            error: null,
+            reportType: 'toothSlice'
+          });
+
+          return cachedData;
+        }
       }
     }
 
-    // Clear cache for different tooth
-    if (toothSliceCache && toothSliceCache.toothId !== toothId) {
-      toothSliceCache = null;
-      console.log('🗑️ Previous tooth cache cleared');
+    // Clear cache if different tooth OR different report context
+    if (toothSliceCache) {
+      if (toothSliceCache.toothId !== toothId) {
+        toothSliceCache = null;
+        console.log('🗑️ Previous tooth cache cleared (diff tooth)');
+      } else if (currentStoreReportId && toothSliceCache.reportId && toothSliceCache.reportId !== currentStoreReportId) {
+        toothSliceCache = null;
+        console.log('🗑️ Previous tooth cache cleared (diff report)');
+      }
     }
 
     // Set loading state
@@ -239,13 +257,13 @@ export function useToothSliceData(options = {}) {
 
     try {
       const toothSliceData = await fetchToothSliceData(toothId, abortControllerRef.current.signal);
-      
+
       // Handle aborted request
       if (!toothSliceData) {
         console.log('🚫 Tooth slice request was aborted');
         return null;
       }
-      
+
       // Check if request is still current
       if (currentToothIdRef.current !== toothId || !isMountedRef.current) {
         console.log('🚫 Tooth slice request obsolete or component unmounted');
@@ -255,11 +273,12 @@ export function useToothSliceData(options = {}) {
       // Update cache
       toothSliceCache = {
         toothId,
+        reportId: currentStoreReportId || null,
         data: toothSliceData,
         createdAt: Date.now()
       };
 
-      console.log('💾 New tooth slice cached:', toothId);
+      console.log('💾 New tooth slice cached:', toothId, 'Report:', currentStoreReportId);
 
       // Load data to stores
       loadToothSliceDataToStore(loadPatientData, toothSliceData, toothId);
@@ -281,9 +300,9 @@ export function useToothSliceData(options = {}) {
         console.log('🚫 Tooth slice fetch aborted');
         return null;
       }
-      
+
       console.error('❌ Tooth slice fetch failed:', error);
-      
+
       if (currentToothIdRef.current === toothId && isMountedRef.current) {
         updateState({
           data: null,
@@ -292,7 +311,7 @@ export function useToothSliceData(options = {}) {
           reportType: 'toothSlice'
         });
       }
-      
+
       throw error;
     }
   }, [loadPatientData, updateState]);
@@ -322,14 +341,14 @@ export function useToothSliceData(options = {}) {
   // Reset state
   const reset = useCallback(() => {
     console.log('🔄 Resetting tooth slice hook state');
-    
+
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-    
+
     currentToothIdRef.current = null;
-    
+
     if (isMountedRef.current) {
       updateState({
         data: null,
@@ -369,21 +388,21 @@ export function useToothSliceData(options = {}) {
     loading: state.loading,
     error: state.error,
     reportType: state.reportType,
-    
+
     // Actions
     fetchData,
     retry,
     cancel,
     clearCache,
     reset,
-    
+
     // Helpers
     isLoading: state.loading,
     hasData: !!state.data,
     hasError: !!state.error,
     isIdle: !state.loading && !state.error && !state.data,
     isToothSlice: true,
-    
+
     // Debug
     getCacheInfo
   };

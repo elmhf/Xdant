@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { CoordinateUtils, ImageCalculations } from '../../../test/calculations';
+import { CoordinateUtils, ImageCalculations } from '../utils/calculations';
 
 /**
  * Enhanced ZoomMouseEvents - معالجة محسنة لأحداث الماوس للتكبير/التصغير والتحريك
@@ -88,9 +88,9 @@ export const useZoomMouseEvents = (coreState) => {
     }
 
     const { imageWidth, imageHeight } = ImageCalculations.calculateImageDimensions(
-      viewType, 
-      canvasSize.width, 
-      canvasSize.height, 
+      viewType,
+      canvasSize.width,
+      canvasSize.height,
       global.volumeSize
     );
 
@@ -108,14 +108,14 @@ export const useZoomMouseEvents = (coreState) => {
     const params = getViewParams(viewType);
     const zoom = zooms[viewType];
     const pan = pans[viewType];
-    
+
     return CoordinateUtils.canvasToWorld(
-      canvasPoint, 
-      params, 
-      zoom, 
-      pan, 
-      viewType, 
-      global, 
+      canvasPoint,
+      params,
+      zoom,
+      pan,
+      viewType,
+      global,
       currentSlices
     );
   }, [getViewParams, zooms, pans, global, currentSlices]);
@@ -125,7 +125,7 @@ export const useZoomMouseEvents = (coreState) => {
     const params = getViewParams(viewType);
     const zoom = zooms[viewType];
     const pan = pans[viewType];
-    
+
     return CoordinateUtils.worldToCanvas(worldPoint, params, zoom, pan, viewType);
   }, [getViewParams, zooms, pans]);
 
@@ -138,7 +138,7 @@ export const useZoomMouseEvents = (coreState) => {
   // حساب السرعة
   const calculateVelocity = useCallback((currentPos, lastPos, deltaTime) => {
     if (!currentPos || !lastPos || deltaTime === 0) return { x: 0, y: 0 };
-    
+
     return {
       x: (currentPos.x - lastPos.x) / deltaTime,
       y: (currentPos.y - lastPos.y) / deltaTime
@@ -159,7 +159,7 @@ export const useZoomMouseEvents = (coreState) => {
       'panning': 'move',
       'crosshair': 'crosshair'
     };
-    
+
     const newCursor = cursorMap[state] || 'grab';
     setCursors(prev => ({
       ...prev,
@@ -171,7 +171,7 @@ export const useZoomMouseEvents = (coreState) => {
   const getCanvasCenter = useCallback((viewType) => {
     const canvasSize = canvasSizes[viewType];
     if (!canvasSize) return { x: 0, y: 0 };
-    
+
     return {
       x: canvasSize.width / 2,
       y: canvasSize.height / 2
@@ -182,7 +182,7 @@ export const useZoomMouseEvents = (coreState) => {
   const getImageCenter = useCallback((viewType) => {
     const canvas = canvasSizes[viewType];
     if (!canvas || !global?.volumeSize) return getCanvasCenter(viewType);
-    
+
     const { imageWidth, imageHeight, imageX, imageY } = ImageCalculations.calculateImageDimensions(
       viewType,
       canvas.width,
@@ -191,7 +191,7 @@ export const useZoomMouseEvents = (coreState) => {
       zooms[viewType],
       pans[viewType]
     );
-    
+
     return {
       x: imageX + imageWidth / 2,
       y: imageY + imageHeight / 2
@@ -205,23 +205,23 @@ export const useZoomMouseEvents = (coreState) => {
     const currentZoom = zooms[viewType];
     const zoomDiff = targetZoom - currentZoom;
     const zoomStep = zoomDiff / steps;
-    
+
     setZoomState(prev => ({ ...prev, isSmoothZooming: true }));
-    
+
     let currentStep = 0;
     const animate = () => {
       if (currentStep >= steps) {
         setZoomState(prev => ({ ...prev, isSmoothZooming: false }));
         return;
       }
-      
+
       const newZoom = currentZoom + (zoomStep * currentStep);
       updateZoomWithFocus(viewType, newZoom, focusPoint);
       currentStep++;
-      
+
       animationRef.current = requestAnimationFrame(animate);
     };
-    
+
     animate();
   }, [zooms]);
 
@@ -230,7 +230,7 @@ export const useZoomMouseEvents = (coreState) => {
     const clampedZoom = clampZoom(newZoom);
     const currentZoom = zooms[viewType];
     const currentPan = pans[viewType];
-    
+
     if (clampedZoom === currentZoom) return;
 
     if (!focusPoint) {
@@ -238,7 +238,7 @@ export const useZoomMouseEvents = (coreState) => {
     }
 
     const worldFocus = canvasToWorld(focusPoint, viewType);
-    
+
     setZooms(prev => ({ ...prev, [viewType]: clampedZoom }));
 
     // تحديث الإزاحة للحفاظ على نقطة التركيز
@@ -246,7 +246,7 @@ export const useZoomMouseEvents = (coreState) => {
       const newCanvasPosition = worldToCanvas(worldFocus, viewType);
       const deltaX = focusPoint.x - newCanvasPosition.x;
       const deltaY = focusPoint.y - newCanvasPosition.y;
-      
+
       setPans(prev => ({
         ...prev,
         [viewType]: {
@@ -268,18 +268,18 @@ export const useZoomMouseEvents = (coreState) => {
       setPanState(prev => ({ ...prev, smoothTransition: true }));
       setTimeout(() => setPanState(prev => ({ ...prev, smoothTransition: false })), 300);
     }
-    
+
     setPans(prev => {
       const newPan = {
         x: prev[viewType].x + deltaX,
         y: prev[viewType].y + deltaY
       };
-      
+
       // يمكن إضافة تحديد الحدود هنا إذا لزم الأمر
       // const bounds = calculatePanBounds(viewType);
       // newPan.x = Math.max(bounds.minX, Math.min(bounds.maxX, newPan.x));
       // newPan.y = Math.max(bounds.minY, Math.min(bounds.maxY, newPan.y));
-      
+
       return {
         ...prev,
         [viewType]: newPan
@@ -293,22 +293,22 @@ export const useZoomMouseEvents = (coreState) => {
       setPanState(prev => ({ ...prev, hasMomentum: false }));
       return;
     }
-    
+
     setPanState(prev => ({ ...prev, hasMomentum: true }));
-    
+
     const animate = () => {
       velocity.x *= MOMENTUM_DECAY;
       velocity.y *= MOMENTUM_DECAY;
-      
+
       if (Math.abs(velocity.x) < MOMENTUM_THRESHOLD && Math.abs(velocity.y) < MOMENTUM_THRESHOLD) {
         setPanState(prev => ({ ...prev, hasMomentum: false }));
         return;
       }
-      
+
       updatePan(viewType, velocity.x, velocity.y);
       momentumRef.current = requestAnimationFrame(animate);
     };
-    
+
     animate();
   }, [updatePan]);
 
@@ -341,7 +341,7 @@ export const useZoomMouseEvents = (coreState) => {
     stopMomentum();
 
     let point = null;
-    
+
     if (e.evt) {
       const stage = e.target.getStage();
       if (stage) {
@@ -349,9 +349,9 @@ export const useZoomMouseEvents = (coreState) => {
       }
     } else {
       const rect = e.target.getBoundingClientRect();
-      point = { 
-        x: e.clientX - rect.left, 
-        y: e.clientY - rect.top 
+      point = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
       };
     }
 
@@ -363,10 +363,10 @@ export const useZoomMouseEvents = (coreState) => {
     const zoomDirection = deltaY > 0 ? -1 : 1;
     const currentZoom = zooms[viewType];
     const newZoom = currentZoom + (zoomDirection * WHEEL_ZOOM_STEP);
-    
+
     updateZoomWithFocus(viewType, newZoom, point);
     updateCursor(viewType, 'zooming');
-    
+
     // إعادة تعيين المؤشر بعد فترة
     setTimeout(() => updateCursor(viewType, 'grab'), 100);
 
@@ -430,7 +430,7 @@ export const useZoomMouseEvents = (coreState) => {
 
     if (mouseState.isMouseDown && mouseState.activeView === viewType) {
       const distanceMoved = getDistance(mouseState.downPosition, point);
-      
+
       // بدء السحب
       if (!mouseState.isDragging && distanceMoved > DRAG_THRESHOLD) {
         mouseState.isDragging = true;
@@ -443,16 +443,16 @@ export const useZoomMouseEvents = (coreState) => {
         const deltaTime = currentTime - mouseState.lastMoveTime;
         const deltaX = (point.x - mouseState.lastMousePos.x) * PAN_SENSITIVITY;
         const deltaY = (point.y - mouseState.lastMousePos.y) * PAN_SENSITIVITY;
-        
+
         // حساب السرعة
         mouseState.velocity = calculateVelocity(point, mouseState.lastMousePos, deltaTime);
-        
+
         // تحديث تاريخ الحركة للزخم
         mouseState.panHistory.push({ pos: point, time: currentTime });
         if (mouseState.panHistory.length > 5) {
           mouseState.panHistory.shift();
         }
-        
+
         updatePan(viewType, deltaX, deltaY);
         mouseState.lastMoveTime = currentTime;
       }
@@ -474,7 +474,7 @@ export const useZoomMouseEvents = (coreState) => {
     const mouseState = mouseStateRef.current;
     const wasViewType = mouseState.activeView;
     const wasDragging = mouseState.isDragging;
-    
+
     // تطبيق الزخم إذا كان هناك سحب
     if (wasDragging && wasViewType && mouseState.panHistory.length > 1) {
       const recentHistory = mouseState.panHistory.slice(-3);
@@ -488,10 +488,10 @@ export const useZoomMouseEvents = (coreState) => {
           y: acc.y + vel.y
         };
       }, { x: 0, y: 0 });
-      
+
       avgVelocity.x /= (recentHistory.length - 1);
       avgVelocity.y /= (recentHistory.length - 1);
-      
+
       // تطبيق الزخم إذا كانت السرعة كافية
       if (Math.abs(avgVelocity.x) > MOMENTUM_THRESHOLD || Math.abs(avgVelocity.y) > MOMENTUM_THRESHOLD) {
         applyMomentum(wasViewType, avgVelocity);
@@ -522,7 +522,7 @@ export const useZoomMouseEvents = (coreState) => {
   // معالج مغادرة الماوس المحسن
   const handleMouseLeave = useCallback((viewType) => (e) => {
     const mouseState = mouseStateRef.current;
-    
+
     if (mouseState.isDragging) {
       // تطبيق الزخم عند المغادرة
       if (mouseState.panHistory.length > 1) {
@@ -531,7 +531,7 @@ export const useZoomMouseEvents = (coreState) => {
         const velocity = calculateVelocity(lastTwo[1].pos, lastTwo[0].pos, deltaTime);
         applyMomentum(viewType, velocity);
       }
-      
+
       mouseState.isDragging = false;
       mouseState.isMouseDown = false;
       updateCursor(viewType, 'grab');
@@ -544,21 +544,21 @@ export const useZoomMouseEvents = (coreState) => {
       if (typeof e.evt.preventDefault === 'function') e.evt.preventDefault();
       if (typeof e.evt.stopPropagation === 'function') e.evt.stopPropagation();
     }
-    
+
     stopMomentum();
-    
+
     const currentTime = Date.now();
     const mouseState = mouseStateRef.current;
-    
+
     // تحديث عداد النقرات
     if (currentTime - mouseState.lastClickTime < DOUBLE_CLICK_THRESHOLD) {
       mouseState.clickCount += 1;
     } else {
       mouseState.clickCount = 1;
     }
-    
+
     mouseState.lastClickTime = currentTime;
-    
+
     // إعادة تعيين الزوم في النقر المزدوج
     if (mouseState.clickCount === 2) {
       resetZoom(viewType);
@@ -569,11 +569,11 @@ export const useZoomMouseEvents = (coreState) => {
   // معالج النقر العادي المحسن
   const handleClick = useCallback((viewType) => (e) => {
     const mouseState = mouseStateRef.current;
-    
+
     if (mouseState.hasMoved) return;
 
     let point = null;
-    
+
     if (e.evt) {
       const stage = e.target.getStage();
       if (stage) {
@@ -593,7 +593,7 @@ export const useZoomMouseEvents = (coreState) => {
 
   const handleTouchStart = useCallback((viewType) => (e) => {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
-    
+
     const touches = e.touches || e.evt?.touches;
     if (!touches) return;
 
@@ -606,7 +606,7 @@ export const useZoomMouseEvents = (coreState) => {
       // لمسة واحدة - تحريك
       const touch = touches[0];
       const point = { x: touch.clientX, y: touch.clientY };
-      
+
       mouseStateRef.current = {
         ...mouseStateRef.current,
         isMouseDown: true,
@@ -626,7 +626,7 @@ export const useZoomMouseEvents = (coreState) => {
         { x: touch1.clientX, y: touch1.clientY },
         { x: touch2.clientX, y: touch2.clientY }
       );
-      
+
       mouseStateRef.current = {
         ...mouseStateRef.current,
         isPinching: true,
@@ -638,7 +638,7 @@ export const useZoomMouseEvents = (coreState) => {
 
   const handleTouchMove = useCallback((viewType) => (e) => {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
-    
+
     const touches = e.touches || e.evt?.touches;
     if (!touches) return;
 
@@ -648,9 +648,9 @@ export const useZoomMouseEvents = (coreState) => {
       // تحريك بلمسة واحدة
       const touch = touches[0];
       const point = { x: touch.clientX, y: touch.clientY };
-      
+
       const distanceMoved = getDistance(mouseState.downPosition, point);
-      
+
       if (!mouseState.isDragging && distanceMoved > DRAG_THRESHOLD) {
         mouseState.isDragging = true;
         mouseState.hasMoved = true;
@@ -659,15 +659,15 @@ export const useZoomMouseEvents = (coreState) => {
       if (mouseState.isDragging && mouseState.lastMousePos) {
         const deltaX = (point.x - mouseState.lastMousePos.x) * PAN_SENSITIVITY;
         const deltaY = (point.y - mouseState.lastMousePos.y) * PAN_SENSITIVITY;
-        
+
         updatePan(viewType, deltaX, deltaY);
-        
+
         mouseState.panHistory.push({ pos: point, time: Date.now() });
         if (mouseState.panHistory.length > 5) {
           mouseState.panHistory.shift();
         }
       }
-      
+
       mouseState.lastMousePos = point;
     } else if (touches.length === 2 && mouseState.isPinching) {
       // تكبير بلمستين
@@ -677,23 +677,23 @@ export const useZoomMouseEvents = (coreState) => {
         { x: touch1.clientX, y: touch1.clientY },
         { x: touch2.clientX, y: touch2.clientY }
       );
-      
+
       const scale = distance / mouseState.initialPinchDistance;
       const newZoom = mouseState.initialPinchZoom * scale;
-      
+
       // نقطة التركيز بين اللمستين
       const centerPoint = {
         x: (touch1.clientX + touch2.clientX) / 2,
         y: (touch1.clientY + touch2.clientY) / 2
       };
-      
+
       updateZoomWithFocus(viewType, newZoom, centerPoint);
     }
   }, [getDistance, updatePan, updateZoomWithFocus]);
 
   const handleTouchEnd = useCallback((viewType) => (e) => {
     const mouseState = mouseStateRef.current;
-    
+
     if (mouseState.isDragging && mouseState.panHistory.length > 1) {
       // تطبيق الزخم
       const recentHistory = mouseState.panHistory.slice(-3);
@@ -707,15 +707,15 @@ export const useZoomMouseEvents = (coreState) => {
           y: acc.y + vel.y
         };
       }, { x: 0, y: 0 });
-      
+
       avgVelocity.x /= (recentHistory.length - 1);
       avgVelocity.y /= (recentHistory.length - 1);
-      
+
       if (Math.abs(avgVelocity.x) > MOMENTUM_THRESHOLD || Math.abs(avgVelocity.y) > MOMENTUM_THRESHOLD) {
         applyMomentum(viewType, avgVelocity);
       }
     }
-    
+
     // إعادة تعيين الحالة
     mouseStateRef.current = {
       ...mouseStateRef.current,
@@ -799,8 +799,8 @@ export const useZoomMouseEvents = (coreState) => {
     onTouchMove: handleTouchMove(viewType),
     onTouchEnd: handleTouchEnd(viewType),
     tabIndex: 0,
-    style: { 
-      background: "[#0d0c22]", 
+    style: {
+      background: "[#0d0c22]",
       cursor: cursors[viewType],
       outline: 'none',
       touchAction: 'none', // منع التمرير الافتراضي في اللمس
@@ -900,15 +900,15 @@ export const useZoomMouseEvents = (coreState) => {
     const canvas = canvasSizes[viewType];
     const imageSize = getImageDrawnSize(viewType);
     const zoom = zooms[viewType];
-    
+
     if (!canvas || !imageSize) return null;
 
     const scaledImageWidth = imageSize.width * zoom;
     const scaledImageHeight = imageSize.height * zoom;
-    
+
     const maxPanX = Math.max(0, (scaledImageWidth - canvas.width) / 2);
     const maxPanY = Math.max(0, (scaledImageHeight - canvas.height) / 2);
-    
+
     return {
       minX: -maxPanX,
       maxX: maxPanX,
@@ -957,7 +957,7 @@ export const useZoomMouseEvents = (coreState) => {
   const fitToView = useCallback((viewType) => {
     const canvas = canvasSizes[viewType];
     const imageSize = getImageDrawnSize(viewType);
-    
+
     if (!canvas || !imageSize) return;
 
     const zoomX = canvas.width / imageSize.width;
@@ -965,7 +965,7 @@ export const useZoomMouseEvents = (coreState) => {
     const targetZoom = Math.min(zoomX, zoomY) * 0.95; // هامش 5%
 
     const centerPoint = getCanvasCenter(viewType);
-    
+
     smoothZoom(viewType, targetZoom, centerPoint);
     setPans(prev => ({ ...prev, [viewType]: { x: 0, y: 0 } }));
   }, [canvasSizes, getImageDrawnSize, getCanvasCenter, smoothZoom, setPans]);
@@ -978,22 +978,22 @@ export const useZoomMouseEvents = (coreState) => {
     currentZooms: zooms,
     currentPans: pans,
     cursors,
-    
+
     // المعالجات المحسنة
     getStageProps,
-    
+
     // وظائف التكبير/التصغير
     zoomIn,
     zoomOut,
     resetZoom,
     updateZoomWithFocus,
     smoothZoom,
-    
+
     // وظائف التحريك
     updatePan,
     applyMomentum,
     stopMomentum,
-    
+
     // المعالجات الأساسية
     handleWheel,
     handleMouseDown,
@@ -1007,18 +1007,18 @@ export const useZoomMouseEvents = (coreState) => {
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
-    
+
     // أدوات التحكم
     getZoomControls,
     getPanControls,
-    
+
     // معلومات الحالة
     isMouseDown: () => mouseStateRef.current.isMouseDown,
     isDragging: () => mouseStateRef.current.isDragging,
     hasMoved: () => mouseStateRef.current.hasMoved,
     getActiveView: () => mouseStateRef.current.activeView,
     isPinching: () => mouseStateRef.current.isPinching,
-    
+
     // وظائف الإحداثيات
     canvasToWorld,
     worldToCanvas,
@@ -1026,17 +1026,17 @@ export const useZoomMouseEvents = (coreState) => {
     getImageDrawnSize,
     getCanvasCenter,
     getImageCenter,
-    
+
     // وظائف متقدمة
     calculatePanBounds,
     applyPanBounds,
     zoomToRect,
     fitToView,
-    
+
     // التهيئة والتنظيف
     initializePans,
     getDebugInfo,
-    
+
     // الإعدادات القابلة للتخصيص
     ZOOM_STEP,
     MIN_ZOOM,

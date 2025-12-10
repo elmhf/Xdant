@@ -1,18 +1,33 @@
 "use client"
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import EditInfo from "./editInfo";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import SignatureCard from "./SignatureCard";
-import { useState, useEffect } from "react";
+import SupportAccessSection from "./SupportAccessSection";
+import { useState, useEffect, useRef } from "react";
 import useUserStore from "./store/userStore";
+import { Edit2 } from "lucide-react";
+import NameForm from "./NameForm";
+import EmailForm from "./EmailForm";
+import PasswordForm from "./PasswordForm";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 // --------------------------- Component ---------------------------
 export default function AccountInfoCard({ firstName, lastName, email }) {
   // ======= State & Store =======
-  const [open, setOpen] = useState(false);
-  const [openSignature, setOpenSignature] = useState(false);
   const { userInfo, setUserInfo, changePassword, changeName, getUserInfo } = useUserStore();
   const getImageFromCache = useUserStore(state => state.getImageFromCache);
+  const changePhoto = useUserStore(state => state.changePhoto);
+
+  // Form dialog states
+  const [showNameForm, setShowNameForm] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  
+  // File input ref
+  const fileInputRef = useRef(null);
 
   // ======= Effects =======
   useEffect(() => {
@@ -29,7 +44,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
   // ======= Handlers =======
   const handleSignatureSave = async (svgUrl, fileOrBlob) => {
-    console.log(fileOrBlob," fileOrBlob ****************************++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    console.log(fileOrBlob, " fileOrBlob ****************************++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     if (fileOrBlob) {
       const result = await useUserStore.getState().changeSignature(fileOrBlob);
       if (result.success && result.signatureUrl) {
@@ -43,106 +58,218 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
     }
   };
 
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Vérification du type et de la taille
+      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Veuillez choisir une image au format PNG ou JPG uniquement');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert('La taille de l\'image ne doit pas dépasser 10 mégaoctets');
+        return;
+      }
+      setIsUploadingPhoto(true);
+      // Call changePhoto API
+      const result = await changePhoto(file);
+      setIsUploadingPhoto(false);
+      if (result.success && result.profilePhotoUrl) {
+        setUserInfo({ profilePhotoUrl: result.profilePhotoUrl });
+      } else {
+        alert(result.message || "Erreur lors du téléchargement de la photo");
+      }
+    }
+  };
+
   // ======= Cached Profile Photo =======
   const cachedPhoto = getImageFromCache(userInfo.profilePhotoUrl);
   const photoSrc = cachedPhoto?.src || userInfo.profilePhotoUrl;
 
-  // Helper to display '-' if value is null, undefined, or empty string
-  function displayField(value) {
-    if (value === null || value === undefined || value === '') {
-      return <span className="text-gray-400 font-medium">Non spécifié</span>;
-    }
-    return <span className="font-semibold text-gray-900">{value}</span>;
-  }
-
   // =================== JSX ===================
   return (
-    <div className="flex flex-col lg:flex-row gap-6 w-full items-start justify-center">
-      {/* === Main Profile Card === */}
-      <Card className="mx-auto rounded-xl py-0  border-2 border-gray-200 w-full bg-white">
-        <CardContent className="p-8">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-[900] text-gray-900">Informations du compte</h2>
-            <Button 
-              variant="outline" 
-              className="px-6 h-12 text-base font-semibold border-2 border-[#7564ed] text-[#7564ed] hover:bg-[#7564ed] hover:text-white transition-all duration-200" 
-              onClick={() => setOpen(true)}
-            >
-              Modifier
-            </Button>
-          </div>
+    <div className="w-full max-w-7xl mx-auto">
+      {/* Main Content - Row Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Main Profile Card */}
+        <Card className="rounded-xl border-2 border-gray-200 bg-white w-full h-fit">
+          <CardContent className="p-8">
+            {/* My Profile Section */}
+            <div className="mb-10">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Mon Profil</h3>
 
-          {/* Profile Photo Section */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="relative">
-              {photoSrc ? (
-                <img
-                  src={photoSrc}
-                  alt="Profile"
-                  className="w-32 h-32 rounded-full object-cover border-4 border-[#7564ed]/20 shadow-xl"
-                />
-              ) : (
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#7564ed] to-[#6a4fd8] text-white flex items-center justify-center font-bold text-3xl shadow-xl">
-                  {userInfo.firstName?.[0]}{userInfo.lastName?.[0]}
+              {/* Profile Picture */}
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#7564ed] to-[#6a4fd8] flex items-center justify-center text-white text-xl font-bold overflow-hidden">
+                  {photoSrc ? (
+                    <img src={photoSrc} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{userInfo?.firstName?.[0]}{userInfo?.lastName?.[0]}</span>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
+                <div className="flex-1">
+                  <div className="flex gap-3 mb-2">
+                    <button 
+                      onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                      disabled={isUploadingPhoto}
+                      className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isUploadingPhoto ? (
+                        <>
+                          <div className="animate-spin rounded-full w-4 h-4 border-2 border-white border-t-transparent"></div>
+                          Téléchargement...
+                        </>
+                      ) : (
+                        <>
+                          <span>+</span> Changer l'image
+                        </>
+                      )}
+                    </button>
+                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                      Supprimer l'image
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500">Nous supportons les PNG, JPEG et GIF de moins de 10MB</p>
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/jpg"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                  />
+                </div>
+              </div>
 
-          {/* Info Grid */}
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center py-2">
-                <span className="w-68 text-lg font-medium text-gray-600">Prénom</span>
-                <span className="text-lg font-semibold text-gray-900">{displayField(userInfo.firstName || firstName)}</span>
-              </div>
-              <div className="flex items-center py-2">
-                <span className="w-68 text-lg font-medium text-gray-600">Nom</span>
-                <span className="text-lg font-semibold text-gray-900">{displayField(userInfo.lastName || lastName)}</span>
-              </div>
-              <div className="flex items-center py-2">
-                <span className="w-68 text-lg font-medium text-gray-600">Adresse email</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold text-gray-900">{displayField(userInfo.email || email)}</span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Vérifié
-                  </span>
+              {/* Name Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-900">Prénom</label>
+                  <div className="flex gap-3">
+                    <Input
+                      value={userInfo?.firstName || ""}
+                      disabled
+                      className="h-11 text-base bg-gray-50 flex-1"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-900">Nom</label>
+                  <div className="flex gap-3">
+                    <Input
+                      value={userInfo?.lastName || ""}
+                      disabled
+                      className="h-11 text-base bg-gray-50 flex-1"
+                    />
+                    <button
+                      onClick={() => setShowNameForm(true)}
+                      className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap"
+                    >
+                      Modifier le nom
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Status Section */}
-          <div className="mt-8 p-6 bg-blue-50 rounded-xl border-2 border-blue-200">
-            <div className="flex items-center">
-              <svg className="w-6 h-6 text-blue-600 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <p className="text-lg font-semibold text-blue-900">Compte actif</p>
-                <p className="text-sm text-blue-700">Dernière connexion: Aujourd'hui à 14:30</p>
+            {/* Account Security Section */}
+            <div className="mb-10">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Sécurité du compte</h3>
+
+              {/* Email */}
+              <div className="space-y-2 mb-6">
+                <label className="text-sm font-medium text-gray-900">Email</label>
+                <div className="flex gap-3">
+                  <Input
+                    value={userInfo?.email || ""}
+                    disabled
+                    className="h-11 text-base bg-gray-50 flex-1"
+                  />
+                  <button
+                    onClick={() => setShowEmailForm(true)}
+                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap"
+                  >
+                    Changer l'email
+                  </button>
+                </div>
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2 mb-6">
+                <label className="text-sm font-medium text-gray-900">Mot de passe</label>
+                <div className="flex gap-3">
+                  <Input
+                    type="password"
+                    value="••••••••••"
+                    disabled
+                    className="h-11 text-base bg-gray-50 flex-1"
+                  />
+                  <button
+                    onClick={() => setShowPasswordForm(true)}
+                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap"
+                  >
+                    Changer le mot de passe
+                  </button>
+                </div>
+              </div>
+
+              {/* Support Access Button */}
+              <div className="flex items-start justify-between py-4 border-t border-gray-200">
+                <div className="flex-1">
+                  <h4 className="text-base font-semibold text-gray-900 mb-1">Accès au support</h4>
+                  <p className="text-sm text-gray-600">Gérer les paramètres de sécurité et l'accès au support</p>
+                </div>
+                <SupportAccessSection>
+                  <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                    Gérer
+                  </button>
+                </SupportAccessSection>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* === Signature Card === */}
-      <SignatureCard 
-        signature={userInfo.personalSignature} 
-        onSave={handleSignatureSave} 
-      />
+        {/* Signature Card */}
+        <SignatureCard
+          signature={userInfo.personalSignature}
+          onSave={handleSignatureSave}
+        />
+      </div>
 
-      {/* === Edit Modal === */}
-      <EditInfo
-        open={open}
-        onOpenChange={setOpen}
-        userInfo={userInfo}
-        setUserInfo={setUserInfo}
-        changePassword={changePassword}
-        changeName={changeName}
-        onClose={() => setOpen(false)}
-      />
+      {/* Form Dialogs */}
+
+      <Dialog open={showNameForm} onOpenChange={setShowNameForm}>
+        <DialogContent className="max-w-lg bg-white">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Modifier le nom</h2>
+          <NameForm
+            onBack={() => setShowNameForm(false)}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+            changeName={changeName}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
+        <DialogContent className="max-w-lg bg-white">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Changer l'email</h2>
+          <EmailForm
+            onBack={() => setShowEmailForm(false)}
+            userInfo={userInfo}
+            setUserInfo={setUserInfo}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showPasswordForm} onOpenChange={setShowPasswordForm}>
+        <DialogContent className="max-w-lg bg-white">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Changer le mot de passe</h2>
+          <PasswordForm
+            onBack={() => setShowPasswordForm(false)}
+            changePassword={changePassword}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

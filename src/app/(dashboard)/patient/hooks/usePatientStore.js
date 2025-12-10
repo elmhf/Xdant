@@ -53,7 +53,7 @@ const initialState = {
 };
 
 export const usePatientStore = create(
-  persist(
+
     (set, get) => ({
       // ===== INITIAL STATE =====
       ...initialState,
@@ -737,7 +737,7 @@ export const usePatientStore = create(
       }),
     }
   )
-);
+;
 
 // Export selectors for better performance
 export const usePatientSelector = (selector) => usePatientStore(selector);

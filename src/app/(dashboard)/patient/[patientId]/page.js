@@ -25,6 +25,7 @@ import {
   useReportsStats,
   useFilteredReports
 } from '@/stores/patientStore';
+import { useDentalStore } from '@/stores/dataStore';
 import ReportComments from '../components/ReportComments';
 
 const calculateAge = (dateOfBirth) => {
@@ -47,6 +48,22 @@ export default function PatientDetailPage() {
   const params = useParams();
   const router = useRouter();
   const patientId = params.patientId;
+  const resetDentalStore = useDentalStore(state => state.resetData);
+
+  // Clear dental store data when entering patient detail page
+  useEffect(() => {
+    // 1. Reset Zustand store state
+    resetDentalStore();
+    console.log("🧹 Dental store reset on patient page entry");
+
+    // 2. Clear storage manually to be 100% sure
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('dental-storage');
+      localStorage.removeItem('dental-storage');
+      console.log("🧹 Storage keys cleared (session & local)");
+    }
+  }, []); // Run once on mount
+
   // استخدام selectors محسنة للأداء
   const currentPatient = useCurrentPatient();
   const reports = useReportsSelector();

@@ -6,7 +6,7 @@ import { RiFullscreenFill } from 'react-icons/ri';
 import { Stage, Layer, Image } from 'react-konva';
 import { Group } from 'react-konva';
 import { useImageStore } from './stores/imageStore';
-import { ImageCalculations } from '../../test/calculations';
+import { ImageCalculations } from './utils/calculations';
 import { CrosshairLayer } from './hooks/crosshairActivity';
 import { useCrosshairCore } from './core/viewcore';
 import { useCrosshairMouseEvents } from './mouseEvente/crosshairmouseevent';
@@ -16,9 +16,9 @@ import { useZoomMouseEvents } from './mouseEvente/useZoomMouseEvents';
 const DEFAULT_CANVAS_SIZE = { width: 500, height: 200 };
 
 // Enhanced ViewComponent with better mouse event handling
-const ViewComponent = React.memo(({ 
+const ViewComponent = React.memo(({
   stateCore,
-  viewType, 
+  viewType,
   brightness,
   setBrightness,
   crosshairHook,
@@ -62,16 +62,16 @@ const ViewComponent = React.memo(({
   const isLoading = getViewLoading(viewType);
   const loadedCount = getViewLoadingCount(viewType);
   const totalSlices = sliceCounts[viewType];
-  
+
   const stageWidth = containerSize.width;
   const stageHeight = containerSize.height;
-  
+
   // Memoize image calculations
-  const imageDimensions = useMemo(() => 
+  const imageDimensions = useMemo(() =>
     ImageCalculations.calculateImageDimensions(
-      viewType, 
-      stageWidth, 
-      stageHeight, 
+      viewType,
+      stageWidth,
+      stageHeight,
       crosshairHook.global.volumeSize,
       zoomHook.currentZooms?.[viewType] ?? 1,
       zoomHook.currentPans?.[viewType] ?? { x: 0, y: 0 }
@@ -100,8 +100,8 @@ const ViewComponent = React.memo(({
             <div className="text-sm">Loading {viewType} images...</div>
             <div className="text-xs text-gray-400">{loadedCount} / {totalSlices} loaded</div>
             <div className="w-32 bg-gray-700 rounded-full h-2 mt-2">
-              <div 
-                className="bg-blue-400 h-2 rounded-full transition-all duration-300" 
+              <div
+                className="bg-blue-400 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${(loadedCount / totalSlices) * 100}%` }}
               />
             </div>
@@ -143,7 +143,7 @@ const ViewComponent = React.memo(({
       <div className="absolute top-2 left-2 z-20 flex gap-2 bg-[#0d0c22]/60 rounded p-1">
         <button
           className="text-white px-2 py-1 rounded hover:bg-blue-600 bg-blue-500 text-xs"
-          onClick={() => {zoomHook?.zoomIn?.(viewType);console.log(zoomHook.currentPans?.[viewType]?.x ,zoomHook.currentZooms?.[viewType] ,"ooooooookllll")}}
+          onClick={() => { zoomHook?.zoomIn?.(viewType); console.log(zoomHook.currentPans?.[viewType]?.x, zoomHook.currentZooms?.[viewType], "ooooooookllll") }}
           title="Zoom In"
         >
           +
@@ -186,18 +186,18 @@ const ViewComponent = React.memo(({
                 filters={brightness !== 1 ? [Konva.Filters.Brighten] : []}
                 brightness={brightness !== 1 ? (brightness - 1) / 2 : 0}
               />
-       
+
             </Group>
             <CrosshairLayer
-                x={crosshairCoords.x}
-                y={crosshairCoords.y}
-                width={stageWidth}
-                height={stageHeight}
-                viewType={viewType}
-              />
+              x={crosshairCoords.x}
+              y={crosshairCoords.y}
+              width={stageWidth}
+              height={stageHeight}
+              viewType={viewType}
+            />
           </Layer>
         </Stage>
-        
+
         {/* World coordinates display */}
         <div className="absolute bottom-2 right-2 text-xs text-gray-400 bg-[#0d0c22] bg-opacity-75 px-2 py-1 rounded">
           <div>World Position:</div>
@@ -223,22 +223,22 @@ const ViewComponent = React.memo(({
 }, (prevProps, nextProps) => {
   // Custom comparison function for React.memo
   const keysToCompare = ['viewType', 'brightness'];
-  
+
   for (let key of keysToCompare) {
     if (prevProps[key] !== nextProps[key]) {
       return false;
     }
   }
-  
+
   // Deep compare for complex objects
   if (JSON.stringify(prevProps.crosshairHook.crosshair) !== JSON.stringify(nextProps.crosshairHook.crosshair)) {
     return false;
   }
-  
+
   if (JSON.stringify(prevProps.crosshairHook.currentSlices) !== JSON.stringify(nextProps.crosshairHook.currentSlices)) {
     return false;
   }
-  
+
   return true;
 });
 

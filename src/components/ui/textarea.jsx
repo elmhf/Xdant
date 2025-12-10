@@ -8,7 +8,7 @@ function Textarea({ className, ...props }) {
       className={cn(
         className,
         // الأساسيات[]
-        "flex w-full rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-base shadow-xs transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "flex w-full rounded-lg border-1 border-gray-400 bg-white px-3 py-2 text-base shadow-xs transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
         // الألوان و الـ placeholder
         "border-input placeholder:text-muted-foreground dark:bg-input/30",
         // التأثير وقت الـ focus

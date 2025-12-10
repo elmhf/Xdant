@@ -55,6 +55,7 @@ const initialData = {
   treatmentPlan: [],
   conclusion: "", // نتيجة التقرير
   conclusionUpdatedAt: null, // تاريخ آخر تحديث للنتيجة
+  currentReportId: null, // المعرف الحالي للتقرير
   metadata: {
     generatedBy: "",
     lastUpdated: "",
@@ -749,6 +750,23 @@ export const useDentalStore = create(
         }
       },
 
+      // Update all problems for a tooth (e.g. for toggling targetProblem)
+      updateToothProblems: (toothNumber, problems) => {
+        const currentData = JSON.parse(JSON.stringify(get().data));
+        const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
+
+        if (toothIndex !== -1) {
+          currentData.teeth[toothIndex].problems = problems;
+
+          const newHistory = [...get().history.slice(0, get().currentIndex + 1), currentData];
+          set({
+            data: currentData,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+          });
+        }
+      },
+
       addToothNote: (toothNumber, note) => {
         const currentData = JSON.parse(JSON.stringify(get().data));
         const toothIndex = currentData.teeth.findIndex(t => t.toothNumber === toothNumber);
@@ -792,6 +810,17 @@ export const useDentalStore = create(
       isPano: () => get().data.reportType === 'pano ai' || get().data.reportType === 'pano',
       isCbct: () => get().data.reportType === 'cbct ai' || get().data.reportType === 'cbct',
 
+      // إدارة معرف التقرير
+      setCurrentReportId: (id) => {
+        set(state => ({
+          data: {
+            ...state.data,
+            currentReportId: id
+          }
+        }));
+      },
+      getCurrentReportId: () => get().data.currentReportId,
+
       // تحديث النتيجة
       setConclusion: (text) => {
         set(state => ({
@@ -804,18 +833,34 @@ export const useDentalStore = create(
       },
       getConclusion: () => get().data.conclusion || "",
       getConclusionUpdatedAt: () => get().data.conclusionUpdatedAt,
+
+      // Reset Store Data
+      resetData: () => {
+        set({
+          data: JSON.parse(JSON.stringify(initialData)),
+          history: [],
+          currentIndex: -1,
+          loading: false,
+          error: null,
+        });
+      },
     }),
     {
       name: 'dental-storage',
       storage: {
         getItem: (name) => {
+          if (typeof window === 'undefined') return null;
           const str = sessionStorage.getItem(name);
           return str ? JSON.parse(str) : null;
         },
         setItem: (name, value) => {
+          if (typeof window === 'undefined') return;
           sessionStorage.setItem(name, JSON.stringify(value));
         },
-        removeItem: (name) => sessionStorage.removeItem(name),
+        removeItem: (name) => {
+          if (typeof window === 'undefined') return;
+          sessionStorage.removeItem(name);
+        },
       },
     }
   )

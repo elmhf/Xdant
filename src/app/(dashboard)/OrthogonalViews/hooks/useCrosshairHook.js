@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { CoordinateUtils, ImageCalculations } from '../../../test/calculations';
+import { CoordinateUtils, ImageCalculations } from '../utils/calculations';
 
 // Constants
 const DEFAULT_CANVAS_SIZE = { width: 500, height: 200 };
@@ -7,7 +7,7 @@ const DEFAULT_CANVAS_SIZE = { width: 500, height: 200 };
 
 export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   // ===== STATE MANAGEMENT =====
-  
+
   // Canvas sizes for each view
   const [canvasSizes, setCanvasSizes] = useState({
     axial: DEFAULT_CANVAS_SIZE,
@@ -16,17 +16,17 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   });
 
   // Zoom levels for each view
-  const [zooms, setZooms] = useState({ 
-    axial: 1, 
-    coronal: 1, 
-    sagittal: 1 
+  const [zooms, setZooms] = useState({
+    axial: 1,
+    coronal: 1,
+    sagittal: 1
   });
 
   // Pan positions for each view
-  const [pans, setPans] = useState({ 
-    axial: { x: 0, y: 0 }, 
-    coronal: { x: 0, y: 0 }, 
-    sagittal: { x: 0, y: 0 } 
+  const [pans, setPans] = useState({
+    axial: { x: 0, y: 0 },
+    coronal: { x: 0, y: 0 },
+    sagittal: { x: 0, y: 0 }
   });
 
   // Single source of truth - World position coordinates
@@ -40,7 +40,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   });
 
   // ===== CROSSHAIR INTERACTION STATE =====
-  
+
   // Track which crosshair line is being dragged
   const [dragState, setDragState] = useState({
     isDragging: false,
@@ -58,7 +58,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   });
 
   // ===== REFS =====
-  
+
   // Stage references for each view
   const stageRefs = {
     axial: useRef(null),
@@ -102,8 +102,8 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
     const sizes = {};
     ['axial', 'coronal', 'sagittal'].forEach(viewType => {
       const { imageWidth, imageHeight } = ImageCalculations.calculateImageDimensions(
-        viewType, 
-        canvasSizes[viewType].width, 
+        viewType,
+        canvasSizes[viewType].width,
         canvasSizes[viewType].height,
         global.volumeSize,
         zooms[viewType],
@@ -121,10 +121,10 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
       try {
         const params = CoordinateUtils.getViewParams(view, global, drawnSizes[view], canvasSizes);
         positions[view] = CoordinateUtils.worldToCanvas(
-          worldPosition, 
-          params, 
-          zooms[view], 
-          pans[view], 
+          worldPosition,
+          params,
+          zooms[view],
+          pans[view],
           view
         );
       } catch (error) {
@@ -143,7 +143,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
       // Validate and set world position
       const validated = CoordinateUtils.validateCoordinates(newWorldPosition, global);
       setWorldPosition(validated);
-      
+
       // Calculate and set slice indices from world position
       const newSlices = {};
       ['axial', 'coronal', 'sagittal'].forEach(view => {
@@ -252,7 +252,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   // Handle crosshair line drag start with cursor update
   const handleCrosshairDragStart = useCallback((viewType, canvasPos) => {
     const lineType = getCrosshairLineType(viewType, canvasPos);
-    
+
     if (lineType) {
       setDragState({
         isDragging: true,
@@ -264,7 +264,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
 
       // Update cursor to grabbing state
       updateCursor(viewType, lineType, true);
-      
+
       return true; // Indicate drag started
     }
     return false;
@@ -276,9 +276,9 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
 
     try {
       const params = CoordinateUtils.getViewParams(
-        dragState.viewType, 
-        global, 
-        drawnSizes[dragState.viewType], 
+        dragState.viewType,
+        global,
+        drawnSizes[dragState.viewType],
         canvasSizes
       );
 
@@ -292,7 +292,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
       if (dragState.dragType === 'horizontal' || dragState.dragType === 'both') {
         // Moving horizontal line affects Y axis in world coordinates
         const worldDeltaY = deltaY / (zooms[dragState.viewType] || 1);
-        
+
         switch (dragState.viewType) {
           case 'axial':
             newWorldPosition.y += worldDeltaY * global.spacing.y;
@@ -309,7 +309,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
       if (dragState.dragType === 'vertical' || dragState.dragType === 'both') {
         // Moving vertical line affects X axis in world coordinates
         const worldDeltaX = deltaX / (zooms[dragState.viewType] || 1);
-        
+
         switch (dragState.viewType) {
           case 'axial':
             newWorldPosition.x += worldDeltaX * global.spacing.x;
@@ -333,7 +333,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   // Handle crosshair line drag end with cursor reset
   const handleCrosshairDragEnd = useCallback(() => {
     const wasViewType = dragState.viewType;
-    
+
     setDragState({
       isDragging: false,
       dragType: null,
@@ -355,7 +355,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
     try {
       const stage = e.target.getStage();
       const point = stage.getPointerPosition();
-      
+
       if (!point) return;
 
       // Check if clicking on crosshair line to start drag
@@ -368,26 +368,26 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
           return;
         }
       }
-      
+
       // Regular view click - move crosshair to clicked position immediately
       const params = CoordinateUtils.getViewParams(viewType, global, drawnSizes[viewType], canvasSizes);
       const worldPoint = CoordinateUtils.canvasToWorld(
-        point, 
-        params, 
-        zooms[viewType], 
-        pans[viewType], 
-        viewType, 
-        global, 
+        point,
+        params,
+        zooms[viewType],
+        pans[viewType],
+        viewType,
+        global,
         currentSlices
       );
-      
+
       // Update position immediately on mouse down
       updatePosition(worldPoint);
-      
+
       // Remove hoverState and setHoverState
       // Remove handleCrosshairHover and all code that updates or uses hover
       // Remove any references to hoverType, isHovering, or hoverState in the rest of the file
-      
+
     } catch (error) {
       console.error('Error handling view mouse down:', error);
     }
@@ -400,18 +400,18 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   const handleSliceChange = useCallback((view, direction) => {
     const currentSlice = currentSlices[view];
     const maxSlices = (sliceCounts[view] || 1) - 1;
-    
+
     let newSlice = currentSlice;
     if (direction === 'next' && currentSlice < maxSlices) {
       newSlice = currentSlice + 1;
     } else if (direction === 'prev' && currentSlice > 0) {
       newSlice = currentSlice - 1;
     }
-    
+
     if (newSlice !== currentSlice) {
       // Calculate new world position from slice
       const newWorldPosition = { ...worldPosition };
-      
+
       switch (view) {
         case 'axial':
           newWorldPosition.z = global.origin.z + (newSlice * global.spacing.z);
@@ -423,7 +423,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
           newWorldPosition.x = global.origin.x + (newSlice * global.spacing.x);
           break;
       }
-      
+
       updatePosition(newWorldPosition);
     }
   }, [currentSlices, sliceCounts, worldPosition, global, updatePosition]);
@@ -436,7 +436,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
         x: currentPos.x + delta.x,
         y: currentPos.y + delta.y
       };
-      
+
       const params = CoordinateUtils.getViewParams(viewType, global, drawnSizes[viewType], canvasSizes);
       const newWorldPoint = CoordinateUtils.canvasToWorld(
         newCanvasPos,
@@ -447,7 +447,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
         global,
         currentSlices
       );
-      
+
       // Use immediate update for legacy support
       updatePosition(newWorldPoint);
     } catch (error) {
@@ -482,7 +482,7 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
     updateCursor
   }), [
     crosshairPositions, canvasSizes, global, drawnSizes, zooms, pans, currentSlices, updatePosition,
-    dragState, handleCrosshairDragStart, 
+    dragState, handleCrosshairDragStart,
     handleCrosshairDragMove, handleCrosshairDragEnd, handleGlobalMouseMove, handleMouseLeave,
     getCrosshairLineType, getCursorForInteraction, updateCursor
   ]);
@@ -492,9 +492,9 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   // Calculate image dimensions for a view
   const calculateImageDimensions = useCallback((viewType, stageWidth, stageHeight) => {
     return ImageCalculations.calculateImageDimensions(
-      viewType, 
-      stageWidth, 
-      stageHeight, 
+      viewType,
+      stageWidth,
+      stageHeight,
       global.volumeSize,
       zooms[viewType],
       pans[viewType]
@@ -504,9 +504,9 @@ export const useCrosshairHook = (sliceCounts, voxelSizes = {}) => {
   // Get view parameters for coordinate conversion
   const getViewParams = useCallback((viewType) => {
     return CoordinateUtils.getViewParams(
-      viewType, 
-      global, 
-      drawnSizes[viewType], 
+      viewType,
+      global,
+      drawnSizes[viewType],
       canvasSizes
     );
   }, [global, drawnSizes, canvasSizes]);

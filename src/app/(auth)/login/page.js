@@ -6,10 +6,14 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import PinVerification from "../signeup/SingUpSteps/PinVerification";
 import { login } from "@/utils/jwtUtils";
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
+
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +24,7 @@ export default function LoginPage() {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [loginError, setLoginError] = useState("");
   const router = useRouter();
- const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   // Validation functions
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,7 +33,7 @@ export default function LoginPage() {
 
   const validateField = (field, value) => {
     const newErrors = { ...errors };
-    
+
     switch (field) {
       case 'email':
         if (!value.trim()) {
@@ -40,7 +44,7 @@ export default function LoginPage() {
           delete newErrors.email;
         }
         break;
-        
+
       case 'password':
         if (!value) {
           newErrors.password = "Password is required";
@@ -49,7 +53,7 @@ export default function LoginPage() {
         }
         break;
     }
-    
+
     setErrors(newErrors);
   };
 
@@ -74,19 +78,19 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     if (!canLogin) return;
-   
+
 
     setLoading(true);
     setPendingVerification(false);
     setLoginError("");
-    
+
     try {
       await login(email, password);
       startTransition(() => {
         router.push("/");
       });
-      
-      
+
+
     } catch (err) {
       // التحقق من خطأ التحقق المعلق
       if (err.message && err.message.toLowerCase().includes("pending verification")) {
@@ -160,9 +164,8 @@ export default function LoginPage() {
                   type="email"
                   placeholder="you@company.com"
                   maxLength={254}
-                  className={`w-full border rounded-lg bg-white pl-10 pr-4 py-2 text-gray-900 placeholder-gray-400 ${
-                    errors.email ? 'border-red-500' : touched.email ? 'border-green-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full border rounded-lg bg-white pl-10 pr-4 py-2 text-gray-900 placeholder-gray-400 ${errors.email ? 'border-red-500' : touched.email ? 'border-green-500' : 'border-gray-300'
+                    }`}
                   value={email}
                   onChange={(e) => handleChange('email', e.target.value)}
                   onBlur={() => handleBlur('email')}
@@ -188,9 +191,8 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   maxLength={128}
-                  className={`w-full border rounded-lg bg-white pl-10 pr-10 py-2 text-gray-900 placeholder-gray-400 ${
-                    errors.password ? 'border-red-500' : touched.password ? 'border-green-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full border rounded-lg bg-white pl-10 pr-10 py-2 text-gray-900 placeholder-gray-400 ${errors.password ? 'border-red-500' : touched.password ? 'border-green-500' : 'border-gray-300'
+                    }`}
                   value={password}
                   onChange={(e) => handleChange('password', e.target.value)}
                   onBlur={() => handleBlur('password')}
@@ -228,11 +230,10 @@ export default function LoginPage() {
                 type="button"
                 onClick={canLogin ? handleLogin : undefined}
                 disabled={!canLogin || loading}
-                className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${
-                  canLogin && !loading
-                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
+                className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${canLogin && !loading
+                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -270,9 +271,11 @@ export default function LoginPage() {
                 variant="outline"
                 className="w-full flex items-center justify-center space-x-2 border-gray-300 hover:bg-gray-50"
               >
-                <img
+                <Image
                   src="https://www.svgrepo.com/show/475656/google-color.svg"
                   alt="Google"
+                  width={20}
+                  height={20}
                   className="h-5 w-5"
                 />
                 <span>Continue with Google</span>
@@ -283,9 +286,11 @@ export default function LoginPage() {
                 variant="outline"
                 className="w-full flex items-center justify-center space-x-2 border-gray-300 hover:bg-gray-50"
               >
-                <img
+                <Image
                   src="https://www.svgrepo.com/show/448234/linkedin.svg"
                   alt="LinkedIn"
+                  width={20}
+                  height={20}
                   className="h-5 w-5"
                 />
                 <span>Continue with LinkedIn</span>
@@ -300,7 +305,7 @@ export default function LoginPage() {
               className="text-center mt-6"
             >
               <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/signeup" className="text-blue-600 hover:text-blue-800 font-semibold">
                   Sign up
                 </Link>

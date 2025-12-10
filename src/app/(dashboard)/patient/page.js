@@ -1,13 +1,15 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, UserPlus, X } from "lucide-react";
 import { useClinicMembers } from "@/app/(dashboard)/company/hooks";
 import useUserStore from "@/components/features/profile/store/userStore";
+import { useDentalStore } from "@/stores/dataStore";
 import PatientTable from './components/PatientTable';
 import AddPatientDialog from './components/AddPatientDialog';
 import EditPatientDialog from './components/EditPatientDialog';
@@ -26,6 +28,13 @@ export default function PatientPage() {
   const router = useRouter();
   // Get current clinic from the same hook used in company page
   const { currentClinic } = useClinicMembers();
+  const resetDentalStore = useDentalStore(state => state.resetData);
+
+  useEffect(() => {
+    // Clear dental store data when entering patient list to ensure fresh report loading later
+    resetDentalStore();
+    console.log("resetDentalStore");
+  }, []);
 
   const [activeTab, setActiveTab] = useState("my");
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,6 +62,9 @@ export default function PatientPage() {
   // Fetch patients when clinic changes
   useEffect(() => {
     const fetchPatients = async () => {
+      // Skip during build/SSR
+      if (typeof window === 'undefined') return;
+
       if (!currentClinic?.id) {
         setPatients([]);
         return;

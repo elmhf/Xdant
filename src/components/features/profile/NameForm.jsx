@@ -38,7 +38,7 @@ export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) 
   };
 
   return (
-    <form className="p-6 pt-2 space-y-6" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+    <form className=" space-y-6" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
         <span className="font-semibold text-gray-800">Info :</span> Le prénom et le nom doivent contenir au moins <span className="font-semibold">3 lettres</span>, uniquement des caractères alphabétiques (pas de chiffres ni de symboles). Évitez d'utiliser un nom aléatoire ou des caractères spéciaux.
       </div>

@@ -24,6 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Switch } from "@/components/ui/switch";
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -60,7 +62,8 @@ const AddConditionDialog = ({ toothNumber, children }) => {
     condition: "",
     severity: "",
     description: "",
-    notes: ""
+    notes: "",
+    targetProblem: true
   });
 
   const handleInputChange = (field, value) => {
@@ -94,7 +97,9 @@ const AddConditionDialog = ({ toothNumber, children }) => {
       description: formData.description,
       notes: formData.notes,
       date: new Date().toISOString().split('T')[0],
-      images: []
+      date: new Date().toISOString().split('T')[0],
+      images: [],
+      targetProblem: formData.targetProblem
     };
 
     try {
@@ -121,7 +126,8 @@ const AddConditionDialog = ({ toothNumber, children }) => {
       condition: "",
       severity: "",
       description: "",
-      notes: ""
+      notes: "",
+      targetProblem: true
     });
   };
 
@@ -193,6 +199,18 @@ const AddConditionDialog = ({ toothNumber, children }) => {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            {/* Target Problem Switch */}
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="target-problem"
+                checked={formData.targetProblem}
+                onCheckedChange={(checked) => handleInputChange('targetProblem', checked)}
+              />
+              <Label htmlFor="target-problem" className="text-sm font-medium text-gray-900 cursor-pointer">
+                Target Problem? (Show on card)
+              </Label>
             </div>
 
             {/* Description */}

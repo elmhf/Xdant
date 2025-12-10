@@ -1,12 +1,12 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { CoordinateUtils, ImageCalculations } from '../../../test/calculations';
+import { CoordinateUtils, ImageCalculations } from '../utils/calculations';
 
 // Constants
 export const DEFAULT_CANVAS_SIZE = { width: 500, height: 200 };
 
 export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
   // ===== STATE MANAGEMENT =====
-  
+
   // Canvas sizes for each view
   const [canvasSizes, setCanvasSizes] = useState({
     axial: DEFAULT_CANVAS_SIZE,
@@ -15,17 +15,17 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
   });
 
   // Zoom levels for each view
-  const [zooms, setZooms] = useState({ 
-    axial: 1, 
-    coronal: 1, 
-    sagittal: 1 
+  const [zooms, setZooms] = useState({
+    axial: 1,
+    coronal: 1,
+    sagittal: 1
   });
 
   // Pan positions for each view
-  const [pans, setPans] = useState({ 
-    axial: { x: 0, y: 0 }, 
-    coronal: { x: 0, y: 0 }, 
-    sagittal: { x: 0, y: 0 } 
+  const [pans, setPans] = useState({
+    axial: { x: 0, y: 0 },
+    coronal: { x: 0, y: 0 },
+    sagittal: { x: 0, y: 0 }
   });
 
   // Single source of truth - World position coordinates
@@ -39,7 +39,7 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
   });
 
   // ===== REFS =====
-  
+
   // Stage references for each view
   const stageRefs = {
     axial: useRef(null),
@@ -83,8 +83,8 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
     const sizes = {};
     ['axial', 'coronal', 'sagittal'].forEach(viewType => {
       const { imageWidth, imageHeight } = ImageCalculations.calculateImageDimensions(
-        viewType, 
-        canvasSizes[viewType].width, 
+        viewType,
+        canvasSizes[viewType].width,
         canvasSizes[viewType].height,
         global.volumeSize,
         zooms[viewType],
@@ -102,10 +102,10 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
       try {
         const params = CoordinateUtils.getViewParams(view, global, drawnSizes[view], canvasSizes);
         positions[view] = CoordinateUtils.worldToCanvas(
-          worldPosition, 
-          params, 
-          zooms[view], 
-          pans[view], 
+          worldPosition,
+          params,
+          zooms[view],
+          pans[view],
           view
         );
       } catch (error) {
@@ -124,7 +124,7 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
       // Validate and set world position
       const validated = CoordinateUtils.validateCoordinates(newWorldPosition, global);
       setWorldPosition(validated);
-      
+
       // Calculate and set slice indices from world position
       const newSlices = {};
       ['axial', 'coronal', 'sagittal'].forEach(view => {
@@ -142,18 +142,18 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
   const handleSliceChange = useCallback((view, direction) => {
     const currentSlice = currentSlices[view];
     const maxSlices = (sliceCounts[view] || 1) - 1;
-    
+
     let newSlice = currentSlice;
     if (direction === 'next' && currentSlice < maxSlices) {
       newSlice = currentSlice + 1;
     } else if (direction === 'prev' && currentSlice > 0) {
       newSlice = currentSlice - 1;
     }
-    
+
     if (newSlice !== currentSlice) {
       // Calculate new world position from slice
       const newWorldPosition = { ...worldPosition };
-      
+
       switch (view) {
         case 'axial':
           newWorldPosition.z = global.origin.z + (newSlice * global.spacing.z);
@@ -165,7 +165,7 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
           newWorldPosition.x = global.origin.x + (newSlice * global.spacing.x);
           break;
       }
-      
+
       updatePosition(newWorldPosition);
     }
   }, [currentSlices, sliceCounts, worldPosition, global, updatePosition]);
@@ -175,9 +175,9 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
   // Calculate image dimensions for a view
   const calculateImageDimensions = useCallback((viewType, stageWidth, stageHeight) => {
     return ImageCalculations.calculateImageDimensions(
-      viewType, 
-      stageWidth, 
-      stageHeight, 
+      viewType,
+      stageWidth,
+      stageHeight,
       global.volumeSize,
       zooms[viewType],
       pans[viewType]
@@ -187,9 +187,9 @@ export const useCrosshairCore = (sliceCounts, voxelSizes = {}) => {
   // Get view parameters for coordinate conversion
   const getViewParams = useCallback((viewType) => {
     return CoordinateUtils.getViewParams(
-      viewType, 
-      global, 
-      drawnSizes[viewType], 
+      viewType,
+      global,
+      drawnSizes[viewType],
       canvasSizes
     );
   }, [global, drawnSizes, canvasSizes]);

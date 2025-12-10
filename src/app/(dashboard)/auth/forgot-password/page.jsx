@@ -1,3 +1,3 @@
-import ForgotPasswordPage from './ForgotPasswordPage';
+'use client';
 
-export default ForgotPasswordPage;
+export { default } from '../ForgotPasswordPage';

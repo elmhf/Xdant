@@ -45,7 +45,7 @@ export default function PasswordForm({ onBack, changePassword }) {
     passwordMeetsRequirements(newPassword);
 
   return (
-    <form className="p-6 pt-2 space-y-6" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+    <form className=" space-y-6" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
         <span className="font-semibold text-gray-800">Sécurité :</span> Votre mot de passe doit contenir au moins 6 caractères et inclure une combinaison de chiffres, lettres et caractères spéciaux (!$@%).
       </div>

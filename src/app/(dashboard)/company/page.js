@@ -1,4 +1,6 @@
-"use client"
+"use client";
+
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -45,6 +47,9 @@ export default function page() {
   // Fetch invitations when clinic changes
   useEffect(() => {
     const fetchInvitations = async () => {
+      // Skip during build/SSR
+      if (typeof window === 'undefined') return;
+
       if (!currentClinic?.id) {
         setInvitations([]);
         return;
@@ -87,15 +92,15 @@ export default function page() {
 
   // Debug logging
 
-  
-  
-  
-  
-  
-  
-  
 
-  
+
+
+
+
+
+
+
+
 
 
 
