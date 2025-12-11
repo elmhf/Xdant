@@ -138,7 +138,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
             <span className="font-semibold text-gray-800">Sécurité :</span> Pour modifier votre adresse email, nous devons vérifier votre identité en saisissant votre mot de passe actuel.
           </div>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="password" className="text-base font-semibold text-gray-700">
@@ -155,29 +155,29 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
               />
             </div>
           </div>
-          
+
           {error && (
             <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
               {error}
             </div>
           )}
-          
-          <div className="flex gap-4 pt-4">
-            <Button 
-              type="submit" 
-              className="flex-1 h-12 text-base font-semibold bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]" 
-              disabled={!password || loading}
-            >
-              {loading ? "Vérification..." : "Vérifier"}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              className="flex-1 h-12 text-base font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50" 
-              onClick={onBack} 
+
+          <div className="flex gap-3 pt-2 mt-auto justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              onClick={onBack}
               disabled={loading}
             >
               Annuler
+            </Button>
+            <Button
+              type="submit"
+              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              disabled={!password || loading}
+            >
+              {loading ? "Vérification..." : "Vérifier"}
             </Button>
           </div>
         </form>
@@ -188,7 +188,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
             <span className="font-semibold text-gray-800">Info :</span> Veuillez saisir votre nouvelle adresse email. Un code de vérification sera envoyé à cette adresse.
           </div>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-base font-semibold text-gray-700">
@@ -205,35 +205,35 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
               />
             </div>
           </div>
-          
+
           {error && (
             <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
               {error}
             </div>
           )}
-          
+
           {success && (
             <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
               {success}
             </div>
           )}
-          
-          <div className="flex gap-4 pt-4">
-            <Button 
-              type="submit" 
-              className="flex-1 h-12 text-base font-semibold bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]" 
-              disabled={!email || loading}
-            >
-              {loading ? "Envoi..." : "Envoyer le code"}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              className="flex-1 h-12 text-base font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50" 
-              onClick={onBack} 
+
+          <div className="flex gap-3 pt-2 mt-auto justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              onClick={onBack}
               disabled={loading}
             >
               Annuler
+            </Button>
+            <Button
+              type="submit"
+              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              disabled={!email || loading}
+            >
+              {loading ? "Envoi..." : "Envoyer le code"}
             </Button>
           </div>
         </form>
@@ -244,7 +244,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
             <span className="font-semibold text-gray-800">Vérification :</span> Saisissez le code à 6 chiffres envoyé à votre nouvelle adresse email.
           </div>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-base font-semibold text-gray-700">
@@ -270,35 +270,35 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
               </div>
             </div>
           </div>
-          
+
           {error && (
             <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
               {error}
             </div>
           )}
-          
+
           {success && (
             <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
               {success}
             </div>
           )}
-          
-          <div className="flex gap-4 pt-4">
-            <Button 
-              type="submit" 
-              className="flex-1 h-12 text-base font-semibold bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]" 
-              disabled={code.join("").length < 6 || loading}
-            >
-              {loading ? "Vérification..." : "Valider le code"}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              className="flex-1 h-12 text-base font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50" 
-              onClick={onBack} 
+
+          <div className="flex gap-3 pt-2 mt-auto justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              onClick={onBack}
               disabled={loading}
             >
               Annuler
+            </Button>
+            <Button
+              type="submit"
+              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              disabled={code.join("").length < 6 || loading}
+            >
+              {loading ? "Vérification..." : "Valider le code"}
             </Button>
           </div>
         </form>

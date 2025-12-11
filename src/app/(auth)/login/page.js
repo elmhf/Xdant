@@ -3,14 +3,15 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import PinVerification from "../signeup/SingUpSteps/PinVerification";
-import { login } from "@/utils/jwtUtils";
+import { login, login2FA } from "@/utils/jwtUtils";
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
+import CustomOTPInput from "@/components/ui/CustomOTPInput";
 
 export const dynamic = 'force-dynamic';
 
@@ -22,9 +23,24 @@ export default function LoginPage() {
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [tempToken, setTempToken] = useState("");
+  const [twoFactorCode, setTwoFactorCode] = useState("");
   const [loginError, setLoginError] = useState("");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [timer, setTimer] = useState(109);
+
+  useEffect(() => {
+    let interval;
+    if (mfaRequired && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [mfaRequired, timer]);
+
   // Validation functions
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -85,11 +101,17 @@ export default function LoginPage() {
     setLoginError("");
 
     try {
-      await login(email, password);
-      startTransition(() => {
-        router.push("/");
-      });
+      const result = await login(email, password);
 
+      if (result?.mfaRequired) {
+        setMfaRequired(true);
+        setTempToken(result.tempToken);
+        setLoginError("");
+      } else {
+        startTransition(() => {
+          router.push("/");
+        });
+      }
 
     } catch (err) {
       // التحقق من خطأ التحقق المعلق
@@ -98,6 +120,22 @@ export default function LoginPage() {
       } else {
         setLoginError(err.message || "Invalid email or password. Please try again.");
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handle2FASubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setLoginError("");
+    try {
+      await login2FA(twoFactorCode, email, tempToken);
+      startTransition(() => {
+        router.push("/");
+      });
+    } catch (err) {
+      setLoginError(err.message || "Invalid 2FA code.");
     } finally {
       setLoading(false);
     }
@@ -113,6 +151,61 @@ export default function LoginPage() {
   if (pendingVerification) {
     return (
       <PinVerification email={email} onNext={handleVerificationNext} />
+    );
+  }
+
+  if (mfaRequired) {
+    return (
+      <div className="min-h-full w-full bg-gray-50 flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-[480px] bg-transparent rounded-2xl  p-10 text-center"
+        >
+          <div className="mb-8">
+            <h2 className="text-3xl font-semibold text-gray-900 mb-3">Enter Code</h2>
+            <p className="text-gray-500 text-base mb-1">
+              We sent a verification code to <span className="font-medium text-gray-900">{email}</span>.
+            </p>
+            <button
+              onClick={() => { setMfaRequired(false); setTwoFactorCode(""); }}
+              className="text-blue-600 hover:text-blue-700 font-medium text-sm hover:underline"
+            >
+              Wrong email address? Edit
+            </button>
+          </div>
+
+
+
+          <form onSubmit={handle2FASubmit} className="space-y-8">
+            <div className="flex justify-center">
+              <CustomOTPInput value={twoFactorCode} onChange={setTwoFactorCode} error={!!loginError} />
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-12 text-lg font-medium bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl "
+              disabled={loading || twoFactorCode.length !== 6}
+            >
+              {loading ? "Verifying..." : "Verify Code →"}
+            </Button>
+
+            {timer > 0 ? (
+              <p className="text-gray-400 text-sm font-medium">
+                Send again in {Math.floor(timer / 60).toString().padStart(2, '0')}:{(timer % 60).toString().padStart(2, '0')}
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={() => { setTimer(109); /* Add resend logic here if needed */ }}
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline"
+              >
+                Send code again
+              </button>
+            )}
+          </form>
+        </motion.div>
+      </div>
     );
   }
 

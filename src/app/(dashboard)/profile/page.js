@@ -2,10 +2,10 @@ import AccountInfoCard from "@/components/features/profile/profile"
 
 export default function Page() {
   return (
-    <div className="bg-transparent w-full">
+    <div className="bg-transparent w-full px-4">
       {/* Header Section */}
       <div className="bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <div className="">
           <div className="text-start">
             <h2 className="text-3xl md:text-4xl font-[900] text-gray-900 mb-2">
               Mon Profil
@@ -18,7 +18,7 @@ export default function Page() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1">
+      <div className="">
         <AccountInfoCard />
       </div>
     </div>

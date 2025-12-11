@@ -49,7 +49,7 @@ export default function PasswordForm({ onBack, changePassword }) {
       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
         <span className="font-semibold text-gray-800">Sécurité :</span> Votre mot de passe doit contenir au moins 6 caractères et inclure une combinaison de chiffres, lettres et caractères spéciaux (!$@%).
       </div>
-      
+
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="oldPassword" className="text-base font-semibold text-gray-700">
@@ -57,7 +57,7 @@ export default function PasswordForm({ onBack, changePassword }) {
           </Label>
           <Input
             id="oldPassword"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed]"
             type="password"
             placeholder="Entrez votre mot de passe actuel"
             value={oldPassword}
@@ -72,7 +72,7 @@ export default function PasswordForm({ onBack, changePassword }) {
           </Label>
           <Input
             id="newPassword"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed]"
             type="password"
             placeholder="Entrez votre nouveau mot de passe"
             value={newPassword}
@@ -96,47 +96,47 @@ export default function PasswordForm({ onBack, changePassword }) {
           />
         </div>
       </div>
-      
+
       {newPassword && !passwordMeetsRequirements(newPassword) && (
         <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
           Le mot de passe doit contenir au moins 6 caractères et inclure une lettre, un chiffre et un caractère spécial (!$@%).
         </div>
       )}
-      
+
       {newPassword && confirmPassword && newPassword !== confirmPassword && (
         <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
           Les mots de passe ne correspondent pas
         </div>
       )}
-      
+
       {error && (
         <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
           {error}
         </div>
       )}
-      
+
       {success && (
         <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
           {success}
         </div>
       )}
-      
-      <div className="flex gap-4 pt-4">
-        <Button 
-          type="submit" 
-          className="flex-1 h-12 text-base font-semibold bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]" 
-          disabled={!isValid || loading}
-        >
-          {loading ? "Enregistrement..." : "Enregistrer"}
-        </Button>
-        <Button 
-          type="button" 
-          variant="outline" 
-          className="flex-1 h-12 text-base font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50" 
-          onClick={onBack} 
+
+      <div className="flex gap-3 pt-2 mt-auto justify-end">
+        <Button
+          type="button"
+          variant="ghost"
+          className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+          onClick={onBack}
           disabled={loading}
         >
           Annuler
+        </Button>
+        <Button
+          type="submit"
+          className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+          disabled={!isValid || loading}
+        >
+          {loading ? "Enregistrement..." : "Enregistrer"}
         </Button>
       </div>
     </form>

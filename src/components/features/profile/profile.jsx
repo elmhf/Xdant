@@ -11,7 +11,8 @@ import { Edit2 } from "lucide-react";
 import NameForm from "./NameForm";
 import EmailForm from "./EmailForm";
 import PasswordForm from "./PasswordForm";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
 
 // --------------------------- Component ---------------------------
 export default function AccountInfoCard({ firstName, lastName, email }) {
@@ -24,8 +25,9 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
   const [showNameForm, setShowNameForm] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
-  
+
   // File input ref
   const fileInputRef = useRef(null);
 
@@ -89,7 +91,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
   // =================== JSX ===================
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full ">
       {/* Main Content - Row Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Main Profile Card */}
@@ -110,7 +112,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                 </div>
                 <div className="flex-1">
                   <div className="flex gap-3 mb-2">
-                    <button 
+                    <button
                       onClick={() => fileInputRef.current && fileInputRef.current.click()}
                       disabled={isUploadingPhoto}
                       className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -219,7 +221,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                   <h4 className="text-base font-semibold text-gray-900 mb-1">Accès au support</h4>
                   <p className="text-sm text-gray-600">Gérer les paramètres de sécurité et l'accès au support</p>
                 </div>
-                <SupportAccessSection>
+                <SupportAccessSection userInfo={userInfo} setUserInfo={setUserInfo}>
                   <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
                     Gérer
                   </button>
@@ -270,6 +272,12 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
           />
         </DialogContent>
       </Dialog>
-    </div>
+
+
+
+
+
+
+    </div >
   );
 }
