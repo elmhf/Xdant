@@ -28,7 +28,7 @@ const PatientInfoDialog = ({ isOpen, onClose, patient }) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[450px] rounded-2xl border-none shadow-xl p-8 bg-white">
+            <DialogContent className=" rounded-2xl border-none shadow-xl p-8 bg-white">
                 <div className="space-y-6">
                     {/* Patient Name and Title */}
                     <div>

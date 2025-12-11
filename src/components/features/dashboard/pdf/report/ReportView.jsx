@@ -111,7 +111,7 @@ const SignaturePad = ({ onSave, disabled = false }) => {
   }, [hasSignature, onSave]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-4">
+    <div className="w-full  mx-auto space-y-4">
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-slate-900 mb-1">
           منطقة التوقيع الإلكتروني

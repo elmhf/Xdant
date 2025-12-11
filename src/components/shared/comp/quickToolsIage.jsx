@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { 
+import {
   Download, Ruler, ZoomIn, ZoomOut, Maximize, Eye, EyeOff, Grid3X3, MousePointer, Hand, Lock, Unlock, MoreHorizontal, RotateCcw, RotateCw, Square, Circle, Undo, MapPin,
   Trash
 } from 'lucide-react';
@@ -17,11 +17,11 @@ const ToolButton = React.memo(({ tool, isSelected, onClick, variant = 'default',
       orange: 'bg-orange-100 border-2 border-orange-300 text-orange-700 hover:bg-orange-200 hover:border-orange-400',
       default: 'bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-800 border-2 border-transparent hover:border-gray-200'
     };
-    
+
     if (disabled) {
       return `${baseStyles} bg-gray-100 text-gray-400 border-2 border-gray-200 cursor-not-allowed`;
     }
-    
+
     return `${baseStyles} ${isSelected ? variants[variant] + ' font-bold ring-2 ring-offset-2 ring-' + (variant === 'default' ? 'gray-300' : variant + '-300') : variants.default}`;
   };
 
@@ -29,11 +29,11 @@ const ToolButton = React.memo(({ tool, isSelected, onClick, variant = 'default',
     if (disabled) return 'text-gray-400';
     if (tool.id === 'reset-drawing' && !disabled) return 'text-red-600';
     const variants = {
-      blue: 'text-blue-700', 
-      green: 'text-green-700', 
+      blue: 'text-blue-700',
+      green: 'text-green-700',
       purple: 'text-purple-700',
-      indigo: 'text-indigo-700', 
-      red: 'text-red-700', 
+      indigo: 'text-indigo-700',
+      red: 'text-red-700',
       orange: 'text-orange-700',
       default: 'group-hover:text-gray-800'
     };
@@ -42,7 +42,7 @@ const ToolButton = React.memo(({ tool, isSelected, onClick, variant = 'default',
 
   return (
     <button
-      onClick={disabled ? undefined : onClick} 
+      onClick={disabled ? undefined : onClick}
       className={getButtonStyles()}
       title={tool.label}
       aria-label={tool.label}
@@ -84,13 +84,13 @@ export default function Toolbar({
   const [visibleTools, setVisibleTools] = useState([]);
   const [hiddenTools, setHiddenTools] = useState([]);
   const toolbarRef = useRef(null);
-  
+
   const handleToolClick = useCallback((toolId) => {
     if (onToolSelect) {
       onToolSelect(toolId === activeTool ? null : toolId);
     }
   }, [activeTool, onToolSelect]);
-  
+
   const handleViewToolClick = useCallback((toolId) => {
     switch (toolId) {
       case 'zoom-in':
@@ -135,8 +135,9 @@ export default function Toolbar({
       { icon: MapPin, label: 'Point Tool', id: 'point', type: 'drawing', priority: 5 },
     ],
     view: [
-      { icon: Trash, label: 'Reset (Delete)', id: 'reset-drawing', type: 'view', 
-        priority: 10, 
+      {
+        icon: Trash, label: 'Reset (Delete)', id: 'reset-drawing', type: 'view',
+        priority: 10,
         variant: canUndo ? 'red' : 'default',
         disabled: !canUndo
       },
@@ -166,23 +167,23 @@ export default function Toolbar({
   // حساب المساحة المطلوبة وتحديد الأدوات المرئية والمخفية
   const calculateVisibleTools = useCallback(() => {
     if (!toolbarRef.current) return;
-    
+
     const containerWidth = toolbarRef.current.offsetWidth;
     const baseWidth = 38; // كان 48
     const toolWidth = 26; // كان 32
     const separatorWidth = 13; // كان 16
     const dropdownWidth = 64; // كان 80
-    
+
     // حساب عدد الفواصل (عدد المجموعات - 1)
     const separatorCount = Object.keys(toolDefinitions).length - 1;
     const separatorsWidth = separatorCount * separatorWidth;
-    
+
     // المساحة الكلية المتاحة للأدوات
     const availableWidth = containerWidth - baseWidth - separatorsWidth - dropdownWidth;
-    
+
     // عدد الأدوات التي يمكن عرضها
     const maxVisibleTools = Math.floor(availableWidth / toolWidth);
-    
+
     if (maxVisibleTools >= allTools.length) {
       setVisibleTools(allTools);
       setHiddenTools([]);
@@ -233,7 +234,7 @@ export default function Toolbar({
       switch (tool.type) {
         case 'tool': return { variant: 'blue', isSelected: activeTool === tool.id };
         case 'measurement': return { variant: 'green', isSelected: activeTool === tool.id };
-        case 'drawing': 
+        case 'drawing':
           if (tool.id === 'point') return { variant: 'orange', isSelected: activeTool === tool.id, isCircular: true };
           return { variant: 'purple', isSelected: activeTool === tool.id };
         case 'helper':
@@ -246,8 +247,8 @@ export default function Toolbar({
     };
 
     const getClickHandler = () => {
-      if (tool.disabled) return () => {};
-      
+      if (tool.disabled) return () => { };
+
       switch (tool.type) {
         case 'tool':
         case 'measurement':
@@ -259,8 +260,8 @@ export default function Toolbar({
         case 'action':
           if (tool.id === 'download') return onDownload;
           if (tool.id === 'reanalyze') return onReanalyze;
-          return () => {};
-        default: return () => {};
+          return () => { };
+        default: return () => { };
       }
     };
 
@@ -284,7 +285,7 @@ export default function Toolbar({
     <div className="flex items-center justify-center p-3">
       <div
         ref={toolbarRef}
-        className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-2xl px-3 py-2 shadow-lg border border-gray-200/50 hover:shadow-xl transition-shadow duration-300 w-full max-w-2xl mx-auto"
+        className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-2xl px-3 py-2 shadow-lg border border-gray-200/50 hover:shadow-xl transition-shadow duration-300 w-full  mx-auto"
         style={{ minHeight: 45 }}
       >
         {/* الأدوات مع فاصل بين المجموعات */}

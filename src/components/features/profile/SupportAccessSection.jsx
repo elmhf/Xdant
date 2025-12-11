@@ -3,7 +3,7 @@ import { Switch } from "@/components/ui/switch";
 import { X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { initiate2FA, verify2FA, initiateDisable2FA, confirmDisable2FA, getSecurityStatus } from "@/services/securityService";
+import { initiate2FA, verify2FA, initiateDisable2FA, confirmDisable2FA, getSecurityStatus, updateAutoSave } from "@/services/securityService";
 import {
     Dialog,
     DialogContent,
@@ -15,6 +15,8 @@ import {
     DialogFooter
 } from "@/components/ui/dialog";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+
+import DeleteAccountDialog from "./DeleteAccountDialog";
 
 export default function SupportAccessSection({ children, userInfo, setUserInfo }) {
     const { pushNotification } = useNotification();
@@ -30,6 +32,13 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
     const [disablePassword, setDisablePassword] = useState("");
     const [disableCode, setDisableCode] = useState("");
 
+    // Autosave States
+    const [autoSaveEnabled, setAutoSaveEnabled] = useState(false);
+    const [isAutoSaveLoading, setIsAutoSaveLoading] = useState(false);
+
+    // Account Deletion State
+    const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState(false);
+
     // Fetch Security Status on Open
     useEffect(() => {
         if (open) {
@@ -39,6 +48,9 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                     // Update user info store with latest status
                     if (setUserInfo && typeof data.two_factor_enabled !== 'undefined') {
                         setUserInfo({ isTwoFactorEnabled: data.two_factor_enabled });
+                    }
+                    if (typeof data.autosave !== 'undefined') {
+                        setAutoSaveEnabled(data.autosave);
                     }
                 } catch (error) {
                     console.error("Failed to fetch security status:", error);
@@ -110,6 +122,19 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
             handleEnable2FJClick();
         } else {
             setShow2FADisableDialog(true);
+        }
+    };
+
+    const handleAutoSaveToggle = async (checked) => {
+        setIsAutoSaveLoading(true);
+        try {
+            await updateAutoSave(checked);
+            setAutoSaveEnabled(checked);
+            pushNotification("success", `Autosave ${checked ? 'enabled' : 'disabled'} successfully`);
+        } catch (error) {
+            pushNotification("error", error.message);
+        } finally {
+            setIsAutoSaveLoading(false);
         }
     };
 
@@ -392,13 +417,19 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                         )}
                     </div>
 
-                    {/* Support Access Toggle */}
-                    <div className="flex items-start justify-between py-4 mb-6 border-t border-gray-200 pt-6">
+
+
+                    {/* Autosave Toggle */}
+                    <div className="flex items-start justify-between py-4 mb-6 border-t border-gray-200">
                         <div className="flex-1">
-                            <h4 className="text-base font-semibold text-gray-900 mb-1">Accès au support</h4>
-                            <p className="text-sm text-gray-600">Vous nous avez accordé l'accès à votre compte à des fins d'assistance jusqu'au 31 août 2023, 21:40.</p>
+                            <h4 className="text-base font-semibold text-gray-900 mb-1">Sauvegarde automatique</h4>
+                            <p className="text-sm text-gray-600">Activez la sauvegarde automatique pour ne jamais perdre vos données.</p>
                         </div>
-                        <Switch checked={true} />
+                        <Switch
+                            checked={autoSaveEnabled}
+                            onCheckedChange={handleAutoSaveToggle}
+                            disabled={isAutoSaveLoading}
+                        />
                     </div>
 
                     {/* Log out of all devices */}
@@ -418,7 +449,10 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                             <h4 className="text-base font-semibold text-[#f43f5e] mb-1">Supprimer mon compte</h4>
                             <p className="text-sm text-gray-600">Supprimez définitivement le compte et supprimez l'accès à tous les espaces de travail.</p>
                         </div>
-                        <button className="text-md font-bold hover:outline-3 hover:outline-[#f43f5e]  bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-lg flex items-center justify-center min-w-[6vw]">
+                        <button
+                            className="text-md font-bold hover:outline-3 hover:outline-[#f43f5e] bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-lg flex items-center justify-center min-w-[6vw]"
+                            onClick={() => setShowDeleteAccountDialog(true)}
+                        >
                             Supprimer le compte
                         </button>
                     </div>
@@ -437,14 +471,20 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 setDisableStep(1);
                 setDisablePassword("");
                 setDisableCode("");
+                setShowDeleteAccountDialog(false);
             }
         }}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="max-w-[650px] w-full rounded-2xl bg-white p-0 overflow-hidden border-0 shadow-2xl">
+            <DialogContent className=" w-full rounded-2xl bg-white p-0 overflow-hidden border-0 shadow-2xl">
                 {renderContent()}
             </DialogContent>
+
+            <DeleteAccountDialog
+                open={showDeleteAccountDialog}
+                onOpenChange={setShowDeleteAccountDialog}
+            />
         </Dialog>
     );
 }

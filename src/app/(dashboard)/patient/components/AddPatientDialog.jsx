@@ -113,7 +113,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white max-w-2xl max-h-[90vh] w-[90vw] overflow-y-auto">
+      <DialogContent className="bg-white  max-h-[90vh]  overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-900">
             New patient
@@ -214,31 +214,31 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
           </div>
 
           {/* Date of Birth and Patient ID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
-              {/* Gender */}
-          <div className="space-y-2">
-            <Label className="text-sm text-gray-600">
-              Gender <span className="text-red-500">*</span>
-            </Label>
-            <div className="flex gap-2">
-              {['Male', 'Female', 'Other'].map((gender) => (
-                <Button
-                  key={gender}
-                  type="button"
-                  onClick={() => handleInputChange('gender', gender.toLowerCase())}
-                  className={`px-6 py-2 rounded-lg text-sm font-[500] transition-colors ${formData.gender === gender.toLowerCase()
-                    ? 'bg-[#7564ed] text-white border-[#7564ed]'
-                    : 'bg-gray-100 text-gray-700 hover:border-[#7564ed]'
-                    }`}
-                >
-                  {gender}
-                </Button>
-              ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Gender */}
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-600">
+                Gender <span className="text-red-500">*</span>
+              </Label>
+              <div className="flex gap-2">
+                {['Male', 'Female', 'Other'].map((gender) => (
+                  <Button
+                    key={gender}
+                    type="button"
+                    onClick={() => handleInputChange('gender', gender.toLowerCase())}
+                    className={`px-6 py-2 rounded-lg text-sm font-[500] transition-colors ${formData.gender === gender.toLowerCase()
+                      ? 'bg-[#7564ed] text-white border-[#7564ed]'
+                      : 'bg-gray-100 text-gray-700 hover:border-[#7564ed]'
+                      }`}
+                  >
+                    {gender}
+                  </Button>
+                ))}
+              </div>
+              {!formData.gender && formError && (
+                <p className="text-red-500 text-sm">Field is required</p>
+              )}
             </div>
-            {!formData.gender && formError && (
-              <p className="text-red-500 text-sm">Field is required</p>
-            )}
-          </div>
             <div className="space-y-2">
               <Label htmlFor="date_of_birth" className="text-sm text-gray-600">
                 Date of birth <span className="text-red-500">*</span>
@@ -261,7 +261,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
 
           </div>
 
-       
+
 
           {/* Treating Doctors */}
           <div className="space-y-2">

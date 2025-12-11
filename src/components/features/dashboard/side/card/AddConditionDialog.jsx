@@ -136,7 +136,7 @@ const AddConditionDialog = ({ toothNumber, children }) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-[650px] w-full rounded-2xl bg-white p-0 overflow-hidden border-0 shadow-2xl">
+      <DialogContent className=" w-full rounded-2xl bg-white p-0 overflow-hidden border-0 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-8 pt-8 pb-6">
           <DialogTitle className="text-2xl font-bold text-gray-900">

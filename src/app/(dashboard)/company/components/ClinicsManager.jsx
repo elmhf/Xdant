@@ -59,8 +59,8 @@ export const ClinicsManager = () => {
     );
   };
 
-  const handleLeaveClinic = async () => {
-    const result = await confirmLeaveClinic();
+  const handleLeaveClinic = async (action, newOwnerId) => {
+    const result = await confirmLeaveClinic(action, newOwnerId);
     if (result?.success) {
       // Refresh clinics data
       await useUserStore.getState().fetchMyClinics();

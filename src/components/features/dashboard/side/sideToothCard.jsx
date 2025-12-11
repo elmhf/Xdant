@@ -301,7 +301,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
 
       {/* Approval Confirmation Dialog */}
       <Dialog open={showApproveDialog} onOpenChange={setShowApproveDialog}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-900">Confirmer l'approbation</DialogTitle>
             <DialogDescription className="text-gray-600">

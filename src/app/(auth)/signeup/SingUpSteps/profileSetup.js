@@ -98,7 +98,7 @@ export default function ProfileSetup({ onBack, onNext, isFirstStep, isLastStep }
       transition={{ duration: 0.5 }}
       className="h-full flex w-full items-center justify-center px-4"
     >
-      <div className="w-full max-w-lg bg-white space-y-8  border-gray-100">
+      <div className="w-full  bg-white space-y-8  border-gray-100">
         {/* Heading + logo preview */}
         <div className="flex flex-col items-center gap-2">
           <h2 className="text-2xl font-bold mt-2">Profile Setup</h2>

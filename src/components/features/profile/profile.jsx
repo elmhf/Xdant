@@ -96,10 +96,10 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Main Profile Card */}
         <Card className="rounded-xl border-2 border-gray-200 bg-white w-full h-fit">
-          <CardContent className="p-8">
+          <CardContent className="p-6">
             {/* My Profile Section */}
             <div className="mb-10">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Mon Profil</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Account info</h3>
 
               {/* Profile Picture */}
               <div className="flex items-start gap-4 mb-6">
@@ -241,7 +241,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       {/* Form Dialogs */}
 
       <Dialog open={showNameForm} onOpenChange={setShowNameForm}>
-        <DialogContent className="max-w-lg bg-white">
+        <DialogContent className=" bg-white">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Modifier le nom</h2>
           <NameForm
             onBack={() => setShowNameForm(false)}
@@ -253,7 +253,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       </Dialog>
 
       <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
-        <DialogContent className="max-w-lg bg-white">
+        <DialogContent className=" bg-white">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Changer l'email</h2>
           <EmailForm
             onBack={() => setShowEmailForm(false)}
@@ -264,7 +264,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       </Dialog>
 
       <Dialog open={showPasswordForm} onOpenChange={setShowPasswordForm}>
-        <DialogContent className="max-w-lg bg-white">
+        <DialogContent className=" bg-white">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Changer le mot de passe</h2>
           <PasswordForm
             onBack={() => setShowPasswordForm(false)}

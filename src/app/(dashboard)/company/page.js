@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Building, AlertTriangle } from "lucide-react";
 import {
   useClinicMembers,
-  useLeaveClinicWithVerification,
+  useLeaveClinic,
   usePermissions
 } from "./hooks";
-import { LeaveClinicDialogWithVerification } from "./components/LeaveClinicDialogWithVerification";
+import { LeaveClinicDialog } from "./components/LeaveClinicDialog";
 import { ClinicProfileTab } from "./components/ClinicProfileTab";
 import { MembersTab } from "./components/MembersTab";
 import { InvitationsTab } from "./components/InvitationsTab";
@@ -23,21 +23,26 @@ export default function page() {
   // Use custom hooks
   const { clinicMembers, loading, error, refetch, currentClinic } = useClinicMembers();
   const {
-    step,
-    password,
-    setPassword,
     leaving,
     leaveMessage,
     showLeaveDialog,
     setShowLeaveDialog,
     clinicToLeave,
-    error: passwordError,
-    verifyPassword,
-    leaveClinic,
     openLeaveDialog,
     closeLeaveDialog,
-    handleBack
-  } = useLeaveClinicWithVerification();
+    confirmLeaveClinic
+  } = useLeaveClinic();
+
+  const handleLeaveClinic = async (action, newOwnerId) => {
+    const result = await confirmLeaveClinic(action, newOwnerId);
+    if (result?.success) {
+      // Refresh clinics data handled in useLeaveClinic usually, but if we need page refresh:
+      // useClinicMembers refetch is mostly for table. 
+      // if we leave current clinic, we might be redirected or need to refresh member list if we just transferred?
+      // If we leave, we leave.
+      window.location.reload();
+    }
+  };
 
   // Fetch invitations data once at page level
   const [invitations, setInvitations] = useState([]);
@@ -256,19 +261,14 @@ export default function page() {
       </div>
 
       {/* Leave Clinic Dialog with Verification */}
-      <LeaveClinicDialogWithVerification
+      {/* Leave Clinic Dialog */}
+      <LeaveClinicDialog
         open={showLeaveDialog}
         onOpenChange={setShowLeaveDialog}
         clinic={clinicToLeave}
-        step={step}
-        password={password}
-        setPassword={setPassword}
-        error={passwordError}
-        leaving={leaving}
-        leaveMessage={leaveMessage}
-        onVerifyPassword={verifyPassword}
-        onLeaveClinic={leaveClinic}
-        onBack={handleBack}
+        onConfirm={handleLeaveClinic}
+        loading={leaving}
+        message={leaveMessage}
       />
     </div>
   );

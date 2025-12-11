@@ -49,7 +49,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (selectedDoctors.length === 0) {
       setFormError("Please select at least one doctor");
       return;
@@ -76,7 +76,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
         address: patient.address || "",
         treating_doctor_id: treating_doctor_ids
       };
-      
+
       const response = await fetch(`http://localhost:5000/api/patients/update`, {
         method: 'PUT',
         headers: {
@@ -93,7 +93,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
       }
 
       setFormSuccess("Doctors added successfully!");
-      
+
       // Close dialog after success
       setTimeout(() => {
         onClose();
@@ -114,7 +114,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white  max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-4xl font-bold text-gray-900">
             Add Treating Doctors
@@ -145,39 +145,38 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
             <Label className="text-sm text-gray-600">
               Select Doctors <span className="text-red-500">*</span>
             </Label>
-            
+
             <div className="relative">
               <Select onValueChange={addDoctor} value={selectedDoctors.map(doctor => doctor.id).join(',')}>
-                <SelectTrigger className={`h-fit w-full text-base border-2 ${
-                  selectedDoctors.length === 0 && formError ? 'border-red-500' : ''
-                }  rounded-lg bg-white p-2`}>
+                <SelectTrigger className={`h-fit w-full text-base border-2 ${selectedDoctors.length === 0 && formError ? 'border-red-500' : ''
+                  }  rounded-lg bg-white p-2`}>
                   <div className="flex flex-wrap gap-2 items-center w-full">
                     {selectedDoctors.length > 0 ? (
                       selectedDoctors.map((doctor) => (
-         <div
-                              key={doctor.id}
-                              className="flex items-center gap-2 bg-[#e4e7eb86]  text-[#0d0c22] px-3 py-3.5 rounded-full border border-purple-200"
-                            >
-                                                           <Avatar className="h-10 w-10">
-                                 <AvatarFallback className="bg-[#7564ed] w-full h-full text-white text-xs">
-                                   {((doctor.first_name || '').slice(0, 1) + 
-                                     (doctor.last_name || '').slice(0, 2)).toUpperCase()}
-                                 </AvatarFallback>
-                               </Avatar>
-                                                           <span className="text-sm font-medium">
-                                 {doctor.first_name || ""} {doctor.last_name || ""}
-                               </span>
-                                                           <div
-                              onPointerDown ={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  removeDoctor(doctor.id);
-                                }}
-                                 className="text-gray-400 hover:text-[#ff254e] ml-1 cursor-pointer p-1 rounded-full transition-colors"
-                               >
-                                 <X className="w-5 h-5 stroke-[3.5] hover:text-[#ff254e] " />
-                               </div>
-                            </div>
+                        <div
+                          key={doctor.id}
+                          className="flex items-center gap-2 bg-[#e4e7eb86]  text-[#0d0c22] px-3 py-3.5 rounded-full border border-purple-200"
+                        >
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-[#7564ed] w-full h-full text-white text-xs">
+                              {((doctor.first_name || '').slice(0, 1) +
+                                (doctor.last_name || '').slice(0, 2)).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm font-medium">
+                            {doctor.first_name || ""} {doctor.last_name || ""}
+                          </span>
+                          <div
+                            onPointerDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              removeDoctor(doctor.id);
+                            }}
+                            className="text-gray-400 hover:text-[#ff254e] ml-1 cursor-pointer p-1 rounded-full transition-colors"
+                          >
+                            <X className="w-5 h-5 stroke-[3.5] hover:text-[#ff254e] " />
+                          </div>
+                        </div>
                       ))
                     ) : (
                       <span className="text-gray-500 text-base">Select doctors</span>
@@ -191,7 +190,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
                             <AvatarFallback className="bg-[#7558db] text-white text-xs">
-                              {((doctor.first_name || '').slice(0, 1) + 
+                              {((doctor.first_name || '').slice(0, 1) +
                                 (doctor.last_name || '').slice(0, 2)).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>

@@ -55,5 +55,45 @@ export async function getSecurityStatus() {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Failed to fetch security status');
-    return data; // { two_factor_enabled: boolean }
+    return data; // { two_factor_enabled: boolean, autosave: boolean }
+}
+
+export async function updateAutoSave(autosave) {
+    const res = await fetch(`${BACKEND_URL}/api/security/autosave`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ autosave }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to update autosave settings');
+    return data;
+}
+
+export async function initiateAccountDeletion(password) {
+    const res = await fetch(`${BACKEND_URL}/api/auth/delete-account/initiate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        const error = new Error(data.message || 'Failed to initiate account deletion');
+        error.data = data; // store data for ownedClinics check
+        throw error;
+    }
+    return data;
+}
+
+export async function confirmAccountDeletion(code) {
+    const res = await fetch(`${BACKEND_URL}/api/auth/delete-account/confirm`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ code }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to confirm account deletion');
+    return data;
 }

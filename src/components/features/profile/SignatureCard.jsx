@@ -352,7 +352,7 @@ export default function SignatureCard({ signature, onSave }) {
 
   return (
     <Card className="rounded-xl p-0 border-2 border-gray-200 bg-white w-full h-fit">
-      <CardContent className="p-8">
+      <CardContent className="p-6">
         <div className="mb-8">
           <h3 className="text-xl font-bold text-gray-900 mb-2">Signature et tampon</h3>
           <p className="text-sm text-gray-600">Signature individuelle</p>

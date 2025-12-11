@@ -7,7 +7,7 @@ export const useLeaveClinic = () => {
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [clinicToLeave, setClinicToLeave] = useState(null);
 
-  const leaveClinic = async (clinicId, clinicName) => {
+  const leaveClinic = async (clinicId, clinicName, action = null, newOwnerId = null) => {
     if (!clinicId) {
       setLeaveMessage("ID de clinique invalide");
       return;
@@ -21,7 +21,7 @@ export const useLeaveClinic = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
-        body: JSON.stringify({ clinicId })
+        body: JSON.stringify({ clinicId, action, newOwnerId })
       });
 
       const data = await res.json();
@@ -49,6 +49,7 @@ export const useLeaveClinic = () => {
 
         return { success: true, message: "Vous avez quitté la clinique avec succès" };
       } else {
+        console.log("ErreurErreurErreurErreur", data);
         setLeaveMessage(data.message || "Erreur lors de la sortie de la clinique");
         return { success: false, message: data.message || "Erreur lors de la sortie de la clinique" };
       }
@@ -73,10 +74,10 @@ export const useLeaveClinic = () => {
     setLeaveMessage("");
   };
 
-  const confirmLeaveClinic = async () => {
+  const confirmLeaveClinic = async (action = null, newOwnerId = null) => {
     if (!clinicToLeave) return;
 
-    const result = await leaveClinic(clinicToLeave.id, clinicToLeave.clinic_name);
+    const result = await leaveClinic(clinicToLeave.id, clinicToLeave.clinic_name, action, newOwnerId);
     return result;
   };
 

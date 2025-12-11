@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, LogOut, Lock, ArrowLeft } from "lucide-react";
 
-export const LeaveClinicDialogWithVerification = ({ 
-  open, 
-  onOpenChange, 
-  clinic, 
+export const LeaveClinicDialogWithVerification = ({
+  open,
+  onOpenChange,
+  clinic,
   step,
   password,
   setPassword,
@@ -38,20 +38,20 @@ export const LeaveClinicDialogWithVerification = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-white border-2 border-gray-200 shadow-2xl">
+      <DialogContent className=" bg-white border-2 border-gray-200 shadow-2xl">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-3 text-gray-900 text-xl font-bold">
             <AlertTriangle className="h-6 w-6 text-gray-600" />
             {step === 1 ? "Vérification requise" : "Quitter la clinique"}
           </DialogTitle>
           <DialogDescription className="text-base text-gray-600 mt-2">
-            {step === 1 
+            {step === 1
               ? "Pour des raisons de sécurité, veuillez confirmer votre mot de passe avant de quitter la clinique."
               : "Êtes-vous sûr de vouloir quitter cette clinique ? Cette action ne peut pas être annulée."
             }
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="py-6">
           {/* Step 1: Password Verification */}
           {step === 1 && (
@@ -71,7 +71,7 @@ export const LeaveClinicDialogWithVerification = ({
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-3">
                 <label className="block text-base font-semibold text-gray-700">
                   Mot de passe
@@ -109,7 +109,7 @@ export const LeaveClinicDialogWithVerification = ({
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
@@ -134,34 +134,33 @@ export const LeaveClinicDialogWithVerification = ({
               </div>
             </div>
           )}
-          
+
           {leaveMessage && (
-            <div className={`mt-4 p-4 rounded-xl text-base font-medium ${
-              leaveMessage.includes('succès') 
-                ? 'bg-green-50 text-green-800 border-2 border-green-200' 
+            <div className={`mt-4 p-4 rounded-xl text-base font-medium ${leaveMessage.includes('succès')
+                ? 'bg-green-50 text-green-800 border-2 border-green-200'
                 : 'bg-red-50 text-red-800 border-2 border-red-200'
-            }`}>
+              }`}>
               {leaveMessage}
             </div>
           )}
         </div>
-        
+
         <DialogFooter className="pt-4">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onBack}
             disabled={leaving}
             className="flex-1 h-12 text-base font-semibold border-2"
           >
             {step === 1 ? "Annuler" : "Retour"}
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={leaving || (step === 1 && !password.trim())}
             className="flex-1 h-12  font-semiboldbg-white text-xl font-medium bg-gray-100 text-[#ff254e] border-2 border-[#ff254e] hover:bg-[#ff254e] hover:text-white"
           >
-            {leaving 
-              ? (step === 1 ? "Vérification..." : "Sortie en cours...") 
+            {leaving
+              ? (step === 1 ? "Vérification..." : "Sortie en cours...")
               : (step === 1 ? "Vérifier" : "Quitter la clinique")
             }
           </Button>

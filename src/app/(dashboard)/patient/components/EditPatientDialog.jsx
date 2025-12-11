@@ -173,7 +173,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, patient, hideTre
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white  max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-900">
             Edit patient

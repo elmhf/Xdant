@@ -8,10 +8,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronDown, Search, UserPlus, Trash2, UserCheck } from "lucide-react";
-import { 
-  useMemberFilters, 
-  useInviteMember, 
-  useMemberBadges, 
+import {
+  useMemberFilters,
+  useInviteMember,
+  useMemberBadges,
   useTableUtils,
   useDeleteMember,
   useChangeMemberRole
@@ -21,27 +21,27 @@ import { ChangeMemberRoleDialog } from "./ChangeMemberRoleDialog";
 
 export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => {
   // Use custom hooks with passed data
-  const { 
-    searchQuery, 
-    setSearchQuery, 
-    filterRole, 
-    setFilterRole, 
-    sorting, 
-    handleSort, 
-    filteredMembers, 
-    clearFilters, 
-    hasActiveFilters 
+  const {
+    searchQuery,
+    setSearchQuery,
+    filterRole,
+    setFilterRole,
+    sorting,
+    handleSort,
+    filteredMembers,
+    clearFilters,
+    hasActiveFilters
   } = useMemberFilters(clinicMembers || []);
-  const { 
-    inviteDialogOpen, 
-    setInviteDialogOpen, 
-    inviteEmail, 
-    setInviteEmail, 
-    inviteRole, 
-    setInviteRole, 
-    inviteLoading, 
-    inviteMessage, 
-    handleInviteMember 
+  const {
+    inviteDialogOpen,
+    setInviteDialogOpen,
+    inviteEmail,
+    setInviteEmail,
+    inviteRole,
+    setInviteRole,
+    inviteLoading,
+    inviteMessage,
+    handleInviteMember
   } = useInviteMember();
   const { getStatusBadge, getRoleBadge } = useMemberBadges();
   const { renderMemberAvatar, formatDate } = useTableUtils();
@@ -101,22 +101,22 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
               <DropdownMenuContent>
                 <DropdownMenuLabel>Filtrer par rôle</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setFilterRole("all")}> 
+                <DropdownMenuItem onClick={() => setFilterRole("all")}>
                   Tous les rôles
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterRole("Dentist")}> 
+                <DropdownMenuItem onClick={() => setFilterRole("Dentist")}>
                   Dentiste
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterRole("Receptionist")}> 
+                <DropdownMenuItem onClick={() => setFilterRole("Receptionist")}>
                   Réceptionniste
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterRole("assistant_access")}> 
+                <DropdownMenuItem onClick={() => setFilterRole("assistant_access")}>
                   Assistant
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterRole("Hygienist")}> 
+                <DropdownMenuItem onClick={() => setFilterRole("Hygienist")}>
                   Hygiéniste
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterRole("Technician")}> 
+                <DropdownMenuItem onClick={() => setFilterRole("Technician")}>
                   Technicien
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -134,7 +134,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                   Inviter un membre
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px] bg-white border-2 border-gray-200">
+              <DialogContent className=" bg-white border-2 border-gray-200">
                 <DialogHeader className="pb-4">
                   <DialogTitle className="flex items-center gap-3 text-[#7564ed] text-xl font-bold">
                     <UserPlus className="h-6 w-6" />
@@ -175,11 +175,10 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                     </Select>
                   </div>
                   {inviteMessage && (
-                    <div className={`p-4 rounded-xl text-base font-medium border-2 ${
-                      inviteMessage.includes('successfully')
+                    <div className={`p-4 rounded-xl text-base font-medium border-2 ${inviteMessage.includes('successfully')
                         ? 'bg-green-50 text-green-800 border-green-200'
                         : 'bg-red-50 text-red-800 border-red-200'
-                    }`}>
+                      }`}>
                       {inviteMessage}
                     </div>
                   )}

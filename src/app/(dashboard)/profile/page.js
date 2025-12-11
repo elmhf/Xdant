@@ -7,12 +7,9 @@ export default function Page() {
       <div className="bg-transparent">
         <div className="">
           <div className="text-start">
-            <h2 className="text-3xl md:text-4xl font-[900] text-gray-900 mb-2">
-              Mon Profil
+            <h2 className="text-3xl md:text-4xl font-[700] text-gray-900 mb-2">
+              My Profile
             </h2>
-            <p className="text-gray-600 text-lg">
-              Gérez vos informations personnelles, sécurité et signature
-            </p>
           </div>
         </div>
       </div>

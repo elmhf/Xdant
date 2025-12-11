@@ -36,7 +36,7 @@ export const ChangeMemberRoleDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-white border-2 border-gray-200 shadow-2xl">
+      <DialogContent className=" bg-white border-2 border-gray-200 shadow-2xl">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-3 text-gray-900 text-xl font-bold">
             <UserCheck className="h-6 w-6 text-gray-600" />
@@ -112,8 +112,8 @@ export const ChangeMemberRoleDialog = ({
 
           {message && (
             <div className={`mt-4 p-4 rounded-xl text-base font-medium border-2 ${message.includes('succès')
-                ? 'bg-green-50 text-green-800 border-green-200'
-                : 'bg-red-50 text-red-800 border-red-200'
+              ? 'bg-green-50 text-green-800 border-green-200'
+              : 'bg-red-50 text-red-800 border-red-200'
               }`}>
               {message}
             </div>

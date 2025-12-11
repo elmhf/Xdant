@@ -10,19 +10,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, UserX, Trash2 } from "lucide-react";
 
-export const DeleteMemberDialog = ({ 
-  open, 
-  onOpenChange, 
-  member, 
-  onConfirm, 
-  loading, 
-  message 
+export const DeleteMemberDialog = ({
+  open,
+  onOpenChange,
+  member,
+  onConfirm,
+  loading,
+  message
 }) => {
   if (!member) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-white border-2 border-gray-200 shadow-2xl">
+      <DialogContent className=" bg-white border-2 border-gray-200 shadow-2xl">
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-3 text-gray-900 text-xl font-bold">
             <UserX className="h-6 w-6 text-gray-600" />
@@ -32,7 +32,7 @@ export const DeleteMemberDialog = ({
             Êtes-vous sûr de vouloir supprimer ce membre de la clinique ? Cette action ne peut pas être annulée.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="py-6">
           <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
             <div className="flex items-center gap-4">
@@ -52,7 +52,7 @@ export const DeleteMemberDialog = ({
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-4">
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
@@ -75,34 +75,33 @@ export const DeleteMemberDialog = ({
               </div>
             </div>
           </div>
-          
+
           {message && (
-            <div className={`mt-4 p-4 rounded-xl text-base font-medium border-2 ${
-              message.includes('succès') 
-                ? 'bg-green-50 text-green-800 border-green-200' 
+            <div className={`mt-4 p-4 rounded-xl text-base font-medium border-2 ${message.includes('succès')
+                ? 'bg-green-50 text-green-800 border-green-200'
                 : 'bg-red-50 text-red-800 border-red-200'
-            }`}>
+              }`}>
               {message}
             </div>
           )}
         </div>
-        
+
         <DialogFooter className="pt-4">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onOpenChange}
             disabled={loading}
             className="flex-1 h-12 text-base font-semibold border-2"
           >
             Annuler
           </Button>
-          <Button 
+          <Button
             onClick={onConfirm}
             disabled={loading}
             className="flex-1 h-12 text-base font-semibold bg-[#ff254e] hover:bg-[#e01e3e] text-white border-2 border-[#ff254e]"
           >
-            {loading 
-              ? "Suppression..." 
+            {loading
+              ? "Suppression..."
               : "Supprimer le membre"
             }
           </Button>

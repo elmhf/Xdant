@@ -50,7 +50,7 @@ const ReportComments = ({ description = "", onEdit }) => {
 
       {/* Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className=" w-4xl sm:max-w-lg rounded-2xl border-none shadow-xl p-4 bg-white">
+        <DialogContent className=" w-4xl sm: rounded-2xl border-none shadow-xl p-4 bg-white">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-gray-900">
               Clinical case description
