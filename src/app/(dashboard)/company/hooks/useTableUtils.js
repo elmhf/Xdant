@@ -4,7 +4,7 @@ import useUserStore from '@/components/features/profile/store/userStore';
 export const useTableUtils = () => {
   const renderMemberAvatar = (member) => {
     return (
-      <Avatar className="h-8 w-8 flex-shrink-0">
+      <Avatar className="h-11 w-11 flex-shrink-0">
         <AvatarImage
           src={member.profilePhotoUrl ? useUserStore.getState().getImageFromCache(member.profilePhotoUrl)?.src || member.profilePhotoUrl : `https://api.dicebear.com/7.x/initials/svg?seed=${member.name}`}
         />

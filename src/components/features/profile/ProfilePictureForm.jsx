@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import useUserStore from "./store/userStore";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
   const [preview, setPreview] = useState(userInfo.profilePhotoUrl || "https://randomuser.me/api/portraits/men/1.jpg");
@@ -8,6 +9,7 @@ export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = React.useRef(null);
   const changePhoto = useUserStore(state => state.changePhoto);
+  const { pushNotification } = useNotification();
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -15,11 +17,11 @@ export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
       // Vérification du type et de la taille
       const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
       if (!allowedTypes.includes(file.type)) {
-        alert('Veuillez choisir une image au format PNG ou JPG uniquement');
+        pushNotification('error', 'Veuillez choisir une image au format PNG ou JPG uniquement');
         return;
       }
       if (file.size > 10 * 1024 * 1024) {
-        alert('La taille de l\'image ne doit pas dépasser 10 mégaoctets');
+        pushNotification('error', 'La taille de l\'image ne doit pas dépasser 10 mégaoctets');
         return;
       }
       setTempImage(URL.createObjectURL(file));
@@ -32,8 +34,9 @@ export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
         setUserInfo({ profilePhotoUrl: result.profilePhotoUrl });
         setTempImage(null);
         onBack();
+        pushNotification('success', 'Photo de profil mise à jour avec succès');
       } else {
-        alert(result.message || "Erreur lors du téléchargement de la photo");
+        pushNotification('error', result.message || "Erreur lors du téléchargement de la photo");
       }
     }
   };
@@ -47,7 +50,7 @@ export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
         <span className="font-semibold text-gray-800">Info :</span> Choisissez une photo de profil claire avec un fond neutre et un visage bien visible.
       </div>
-      
+
       <div className="flex flex-col items-center space-y-6">
         <div className="relative">
           <img
@@ -61,7 +64,7 @@ export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
             </svg>
           </div>
         </div>
-        
+
         <Button
           className="w-full h-12 text-base font-semibold border-2 border-[#7564ed] text-[#7564ed] hover:bg-[#7564ed] hover:text-white transition-all duration-200"
           variant="outline"
@@ -71,7 +74,7 @@ export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
           <span className="text-2xl mr-2">+</span>
           Choisir une nouvelle photo
         </Button>
-        
+
         <input
           type="file"
           accept="image/png, image/jpeg, image/jpg"
@@ -79,7 +82,7 @@ export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
           className="hidden"
           onChange={handleFileChange}
         />
-        
+
         <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 w-full">
           <h4 className="font-semibold text-gray-800 mb-3">Recommandations :</h4>
           <ul className="space-y-2 text-sm text-gray-700">
@@ -98,14 +101,14 @@ export default function ProfilePictureForm({ onBack, userInfo, setUserInfo }) {
           </ul>
         </div>
       </div>
-      
+
       {isUploading && (
         <div className="flex gap-3 items-center justify-center p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
           <div className="animate-spin rounded-full w-6 h-6 border-2 border-[#7564ed] border-t-transparent"></div>
           <span className="text-[#7564ed] font-semibold">Téléchargement en cours...</span>
         </div>
       )}
-      
+
     </div>
   );
 } 

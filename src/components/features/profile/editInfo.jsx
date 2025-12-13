@@ -145,7 +145,7 @@ export default function EditInfo({
           <div className="space-y-8">
             {/* My Profile Section */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-6">My Profile</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-">My Profile</h3>
               
               {/* Profile Picture */}
               <div className="flex items-start gap-4 mb-6">

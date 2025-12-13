@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, UserPlus, X } from "lucide-react";
-import { useClinicMembers } from "@/app/(dashboard)/company/hooks";
+import { useClinicMembers, usePermissions } from "@/app/(dashboard)/company/hooks";
 import useUserStore from "@/components/features/profile/store/userStore";
 import { useDentalStore } from "@/stores/dataStore";
 import PatientTable from './components/PatientTable';
@@ -29,6 +29,11 @@ export default function PatientPage() {
   // Get current clinic from the same hook used in company page
   const { currentClinic } = useClinicMembers();
   const resetDentalStore = useDentalStore(state => state.resetData);
+  const { userRole } = usePermissions(currentClinic?.id);
+  const user = useUserStore(state => state.userInfo);
+
+  const isOwner = currentClinic?.created_by === user?.user_id;
+  const canAddPatient = isOwner || userRole === 'full_access';
 
   useEffect(() => {
     // Clear dental store data when entering patient list to ensure fresh report loading later
@@ -250,13 +255,15 @@ export default function PatientPage() {
             </h1>
 
             {/* Add Patient Button */}
-            <Button
-              onClick={() => setIsAddPatientOpen(true)}
-              className="bg-[#7564ed] hover:bg-[#6a4fd8] text-xl text-white border-2 border-[#7564ed] h-12 font-semibold px-6"
-            >
-              <Plus className="mr-2 text-xl h-5 w-5" />
-              Add new patient
-            </Button>
+            {canAddPatient && (
+              <Button
+                onClick={() => setIsAddPatientOpen(true)}
+                className="bg-[#7564ed] hover:bg-[#6a4fd8] text-xl text-white border-2 border-[#7564ed] h-12 font-semibold px-6"
+              >
+                <Plus className="mr-2 text-xl h-5 w-5" />
+                Add new patient
+              </Button>
+            )}
           </div>
         </div>
       </div>

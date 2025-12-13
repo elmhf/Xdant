@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useUserStore from "@/components/features/profile/store/userStore";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -14,18 +15,16 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
   const [email, setEmail] = useState(value);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
   const inputsRef = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
+  const { pushNotification } = useNotification();
 
   // Step 1: Send OTP to new email
   const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!validateEmail(email)) {
-      setError("Adresse e-mail invalide.");
+      pushNotification('error', "Adresse e-mail invalide.");
       return;
     }
-    setError("");
     setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/api/auth/send-email-otp-code", {
@@ -36,13 +35,13 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
+        pushNotification('success', "Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
         setStep(2);
       } else {
-        setError(data.message || "Erreur lors de l'envoi du code de vérification.");
+        pushNotification('error', data.message || "Erreur lors de l'envoi du code de vérification.");
       }
     } catch (e) {
-      setError("Erreur réseau");
+      pushNotification('error', "Erreur réseau");
     }
     setLoading(false);
   };
@@ -51,10 +50,9 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     if (otp.join("").length < 6) {
-      setError("Veuillez saisir le code à 6 chiffres.");
+      pushNotification('error', "Veuillez saisir le code à 6 chiffres.");
       return;
     }
-    setError("");
     setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/api/clinics//update-email", {
@@ -65,16 +63,15 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Adresse e-mail modifiée avec succès.");
+        pushNotification('success', "Adresse e-mail modifiée avec succès.");
         setTimeout(() => {
-          setSuccess("");
           onSave(email);
         }, 1200);
       } else {
-        setError(data.message || "Code incorrect ou expiré.");
+        pushNotification('error', data.message || "Code incorrect ou expiré.");
       }
     } catch (e) {
-      setError("Erreur réseau");
+      pushNotification('error', "Erreur réseau");
     }
     setLoading(false);
   };
@@ -85,7 +82,6 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
     const newOtp = [...otp];
     newOtp[i] = value;
     setOtp(newOtp);
-    setError("");
     if (value && i < 5) {
       inputsRef[i + 1].current.focus();
     }
@@ -116,12 +112,12 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
             Pour garantir le sérieux et la sécurité de votre clinique, veuillez utiliser une <span className="font-semibold">adresse e-mail professionnelle</span> (par exemple, contact@votreclinique.com) et évitez d'utiliser une adresse personnelle ou celle que vous utilisez pour votre compte utilisateur. Cela permet de séparer votre activité professionnelle de vos accès personnels.
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-base font-semibold text-gray-700">
+            <Label htmlFor="email" className="text-base font-medium text-gray-700">
               Adresse e-mail
             </Label>
             <Input
               id="email"
-              className="h-12  w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+              className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -134,7 +130,7 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
       {step === 2 && (
         <>
           <div className="space-y-4">
-            <Label className="block text-base font-semibold text-gray-700 mb-4">
+            <Label className="block text-base font-medium text-gray-700 mb-4">
               Code de vérification
             </Label>
             <div className="flex gap-3 justify-center mb-4" dir="ltr">
@@ -149,7 +145,7 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
                   onChange={e => handleChange(i, e.target.value)}
                   onKeyDown={e => handleKeyDown(i, e)}
                   onPaste={i === 0 ? handlePaste : undefined}
-                  className="w-full h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-xl focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20 outline-none transition bg-white"
+                  className="w-full h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20 outline-none transition bg-white"
                   autoFocus={i === 0}
                   disabled={loading}
                 />
@@ -159,34 +155,22 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
         </>
       )}
 
-      {error && (
-        <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
-          {success}
-        </div>
-      )}
-
-      <div className="flex gap-4 pt-4">
-        <Button
-          type="submit"
-          className="flex-1 h-12 text-base font-semibold bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]"
-          disabled={loading}
-        >
-          {loading ? (step === 1 ? "Envoi..." : "Vérification...") : (step === 1 ? "Envoyer le code" : "Valider le code")}
-        </Button>
+      <div className="flex gap-4 pt-4 w-full justify-end">
         <Button
           type="button"
-          variant="outline"
-          className="flex-1 h-12 text-base font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+          variant="ghost"
+          className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
           onClick={onBack}
           disabled={loading}
         >
           Annuler
+        </Button>
+        <Button
+          type="submit"
+          className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+          disabled={loading}
+        >
+          {loading ? (step === 1 ? "Envoi..." : "Vérification...") : (step === 1 ? "Envoyer le code" : "Valider le code")}
         </Button>
       </div>
     </form>

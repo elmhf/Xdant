@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import getStroke from "perfect-freehand";
 import useUserStore from "./store/userStore";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 // Utility function to convert stroke to SVG path
 function getSvgPathFromStroke(stroke) {
@@ -84,6 +85,7 @@ export default function SignatureCard({ signature, onSave }) {
   const strokeStartTime = useRef(null);
 
   const changeSignature = useUserStore(state => state.changeSignature);
+  const { pushNotification } = useNotification();
 
 
   // Convert screen coordinates to SVG coordinates
@@ -91,7 +93,6 @@ export default function SignatureCard({ signature, onSave }) {
     const svg = svgRef.current;
     if (!svg) return null;
 
-    const rect = svg.getBoundingClientRect();
     let clientX, clientY, eventPressure = 0.5;
 
     if (evt.type.startsWith('touch')) {
@@ -105,24 +106,27 @@ export default function SignatureCard({ signature, onSave }) {
       eventPressure = evt.pressure || 0.5;
     }
 
-    // Convert to SVG viewBox coordinates (0-400 range for better precision)
-    const x = ((clientX - rect.left) / rect.width) * 400;
-    const y = ((clientY - rect.top) / rect.height) * 300;
+    // Use SVG's built-in coordinate transformation
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+
+    const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
 
     // Calculate velocity if we have a previous point
     let velocity = 1;
     if (lastPoint.current && strokeStartTime.current) {
       const timeDelta = Date.now() - strokeStartTime.current;
       const distance = Math.hypot(
-        x - lastPoint.current[0],
-        y - lastPoint.current[1]
+        svgP.x - lastPoint.current[0],
+        svgP.y - lastPoint.current[1]
       );
       velocity = Math.min(2, Math.max(0.5, distance / Math.max(timeDelta, 1)));
     }
 
     const point = [
-      Math.max(0, Math.min(400, x)),
-      Math.max(0, Math.min(300, y)),
+      Math.max(0, Math.min(400, svgP.x)),
+      Math.max(0, Math.min(300, svgP.y)),
       eventPressure,
       velocity,
       Date.now()
@@ -253,16 +257,17 @@ export default function SignatureCard({ signature, onSave }) {
         onSave(result.signatureUrl || tempUrl);
         setEditing(false);
         clearSignature();
+        pushNotification('success', 'Signature enregistrée avec succès');
       } else {
         setOptimisticSignature(null);
-        alert(result.message || "Erreur lors de l'enregistrement de la signature.");
+        pushNotification('error', result.message || "Erreur lors de l'enregistrement de la signature.");
       }
     } catch (error) {
       setIsUploading(false);
       setIsSaving(false);
       setOptimisticSignature(null);
       console.error('Error saving signature:', error);
-      alert("Une erreur s'est produite lors de l'enregistrement de la signature.");
+      pushNotification('error', "Une erreur s'est produite lors de l'enregistrement de la signature.");
     }
   }, [strokes, currentStroke, onSave, clearSignature, changeSignature]);
 
@@ -276,7 +281,7 @@ export default function SignatureCard({ signature, onSave }) {
 
     // التحقق من نوع الملف
     if (!file.type.startsWith('image/')) {
-      alert('Veuillez choisir un fichier image valide.');
+      pushNotification('error', 'Veuillez choisir un fichier image valide.');
       return;
     }
 
@@ -291,14 +296,15 @@ export default function SignatureCard({ signature, onSave }) {
 
       if (result.success) {
         onSave(result.signatureUrl);
+        pushNotification('success', 'Signature téléchargée avec succès');
       } else {
-        alert(result.message || "Erreur lors du téléchargement de la signature.");
+        pushNotification('error', result.message || "Erreur lors du téléchargement de la signature.");
       }
     } catch (error) {
       setIsSaving(false);
       setIsUploading(false);
       console.error('Error uploading signature:', error);
-      alert("Une erreur s'est produite lors du téléchargement de la signature.");
+      pushNotification('error', "Une erreur s'est produite lors du téléchargement de la signature.");
     }
 
     // Reset file input
@@ -354,10 +360,9 @@ export default function SignatureCard({ signature, onSave }) {
     <Card className="rounded-xl p-0 border-2 border-gray-200 bg-white w-full h-fit">
       <CardContent className="p-6">
         <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Signature et tampon</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Signature</h3>
           <p className="text-sm text-gray-600">Signature individuelle</p>
         </div>
-
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
@@ -369,71 +374,55 @@ export default function SignatureCard({ signature, onSave }) {
 
         {!editing ? (
           <>
-            <div className="w-full h-64 flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 mb-6 overflow-hidden">
-              {isSaving ? (
-                <div className="flex flex-col items-center justify-center w-full h-full">
-                  <LoadingSpinner size="w-12 h-12" />
-                  <span className="text-[#7564ed] mt-3 font-medium">Enregistrement de la signature...</span>
-                  {optimisticSignature && (
-                    <img src={optimisticSignature} alt="معاينة التوقيع" className="max-h-32 max-w-full object-contain opacity-60 mt-2 rounded" />
-                  )}
-                </div>
-              ) : isUploading ? (
-                <div className="flex flex-col items-center justify-center w-full h-full">
-                  <LoadingSpinner size="w-10 h-10" />
-                  <span className="text-[#7564ed] mt-2">Téléchargement de la signature...</span>
-                  {optimisticSignature && (
-                    <img src={optimisticSignature} alt="معاينة التوقيع" className="max-h-32 max-w-full object-contain opacity-60 mt-2 rounded" />
-                  )}
-                </div>
-              ) : optimisticSignature ? (
-                <img src={optimisticSignature} alt="معاينة التوقيع" className="max-h-full max-w-full object-contain opacity-80" />
-              ) : signature ? (
-                <img
-                  src={signature}
-                  alt="Signature enregistrée"
-                  className="max-h-full max-w-full object-contain"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling?.style.setProperty('display', 'block');
-                  }}
-                />
-              ) : (
-                <div className="text-center text-gray-500 px-4">
-                  <div className="text-4xl mb-2">✍️</div>
-                  <div className="text-sm">Aucune signature enregistrée</div>
-                </div>
-              )}
-            </div>
-            <div className="flex gap-3 w-full">
-              <Button
-                className="flex-1 bg-gray-900 hover:bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={() => setEditing(true)}
-                disabled={isSaving}
-              >
+            {/* Signature Display Area */}
+            <div className="w-full bg-white rounded-xl   overflow-hidden">
+              {/* Signature content */}
+              <div className="w-full border-dashed border-2 rounded-xl border-gray-300 h-64 flex items-center justify-center bg-gray-100 overflow-hidden">
                 {isSaving ? (
-                  <div className="flex items-center gap-2">
-                    <LoadingSpinner size="w-4 h-4" />
-                    <span>Enregistrement...</span>
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    <LoadingSpinner size="w-12 h-12" />
+                    <span className="text-[#7564ed] mt-3 font-medium">Enregistrement de la signature...</span>
+                    {optimisticSignature && (
+                      <img src={optimisticSignature} className="max-h-32 max-w-full object-contain opacity-60 mt-2 rounded" />
+                    )}
                   </div>
-                ) : (
-                  "Modifier"
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={handleUploadClick}
-                disabled={isSaving}
-              >
-                {isSaving ? (
-                  <div className="flex items-center gap-2">
-                    <LoadingSpinner size="w-4 h-4" />
+                ) : isUploading ? (
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    <LoadingSpinner size="w-10 h-10" />
+                    <span className="text-[#7564ed] mt-2">Téléchargement de la signature...</span>
+                    {optimisticSignature && (
+                      <img src={optimisticSignature} className="max-h-32 max-w-full object-contain opacity-60 mt-2 rounded" />
+                    )}
                   </div>
+                ) : optimisticSignature ? (
+                  <img src={optimisticSignature} className="max-h-full max-w-full object-contain opacity-80" />
+                ) : signature ? (
+                  <img
+                    src={signature}
+                    className="max-h-full max-w-full object-contain px-8"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling?.style.setProperty('display', 'block');
+                    }}
+                  />
                 ) : (
-                  "Télécharger un fichier"
+                  <div className="text-center text-gray-500 px-4">
+                    <div className="text-4xl mb-2">✍️</div>
+                    <div className="text-sm">Aucune signature enregistrée</div>
+                  </div>
                 )}
-              </Button>
+              </div>
+
+              {/* Action Button */}
+              <div className="px-0 py-4 bg-white border-t border-gray-100 flex items-end justify-end">
+                <button
+                  className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                  onClick={() => setEditing(true)}
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Enregistrement..." : "Modifier la signature"}
+                </button>
+              </div>
             </div>
           </>
         ) : (
@@ -443,18 +432,31 @@ export default function SignatureCard({ signature, onSave }) {
               {isSaving && (
                 <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-20 rounded-xl">
                   <div className="flex flex-col items-center">
-                    <LoadingSpinner size="w-10 h-10" />
-                    <span className="text-[#7564ed] mt-2 font-medium">Enregistrement de la signature...</span>
+                    <LoadingSpinner size="w-15 h-15" stroke="#7564ed" className="stroke-2" />
                   </div>
                 </div>
               )}
 
+              {/* Clear button icon positioned top right */}
+              {!isSaving && hasSignatureData && (
+                <button
+                  onClick={clearSignature}
+                  className="absolute top-2 right-2 z-10 p-2 bg-red-50 hover:bg-red-100 rounded-lg transition-colors group"
+                  disabled={isSaving}
+                >
+                  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
+
               {/* Guideline overlay - not part of the saved SVG */}
               <svg
-                className="absolute top-0 left-0 w-full h-full pointer-events-none z-10"
+                className="absolute top-0 left-0 w-full h-full pointer-events-none z-5"
                 width="100%"
-                height="300"
+                height="100%"
                 viewBox="0 0 400 300"
+                preserveAspectRatio="none"
                 style={{ position: 'absolute', inset: 0 }}
               >
                 <line
@@ -471,8 +473,9 @@ export default function SignatureCard({ signature, onSave }) {
               <svg
                 ref={svgRef}
                 width="100%"
-                height="300"
-                viewBox="0 0 400 300"
+                height="100%"
+                viewBox="0 0 400 200"
+                preserveAspectRatio="xMidYMid meet"
                 className={`cursor-crosshair w-full border-2 border-dashed border-gray-300 bg-white rounded-xl transition-all duration-75 ${isSaving ? 'pointer-events-none opacity-50' : ''}`}
                 onMouseDown={isSaving ? undefined : startDrawing}
                 onMouseMove={isSaving ? undefined : continueDrawing}
@@ -500,21 +503,23 @@ export default function SignatureCard({ signature, onSave }) {
               <div className="text-sm text-gray-600 mb-3 text-center">
                 Dessinez votre signature dans la zone ci-dessus
               </div>
-              <div className="flex justify-between items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={clearSignature}
-                  disabled={!hasSignatureData || isSaving}
-                >
-                  Effacer
-                </Button>
+              <div className="flex justify-end items-center gap-2">
                 <div className="flex gap-2">
                   <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-500 hover:text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => {
+                      setEditing(false);
+                      clearSignature();
+                    }}
+                    disabled={isSaving}
+                  >
+                    Annuler
+                  </Button> <Button
                     variant="outline"
                     size="sm"
-                    className="text-gray-700 border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
                     onClick={saveSignature}
                     disabled={!hasSignatureData || isSaving}
                   >
@@ -527,18 +532,7 @@ export default function SignatureCard({ signature, onSave }) {
                       "Enregistrer"
                     )}
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-500 hover:text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={() => {
-                      setEditing(false);
-                      clearSignature();
-                    }}
-                    disabled={isSaving}
-                  >
-                    Annuler
-                  </Button>
+
                 </div>
               </div>
             </div>

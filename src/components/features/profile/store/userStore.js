@@ -1,4 +1,4 @@
-import {create} from 'zustand'
+import { create } from 'zustand'
 
 const useUserStore = create((set, get) => ({
   userInfo: {
@@ -12,7 +12,7 @@ const useUserStore = create((set, get) => ({
 
   // Cache للصور المحملة
   imageCache: new Map(),
-  
+
   // حالة تحميل الصور
   imageLoadingStates: new Map(),
 
@@ -22,7 +22,7 @@ const useUserStore = create((set, get) => ({
   setCurrentClinicId: (clinicId) => set({ currentClinicId: clinicId }),
   invitations: [],
   setInvitations: (invitations) => set({ invitations }),
-  
+
   // Role system and mapping
   roleLevels: {
     'limited_access': 1,
@@ -30,7 +30,7 @@ const useUserStore = create((set, get) => ({
     'assistant': 3,
     'full_access': 4
   },
-  
+
   // Role mapping from display names to API roles
   roleMapping: {
     'dentist': 'clinic_access',
@@ -39,20 +39,20 @@ const useUserStore = create((set, get) => ({
     'admin': 'full_access',
     'owner': 'full_access'
   },
-  
+
   // Get role level
   getRoleLevel: (role) => {
     const state = get();
     const apiRole = state.roleMapping[role] || role;
     return state.roleLevels[apiRole] || 0;
   },
-  
+
   // Map display role to API role
   mapRoleToAPI: (displayRole) => {
     const state = get();
     return state.roleMapping[displayRole] || displayRole;
   },
-  
+
   // Map API role to display role
   mapAPIToDisplay: (apiRole) => {
     const state = get();
@@ -96,15 +96,15 @@ const useUserStore = create((set, get) => ({
     const state = get();
     const currentClinic = state.clinicsInfo.find(clinic => clinic.id === state.currentClinicId);
     const stampUrl = currentClinic?.stampUrl || currentClinic?.stamp_url;
-    
-    
-    
+
+
+
     if (currentClinic && stampUrl) {
       const cachedImage = state.getImageFromCache(stampUrl);
-      
+
       return cachedImage;
     }
-    
+
     return null;
   },
 
@@ -113,21 +113,21 @@ const useUserStore = create((set, get) => ({
     const state = get();
     const currentClinic = state.clinicsInfo.find(clinic => clinic.id === state.currentClinicId);
     const stampUrl = currentClinic?.stampUrl || currentClinic?.stamp_url;
-    
-    
-    
+
+
+
     if (currentClinic && stampUrl) {
-      
+
       try {
         const result = await state.loadImage(stampUrl);
-        
+
         return result;
       } catch (error) {
         console.error("Error loading stamp to cache:", error);
         throw error;
       }
     } else {
-      
+
       return null;
     }
   },
@@ -182,7 +182,7 @@ const useUserStore = create((set, get) => ({
   // تحميل صورة وحفظها في الـ cache
   loadImage: (url) => {
     const state = get();
-    
+
     // إذا كانت الصورة موجودة في الـ cache، إرجاعها مباشرة
     if (state.imageCache.has(url)) {
       return Promise.resolve(state.imageCache.get(url));
@@ -195,7 +195,7 @@ const useUserStore = create((set, get) => ({
         const checkLoading = () => {
           const currentState = get();
           const currentLoadingState = currentState.imageLoadingStates.get(url);
-          
+
           if (!currentLoadingState?.isLoading) {
             if (currentLoadingState?.error) {
               reject(currentLoadingState.error);
@@ -216,7 +216,7 @@ const useUserStore = create((set, get) => ({
 
     return new Promise((resolve, reject) => {
       const img = new Image();
-      
+
       img.onload = () => {
         get().addImageToCache(url, img);
         get().setImageLoadingState(url, false);
@@ -231,12 +231,12 @@ const useUserStore = create((set, get) => ({
 
       // تعيين CORS إذا لزم الأمر
       img.crossOrigin = 'anonymous';
-      
+
       // Add additional headers for Supabase URLs
       if (url.includes('supabase.co')) {
-        
+
       }
-      
+
       img.src = url;
     });
   },
@@ -247,9 +247,9 @@ const useUserStore = create((set, get) => ({
     const newLoadingStates = new Map(state.imageLoadingStates);
     newCache.delete(url);
     newLoadingStates.delete(url);
-    return { 
+    return {
       imageCache: newCache,
-      imageLoadingStates: newLoadingStates 
+      imageLoadingStates: newLoadingStates
     };
   }),
 
@@ -264,7 +264,7 @@ const useUserStore = create((set, get) => ({
       const res = await fetch("http://localhost:5000/api/users/change-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: 'include', 
+        credentials: 'include',
         body: JSON.stringify({ oldPassword, newPassword }),
       });
       const data = await res.json();
@@ -341,21 +341,21 @@ const useUserStore = create((set, get) => ({
           }
         }));
 
-        return { 
-          success: true, 
-          message: "Signature changed successfully!", 
-          signatureUrl: data.signatureUrl 
+        return {
+          success: true,
+          message: "Signature changed successfully!",
+          signatureUrl: data.signatureUrl
         };
       } else {
-        return { 
-          success: false, 
-          message: data.message || "Error changing signature" 
+        return {
+          success: false,
+          message: data.message || "Error changing signature"
         };
       }
     } catch (error) {
-      return { 
-        success: false, 
-        message: `Network error: ${error.message}` 
+      return {
+        success: false,
+        message: `Network error: ${error.message}`
       };
     }
   },
@@ -379,17 +379,17 @@ const useUserStore = create((set, get) => ({
       const data = await res.json();
 
       if (res.ok) {
-        
+
         // إزالة الصورة القديمة من الـ cache إذا وجدت
         const oldPhoto = get().userInfo.profilePhotoUrl;
         if (oldPhoto) {
-          
+
           get().removeImageFromCache(oldPhoto);
         }
 
         // تحميل الصورة الجديدة إلى الـ cache
         if (data.profilePhotoUrl) {
-          
+
           const url = URL.createObjectURL(fileOrBlob);
           get().setImageCache(data.profilePhotoUrl, url);
         }
@@ -407,17 +407,60 @@ const useUserStore = create((set, get) => ({
           profilePhotoUrl: data.profilePhotoUrl
         };
       } else {
-        
+
         return {
           success: false,
           message: data.message || "Error changing photo"
         };
       }
     } catch (error) {
-        
+
       return {
         success: false,
         message: `Network error: ${error.message}`
+      };
+    }
+  },
+
+  deletePhoto: async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/users/delete-profile-photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Remove old photo from cache
+        const oldPhoto = get().userInfo.profilePhotoUrl;
+        if (oldPhoto) {
+          get().removeImageFromCache(oldPhoto);
+        }
+
+        // Update userInfo to set profilePhotoUrl to null
+        set(state => ({
+          userInfo: {
+            ...state.userInfo,
+            profilePhotoUrl: null,
+          }
+        }));
+
+        return {
+          success: true,
+          message: "Photo supprimée avec succès!"
+        };
+      } else {
+        return {
+          success: false,
+          message: data.message || "Erreur lors de la suppression de la photo"
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: `Erreur réseau: ${error.message}`
       };
     }
   },
@@ -430,16 +473,16 @@ const useUserStore = create((set, get) => ({
         credentials: 'include',
       });
       const data = await res.json();
-      console.log('mee',data)
+      console.log('mee', data)
 
       if (res.ok) {
-        
+
         // تحميل الصور إلى الـ cache عند جلب معلومات المستخدم
         if (data.personalSignature) {
           get().loadImage(data.personalSignature).catch(console.error);
         }
         if (data.profilePhotoUrl) {
-          
+
           get().loadImage(data.profilePhotoUrl).catch(console.error);
         }
 
@@ -462,40 +505,40 @@ const useUserStore = create((set, get) => ({
   // Fetch clinics data and log it
   fetchMyClinics: async () => {
     try {
-      
+
       const res = await fetch("http://localhost:5000/api/clinics/my-clinics", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
       });
-      
-      
-      
-      
-      
-      
-      
-      
+
+
+
+
+
+
+
+
       if (!res.ok) {
         const errorText = await res.text();
         console.error("API Error:", res.status, errorText);
         return null;
       }
-      
+
       const data = await res.json();
-      
-      
-      
+
+
+
       if (data.clinics && Array.isArray(data.clinics)) {
         set({ clinicsInfo: data.clinics });
-        
+
         // Set the first clinic as current by default if not already set
         const state = get();
         if (data.clinics.length > 0 && !state.currentClinicId) {
-          
+
           set({ currentClinicId: data.clinics[0].id });
         }
-        
+
         // Load clinic logos and stamps to cache
         data.clinics.forEach(clinic => {
           const logoUrl = clinic.logoUrl || clinic.logo_url;
@@ -507,8 +550,8 @@ const useUserStore = create((set, get) => ({
             get().loadImage(stampUrl).catch(console.error);
           }
         });
-        
-        
+
+
         return data.clinics;
       } else {
         console.error("Invalid clinics data format:", data);
@@ -523,35 +566,35 @@ const useUserStore = create((set, get) => ({
   },
 
   changeClinicLogo: async (clinicId, fileOrBlob) => {
-    console.log(fileOrBlob," fileOrBlob ****************************++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    
-    
+    console.log(fileOrBlob, " fileOrBlob ****************************++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+
     try {
       if (!fileOrBlob || (!(fileOrBlob instanceof File) && !(fileOrBlob instanceof Blob))) {
         return { success: false, message: "Fichier invalide" };
       }
-      
-      
-      
-      
+
+
+
+
       const formData = new FormData();
       formData.append('clinicId', String(clinicId));
       formData.append('image', fileOrBlob);
-      
+
       // Log FormData contents
       for (let [key, value] of formData.entries()) {
-        
+
       }
-      
+
       const res = await fetch("http://localhost:5000/api/clinics/change-logo", {
         method: "POST",
         credentials: 'include',
         body: formData,
       });
-      
-      
-      
-      
+
+
+
+
       if (!res.ok) {
         const errorText = await res.text();
         console.error("Error response:", errorText);
@@ -560,9 +603,9 @@ const useUserStore = create((set, get) => ({
           message: `Server error: ${res.status} - ${errorText}`
         };
       }
-      
+
       const data = await res.json();
-      
+
       if (res.ok) {
         // إزالة الصورة القديمة من الـ cache إذا وجدت
         const currentClinic = get().getCurrentClinic();
@@ -578,8 +621,8 @@ const useUserStore = create((set, get) => ({
 
         // تحديث معلومات العيادة في الـ store
         set(state => ({
-          clinicsInfo: state.clinicsInfo.map(clinic => 
-            clinic.id === clinicId 
+          clinicsInfo: state.clinicsInfo.map(clinic =>
+            clinic.id === clinicId
               ? { ...clinic, logoUrl: data.logoUrl, logo_url: data.logoUrl }
               : clinic
           )
@@ -605,34 +648,34 @@ const useUserStore = create((set, get) => ({
   },
 
   changeClinicStamp: async (clinicId, fileOrBlob) => {
-    
-    
+
+
     try {
       if (!fileOrBlob || (!(fileOrBlob instanceof File) && !(fileOrBlob instanceof Blob))) {
         return { success: false, message: "Fichier invalide" };
       }
-      
-      
-      
-      
+
+
+
+
       const formData = new FormData();
       formData.append('clinicId', String(clinicId));
       formData.append('image', fileOrBlob);
-      
+
       // Log FormData contents
       for (let [key, value] of formData.entries()) {
-        
+
       }
-      
+
       const res = await fetch("http://localhost:5000/api/clinics/change-stamp", {
         method: "POST",
         credentials: 'include',
         body: formData,
       });
-      
-      
-      
-      
+
+
+
+
       if (!res.ok) {
         const errorText = await res.text();
         console.error("Error response for stamp:", errorText);
@@ -641,10 +684,10 @@ const useUserStore = create((set, get) => ({
           message: `Server error: ${res.status} - ${errorText}`
         };
       }
-      
+
       const data = await res.json();
-      
-      
+
+
       if (res.ok) {
         // إزالة الصورة القديمة من الـ cache إذا وجدت
         const currentClinic = get().getCurrentClinic();
@@ -660,8 +703,8 @@ const useUserStore = create((set, get) => ({
 
         // تحديث معلومات العيادة في الـ store
         set(state => ({
-          clinicsInfo: state.clinicsInfo.map(clinic => 
-            clinic.id === clinicId 
+          clinicsInfo: state.clinicsInfo.map(clinic =>
+            clinic.id === clinicId
               ? { ...clinic, stampUrl: data.stampUrl, stamp_url: data.stampUrl }
               : clinic
           )
@@ -695,10 +738,10 @@ const useUserStore = create((set, get) => ({
         credentials: 'include',
         body: JSON.stringify({ clinicId })
       });
-      
+
       const data = await res.json();
-      
-      
+
+
       if (res.ok) {
         // Load profile images to cache
         if (data.members && Array.isArray(data.members)) {
@@ -708,23 +751,23 @@ const useUserStore = create((set, get) => ({
             }
           });
         }
-        
-        return { 
-          success: true, 
+
+        return {
+          success: true,
           members: data.members || [],
           totalMembers: data.totalMembers || 0
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.message || "Error fetching clinic members",
           members: []
         };
       }
     } catch (error) {
       console.error("Error fetching clinic members:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error",
         members: []
       };
@@ -740,10 +783,10 @@ const useUserStore = create((set, get) => ({
         credentials: 'include',
         body: JSON.stringify({ clinicId, email, role })
       });
-      
+
       const data = await res.json();
-      
-      
+
+
       if (res.ok) {
         // Add the new invitation to the store if it exists
         const state = get();
@@ -753,22 +796,22 @@ const useUserStore = create((set, get) => ({
             invitations: state.invitations ? [...state.invitations, data.invitation] : [data.invitation]
           }));
         }
-        
-        return { 
-          success: true, 
+
+        return {
+          success: true,
           message: data.message || "Invitation sent successfully",
           invitation: data.invitation
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.error || "Error sending invitation"
         };
       }
     } catch (error) {
       console.error("Error inviting member:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error"
       };
     }
@@ -776,7 +819,7 @@ const useUserStore = create((set, get) => ({
 
   // Fetch invited members
   fetchInvitedMembers: async (clinicId) => {
-    
+
     try {
       const res = await fetch("http://localhost:5000/api/clinics/get-invitation-members", {
         method: "POST",
@@ -784,30 +827,30 @@ const useUserStore = create((set, get) => ({
         credentials: 'include',
         body: JSON.stringify({ clinicId })
       });
-      
+
       const data = await res.json();
-      
-      
+
+
       if (res.ok) {
         // Store invitations in the store
         set({ invitations: data.invitations || [] });
-        
-        return { 
-          success: true, 
+
+        return {
+          success: true,
           invitations: data.invitations || [],
           totalInvitations: data.totalInvitations || 0
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.message || "Error fetching invitations",
           invitations: []
         };
       }
     } catch (error) {
       console.error("Error fetching invited members:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error",
         invitations: []
       };
@@ -816,8 +859,8 @@ const useUserStore = create((set, get) => ({
 
   // Delete clinic invitation
   deleteClinicInvitation: async (clinicId, invitationId) => {
-    
-    
+
+
     try {
       const res = await fetch("http://localhost:5000/api/clinics/delete-invitation", {
         method: "POST",
@@ -825,26 +868,26 @@ const useUserStore = create((set, get) => ({
         credentials: 'include',
         body: JSON.stringify({ clinicId, invitationId })
       });
-      
+
       const data = await res.json();
-      
-      
+
+
       if (res.ok) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: data.message || "Invitation deleted successfully",
           deletedInvitation: data.deletedInvitation
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.error || "Error deleting invitation"
         };
       }
     } catch (error) {
       console.error("Error deleting invitation:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error"
       };
     }
@@ -859,63 +902,63 @@ const useUserStore = create((set, get) => ({
         credentials: 'include',
         body: JSON.stringify({ clinicId, memberId, newRole })
       });
-      
+
       const data = await res.json();
-      
-      
+
+
       if (res.ok) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: data.message || "Member role updated successfully",
           member: data.member
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.error || "Error updating member role"
         };
       }
     } catch (error) {
       console.error("Error changing member role:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error"
       };
     }
   },
 
-    // Get all patients for a clinic
+  // Get all patients for a clinic
   getPatients: async (clinicId) => {
-     
+
     try {
-      
+
       const res = await fetch(`http://localhost:5000/api/patients/all`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
         body: JSON.stringify({ clinicId })
       });
-      
+
       const data = await res.json();
-      console.log(data,"data");
-      
+      console.log(data, "data");
+
       if (res.ok) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           patients: data.patients || [],
           totalPatients: data.totalPatients || 0
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.error || "Error fetching patients",
           patients: []
         };
       }
     } catch (error) {
       console.error("Error fetching patients:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error",
         patients: []
       };
@@ -932,28 +975,28 @@ const useUserStore = create((set, get) => ({
         headers: { "Content-Type": "application/json" },
         credentials: 'include'
       });
-      
+
       const data = await res.json();
       console.log('🔄 userStore - API response:', { status: res.status, data });
-      
+
       if (res.ok) {
         console.log('✅ userStore - Patient fetched successfully:', data.patient);
-        return { 
-          success: true, 
+        return {
+          success: true,
           patient: data.patient,
           userAccess: data.userAccess
         };
       } else {
         console.log('❌ userStore - API error:', data.error);
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.error || "Error fetching patient"
         };
       }
     } catch (error) {
       console.error("Error fetching patient:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error"
       };
     }
@@ -968,24 +1011,24 @@ const useUserStore = create((set, get) => ({
         credentials: 'include',
         body: JSON.stringify({ patientId })
       });
-      
+
       const data = await res.json();
-      
+
       if (res.ok) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: data.message || "Patient deleted successfully"
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.error || "Error deleting patient"
         };
       }
     } catch (error) {
       console.error("Error deleting patient:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error"
       };
     }
@@ -995,33 +1038,33 @@ const useUserStore = create((set, get) => ({
   toggleFavorite: async (patientId, isFavorite) => {
     try {
       console.log('Sending toggle favorite request:', { patientId, isFavorite });
-      
+
       const res = await fetch(`http://localhost:5000/api/patients/favorites/toggle`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
         body: JSON.stringify({ patientId, isFavorite })
       });
-      
+
       const data = await res.json();
       console.log('Toggle favorite response:', { status: res.status, data });
-      
+
       if (res.ok) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: data.message || "Favorite status updated successfully"
         };
       } else {
         console.error('Toggle favorite API error:', data);
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: data.error || `Error updating favorite status (${res.status})`
         };
       }
     } catch (error) {
       console.error("Error updating favorite status:", error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: "Network error"
       };
     }

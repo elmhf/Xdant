@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, UserX, Trash2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { X } from "lucide-react";
+import useUserStore from "@/components/features/profile/store/userStore";
+import ClinicPasswordVerifyStep from "@/components/features/clinic-profile/ClinicPasswordVerifyStep";
 
 export const DeleteMemberDialog = ({
   open,
@@ -18,94 +20,105 @@ export const DeleteMemberDialog = ({
   loading,
   message
 }) => {
+  const { userInfo } = useUserStore();
+  const [step, setStep] = useState(1);
+
   if (!member) return null;
 
+  // Extract first and last name from member
+  const firstName = member.firstName || member.name?.split(' ')[0] || '';
+  const lastName = member.lastName || member.name?.split(' ').slice(1).join(' ') || '';
+  const fullName = `${firstName} ${lastName}`.trim() || member.name || 'Unknown';
+
+  // Avatar image URL
+  const avatarUrl = member.profilePhotoUrl
+    ? useUserStore.getState().getImageFromCache(member.profilePhotoUrl)?.src || member.profilePhotoUrl
+    : `https://api.dicebear.com/7.x/initials/svg?seed=${fullName}`;
+
+  const handleOpenChange = (newOpen) => {
+    if (!newOpen) {
+      setStep(1);
+    }
+    onOpenChange(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className=" bg-white border-2 border-gray-200 shadow-2xl">
-        <DialogHeader className="pb-4">
-          <DialogTitle className="flex items-center gap-3 text-gray-900 text-xl font-bold">
-            <UserX className="h-6 w-6 text-gray-600" />
-            Supprimer le membre
-          </DialogTitle>
-          <DialogDescription className="text-base text-gray-600 mt-2">
-            Êtes-vous sûr de vouloir supprimer ce membre de la clinique ? Cette action ne peut pas être annulée.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="py-6">
-          <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
-                <Trash2 className="h-8 w-8 text-gray-600" />
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="bg-white border-2 border-gray-200 shadow-2xl max-w-[500px]">
+        {step === 1 ? (
+          <ClinicPasswordVerifyStep
+            userEmail={userInfo?.email}
+            onSuccess={() => setStep(2)}
+            onBack={() => handleOpenChange(false)}
+            title="Security Check"
+            description="Please verify your password to delete this member."
+          />
+        ) : (
+          <>
+            <DialogHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-gray-900 text-xl font-bold opacity-0">
+                  Remove Member
+                </DialogTitle>
+                <button
+                  onClick={() => handleOpenChange(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              <div>
-                <p className="font-bold text-gray-900 text-lg">
-                  {member.name}
-                </p>
-                <p className="text-gray-600 text-base mt-1">
-                  {member.email}
-                </p>
-                <p className="text-gray-500 text-sm mt-1">
-                  Rôle: {member.role}
-                </p>
+            </DialogHeader>
+
+            {/* Member Profile */}
+            <div className="flex flex-col items-center pb-4">
+              <Avatar className="h-40 w-40 mb-3 border-2 border-gray-200">
+                <AvatarImage src={avatarUrl} />
+                <AvatarFallback className="bg-purple-100 text-purple-600 text-lg font-semibold">
+                  {fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+
+            {/* Description */}
+            <div className="text-center pb-6">
+              <h2 className="text-2xl font-bold text-gray-900 ">
+                Remove Member?
+              </h2>
+              <p className="text-gray-500 text-base">
+                Are you sure you want to remove{' '}
+                <span className="text-[#5b9bff] font-medium">{firstName} {lastName}</span>
+                {' '}from your workspace
+              </p>
+            </div>
+
+            {message && (
+              <div className={`p-3 rounded-lg text-sm font-medium mb-4 ${message.includes('succès')
+                ? 'bg-green-50 text-green-800'
+                : 'bg-red-50 text-red-800'
+                }`}>
+                {message}
               </div>
-            </div>
-          </div>
+            )}
 
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-4">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
-              <div className="text-base text-gray-700">
-                <p className="font-bold mb-2">Attention :</p>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-gray-600 font-bold">•</span>
-                    <span>Le membre perdra l'accès à tous les patients de cette clinique</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-gray-600 font-bold">•</span>
-                    <span>Il ne pourra plus voir les rendez-vous et les dossiers</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-gray-600 font-bold">•</span>
-                    <span>Il devra être réinvité pour rejoindre la clinique</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {message && (
-            <div className={`mt-4 p-4 rounded-xl text-base font-medium border-2 ${message.includes('succès')
-                ? 'bg-green-50 text-green-800 border-green-200'
-                : 'bg-red-50 text-red-800 border-red-200'
-              }`}>
-              {message}
-            </div>
-          )}
-        </div>
-
-        <DialogFooter className="pt-4">
-          <Button
-            variant="outline"
-            onClick={onOpenChange}
-            disabled={loading}
-            className="flex-1 h-12 text-base font-semibold border-2"
-          >
-            Annuler
-          </Button>
-          <Button
-            onClick={onConfirm}
-            disabled={loading}
-            className="flex-1 h-12 text-base font-semibold bg-[#ff254e] hover:bg-[#e01e3e] text-white border-2 border-[#ff254e]"
-          >
-            {loading
-              ? "Suppression..."
-              : "Supprimer le membre"
-            }
-          </Button>
-        </DialogFooter>
+            <DialogFooter className="pt-4 gap-3">
+              <Button
+                variant="outline"
+                onClick={() => handleOpenChange(false)}
+                disabled={loading}
+                className="flex-1 h-12 text-base font-medium border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={onConfirm}
+                disabled={loading}
+                className="flex-1 h-12 text-base font-medium bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0"
+              >
+                {loading ? "Removing..." : "Yes, remove"}
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

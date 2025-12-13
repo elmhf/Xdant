@@ -38,10 +38,10 @@ export const LeaveClinicDialogWithVerification = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className=" bg-white border-2 border-gray-200 shadow-2xl">
+      <DialogContent className=" bg-white border-2 border-gray-200 shadow-2xl rounded-2xl max-w-2xl">
         <DialogHeader className="pb-4">
-          <DialogTitle className="flex items-center gap-3 text-gray-900 text-xl font-bold">
-            <AlertTriangle className="h-6 w-6 text-gray-600" />
+          <DialogTitle className="flex items-center gap-3 text-gray-900 text-3xl font-bold">
+            <AlertTriangle className="h-8 w-8 text-gray-600" />
             {step === 1 ? "Vérification requise" : "Quitter la clinique"}
           </DialogTitle>
           <DialogDescription className="text-base text-gray-600 mt-2">
@@ -81,7 +81,7 @@ export const LeaveClinicDialogWithVerification = ({
                   placeholder="Entrez votre mot de passe"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 text-base border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  className="w-full h-12 text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
                   disabled={leaving}
                 />
                 {error && (
@@ -137,27 +137,31 @@ export const LeaveClinicDialogWithVerification = ({
 
           {leaveMessage && (
             <div className={`mt-4 p-4 rounded-xl text-base font-medium ${leaveMessage.includes('succès')
-                ? 'bg-green-50 text-green-800 border-2 border-green-200'
-                : 'bg-red-50 text-red-800 border-2 border-red-200'
+              ? 'bg-green-50 text-green-800 border-2 border-green-200'
+              : 'bg-red-50 text-red-800 border-2 border-red-200'
               }`}>
               {leaveMessage}
             </div>
           )}
         </div>
 
-        <DialogFooter className="pt-4">
+        <DialogFooter className="pt-4 flex gap-3">
           <Button
-            variant="outline"
+            type="button"
+            variant="ghost"
             onClick={onBack}
             disabled={leaving}
-            className="flex-1 h-12 text-base font-semibold border-2"
+            className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
           >
             {step === 1 ? "Annuler" : "Retour"}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={leaving || (step === 1 && !password.trim())}
-            className="flex-1 h-12  font-semiboldbg-white text-xl font-medium bg-gray-100 text-[#ff254e] border-2 border-[#ff254e] hover:bg-[#ff254e] hover:text-white"
+            className={`text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw] ${step === 2
+                ? "bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0"
+                : "bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4"
+              }`}
           >
             {leaving
               ? (step === 1 ? "Vérification..." : "Sortie en cours...")

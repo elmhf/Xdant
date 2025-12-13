@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function ClinicNameForm({ value, onSave, onBack }) {
   const [name, setName] = useState(value);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
+  const { pushNotification } = useNotification();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -12,9 +13,8 @@ export default function ClinicNameForm({ value, onSave, onBack }) {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      setSuccess("Nom modifié avec succès.");
+      pushNotification('success', "Nom modifié avec succès.");
       setTimeout(() => {
-        setSuccess("");
         onSave(name);
       }, 800);
     }, 600);
@@ -32,8 +32,7 @@ export default function ClinicNameForm({ value, onSave, onBack }) {
         disabled={loading}
         required
       />
-      {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-      {success && <div className="text-green-600 text-sm mb-2">{success}</div>}
+
       <div className="flex gap-2 mt-4">
         <Button type="submit" className="flex-1 bg-[#6a5acd] hover:bg-[#625a97] text-white rounded-lg" disabled={!name || loading}>
           {loading ? "Enregistrement..." : "Enregistrer"}

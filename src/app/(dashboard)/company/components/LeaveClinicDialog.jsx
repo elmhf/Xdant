@@ -85,67 +85,69 @@ export const LeaveClinicDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-red-600">
-            <AlertTriangle className="h-5 w-5" />
+      <DialogContent className="bg-white border-2 border-gray-200 rounded-2xl max-w-2xl">
+        <DialogHeader className="pb-4 border-b border-gray-100">
+          <DialogTitle className="flex items-center gap-3 text-gray-900 text-3xl font-bold">
+            <AlertTriangle className="h-8 w-8 text-gray-600" />
             Quitter la clinique
           </DialogTitle>
-          <DialogDescription>
-            {isOwner
-              ? "En tant que propriétaire, vous devez définir le futur de la clinique avant de partir."
-              : "Êtes-vous sûr de vouloir quitter cette clinique ? Cette action ne peut pas être annulée."}
+          <DialogDescription className="text-base text-gray-600 mt-2">
+            {isOwner ? (
+              <>
+                En tant que propriétaire, vous devez définir le futur de la clinique{" "}
+                <span className="font-semibold text-blue-600">
+                  ({clinic.clinic_name || clinic.clinicName || clinic.name})
+                </span>{" "}
+                avant de partir.
+              </>
+            ) : (
+              <>
+                Êtes-vous sûr de vouloir quitter cette clinique{" "}
+                <span className="font-semibold text-blue-600">
+                  ({clinic.clinic_name || clinic.clinicName || clinic.name})
+                </span>
+                {" "}? Cette action ne peut pas être annulée.
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4 space-y-4">
-          <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-            <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-              <Building2 className="h-6 w-6 text-blue-600" />
-            </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-gray-900">
-                {clinic.clinic_name || clinic.clinicName || clinic.name}
-              </h4>
-              <p className="text-sm text-gray-500">
-                {clinic.address || clinic.location || "Location not available"}
-              </p>
-            </div>
-          </div>
+        <div className=" space-y-6">
+
 
           {isOwner && (
             <div className="space-y-4">
-              <Label className="text-base text-gray-900">Que souhaitez-vous faire ?</Label>
+              <Label className="text-base text-gray-900 font-semibold">Que souhaitez-vous faire ?</Label>
               <RadioGroup value={action} onValueChange={setAction} className="grid grid-cols-2 gap-4">
                 <div>
                   <RadioGroupItem value="delete" id="delete" className="peer sr-only" />
                   <Label
                     htmlFor="delete"
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-red-500 [&:has([data-state=checked])]:border-red-500 cursor-pointer"
+                    className="flex flex-col items-center justify-between rounded-xl border-2 border-gray-200 bg-white p-4 hover:bg-gray-50 peer-data-[state=checked]:border-red-500 peer-data-[state=checked]:bg-red-50 cursor-pointer transition-all"
                   >
                     <Trash2 className="mb-3 h-6 w-6 text-red-500" />
-                    <span className="font-semibold">Supprimer</span>
-                    <span className="text-xs text-center text-muted-foreground mt-1">Supprimer définitivement la clinique pour tous</span>
+                    <span className="font-semibold text-gray-900">Supprimer</span>
+                    <span className="text-xs text-center text-gray-500 mt-1">Supprimer définitivement la clinique {clinic.clinic_name || clinic.clinicName || clinic.name} pour tous</span>
                   </Label>
                 </div>
                 <div>
                   <RadioGroupItem value="transfer" id="transfer" className="peer sr-only" />
                   <Label
                     htmlFor="transfer"
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-blue-500 [&:has([data-state=checked])]:border-blue-500 cursor-pointer"
+                    className="flex flex-col items-center justify-between rounded-xl border-2 border-gray-200 bg-white p-4 hover:bg-gray-50 peer-data-[state=checked]:border-blue-500 peer-data-[state=checked]:bg-blue-50 cursor-pointer transition-all"
                   >
                     <UserCog className="mb-3 h-6 w-6 text-blue-500" />
-                    <span className="font-semibold">Transférer</span>
-                    <span className="text-xs text-center text-muted-foreground mt-1">Transférer la propriété à un autre membre</span>
+                    <span className="font-semibold text-gray-900">Transférer</span>
+                    <span className="text-xs text-center text-gray-500 mt-1">Transférer la propriété à un autre membre</span>
                   </Label>
                 </div>
               </RadioGroup>
 
               {action === 'transfer' && (
                 <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                  <Label>Nouveau propriétaire</Label>
+                  <Label className="text-base font-semibold text-gray-700">Nouveau propriétaire</Label>
                   <Select value={newOwnerId} onValueChange={setNewOwnerId}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 rounded-xl text-base border-2 border-gray-200 focus:border-blue-500">
                       <SelectValue placeholder="Sélectionner un membre" />
                     </SelectTrigger>
                     <SelectContent>
@@ -200,19 +202,20 @@ export const LeaveClinicDialog = ({
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="pt-4 flex gap-3">
           <Button
-            variant="outline"
+            type="button"
+            variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={loading}
+            className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
           >
             Annuler
           </Button>
           <Button
-            variant="destructive"
             onClick={handleConfirm}
             disabled={loading || (isOwner && action === 'transfer' && !newOwnerId)}
-            className="bg-red-600 hover:bg-red-700"
+            className="text-lg font-bold bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
           >
             {loading
               ? "Traitement..."

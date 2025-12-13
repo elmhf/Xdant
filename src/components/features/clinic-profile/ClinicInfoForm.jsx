@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useUserStore from "@/components/features/profile/store/userStore";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function ClinicInfoForm({ values, onSave, onBack }) {
   const currentClinicId = useUserStore(state => state.currentClinicId);
@@ -16,8 +17,8 @@ export default function ClinicInfoForm({ values, onSave, onBack }) {
     website: values.website || "",
   });
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const { pushNotification } = useNotification();
 
   // Validation helper for alphabetic only
   const isAlphabetic = (str) => /^[A-Za-zÀ-ÿ\s'-]+$/.test(str);
@@ -74,16 +75,15 @@ export default function ClinicInfoForm({ values, onSave, onBack }) {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Informations modifiées avec succès.");
+        pushNotification('success', "Informations modifiées avec succès.");
         setTimeout(() => {
-          setSuccess("");
           onSave(form);
         }, 800);
       } else {
-        setError(data.message || "Erreur lors de la modification des informations.");
+        pushNotification('error', data.message || "Erreur lors de la modification des informations.");
       }
     } catch (e) {
-      setError("Erreur réseau");
+      pushNotification('error', "Erreur réseau");
     }
     setLoading(false);
   };
@@ -91,126 +91,131 @@ export default function ClinicInfoForm({ values, onSave, onBack }) {
   return (
     <form className="p-6 pt-2 space-y-6" onSubmit={handleSubmit}>
       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
-        <span className="font-semibold text-gray-800">Info :</span> Le nom de la clinique est obligatoire et doit contenir au moins <span className="font-semibold">3 lettres</span>, uniquement des caractères alphabétiques (pas de chiffres ni de symboles). Évitez d'utiliser un nom aléatoire ou des caractères spéciaux.
+        <span className="font-semibold text-gray-800">Info :</span> Le nom de la clinique est obligatoire et doit contenir au moins <span className="font-semibold">3 lettres</span>, uniquement des caractères alphabétiques (pas de chiffres ni de symboles).
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="clinic_name" className="text-base font-semibold text-gray-700">
-            Nom de la clinique
+          <Label htmlFor="clinic_name" className="text-base font-medium text-gray-700">
+            Nom de la clinique <span className="text-red-500">*</span>
           </Label>
           <Input
             id="clinic_name"
-            className={`h-12 w-full   text-base border-2 ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20'}`}
+            className={`h-12 w-full text-base rounded-xl ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : 'border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20'}`}
             name="clinic_name"
             value={form.clinic_name}
             onChange={handleChange}
             required
+            placeholder="Ex: Ma Clinique Dentaire"
           />
           {error && <div className="text-red-600 text-sm font-medium">{error}</div>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="country" className="text-base font-semibold text-gray-700">
-            Pays
-          </Label>
-          <Input
-            id="country"
-            className="h-12 w-full  text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
-            name="country"
-            value={form.country}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="neighbourhood" className="text-base font-semibold text-gray-700">
-            Région
-          </Label>
-          <Input
-            id="neighbourhood"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
-            name="neighbourhood"
-            value={form.neighbourhood}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="city" className="text-base font-semibold text-gray-700">
-            Ville
-          </Label>
-          <Input
-            id="city"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
-            name="city"
-            value={form.city}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="street_address" className="text-base font-semibold text-gray-700">
-            Adresse
-          </Label>
-          <Input
-            id="street_address"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
-            name="street_address"
-            value={form.street_address}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="postal_code" className="text-base font-semibold text-gray-700">
-            Code postal
-          </Label>
-          <Input
-            id="postal_code"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
-            name="postal_code"
-            value={form.postal_code}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="website" className="text-base font-semibold text-gray-700">
+          <Label htmlFor="website" className="text-base font-medium text-gray-700">
             Site web
           </Label>
           <Input
             id="website"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+            className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
             name="website"
             value={form.website}
             onChange={handleChange}
+            placeholder="https://example.com"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="country" className="text-base font-medium text-gray-700">
+              Pays
+            </Label>
+            <Input
+              id="country"
+              className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+              name="country"
+              value={form.country}
+              onChange={handleChange}
+              placeholder="Tunisie"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="neighbourhood" className="text-base font-medium text-gray-700">
+              Région
+            </Label>
+            <Input
+              id="neighbourhood"
+              className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+              name="neighbourhood"
+              value={form.neighbourhood}
+              onChange={handleChange}
+              placeholder="Tunis"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="city" className="text-base font-medium text-gray-700">
+              Ville
+            </Label>
+            <Input
+              id="city"
+              className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+              name="city"
+              value={form.city}
+              onChange={handleChange}
+              placeholder="Ariana"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="postal_code" className="text-base font-medium text-gray-700">
+              Code postal
+            </Label>
+            <Input
+              id="postal_code"
+              className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+              name="postal_code"
+              value={form.postal_code}
+              onChange={handleChange}
+              placeholder="2080"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="street_address" className="text-base font-medium text-gray-700">
+            Adresse
+          </Label>
+          <Input
+            id="street_address"
+            className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+            name="street_address"
+            value={form.street_address}
+            onChange={handleChange}
+            placeholder="Rue 14 Janvier..."
           />
         </div>
       </div>
 
-      {success && (
-        <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
-          {success}
-        </div>
-      )}
-
-      <div className="flex gap-4 pt-4">
-        <Button
-          type="submit"
-          className="flex-1 h-12 text-base font-semibold bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]"
-          disabled={loading}
-        >
-          {loading ? "Enregistrement..." : "Enregistrer"}
-        </Button>
+      <div className="flex gap-4 pt-4 w-full justify-end">
         <Button
           type="button"
-          variant="outline"
-          className="flex-1 h-12 text-base font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+          variant="ghost"
+          className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
           onClick={onBack}
           disabled={loading}
         >
           Annuler
+        </Button>
+        <Button
+          type="submit"
+          className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+          disabled={loading}
+        >
+          {loading ? "Enregistrement..." : "Enregistrer"}
         </Button>
       </div>
     </form>

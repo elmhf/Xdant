@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -13,8 +14,9 @@ import ClinicPhoneForm from "./ClinicPhoneForm";
 import ClinicPasswordVerifyStep from "./ClinicPasswordVerifyStep";
 import ClinicImagesCard from "./ClinicImagesCard";
 import useUserStore from "@/components/features/profile/store/userStore";
+import { X } from "lucide-react";
 
-export default function ClinicProfile({ canEditClinic }) {
+export default function ClinicProfile({ canEditClinic, userRole }) {
   const { userInfo, getCurrentClinic } = useUserStore();
   const currentClinic = getCurrentClinic();
   const [clinicInfo, setClinicInfo] = useState(currentClinic || {});
@@ -23,6 +25,9 @@ export default function ClinicProfile({ canEditClinic }) {
   const [step, setStep] = useState(1); // 1: password, 2: edit
   const [loading, setLoading] = useState(true);
   const getUserInfo = useUserStore(state => state.getUserInfo);
+
+  // Check if user has permission to edit based on role
+  const canEdit = canEditClinic && (userRole === 'full_access' || userRole === 'admin' || userRole === 'owner');
 
 
   useEffect(() => {
@@ -55,10 +60,6 @@ export default function ClinicProfile({ canEditClinic }) {
   };
 
   // Dialog navigation
-  const handleBackToMain = () => {
-    setSelectedOption(null);
-    setStep(1);
-  };
   const handleClose = () => {
     setSelectedOption(null);
     setOpen(false);
@@ -69,26 +70,26 @@ export default function ClinicProfile({ canEditClinic }) {
   let title = "";
   if (selectedOption === "name") {
     if (step === 1) {
-      content = <ClinicPasswordVerifyStep userEmail={userInfo.email} onSuccess={() => setStep(2)} onBack={handleBackToMain} />;
-      title = "Vérification du mot de passe";
+      content = <ClinicPasswordVerifyStep userEmail={userInfo.email} onSuccess={() => setStep(2)} onBack={handleClose} />;
+      title = "";
     } else {
-      content = <ClinicInfoForm values={clinicInfo} onSave={handleInfoSave} onBack={handleBackToMain} />;
-      title = "Informations de la clinique";
+      content = <ClinicInfoForm values={clinicInfo} onSave={handleInfoSave} onBack={handleClose} />;
+      title = "General info";
     }
   } else if (selectedOption === "email") {
     if (step === 1) {
-      content = <ClinicPasswordVerifyStep userEmail={userInfo.email} onSuccess={() => setStep(2)} onBack={handleBackToMain} />;
-      title = "Vérification du mot de passe";
+      content = <ClinicPasswordVerifyStep userEmail={userInfo.email} onSuccess={() => setStep(2)} onBack={handleClose} />;
+      title = "";
     } else {
-      content = <ClinicEmailForm value={clinicInfo.email} onSave={handleEmailSave} onBack={handleBackToMain} />;
+      content = <ClinicEmailForm value={clinicInfo.email} onSave={handleEmailSave} onBack={handleClose} />;
       title = "E-mail";
     }
   } else if (selectedOption === "phone") {
     if (step === 1) {
-      content = <ClinicPasswordVerifyStep userEmail={userInfo.email} onSuccess={() => setStep(2)} onBack={handleBackToMain} />;
-      title = "Vérification du mot de passe";
+      content = <ClinicPasswordVerifyStep userEmail={userInfo.email} onSuccess={() => setStep(2)} onBack={handleClose} />;
+      title = "";
     } else {
-      content = <ClinicPhoneForm value={clinicInfo.phone} onSave={handlePhoneSave} onBack={handleBackToMain} />;
+      content = <ClinicPhoneForm value={clinicInfo.phone} onSave={handlePhoneSave} onBack={handleClose} />;
       title = "Téléphone";
     }
   }
@@ -113,68 +114,138 @@ export default function ClinicProfile({ canEditClinic }) {
     <div className="flex flex-col lg:flex-row gap-6 w-full items-start justify-center py-0">
       <Card className="w-full rounded-xl py-0  border-2 border-gray-200 bg-white">
         <CardContent className="p-7">
-          <div className="flex justify-between items-center mb-8">
-            <spam className="text-3xl font-[700] text-gray-700">Informations de la clinique</spam>
-            {canEditClinic && (
-              <Button
-
-                className="px-6 h-12 text-base font-[500] text-[#7564ed]  transition-all duration-200"
-                onClick={() => setOpen(true)}
-              >
-                Modifier
-              </Button>
-            )}
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900">General info</h2>
           </div>
-          <div className="space-y-2 font-[450]">
+
+          {/* Company name */}
+          <div className="space-y-2 mb-4">
+            <label className="text-sm font-semibold text-gray-700">
+              Company name <span className="text-red-500">*</span>
+            </label>
+            <Input
+              type="text"
+              value={clinicInfo.clinic_name || ""}
+              disabled
+              className="h-12 text-base  max-w-sm  rounded-lg px-3 w-full text-gray-900"
+            />
+          </div>
+
+          {/* Website */}
+          <div className="space-y-2 mb-4">
+            <label className="text-sm font-semibold text-gray-700">Website</label>
+            <Input
+              type="url"
+              value={clinicInfo.website || ""}
+              disabled
+              className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+            />
+          </div>
+
+          {/* Country & State/Region Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="space-y-2">
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">Nom</span>
-                <span className="text-lg  text-gray-900">{displayField(clinicInfo.clinic_name)}</span>
+              <label className="text-sm font-semibold text-gray-700">Country</label>
+              <Input
+                type="text"
+                value={clinicInfo.country || ""}
+                disabled
+                className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">State/Region</label>
+              <Input
+                type="text"
+                value={clinicInfo.neighbourhood || ""}
+                disabled
+                className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+              />
+            </div>
+          </div>
+
+          {/* City & Zip code Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">City</label>
+              <Input
+                type="text"
+                value={clinicInfo.city || ""}
+                disabled
+                className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">Zip code</label>
+              <Input
+                type="text"
+                value={clinicInfo.postal_code || ""}
+                disabled
+                className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+              />
+            </div>
+          </div>
+
+          {/* Address */}
+          <div className="space-y-2 mb-6">
+            <label className="text-sm font-semibold text-gray-700">Address</label>
+            <Input
+              type="text"
+              value={clinicInfo.street_address || ""}
+              disabled
+              className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+            />
+          </div>
+
+          {/* Edit clinic info button */}
+          <div className="mb-6 w-full flex justify-end">
+            <button
+              onClick={() => { setSelectedOption("name"); setStep(1); setOpen(true); }}
+              disabled={!canEdit}
+              className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors font-medium whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+            >
+              Edit clinic info
+            </button>
+          </div>
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900">Clinic contact</h2>
+          </div>
+          {/* Email & Phone Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">Email</label>
+              <div className="flex gap-3">
+                <Input
+                  type="email"
+                  value={clinicInfo.email || ""}
+                  disabled
+                  className="h-12    rounded-lg px-3 flex-1 text-gray-900"
+                />
+                <button
+                  onClick={() => { setSelectedOption("email"); setStep(1); setOpen(true); }}
+                  disabled={!canEdit}
+                  className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent font-medium whitespace-nowrap"
+                >
+                  Edit
+                </button>
               </div>
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">E-mail</span>
-                <span className="text-lg  text-gray-900">{displayField(clinicInfo.email)}</span>
-              </div>
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">Téléphone</span>
-                <span className="text-lg  text-gray-900">{displayField(clinicInfo.phone)}</span>
-              </div>
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">Pays</span>
-                <span className="text-lg  text-gray-900">{displayField(clinicInfo.country)}</span>
-              </div>
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">Région</span>
-                <span className="text-lg  text-gray-900">{displayField(clinicInfo.neighbourhood)}</span>
-              </div>
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">Ville</span>
-                <span className="text-lg  text-gray-900">{displayField(clinicInfo.city)}</span>
-              </div>
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">Adresse</span>
-                <span className="text-lg  text-gray-900">{displayField(clinicInfo.street_address)}</span>
-              </div>
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">Code postal</span>
-                <span className="text-lg  text-gray-900">{displayField(clinicInfo.postal_code)}</span>
-              </div>
-              <div className="flex items-center ">
-                <span className="w-68 text-lg  text-gray-400">Site web</span>
-                <div className="flex items-center gap-2">
-                  {clinicInfo.website ? (
-                    <a
-                      href={clinicInfo.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-lg  text-[#7564ed] hover:text-[#6a4fd8] hover:underline transition-colors"
-                    >
-                      {clinicInfo.website}
-                    </a>
-                  ) : (
-                    <span className="text-lg  text-gray-400">Non spécifié</span>
-                  )}
-                </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Phone</label>
+              <div className="flex gap-3">
+                <Input
+                  type="tel"
+                  value={clinicInfo.phone || ""}
+                  disabled
+                  className="h-12 text-base   rounded-lg px-3 flex-1 text-gray-900"
+                />
+                <button
+                  onClick={() => { setSelectedOption("phone"); setStep(1); setOpen(true); }}
+                  disabled={!canEdit}
+                  className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent font-medium whitespace-nowrap"
+                >
+                  Edit
+                </button>
               </div>
             </div>
           </div>
@@ -184,60 +255,21 @@ export default function ClinicProfile({ canEditClinic }) {
       <ClinicImagesCard canEditClinic={canEditClinic} />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-2xl bg-white p-0 border-2 border-gray-200 shadow-2xl">
-          {!selectedOption ? (
-            <div className="p-8">
-              <DialogTitle className="mb-6 text-2xl font-bold text-gray-900">Modifier les informations de la clinique</DialogTitle>
-              <div className="space-y-4">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-between h-14 text-lg  text-gray-700 hover:bg-gray-50 hover:text-[#7564ed] transition-all duration-200"
-                  onClick={() => { setSelectedOption("name"); setStep(1); }}
-                >
-                  Informations générales
-                  <span className="text-gray-400">&gt;</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-between h-14 text-lg  text-gray-700 hover:bg-gray-50 hover:text-[#7564ed] transition-all duration-200"
-                  onClick={() => { setSelectedOption("email"); setStep(1); }}
-                >
-                  E-mail
-                  <span className="text-gray-400">&gt;</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-between h-14 text-lg  text-gray-700 hover:bg-gray-50 hover:text-[#7564ed] transition-all duration-200"
-                  onClick={() => { setSelectedOption("phone"); setStep(1); }}
-                >
-                  Téléphone
-                  <span className="text-gray-400">&gt;</span>
-                </Button>
-              </div>
+        <DialogContent className="max-w-2xl rounded-2xl bg-white p-0 border-2 border-gray-200 shadow-2xl">
+          <div>
+            <div className="flex items-center justify-between px-8 pt-8 pb-6">
+              <DialogTitle className="sr-only">{title}</DialogTitle>
+              <h3 className="text-3xl font-bold flex-1 text-start text-gray-900">{title}</h3>
+              <button
+                onClick={handleClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Close"
+              >
+                <X className="h-6 w-6" />
+              </button>
             </div>
-          ) : (
-            <div>
-              <div className="flex items-center justify-between px-8 pt-8 pb-6">
-                <button
-                  onClick={handleBackToMain}
-                  className="text-2xl text-gray-700 hover:text-[#7564ed] transition-colors"
-                  aria-label="Back"
-                >
-                  &#8592;
-                </button>
-                <DialogTitle className="sr-only">{title}</DialogTitle>
-                <h3 className="text-xl font-bold flex-1 text-center text-gray-900">{title}</h3>
-                <button
-                  onClick={handleClose}
-                  className="text-2xl text-gray-700 hover:text-[#7564ed] transition-colors"
-                  aria-label="Close"
-                >
-                  &times;
-                </button>
-              </div>
-              {content}
-            </div>
-          )}
+            {content}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

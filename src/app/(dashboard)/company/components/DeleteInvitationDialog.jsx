@@ -2,13 +2,13 @@ import React from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Mail, Trash2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { X } from "lucide-react";
 
 export const DeleteInvitationDialog = ({
   open,
@@ -20,90 +20,72 @@ export const DeleteInvitationDialog = ({
 }) => {
   if (!invitation) return null;
 
+  // Get initials from email
+  const emailInitials = invitation.email?.substring(0, 2).toUpperCase() || 'IN';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className=" bg-white border-2 border-gray-200 shadow-2xl">
-        <DialogHeader className="pb-4">
-          <DialogTitle className="flex items-center gap-3 text-gray-900 text-xl font-bold">
-            <Mail className="h-6 w-6 text-gray-600" />
-            Supprimer l'invitation
-          </DialogTitle>
-          <DialogDescription className="text-base text-gray-600 mt-2">
-            Êtes-vous sûr de vouloir supprimer cette invitation ? Cette action ne peut pas être annulée.
-          </DialogDescription>
+      <DialogContent className="bg-white border-2 border-gray-200 shadow-2xl max-w-[500px]">
+        <DialogHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-gray-900 text-xl font-bold opacity-0">
+              Remove Invitation
+            </DialogTitle>
+            <button
+              onClick={() => onOpenChange(false)}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </DialogHeader>
 
-        <div className="py-6">
-          <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
-                <Trash2 className="h-8 w-8 text-gray-600" />
-              </div>
-              <div>
-                <p className="font-bold text-gray-900 text-lg">
-                  {invitation.email}
-                </p>
-                <p className="text-gray-600 text-base mt-1">
-                  Rôle: {invitation.role}
-                </p>
-                <p className="text-gray-500 text-sm mt-1">
-                  Statut: {invitation.status}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-4">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
-              <div className="text-base text-gray-700">
-                <p className="font-bold mb-2">Attention :</p>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-gray-600 font-bold">•</span>
-                    <span>L'invitation sera définitivement supprimée</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-gray-600 font-bold">•</span>
-                    <span>L'utilisateur ne pourra plus accepter cette invitation</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-gray-600 font-bold">•</span>
-                    <span>Vous devrez envoyer une nouvelle invitation si nécessaire</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {message && (
-            <div className={`mt-4 p-4 rounded-xl text-base font-medium border-2 ${message.includes('succès')
-                ? 'bg-green-50 text-green-800 border-green-200'
-                : 'bg-red-50 text-red-800 border-red-200'
-              }`}>
-              {message}
-            </div>
-          )}
+        {/* Invitation Profile */}
+        <div className="flex flex-col items-center pb-4">
+          <Avatar className="h-40 w-40 mb-3 border-2 border-gray-200">
+            <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${invitation.email}`} />
+            <AvatarFallback className="bg-purple-100 text-purple-600 text-4xl font-semibold">
+              {emailInitials}
+            </AvatarFallback>
+          </Avatar>
         </div>
 
-        <DialogFooter className="pt-4">
+        {/* Description */}
+        <div className="text-center pb-6">
+          <h2 className="text-2xl font-bold text-gray-900 ">
+            Remove Invitation?
+          </h2>
+          <p className="text-gray-500 text-base">
+            Are you sure you want to remove{' '}
+            <span className="text-[#5b9bff] font-medium">{invitation.email}</span>
+            {' '}from your workspace
+          </p>
+        </div>
+
+        {message && (
+          <div className={`p-3 rounded-lg text-sm font-medium mb-4 ${message.includes('succès')
+            ? 'bg-green-50 text-green-800'
+            : 'bg-red-50 text-red-800'
+            }`}>
+            {message}
+          </div>
+        )}
+
+        <DialogFooter className="pt-4 gap-3">
           <Button
             variant="outline"
-            onClick={onOpenChange}
+            onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="flex-1 h-12 text-base font-semibold border-2"
+            className="flex-1 h-12 text-base font-medium border-gray-300 text-gray-700 hover:bg-gray-50"
           >
-            Annuler
+            Cancel
           </Button>
           <Button
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 h-12 text-base font-semibold bg-[#ff254e] hover:bg-[#e01e3e] text-white border-2 border-[#ff254e]"
+            className="flex-1 h-12 text-base font-medium bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0"
           >
-            {loading
-              ? "Suppression..."
-              : "Supprimer l'invitation"
-            }
+            {loading ? "Removing..." : "Yes, remove"}
           </Button>
         </DialogFooter>
       </DialogContent>

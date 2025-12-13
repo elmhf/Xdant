@@ -1,185 +1,137 @@
-"use strict"
+"use client"
 
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerPortal,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
 
-const DialogContext = React.createContext({
-  isDesktop: true,
-})
-
-const Dialog = ({
-  ...props
-}) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)")
-  const [isOpen, setIsOpen] = React.useState(props.open)
-
-  React.useEffect(() => {
-    setIsOpen(props.open)
-  }, [props.open])
-
-  // Handle open state change safely
-  const handleOpenChange = (open) => {
-    setIsOpen(open)
-    if (props.onOpenChange) {
-      props.onOpenChange(open)
-    }
-  }
-
-  return (
-    <DialogContext.Provider value={{ isDesktop }}>
-      {isDesktop ? (
-        <DialogPrimitive.Root {...props} open={props.open !== undefined ? props.open : isOpen} onOpenChange={handleOpenChange} />
-      ) : (
-        <Drawer {...props} open={props.open !== undefined ? props.open : isOpen} onOpenChange={handleOpenChange} />
-      )}
-    </DialogContext.Provider>
-  )
+function Dialog({
+    ...props
+}) {
+    return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
-const DialogTrigger = DialogPrimitive.Trigger
-
-const DialogPortal = DialogPrimitive.Portal
-
-const DialogClose = DialogPrimitive.Close
-
-const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    className={cn(
-      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
-    {...props} />
-))
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
-
-const DialogContent = React.forwardRef(({ className, children, ...props }, ref) => {
-  const { isDesktop } = React.useContext(DialogContext)
-
-  if (isDesktop) {
-    return (
-      <DialogPortal>
-        <DialogOverlay />
-        <DialogPrimitive.Content
-          ref={ref}
-          className={cn(
-            "fixed left-[50%] top-[20%] z-50 grid w-full max-w-[650px] translate-x-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
-            className
-          )}
-          {...props}>
-          {children}
-          <DialogPrimitive.Close
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
-        </DialogPrimitive.Content>
-      </DialogPortal>
-    )
-  }
-
-  return (
-    <DrawerContent ref={ref} className={className} {...props}>
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted " />
-      {children}
-      <DrawerClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </DrawerClose>
-    </DrawerContent>
-  )
-})
-DialogContent.displayName = DialogPrimitive.Content.displayName
-
-const DialogHeader = ({
-  className,
-  ...props
-}) => {
-  const { isDesktop } = React.useContext(DialogContext)
-
-  if (isDesktop) {
-    return (
-      <div
-        className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)}
-        {...props} />
-    )
-  }
-  return <DrawerHeader className={cn("text-left", className)} {...props} />
+function DialogTrigger({
+    ...props
+}) {
+    return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
-DialogHeader.displayName = "DialogHeader"
 
-const DialogFooter = ({
-  className,
-  ...props
-}) => {
-  const { isDesktop } = React.useContext(DialogContext)
-
-  if (isDesktop) {
-    return (
-      <div
-        className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
-        {...props} />
-    )
-  }
-  return <DrawerFooter className={cn("pt-2", className)} {...props} />
+function DialogPortal({
+    ...props
+}) {
+    return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
 }
-DialogFooter.displayName = "DialogFooter"
 
-const DialogTitle = React.forwardRef(({ className, ...props }, ref) => {
-  const { isDesktop } = React.useContext(DialogContext)
+function DialogClose({
+    ...props
+}) {
+    return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+}
 
-  if (isDesktop) {
+function DialogOverlay({
+    className,
+    ...props
+}) {
     return (
-      <DialogPrimitive.Title
-        ref={ref}
-        className={cn("text-lg font-semibold leading-none tracking-tight", className)}
-        {...props} />
-    )
-  }
-  return <DrawerTitle ref={ref} className={cn("text-left", className)} {...props} />
-})
-DialogTitle.displayName = DialogPrimitive.Title.displayName
+        <DialogPrimitive.Overlay
+            data-slot="dialog-overlay"
+            className={cn(
+                "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+                className
+            )}
+            {...props} />
+    );
+}
 
-const DialogDescription = React.forwardRef(({ className, ...props }, ref) => {
-  const { isDesktop } = React.useContext(DialogContext)
-
-  if (isDesktop) {
+function DialogContent({
+    className,
+    children,
+    showCloseButton = true,
+    ...props
+}) {
     return (
-      <DialogPrimitive.Description
-        ref={ref}
-        className={cn("text-sm text-muted-foreground", className)}
-        {...props} />
-    )
-  }
-  return <DrawerDescription ref={ref} className={cn("text-left", className)} {...props} />
-})
-DialogDescription.displayName = DialogPrimitive.Description.displayName
+        <DialogPortal data-slot="dialog-portal">
+            <DialogOverlay />
+            <DialogPrimitive.Content
+                data-slot="dialog-content"
+                className={cn(
+                    "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 outline-none sm:max-w-lg",
+                    className
+                )}
+                {...props}>
+                {children}
+                {showCloseButton && (
+                    <DialogPrimitive.Close
+                        data-slot="dialog-close"
+                        className="absolute right-4 top-4 rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 hover:bg-gray-100 p-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                        <X className="h-5 w-5" />
+                        <span className="sr-only">Close</span>
+                    </DialogPrimitive.Close>
+                )}
+            </DialogPrimitive.Content>
+        </DialogPortal>
+    );
+}
+
+function DialogHeader({
+    className,
+    ...props
+}) {
+    return (
+        <div
+            data-slot="dialog-header"
+            className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+            {...props} />
+    );
+}
+
+function DialogFooter({
+    className,
+    ...props
+}) {
+    return (
+        <div
+            data-slot="dialog-footer"
+            className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+            {...props} />
+    );
+}
+
+function DialogTitle({
+    className,
+    ...props
+}) {
+    return (
+        <DialogPrimitive.Title
+            data-slot="dialog-title"
+            className={cn("text-lg leading-none font-semibold", className)}
+            {...props} />
+    );
+}
+
+function DialogDescription({
+    className,
+    ...props
+}) {
+    return (
+        <DialogPrimitive.Description
+            data-slot="dialog-description"
+            className={cn("text-muted-foreground text-sm", className)}
+            {...props} />
+    );
+}
 
 export {
-  Dialog,
-  DialogPortal,
-  DialogOverlay,
-  DialogClose,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogOverlay,
+    DialogPortal,
+    DialogTitle,
+    DialogTrigger,
 }

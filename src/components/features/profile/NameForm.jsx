@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) {
   const [firstName, setFirstName] = useState(userInfo.firstName || '');
   const [lastName, setLastName] = useState(userInfo.lastName || '');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const { pushNotification } = useNotification();
 
   // Validation helpers
   const isAlpha = (str) => /^[A-Za-zÀ-ÿ 0-9\s'-]+$/.test(str);
@@ -16,11 +16,9 @@ export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) 
 
   const handleSave = async () => {
     setLoading(true);
-    setError("");
-    setSuccess("");
     // Validation
     if (!isValidName(firstName) || !isValidName(lastName)) {
-      setError("Le prénom et le nom doivent contenir au moins 3 lettres, uniquement des caractères alphabétiques (pas de chiffres ni de symboles)");
+      pushNotification('error', "Le prénom et le nom doivent contenir au moins 3 lettres, uniquement des caractères alphabétiques (pas de chiffres ni de symboles)");
       setLoading(false);
       return;
     }
@@ -28,12 +26,12 @@ export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) 
     setLoading(false);
     if (result.success) {
       setUserInfo({ firstName: firstName.trim(), lastName: lastName.trim() });
-      setSuccess("Nom modifié avec succès.");
+      pushNotification('success', "Nom modifié avec succès.");
       setTimeout(() => {
         onBack();
       }, 1200);
     } else {
-      setError(result.message || "Erreur lors de la modification du nom.");
+      pushNotification('error', result.message || "Erreur lors de la modification du nom.");
     }
   };
 
@@ -50,7 +48,7 @@ export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) 
           </Label>
           <Input
             id="firstName"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+            className="h-12 w-full text-base  focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
             placeholder="Entrez votre prénom"
             value={firstName}
             onChange={e => setFirstName(e.target.value)}
@@ -64,7 +62,7 @@ export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) 
           </Label>
           <Input
             id="lastName"
-            className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
+            className="h-12 w-full text-base  focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
             placeholder="Entrez votre nom"
             value={lastName}
             onChange={e => setLastName(e.target.value)}
@@ -73,17 +71,7 @@ export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) 
         </div>
       </div>
 
-      {error && (
-        <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
-          {error}
-        </div>
-      )}
 
-      {success && (
-        <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
-          {success}
-        </div>
-      )}
 
       <div className="flex gap-3 pt-2 mt-auto justify-end">
         <Button

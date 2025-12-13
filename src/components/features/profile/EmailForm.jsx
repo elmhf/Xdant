@@ -2,26 +2,24 @@ import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function EmailForm({ onBack, userInfo, setUserInfo }) {
   const [step, setStep] = useState(1); // 1: password, 2: email, 3: code
   const [email, setEmail] = useState("");
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const inputsRef = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
   const [password, setPassword] = useState("");
+  const { pushNotification } = useNotification();
 
   // Step 1: Verify password
   const handleVerifyPassword = async () => {
     if (!password.trim()) {
-      setError("Le mot de passe est obligatoire.");
+      pushNotification('error', "Le mot de passe est obligatoire.");
       return;
     }
     setLoading(true);
-    setError("");
-    setSuccess("");
     try {
       const res = await fetch("http://localhost:5000/api/auth/verify-password", {
         method: "POST",
@@ -33,10 +31,10 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
       if (res.ok && data.valid === true) {
         setStep(2);
       } else {
-        setError("Mot de passe incorrect.");
+        pushNotification('error', "Mot de passe incorrect.");
       }
     } catch (e) {
-      setError("Erreur réseau");
+      pushNotification('error', "Erreur réseau");
     }
     setLoading(false);
   };
@@ -44,12 +42,10 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
   // Step 2: Send email
   const handleSendEmail = async () => {
     if (!email.trim()) {
-      setError("L'adresse email est obligatoire.");
+      pushNotification('error', "L'adresse email est obligatoire.");
       return;
     }
     setLoading(true);
-    setError("");
-    setSuccess("");
     try {
       const res = await fetch("http://localhost:5000/api/auth/send-email-update-code", {
         method: "POST",
@@ -59,13 +55,13 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
+        pushNotification('success', "Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
         setStep(3);
       } else {
-        setError(data.message || "Erreur lors de l'envoi du code de vérification.");
+        pushNotification('error', data.message || "Erreur lors de l'envoi du code de vérification.");
       }
     } catch (e) {
-      setError("Erreur réseau");
+      pushNotification('error', "Erreur réseau");
     }
     setLoading(false);
   };
@@ -73,12 +69,10 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
   // Step 3: Verify code
   const handleVerifyCode = async () => {
     if (code.join("").length < 6) {
-      setError("Veuillez saisir le code à 6 chiffres.");
+      pushNotification('error', "Veuillez saisir le code à 6 chiffres.");
       return;
     }
     setLoading(true);
-    setError("");
-    setSuccess("");
     try {
       const res = await fetch("http://localhost:5000/api/auth/verify-email-update-code", {
         method: "POST",
@@ -88,16 +82,16 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess("Adresse e-mail modifiée avec succès.");
+        pushNotification('success', "Adresse e-mail modifiée avec succès.");
         setUserInfo({ email });
         setTimeout(() => {
           onBack();
         }, 1200);
       } else {
-        setError(data.message || "Code incorrect ou expiré.");
+        pushNotification('error', data.message || "Code incorrect ou expiré.");
       }
     } catch (e) {
-      setError("Erreur réseau");
+      pushNotification('error', "Erreur réseau");
     }
     setLoading(false);
   };
@@ -108,7 +102,6 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
     const newCode = [...code];
     newCode[i] = value;
     setCode(newCode);
-    setError("");
     if (value && i < 5) {
       inputsRef[i + 1].current.focus();
     }
@@ -156,11 +149,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             </div>
           </div>
 
-          {error && (
-            <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
-              {error}
-            </div>
-          )}
+
 
           <div className="flex gap-3 pt-2 mt-auto justify-end">
             <Button
@@ -206,17 +195,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             </div>
           </div>
 
-          {error && (
-            <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
-              {error}
-            </div>
-          )}
 
-          {success && (
-            <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
-              {success}
-            </div>
-          )}
 
           <div className="flex gap-3 pt-2 mt-auto justify-end">
             <Button
@@ -271,17 +250,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             </div>
           </div>
 
-          {error && (
-            <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
-              {error}
-            </div>
-          )}
 
-          {success && (
-            <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
-              {success}
-            </div>
-          )}
 
           <div className="flex gap-3 pt-2 mt-auto justify-end">
             <Button

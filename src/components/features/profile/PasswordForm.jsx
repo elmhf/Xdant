@@ -2,28 +2,26 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function PasswordForm({ onBack, changePassword }) {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const { pushNotification } = useNotification();
 
   const handleSave = async () => {
     setLoading(true);
-    setError("");
-    setSuccess("");
     const result = await changePassword(oldPassword, newPassword);
     setLoading(false);
     if (result.success) {
-      setSuccess(result.message);
+      pushNotification('success', result.message);
       setTimeout(() => {
         onBack();
       }, 1200);
     } else {
-      setError(result.message);
+      pushNotification('error', result.message);
     }
   };
 
@@ -109,17 +107,7 @@ export default function PasswordForm({ onBack, changePassword }) {
         </div>
       )}
 
-      {error && (
-        <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
-          {error}
-        </div>
-      )}
 
-      {success && (
-        <div className="p-4 rounded-xl text-base font-medium bg-green-50 text-green-800 border-2 border-green-200">
-          {success}
-        </div>
-      )}
 
       <div className="flex gap-3 pt-2 mt-auto justify-end">
         <Button

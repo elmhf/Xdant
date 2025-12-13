@@ -7,7 +7,7 @@ export default function Page() {
       <div className="bg-transparent">
         <div className="">
           <div className="text-start">
-            <h2 className="text-3xl md:text-4xl font-[700] text-gray-900 mb-2">
+            <h2 className="text-3xl md:text-4xl font-[700] text-gray-900 mb-6 mt-6">
               My Profile
             </h2>
           </div>

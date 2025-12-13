@@ -13,6 +13,7 @@ import EmailForm from "./EmailForm";
 import PasswordForm from "./PasswordForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 // --------------------------- Component ---------------------------
 export default function AccountInfoCard({ firstName, lastName, email }) {
@@ -20,6 +21,8 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
   const { userInfo, setUserInfo, changePassword, changeName, getUserInfo } = useUserStore();
   const getImageFromCache = useUserStore(state => state.getImageFromCache);
   const changePhoto = useUserStore(state => state.changePhoto);
+  const deletePhoto = useUserStore(state => state.deletePhoto);
+  const { pushNotification } = useNotification();
 
   // Form dialog states
   const [showNameForm, setShowNameForm] = useState(false);
@@ -27,6 +30,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isDeletingPhoto, setIsDeletingPhoto] = useState(false);
 
   // File input ref
   const fileInputRef = useRef(null);
@@ -53,7 +57,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
         setUserInfo({ personalSignature: result.signatureUrl });
       } else {
         setUserInfo({ personalSignature: svgUrl });
-        alert(result.message || "خطأ في حفظ التوقيع");
+        pushNotification('error', result.message || "خطأ في حفظ التوقيع");
       }
     } else {
       setUserInfo({ personalSignature: svgUrl });
@@ -66,11 +70,11 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       // Vérification du type et de la taille
       const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
       if (!allowedTypes.includes(file.type)) {
-        alert('Veuillez choisir une image au format PNG ou JPG uniquement');
+        pushNotification('error', 'Veuillez choisir une image au format PNG ou JPG uniquement');
         return;
       }
       if (file.size > 10 * 1024 * 1024) {
-        alert('La taille de l\'image ne doit pas dépasser 10 mégaoctets');
+        pushNotification('error', 'La taille de l\'image ne doit pas dépasser 10 mégaoctets');
         return;
       }
       setIsUploadingPhoto(true);
@@ -79,9 +83,28 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       setIsUploadingPhoto(false);
       if (result.success && result.profilePhotoUrl) {
         setUserInfo({ profilePhotoUrl: result.profilePhotoUrl });
+        pushNotification('success', 'Photo de profil mise à jour avec succès');
       } else {
-        alert(result.message || "Erreur lors du téléchargement de la photo");
+        pushNotification('error', result.message || "Erreur lors du téléchargement de la photo");
       }
+    }
+  };
+
+  const handlePhotoDelete = async () => {
+    if (!userInfo.profilePhotoUrl) return;
+
+    const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer votre photo de profil ?");
+    if (!confirmed) return;
+
+    setIsDeletingPhoto(true);
+    const result = await deletePhoto();
+    setIsDeletingPhoto(false);
+
+    if (result.success) {
+      setUserInfo({ profilePhotoUrl: null });
+      pushNotification('success', 'Photo de profil supprimée avec succès');
+    } else {
+      pushNotification('error', result.message || "Erreur lors de la suppression de la photo");
     }
   };
 
@@ -99,7 +122,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
           <CardContent className="p-6">
             {/* My Profile Section */}
             <div className="mb-10">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Account info</h3>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">Account info</h2>
 
               {/* Profile Picture */}
               <div className="flex items-start gap-4 mb-6">
@@ -115,7 +138,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                     <button
                       onClick={() => fileInputRef.current && fileInputRef.current.click()}
                       disabled={isUploadingPhoto}
-                      className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 cursor-pointer bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isUploadingPhoto ? (
                         <>
@@ -128,8 +151,19 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                         </>
                       )}
                     </button>
-                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
-                      Supprimer l'image
+                    <button
+                      onClick={handlePhotoDelete}
+                      disabled={!userInfo.profilePhotoUrl || isDeletingPhoto}
+                      className="px-4 py-2 cursor-pointer bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isDeletingPhoto ? (
+                        <>
+                          <div className="animate-spin rounded-full w-4 h-4 border-2 border-gray-700 border-t-transparent"></div>
+                          Suppression...
+                        </>
+                      ) : (
+                        "Supprimer l'image"
+                      )}
                     </button>
                   </div>
                   <p className="text-xs text-gray-500">Nous supportons les PNG, JPEG et GIF de moins de 10MB</p>
@@ -146,28 +180,28 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
               {/* Name Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">Prénom</label>
-                  <div className="flex gap-3">
+                  <label className="text-sm font-semibold text-gray-700">Prénom</label>
+           
                     <Input
                       value={userInfo?.firstName || ""}
                       disabled
-                      className="h-11 text-base bg-gray-50 flex-1"
+                      className="h-12 max-w-sm text-base flex-1"
                     />
-                  </div>
+                
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">Nom</label>
+                  <label className="text-sm font-semibold text-gray-700">Nom</label>
                   <div className="flex gap-3">
                     <Input
                       value={userInfo?.lastName || ""}
                       disabled
-                      className="h-11 text-base bg-gray-50 flex-1"
+                      className="h-12 text-base flex-1"
                     />
                     <button
                       onClick={() => setShowNameForm(true)}
-                      className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap"
+                      className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors font-medium whitespace-nowrap"
                     >
-                      Modifier le nom
+                      Edit
                     </button>
                   </div>
                 </div>
@@ -176,41 +210,41 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
             {/* Account Security Section */}
             <div className="mb-10">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Sécurité du compte</h3>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">Sécurité du compte</h2>
 
               {/* Email */}
               <div className="space-y-2 mb-6">
-                <label className="text-sm font-medium text-gray-900">Email</label>
+                <label className="text-sm font-semibold text-gray-700">Email</label>
                 <div className="flex gap-3">
                   <Input
                     value={userInfo?.email || ""}
                     disabled
-                    className="h-11 text-base bg-gray-50 flex-1"
+                    className="h-12 text-base flex-1"
                   />
                   <button
                     onClick={() => setShowEmailForm(true)}
-                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap"
+                    className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors font-medium whitespace-nowrap"
                   >
-                    Changer l'email
+                    Edit
                   </button>
                 </div>
               </div>
 
               {/* Password */}
               <div className="space-y-2 mb-6">
-                <label className="text-sm font-medium text-gray-900">Mot de passe</label>
+                <label className="text-sm font-semibold text-gray-700">Mot de passe</label>
                 <div className="flex gap-3">
                   <Input
                     type="password"
                     value="••••••••••"
                     disabled
-                    className="h-11 text-base bg-gray-50 flex-1"
+                    className="h-12 text-base flex-1"
                   />
                   <button
                     onClick={() => setShowPasswordForm(true)}
-                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap"
+                    className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors font-medium whitespace-nowrap"
                   >
-                    Changer le mot de passe
+                    Edit
                   </button>
                 </div>
               </div>
@@ -222,7 +256,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                   <p className="text-sm text-gray-600">Gérer les paramètres de sécurité et l'accès au support</p>
                 </div>
                 <SupportAccessSection userInfo={userInfo} setUserInfo={setUserInfo}>
-                  <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                  <button className="px-4 py-2 cursor-pointer text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
                     Gérer
                   </button>
                 </SupportAccessSection>
