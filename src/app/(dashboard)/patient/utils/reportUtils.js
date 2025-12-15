@@ -157,12 +157,12 @@ export const convertReportsToOrders = (reports) => {
       hasAnnotations: report.status === 'completed',
       report_url: report.report_url,
       data_url: report.data_url,
-      image_url:report.image_url
-      
+      image_url: report.image_url
+
     };
-    
+
     return order;
   });
-  
+
   return orders;
 };

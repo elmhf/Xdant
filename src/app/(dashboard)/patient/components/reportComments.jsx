@@ -52,7 +52,7 @@ const ReportComments = ({ description = "", onEdit }) => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className=" w-4xl sm: rounded-2xl border-none shadow-xl p-4 bg-white">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-gray-900">
+            <DialogTitle className="text-3xl font-bold text-gray-900">
               Clinical case description
             </DialogTitle>
           </DialogHeader>
@@ -73,7 +73,7 @@ const ReportComments = ({ description = "", onEdit }) => {
             </Button>
             <Button
               onClick={handleSave}
-              className="bg-[#7564ed] hover:bg-[#7564ed] text-white font-medium px-6 py-2 rounded-lg shadow-md transition-all duration-200"
+              className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4   px-6 py-2 rounded-lg shadow-md transition-all duration-200"
             >
               Save
             </Button>

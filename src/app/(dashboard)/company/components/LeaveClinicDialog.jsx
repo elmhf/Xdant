@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Building2, Trash2, UserCog, Check, Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import useUserStore from '@/components/features/profile/store/userStore';
@@ -27,6 +28,8 @@ export const LeaveClinicDialog = ({
   const [newOwnerId, setNewOwnerId] = useState('');
   const [members, setMembers] = useState([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
+  const [confirmUnderstand, setConfirmUnderstand] = useState(false);
+  const [confirmLoseAccess, setConfirmLoseAccess] = useState(false);
   const user = useUserStore(state => state.userInfo);
 
   // Reset state when dialog opens
@@ -177,16 +180,42 @@ export const LeaveClinicDialog = ({
           )}
 
           {!isOwner && (
-            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-yellow-800">
-                  <p className="font-medium">Attention :</p>
-                  <ul className="mt-1 space-y-1 text-xs">
-                    <li>• Vous perdrez l'accès à tous les patients de cette clinique</li>
-                    <li>• Vous ne pourrez plus voir les rendez-vous et les dossiers</li>
-                    <li>• Vous devrez être réinvité pour rejoindre la clinique</li>
+            <div className="mt-4 space-y-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-6 w-6 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-gray-600">
+                  <p className="font-medium text-gray-900 mb-2">Vous êtes sur le point de quitter cette clinique. En quittant, vous :</p>
+                  <ul className="space-y-1.5 text-sm">
+                    <li>• Perdrez l'accès à tous les patients de cette clinique</li>
+                    <li>• Ne pourrez plus voir les rendez-vous et les dossiers</li>
+                    <li>• Devrez être réinvité pour rejoindre la clinique</li>
                   </ul>
+                </div>
+              </div>
+
+              <div className="space-y-3 pl-1">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="confirm-understand"
+                    checked={confirmUnderstand}
+                    onCheckedChange={setConfirmUnderstand}
+                    className="mt-0.5"
+                  />
+                  <label htmlFor="confirm-understand" className="text-sm text-gray-700 cursor-pointer">
+                    Je confirme que je comprends les conséquences de quitter cette clinique
+                  </label>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="confirm-lose-access"
+                    checked={confirmLoseAccess}
+                    onCheckedChange={setConfirmLoseAccess}
+                    className="mt-0.5"
+                  />
+                  <label htmlFor="confirm-lose-access" className="text-sm text-gray-700 cursor-pointer">
+                    Je confirme que je perdrai l'accès aux données de la clinique
+                  </label>
                 </div>
               </div>
             </div>
@@ -214,7 +243,7 @@ export const LeaveClinicDialog = ({
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={loading || (isOwner && action === 'transfer' && !newOwnerId)}
+            disabled={loading || (isOwner && action === 'transfer' && !newOwnerId) || (!isOwner && (!confirmUnderstand || !confirmLoseAccess))}
             className="text-lg font-bold bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
           >
             {loading

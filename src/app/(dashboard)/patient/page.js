@@ -6,11 +6,12 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, UserPlus, X } from "lucide-react";
+import { Search, Plus, UserPlus, X, LayoutGrid, List } from "lucide-react";
 import { useClinicMembers, usePermissions } from "@/app/(dashboard)/company/hooks";
 import useUserStore from "@/components/features/profile/store/userStore";
 import { useDentalStore } from "@/stores/dataStore";
 import PatientTable from './components/PatientTable';
+import PatientCardGrid from './components/PatientCardGrid';
 import AddPatientDialog from './components/AddPatientDialog';
 import EditPatientDialog from './components/EditPatientDialog';
 import { DeletePatientDialog } from './components/DeletePatientDialog';
@@ -23,11 +24,13 @@ import {
   sortPatients,
   getTabCounts
 } from './utils/patientUtils';
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function PatientPage() {
   const router = useRouter();
   // Get current clinic from the same hook used in company page
   const { currentClinic } = useClinicMembers();
+  const { pushNotification } = useNotification();
   const resetDentalStore = useDentalStore(state => state.resetData);
   const { userRole } = usePermissions(currentClinic?.id);
   const user = useUserStore(state => state.userInfo);
@@ -42,6 +45,7 @@ export default function PatientPage() {
   }, []);
 
   const [activeTab, setActiveTab] = useState("my");
+  const [viewMode, setViewMode] = useState("cards"); // 'table' or 'cards'
   const [searchQuery, setSearchQuery] = useState("");
   const [sorting, setSorting] = useState({ column: 'name', direction: 'asc' });
   const [isAddPatientOpen, setIsAddPatientOpen] = useState(false);
@@ -52,7 +56,7 @@ export default function PatientPage() {
   const [isDeletePatientOpen, setIsDeletePatientOpen] = useState(false);
   const [patientToDelete, setPatientToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteMessage, setDeleteMessage] = useState("");
+
 
   // Patient data state
   const [patients, setPatients] = useState([]);
@@ -101,8 +105,8 @@ export default function PatientPage() {
   // Get tab counts using utility function
   const tabCounts = getTabCounts(patients);
   const tabs = [
-    { id: "my", label: "My Patients", count: tabCounts.my },
-    { id: "all", label: "All Patients", count: tabCounts.all },
+    { id: "my", label: "Mine", count: tabCounts.my },
+    { id: "all", label: "All", count: tabCounts.all },
     { id: "favorites", label: "Favorites", count: tabCounts.favorites }
   ];
 
@@ -144,20 +148,18 @@ export default function PatientPage() {
   const handleDeletePatient = (patient) => {
     setPatientToDelete(patient);
     setIsDeletePatientOpen(true);
-    setDeleteMessage("");
   };
 
   const handleConfirmDelete = async () => {
     if (!patientToDelete) return;
 
     setDeleteLoading(true);
-    setDeleteMessage("");
 
     try {
       const result = await useUserStore.getState().deletePatient(patientToDelete.id);
 
       if (result.success) {
-        setDeleteMessage("Patient supprimé avec succès");
+        pushNotification("success", "Patient deleted successfully");
 
         // Refresh patients list
         if (currentClinic?.id) {
@@ -168,17 +170,15 @@ export default function PatientPage() {
         }
 
         // Close dialog after success
-
         setIsDeletePatientOpen(false);
         setPatientToDelete(null);
-        setDeleteMessage("");
 
       } else {
-        setDeleteMessage(result.message || "Erreur lors de la suppression du patient");
+        pushNotification("error", result.message || "Error deleting patient");
       }
     } catch (error) {
       console.error('Error deleting patient:', error);
-      setDeleteMessage("Erreur réseau lors de la suppression");
+      pushNotification("error", "Network error while deleting patient");
     } finally {
       setDeleteLoading(false);
     }
@@ -246,7 +246,7 @@ export default function PatientPage() {
       {/* Header Section */}
       <div className="bg-transparent flex-wrap">
         <div className="px-0 sm:px-0 lg:px-0 py-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center flex-wrap justify-between">
             <h1 className="text-3xl md:text-4xl font-[500] text-gray-900">
               <span className="text-8xl md:text-8xl font-[700]">Patients</span>
               <span className="text-lg md:text-xl font-bold text-gray-600 ml-2">
@@ -278,26 +278,26 @@ export default function PatientPage() {
               <Button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-3 py-2.5 rounded-lg text md:text-[18px]  ${activeTab === tab.id
+                className={`px-3 py-2.5 rounded-lg h-12 text-[20px] md:text-[20px]  ${activeTab === tab.id
                   ? "bg-[#7564ed] text-white"
                   : "bg-[#979eb02d] text-gray-700  hover:bg-[#7564ed] hover:text-white"
                   }`}
               >
-                {tab.label} {tab.count}
+                {tab.label} <span className="opacity-70">{tab.count}</span>
               </Button>
             ))}
           </div>
 
           {/* Search Controls */}
-          <div className="flex items-center gap-0.5 w-full">
+          <div className="flex items-center gap-2 w-full">
             {/* Search Bar */}
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 placeholder="Buscar por nombre o email del paciente"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 h-12 w-full"
+                className="pl-10 text-gray-950 pr-10 h-12 w-full"
               />
 
               {searchQuery && (
@@ -310,23 +310,63 @@ export default function PatientPage() {
                 </button>
               )}
             </div>
+
+            {/* View Toggle Buttons */}
+            <div className="flex gap-1 bg-[#979eb02d]  rounded-2xl p-1.5">
+              <Button
+                onClick={() => setViewMode("cards")}
+                variant="ghost"
+                size="sm"
+                className={`h-11 w-11 p-0 rounded-xl transition-all ${viewMode === "cards"
+                  ? "bg-[#7564ed] text-white "
+                  : "text-gray-600 hover:text-gray-900 hover:bg-white/20"
+                  }`}
+                title="Card view"
+              >
+                <LayoutGrid className="h-8 w-8" />
+              </Button>
+              <Button
+                onClick={() => setViewMode("table")}
+                variant="ghost"
+                size="sm"
+                className={`h-11 w-11 p-0 rounded-xl transition-all ${viewMode === "table"
+                  ? "bg-[#7564ed] text-white "
+                  : "text-gray-600 hover:text-gray-900 hover:bg-white/20"
+                  }`}
+                title="Table view"
+              >
+                <List className="h-8 w-8" />
+
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="bg-white  rounded-xl shadow  max-w-full mx-auto">
-          {/* Patient Table Component */}
-          <PatientTable
-            patients={sortedPatients}
-            sorting={sorting}
-            onSort={handleSort}
-            searchQuery={searchQuery}
-            activeTab={activeTab}
-            onEditPatient={handleEditPatient}
-            onDeletePatient={handleDeletePatient}
-            onToggleFavorite={handleToggleFavorite}
-            onViewInfo={handleViewInfo}
-            favoriteLoadingStates={favoriteLoadingStates}
-          />
+        <div className={`${viewMode === 'table' ? 'bg-white rounded-xl shadow' : ''} max-w-full mx-auto`}>
+          {/* Conditional Rendering based on viewMode */}
+          {viewMode === "table" ? (
+            <PatientTable
+              patients={sortedPatients}
+              sorting={sorting}
+              onSort={handleSort}
+              searchQuery={searchQuery}
+              activeTab={activeTab}
+              onEditPatient={handleEditPatient}
+              onDeletePatient={handleDeletePatient}
+              onToggleFavorite={handleToggleFavorite}
+              onViewInfo={handleViewInfo}
+              favoriteLoadingStates={favoriteLoadingStates}
+            />
+          ) : (
+            <PatientCardGrid
+              patients={sortedPatients}
+              onEditPatient={handleEditPatient}
+              onDeletePatient={handleDeletePatient}
+              onToggleFavorite={handleToggleFavorite}
+              onViewInfo={handleViewInfo}
+              favoriteLoadingStates={favoriteLoadingStates}
+            />
+          )}
         </div>
       </div>
 
@@ -346,6 +386,10 @@ export default function PatientPage() {
         }}
         onPatientUpdated={handlePatientUpdated}
         patient={selectedPatient}
+        onDelete={(patient) => {
+          setIsEditPatientOpen(false);
+          handleDeletePatient(patient);
+        }}
       />
 
       {/* Delete Patient Dialog */}
@@ -355,13 +399,11 @@ export default function PatientPage() {
           if (!open) {
             setIsDeletePatientOpen(false);
             setPatientToDelete(null);
-            setDeleteMessage("");
           }
         }}
         patient={patientToDelete}
         onConfirm={handleConfirmDelete}
         loading={deleteLoading}
-        message={deleteMessage}
       />
 
       {/* Patient Info Dialog */}

@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Plus, X, ChevronDown } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Plus, X, ChevronDown, Trash2, UserPlus } from "lucide-react";
 import { useClinicMembers } from "@/app/(dashboard)/company/hooks";
 import useUserStore from "@/components/features/profile/store/userStore";
 import { validatePatientForm, getInitialFormData, resetFormData, preparePatientDataForAPI } from '../utils/formUtils';
@@ -26,7 +26,9 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
     first_name: member.first_name || "",
     last_name: member.last_name || "",
     name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
-    email: member.email || ''
+    name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+    email: member.email || '',
+    profilePhotoUrl: member.profilePhotoUrl || null
   }));
 
   const handleInputChange = (field, value) => {
@@ -113,7 +115,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white  max-h-[90vh]  overflow-y-auto">
+      <DialogContent className="bg-white max-w-3xl sm:max-w-3xl max-h-[90vh]  overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-900">
             New patient
@@ -263,113 +265,132 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
 
 
 
+
           {/* Treating Doctors */}
-          <div className="space-y-2">
-            <Label className="text-sm text-gray-400">
+          <div className="space-y-3">
+            <Label className="text-sm text-gray-600 font-medium">
               Treating doctor <span className="text-red-500">*</span>
             </Label>
 
-            <div className="relative">
-              {/* Dropdown for selecting doctors with selected ones shown as tags */}
-              <div className="relative">
-                <Select onValueChange={addTreatingDoctor}>
-                  <SelectTrigger className={`min-h-[60px] h-fit w-full text-base border-1 ${formData.treating_doctors.length === 0 && formError ? 'border-red-500' : 'border-gray-200'
-                    } hover:border-[#7564ed] rounded-xl p-1  transition-colors`}>
-                    <div className="flex flex-wrap gap-2 items-center w-full">
-                      {formData.treating_doctors.length > 0 ? (
-                        formData.treating_doctors.map((doctor, index) => {
-                          // Color palette for avatars
-                          const colors = [
-                            'bg-[#a855f7]', // purple
-                            'bg-[#22c55e]', // green
-                            'bg-[#3b82f6]', // blue
-                            'bg-[#f59e0b]', // amber
-                            'bg-[#ec4899]', // pink
-                            'bg-[#14b8a6]', // teal
-                          ];
-                          const avatarColor = colors[index % colors.length];
+            {/* Selected Doctors List */}
+            {formData.treating_doctors.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 border-1 border-gray-300 rounded-xl p-2 max-h-[180px] overflow-y-auto pr-1">
+                {formData.treating_doctors.map((doctor, index) => {
+                  const colors = [
+                    'bg-[#a855f7]',
+                    'bg-[#22c55e]',
+                    'bg-[#3b82f6]',
+                    'bg-[#f59e0b]',
+                    'bg-[#ec4899]',
+                    'bg-[#14b8a6]',
+                  ];
+                  const avatarColor = colors[index % colors.length];
 
-                          return (
-                            <div
-                              key={doctor.id}
-                              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 pl-1.5 pr-3 py-1.5 rounded-full border border-gray-200 "
-                            >
-                              <Avatar className="h-10 w-10">
-                                <AvatarFallback className={`${avatarColor} w-full h-full text-white text-sm font-semibold`}>
+                  return (
+                    <div
+                      key={doctor.id}
+                      onClick={() => removeTreatingDoctor(doctor.id)}
+                      className="flex items-center justify-between p-2 rounded-xl border-1 border-gray-200 bg-gray-100 cursor-pointer transition-all group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                          <AvatarImage src={doctor.profilePhotoUrl} />
+                          <AvatarFallback className={`${avatarColor} text-white text-xs font-bold`}>
+                            {((doctor.first_name || '').slice(0, 1) +
+                              (doctor.last_name || '').slice(0, 1)).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-semibold text-gray-900">
+                            Dr. {doctor.first_name || ""} {doctor.last_name || ""}
+                          </span>
+                          <span className="text-xs text-gray-500">{doctor.email}</span>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeTreatingDoctor(doctor.id);
+                        }}
+                        className="h-8 w-8 p-0 text-gray-400 hover:text-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-all"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Add Doctor Dropdown */}
+            <div className="relative">
+              <Select onValueChange={addTreatingDoctor}>
+                <SelectTrigger className={`h-12 w-full text-base bg-white border-dashed border-2 ${formData.treating_doctors.length === 0 && formError ? 'border-red-300 bg-red-50/10' : 'border-gray-200 hover:border-[#7564ed] hover:bg-[#7564ed]/5'
+                  } rounded-xl px-4 transition-all group text-gray-500 hover:text-[#7564ed]`}>
+                  <div className="flex items-center gap-2 justify-center w-full font-medium">
+                    <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    <span>Add treating doctor</span>
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="max-h-60 p-1">
+                  {availableDoctors
+                    .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
+                    .length > 0 ? (
+                    availableDoctors
+                      .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
+                      .map((doctor, index) => {
+                        const colors = [
+                          'bg-[#a855f7]',
+                          'bg-[#22c55e]',
+                          'bg-[#3b82f6]',
+                          'bg-[#f59e0b]',
+                          'bg-[#ec4899]',
+                          'bg-[#14b8a6]',
+                        ];
+                        const avatarColor = colors[index % colors.length];
+
+                        return (
+                          <SelectItem
+                            key={doctor.id}
+                            value={doctor.id}
+                            className="rounded-lg cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
+                          >
+                            <div className="flex items-center gap-3 py-1">
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage src={doctor.profilePhotoUrl} />
+                                <AvatarFallback className={`${avatarColor} text-white text-xs font-bold`}>
                                   {((doctor.first_name || '').slice(0, 1) +
                                     (doctor.last_name || '').slice(0, 1)).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
-                              <span className="text-sm font-medium">
-                                {doctor.first_name || ""} {doctor.last_name || ""}
-                              </span>
-                              <button
-                                type="button"
-                                onPointerDown={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  removeTreatingDoctor(doctor.id);
-                                }}
-                                className="text-gray-400 hover:text-gray-600 hover:bg-gray-200 ml-1 cursor-pointer p-0.5 rounded-full transition-all"
-                              >
-                                <X className="w-7 h-7 stroke-[2.5]" />
-                              </button>
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <span className="text-gray-400 text-sm">Select doctor</span>
-                      )}
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60">
-                    {availableDoctors
-                      .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
-                      .length > 0 ? (
-                      availableDoctors
-                        .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
-                        .map((doctor, index) => {
-                          // Use same color logic for dropdown
-                          const colors = [
-                            'bg-[#a855f7]', // purple
-                            'bg-[#22c55e]', // green
-                            'bg-[#3b82f6]', // blue
-                            'bg-[#f59e0b]', // amber
-                            'bg-[#ec4899]', // pink
-                            'bg-[#14b8a6]', // teal
-                          ];
-                          const avatarColor = colors[index % colors.length];
-
-                          return (
-                            <SelectItem key={doctor.id} value={doctor.id}>
-                              <div className="flex items-center gap-3 py-1">
-                                <Avatar className="h-8 w-8">
-                                  <AvatarFallback className={`${avatarColor} text-white text-sm font-semibold`}>
-                                    {((doctor.first_name || '').slice(0, 1) +
-                                      (doctor.last_name || '').slice(0, 1)).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <div className="font-medium text-sm">
-                                    {doctor.first_name || ""} {doctor.last_name || ""}
-                                  </div>
-                                  <div className="text-xs text-gray-500">{doctor.email}</div>
-                                </div>
+                              <div className="flex flex-col text-left">
+                                <span className="font-semibold text-sm text-gray-900">
+                                  Dr. {doctor.first_name || ""} {doctor.last_name || ""}
+                                </span>
+                                <span className="text-xs text-gray-500">{doctor.email}</span>
                               </div>
-                            </SelectItem>
-                          );
-                        })
-                    ) : (
-                      <div className="p-2 text-sm text-gray-500 text-center">
-                        All doctors have been selected
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
+                            </div>
+                          </SelectItem>
+                        );
+                      })
+                  ) : (
+                    <div className="p-4 text-sm text-gray-500 text-center flex flex-col items-center gap-2">
+                      <UserPlus className="h-8 w-8 text-gray-300" />
+                      <p>All available doctors added</p>
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
             </div>
+
             {formData.treating_doctors.length === 0 && formError && (
-              <p className="text-red-500 text-sm">Field is required</p>
+              <p className="text-red-500 text-sm flex items-center gap-1 mt-1">
+                At least one doctor is required
+              </p>
             )}
           </div>
 

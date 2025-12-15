@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Play, X, Upload, FileText, AlertCircle, Trash2 } from "lucide-react";
+import { Play, X, Upload, FileText, AlertCircle, Trash2, Folder, File } from "lucide-react";
 import UploadToast, { useUploadToast } from './UploadToast';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -37,12 +37,12 @@ const CreateAIReportDialog = ({
   // Get accepted file types for each report type
   const getAcceptedFileTypes = (reportType) => {
     const fileTypes = {
-      'cbct': '.dcm, .dicom, .nii, .nii.gz, .png, .jpg, .jpeg, .tiff, .tif',
+      'cbct': '.dcm, .dicom, .nii, .nii.gz',
       'pano': '.png, .jpg, .jpeg, .tiff, .tif',
       'ioxray': '.dcm, .dicom, .nii, .nii.gz, .png, .jpg, .jpeg, .tiff, .tif',
-      '3dmodel': '.stl, .obj, .ply, .fbx, .dae, .png, .jpg, .jpeg, .tiff, .tif',
-      'implant': '.dcm, .dicom, .nii, .nii.gz, .png, .jpg, .jpeg, .tiff, .tif',
-      'ortho': '.dcm, .dicom, .nii, .nii.gz, .png, .jpg, .jpeg, .tiff, .tif'
+      '3dmodel': '.stl, .obj, .ply, .fbx, .dae',
+      'implant': '.dcm, .dicom, .nii, .nii.gz',
+      'ortho': '.dcm, .dicom, .nii, .nii.gz'
     };
     return fileTypes[reportType] || '.dcm, .dicom, .nii, .nii.gz, .png, .jpg, .jpeg, .tiff, .tif';
   };
@@ -50,22 +50,47 @@ const CreateAIReportDialog = ({
   // Get accepted file extensions for input accept attribute
   const getAcceptedExtensions = (reportType) => {
     const extensions = {
-      'cbct': '.dcm,.dicom,.nii,.nii.gz,.png,.jpg,.jpeg,.tiff,.tif',
+      'cbct': '.dcm,.dicom,.nii,.nii.gz',
       'pano': '.png,.jpg,.jpeg,.tiff,.tif',
       'ioxray': '.dcm,.dicom,.nii,.nii.gz,.png,.jpg,.jpeg,.tiff,.tif',
-      '3dmodel': '.stl,.obj,.ply,.fbx,.dae,.png,.jpg,.jpeg,.tiff,.tif',
-      'implant': '.dcm,.dicom,.nii,.nii.gz,.png,.jpg,.jpeg,.tiff,.tif',
-      'ortho': '.dcm,.dicom,.nii,.nii.gz,.png,.jpg,.jpeg,.tiff,.tif'
+      '3dmodel': '.stl,.obj,.ply,.fbx,.dae',
+      'implant': '.dcm,.dicom,.nii,.nii.gz',
+      'ortho': '.dcm,.dicom,.nii,.nii.gz'
     };
     return extensions[reportType] || '.dcm,.dicom,.nii,.nii.gz,.png,.jpg,.jpeg,.tiff,.tif';
   };
 
   // Handle file upload
   const handleFileUpload = (event) => {
-    const files = Array.from(event.target.files);
+    setError(null);
+    const files = Array.from(event.target.files || event.dataTransfer.files);
+
     if (files.length > 0) {
-      setUploadedFiles([files[0]]);
+      const file = files[0];
+      const extension = '.' + file.name.split('.').pop().toLowerCase();
+      const reportType = selectedReport?.id || 'cbct';
+      const validExtensions = getAcceptedExtensions(reportType).split(',');
+
+      // Basic folder check (size 0 or empty type often indicates folder in some browsers, but extension check is primary)
+      // Strict extension validation
+      if (!validExtensions.includes(extension)) {
+        setError(`Invalid file type for ${selectedReport?.name}. allowed: ${getAcceptedFileTypes(reportType)}`);
+        return;
+      }
+
+      setUploadedFiles([file]);
     }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleFileUpload(e);
   };
 
   // Remove file from upload list
@@ -213,40 +238,48 @@ const CreateAIReportDialog = ({
 
               {/* File Upload Area */}
               {uploadedFiles.length === 0 ? (
-                <div className="relative">
-                  <Input
-                    id="file-upload"
-                    type="file"
-                    accept={getAcceptedExtensions(selectedReport?.id || 'cbct')}
-                    onChange={handleFileUpload}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  />
-                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-[#7564ed] hover:bg-purple-50/30 transition-all duration-200">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <Upload className="w-6 h-6 text-purple-600" />
+                <div
+                  className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-[#7564ed] hover:bg-purple-50/30 transition-all duration-200"
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                >
+                  <div className="flex justify-center gap-4">
+                    <div className="relative">
+                      <Input
+                        id="file-upload"
+                        type="file"
+                        accept={getAcceptedExtensions(selectedReport?.id || 'cbct')}
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                      <Label
+                        htmlFor="file-upload"
+                        className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-white text-[#7564ed]  hover:bg-gray-50 hover:border-[#7564ed] transition-colors "
+                      >
+                        <File className="w-7 h-7" />
+                        Upload files
+                      </Label>
                     </div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">
-                      Drop your file here or click to browse
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {getAcceptedFileTypes(selectedReport?.id || 'cbct')}
-                    </p>
                   </div>
+
+                  <p className="text-sm text-gray-400">
+                    Or drag and drop file or folder here
+                  </p>
                 </div>
               ) : (
                 /* Uploaded File Display */
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-purple-600" />
+                      <div className="w-10 h-10 text-[#7564ed]  rounded-lg flex items-center justify-center">
+                        <File className="w-10 h-10" />
                       </div>
                       <div>
                         <p className="text-lg font-bold text-gray-900 truncate max-w-[200px]">
                           {uploadedFiles[0].name}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {(uploadedFiles[0].size / 1024).toFixed(1)} KB
+                        <p className="text-sm text-gray-500">
+                          {(uploadedFiles[0].size / 1024).toFixed(1)} KB  {(uploadedFiles[0].type)}
                         </p>
                       </div>
                     </div>
@@ -254,9 +287,9 @@ const CreateAIReportDialog = ({
                       variant="ghost"
                       size="sm"
                       onClick={() => removeFile(0)}
-                      className="h-8 w-8 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full"
+                      className="h-10 w-10 p-0 text-gray-400 hover:text-red-600 rounded-full"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-7 h-7" />
                     </Button>
                   </div>
                 </div>

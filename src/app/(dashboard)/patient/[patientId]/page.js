@@ -5,12 +5,12 @@ import { useReportData } from './hook/useReportData';
 import { useParams, useRouter } from 'next/navigation';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Edit, Trash2, User, Mail, Phone, MapPin, Calendar, Users, Heart, Loader2, Plus, Wifi, WifiOff } from "lucide-react";
 import useUserStore from "@/components/features/profile/store/userStore";
 import { formatPatientName, formatDateOfBirth, getPatientAvatarInitials } from '../utils/patientUtils';
 import AddDoctorDialog from '../components/AddDoctorDialog';
-import { DeleteDoctorDialog } from '../components/DeleteDoctorDialog';
+import { DeleteTreatingDoctorDialog } from '../components/DeleteTreatingDoctorDialog';
 import EditPatientDialog from '../components/EditPatientDialog';
 import OrderAIReport from '../components/OrderAIReport';
 import AIOrdersList from '../components/AIOrdersList';
@@ -27,6 +27,10 @@ import {
 } from '@/stores/patientStore';
 import { useDentalStore } from '@/stores/dataStore';
 import ReportComments from '../components/ReportComments';
+import { FolderIcon } from "lucide-react";
+import { DentalDateGroupCard } from './dental-data/components/DentalDateGroupCard';
+import { useDentalData } from './dental-data/hooks/useDentalData';
+import { FilePreviewDialog } from './dental-data/components/FilePreviewDialog';
 
 const calculateAge = (dateOfBirth) => {
   if (!dateOfBirth) return 'Unknown';
@@ -64,8 +68,18 @@ export default function PatientDetailPage() {
     }
   }, []); // Run once on mount
 
+  const {
+    sortedDates,
+    groupedFiles,
+    helpers, // Expose helpers for child components if needed
+    loading: dentalLoading
+  } = useDentalData();
+
+  const [selectedFile, setSelectedFile] = useState(null);
+
   // استخدام selectors محسنة للأداء
   const currentPatient = useCurrentPatient();
+  console.log(currentPatient, "currentPatient.treating_doctors ")
   const reports = useReportsSelector();
   console.log(reports, "reportsreports")
   const loading = usePatientStore(state => state.loading);
@@ -439,12 +453,13 @@ export default function PatientDetailPage() {
                     currentPatient.treating_doctors.map((doctor, index) => (
                       <div key={doctor.id || index} className="flex items-center justify-between p-1 rounded-lg hover:bg-gray-50 transition-colors">
                         <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
-                            <span className="text-white font-semibold text-sm">
+                          <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                            <AvatarImage src={doctor.profilePhotoUrl} />
+                            <AvatarFallback className="bg-gradient-to-br from-teal-400 to-teal-600 text-white font-semibold text-sm">
                               {((doctor.first_name || '').slice(0, 1) +
                                 (doctor.last_name || '').slice(0, 1)).toUpperCase()}
-                            </span>
-                          </div>
+                            </AvatarFallback>
+                          </Avatar>
                           <div>
                             <h5 className="font-medium text-gray-900 text-l">
                               {doctor.first_name || ""} {doctor.last_name || ""}
@@ -470,7 +485,10 @@ export default function PatientDetailPage() {
                 </div>
               </div>
 
-              <ReportComments></ReportComments>
+              <ReportComments
+                description={currentPatient.description}
+                onEdit={(newDescription) => store.updateDescription(currentPatient.id, newDescription)}
+              />
               {/* Bottom Row - Order AI Report */}
               <div className="">
                 <OrderAIReport
@@ -479,6 +497,24 @@ export default function PatientDetailPage() {
                   addReportToState={handleReportCreated}
                 />
               </div>
+
+              {/* Dental Data Gallery Card */}
+              {dentalLoading ? (
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 h-48 flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 animate-spin text-[#7564ed]" />
+                </div>
+              ) : sortedDates.length > 0 ? (
+                <div onClick={() => router.push(`/patient/${patientId}/dental-data`)} className="cursor-pointer">
+                  <DentalDateGroupCard
+                    date={sortedDates[0]}
+                    files={groupedFiles[sortedDates[0]]}
+                    helpers={helpers}
+                    onSelect={(file) => {
+                      setSelectedFile(file);
+                    }}
+                  />
+                </div>
+              ) : null}
 
             </div>
           </div>
@@ -517,22 +553,23 @@ export default function PatientDetailPage() {
       />
 
       {/* Delete Doctor Dialog */}
-      <DeleteDoctorDialog
+      <DeleteTreatingDoctorDialog
         open={isDeleteDoctorOpen}
         onOpenChange={(open) => {
-          console.log(open, "openopen")
           if (!open) {
             store.closeDeleteDoctorDialog();
           }
-        }}
-        close={() => {
-          store.closeDeleteDoctorDialog();
         }}
         doctor={doctorToDelete}
         patient={currentPatient}
         onConfirm={handleConfirmDeleteDoctor}
         loading={deleteDoctorLoading}
-        message={deleteDoctorMessage}
+      />
+      <FilePreviewDialog
+        selectedFile={selectedFile}
+        isOpen={!!selectedFile}
+        onOpenChange={(open) => !open && setSelectedFile(null)}
+        helpers={helpers}
       />
     </div>
   );

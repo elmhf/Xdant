@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import useUserStore from "@/components/features/profile/store/userStore";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ChevronUp, ChevronDown, Filter, Edit, Trash2, Heart, Loader2, Folder, Info } from "lucide-react";
 import {
@@ -33,7 +33,7 @@ const PatientTable = ({
   favoriteLoadingStates = {}
 }) => {
   const router = useRouter();
-
+  console.log(patients, "patients")
   // Get user info and current clinic from store
   const user = useUserStore(state => state.userInfo);
   const currentClinic = useUserStore(state => state.currentClinicId);
@@ -131,8 +131,9 @@ const PatientTable = ({
                 >
                   <td className="min-w-56 py-4 px-4">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-400 text-white text-sm">
+                      <Avatar className="h-12 w-18 rounded-3xl">
+                        <AvatarImage src={patient.lastReportImageUrl} />
+                        <AvatarFallback className="bg-gradient-to-br from-[#A196F3] to-[#7564ED] text-white text-sm font-semibold">
                           {getPatientAvatarInitials(patient)}
                         </AvatarFallback>
                       </Avatar>
@@ -143,7 +144,7 @@ const PatientTable = ({
                   </td>
 
                   <td className="min-w-44 py-4 px-4 hidden lg:table-cell">
-                    <span className="text-base text-gray-600">
+                    <span className="text-base font-medium text-gray-400">
                       {formatDateOfBirth(patient.date_of_birth)}
                     </span>
                   </td>
@@ -154,7 +155,8 @@ const PatientTable = ({
                         patient.treating_doctors.length === 1 ? (
                           <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10 shadow-lg">
-                              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-purple-600 text-white text-sm font-semibold">
+                              <AvatarImage src={patient.treating_doctors[0].profilePhotoUrl} />
+                              <AvatarFallback className="bg-gradient-to-br from-[#4f46e5] to-[#] text-white text-sm font-semibold">
                                 {((patient.treating_doctors[0].first_name || '').slice(0, 1) +
                                   (patient.treating_doctors[0].last_name || '').slice(0, 2)).toUpperCase()}
                               </AvatarFallback>
@@ -167,7 +169,8 @@ const PatientTable = ({
                           <div className="flex items-center -space-x-3 overflow-hidden">
                             {patient.treating_doctors.map((doctor, index) => (
                               <Avatar key={doctor.id || index} className="h-10 w-10 border-3 border-white">
-                                <AvatarFallback className="bg-gradient-to-br from-purple-500 to-purple-600 text-white text-sm font-semibold">
+                                <AvatarImage src={doctor.profilePhotoUrl} />
+                                <AvatarFallback className="bg-gradient-to-br from-purple-600 to-purple-700 text-white text-sm font-semibold">
                                   {((doctor.first_name || '').slice(0, 1) +
                                     (doctor.last_name || '').slice(0, 2)).toUpperCase()}
                                 </AvatarFallback>
@@ -182,7 +185,7 @@ const PatientTable = ({
                   </td>
                   <td className="min-w-70 py-4 px-4 hidden lg:table-cell">
                     <div className="flex items-center gap-2 justify-start">
-                      <span className="text-base text-gray-600 truncate max-w-50" title={patient.email || "-"}>
+                      <span className="text-base font-light text-gray-400 truncate max-w-50" title={patient.email || "-"}>
                         {patient.email || "-"}
                       </span>
                     </div>

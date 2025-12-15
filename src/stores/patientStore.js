@@ -669,6 +669,47 @@ export const usePatientStore = create(
         }
       },
 
+      // Update patient description
+      updateDescription: async (patientId, description) => {
+        const { currentPatient } = get();
+        if (!currentPatient) return { success: false, message: "No patient selected" };
+
+        try {
+          // Optimistic update
+          const oldDescription = currentPatient.description;
+          set(state => ({
+            currentPatient: { ...state.currentPatient, description }
+          }));
+
+          const response = await fetch(`http://localhost:5000/api/patients/description`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              patientId,
+              description
+            })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            // Revert changes if failed
+            set(state => ({
+              currentPatient: { ...state.currentPatient, description: oldDescription }
+            }));
+            throw new Error(data.error || 'Failed to update description');
+          }
+
+          return { success: true };
+        } catch (error) {
+          console.error('Error updating description:', error);
+          return { success: false, message: error.message };
+        }
+      },
+
       // Delete report
       deleteReport: async (reportId) => {
         const { currentPatient, reportToDelete } = get();
