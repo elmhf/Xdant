@@ -156,26 +156,24 @@ export default function LoginPage() {
 
   if (mfaRequired) {
     return (
-      <div className="min-h-full w-full bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-[480px] bg-transparent rounded-2xl  p-10 text-center"
+          className="w-full max-w-[480px] bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12 text-center"
         >
           <div className="mb-8">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-3">Enter Code</h2>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">Enter Code</h2>
             <p className="text-gray-500 text-base mb-1">
-              We sent a verification code to <span className="font-medium text-gray-900">{email}</span>.
+              We sent a verification code to <span className="font-semibold text-gray-900">{email}</span>.
             </p>
             <button
               onClick={() => { setMfaRequired(false); setTwoFactorCode(""); }}
-              className="text-blue-600 hover:text-blue-700 font-medium text-sm hover:underline"
+              className="text-[#7564ed] hover:text-[#6354c9] font-medium text-sm hover:underline transition-colors"
             >
               Wrong email address? Edit
             </button>
           </div>
-
-
 
           <form onSubmit={handle2FASubmit} className="space-y-8">
             <div className="flex justify-center">
@@ -184,7 +182,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full h-12 text-lg font-medium bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl "
+              className="w-full h-12 text-lg font-bold bg-[#7564ed] hover:bg-[#6354c9] text-white rounded-xl shadow-lg shadow-purple-500/20 transition-all duration-200"
               disabled={loading || twoFactorCode.length !== 6}
             >
               {loading ? "Verifying..." : "Verify Code →"}
@@ -197,8 +195,8 @@ export default function LoginPage() {
             ) : (
               <button
                 type="button"
-                onClick={() => { setTimer(109); /* Add resend logic here if needed */ }}
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline"
+                onClick={() => { setTimer(109); }}
+                className="text-[#7564ed] hover:text-[#6354c9] text-sm font-medium hover:underline transition-colors"
               >
                 Send code again
               </button>
@@ -210,203 +208,175 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-full w-full bg-gray-50 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <div className=" p-8 space-y-6">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-center"
-          >
-            <h2 className="text-5xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p className="text-sm text-gray-600">
-              Sign in to your account to continue
-            </p>
-          </motion.div>
+    <div className="min-h-screen w-full overflow-scroll bg-white flex items-center justify-center p-4">
+      <div className="w-full h-[90vh] max-w-[90vw] grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+        {/* Left Side - Text, Image, and Tags */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="hidden md:flex flex-col items-center justify-center max-h-full relative"
+        >
+          <div className="absolute top-10 left-10 z-20">
+            <h2 className="text-4xl font-bold mb-4 leading-tight text-gray-900 max-w-[400px]">
+              Connectez-vous à votre <span className="text-[#7564ed]">espace dentaire</span>
+            </h2>
+          </div>
 
-          {/* Error Banner */}
-          {loginError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-2 text-sm mb-4">
-              {loginError}
+          <Image
+            src="/dent.png"
+            alt="Dental Graphic"
+            width={1200}
+            height={1200}
+            className="w-full max-w-[700px] max-h-[700px] h-auto object-contain mt-20"
+            priority
+          />
+
+          <div className="mt-[-250px] w-full max-w-[600px] flex flex-wrap gap-x-3 gap-y-2 justify-center px-4 relative z-10">
+            {/* Problem Tags Clustered Below Image */}
+            <span className="text-[18px] font-[600] px-4 py-3 rounded-md whitespace-nowrap bg-[#E4E1FF]/85 text-[#4a39c0]/85 shadow-sm transform -rotate-2">
+              Endo-treated tooth  96 %
+            </span>
+            <span className="text-[18px] font-[600] px-4 py-3 rounded-md whitespace-nowrap bg-[#FFCCD4]/85 text-[#FF3254]/85 shadow-sm transform rotate-1">
+              Impaction  100 %
+            </span>
+            <span className="text-[18px] font-[600] px-4 py-3 rounded-md whitespace-nowrap bg-[#FFCCD4]/85 text-[#FF3254]/85 shadow-sm transform -rotate-1">
+              Periodontal bone loss  87 %
+            </span>
+            <span className="text-[18px] font-[600] px-4 py-3 rounded-md whitespace-nowrap bg-[#E4E1FF]/85 text-[#4a39c0]/85 shadow-sm">
+              Horizontal
+            </span>
+            <span className="text-[18px] font-[600] px-4 py-3 rounded-md whitespace-nowrap bg-[#FFCCD4]/85 text-[#FF3254]/85 shadow-sm">
+              Mild
+            </span>
+            <span className="text-[18px] font-[600] px-4 py-3 rounded-md whitespace-nowrap bg-[#FFCCD4]/85 text-[#FF3254]/85 shadow-sm transform rotate-2">
+              Missed canal  74 %
+            </span>
+            <span className="text-[18px] font-[600] px-4 py-3 rounded-md whitespace-nowrap bg-[#E4E1FF]/85 text-[#4a39c0]/85 shadow-sm transform -rotate-1">
+              Caries  65 %
+            </span>
+            <span className="text-[18px] font-[600] px-4 py-3 rounded-md whitespace-nowrap bg-[#FFCCD4]/85 text-[#FF3254]/85 shadow-sm transform rotate-3">
+              Periapical Lesion 82 %
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Right Side - Login Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full max-w-xl flex flex-col justify-center items-center mx-auto"
+        >
+          <div className="bg-white w-full  rounded-2xl p-8 ">
+      
+
+            <div className="text-center mb-8">
+   
+              <div className="text-4xl font-bold text-gray-900">Welcome Back</div>
             </div>
-          )}
 
-          {/* Form */}
-          <div className="space-y-4">
-            {/* Email */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="space-y-2"
-            >
-              <Label htmlFor="email" className="font-semibold text-gray-700">
-                Email address
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            {/* Error Banner */}
+            {loginError && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="bg-red-50 border border-red-100 text-red-600 rounded-lg px-4 py-3 text-sm font-medium mb-6 flex items-center gap-2"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                {loginError}
+              </motion.div>
+            )}
+
+            {/* Form */}
+            <div className="space-y-5">
+              {/* Email */}
+              <div className="space-y-2">
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder="name@company.com"
                   maxLength={254}
-                  className={`w-full border rounded-lg bg-white pl-10 pr-4 py-2 text-gray-900 placeholder-gray-400 ${errors.email ? 'border-red-500' : touched.email ? 'border-green-500' : 'border-gray-300'
-                    }`}
+                  className={`w-full h-14 bg-white border-2 border-gray-300 rounded-xl px-4 text-base text-gray-900 placeholder-gray-400 focus:border-[#7564ed] focus:ring-4 focus:ring-[#7564ed]/10 transition-all duration-200`}
                   value={email}
                   onChange={(e) => handleChange('email', e.target.value)}
                   onBlur={() => handleBlur('email')}
                 />
               </div>
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-            </motion.div>
 
-            {/* Password */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="space-y-2"
-            >
-              <Label htmlFor="password" className="font-semibold text-gray-700">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  maxLength={128}
-                  className={`w-full border rounded-lg bg-white pl-10 pr-10 py-2 text-gray-900 placeholder-gray-400 ${errors.password ? 'border-red-500' : touched.password ? 'border-green-500' : 'border-gray-300'
-                    }`}
-                  value={password}
-                  onChange={(e) => handleChange('password', e.target.value)}
-                  onBlur={() => handleBlur('password')}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+              {/* Password */}
+              <div className="space-y-2">
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    maxLength={128}
+                    className={`w-full h-14 bg-white border-2 border-gray-300 rounded-xl px-4 pr-12 text-base text-gray-900 placeholder-gray-400 focus:border-[#7564ed] focus:ring-4 focus:ring-[#7564ed]/10 transition-all duration-200`}
+                    value={password}
+                    onChange={(e) => handleChange('password', e.target.value)}
+                    onBlur={() => handleBlur('password')}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#5c4ce3] transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                  </button>
+                </div>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-            </motion.div>
 
-            {/* Forgot Password */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="flex justify-end"
-            >
-              <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
-                Forgot your password?
-              </Link>
-            </motion.div>
+              {/* Login Button */}
+              <div className="pt-2">
+                <Button
+                  type="button"
+                  onClick={canLogin ? handleLogin : undefined}
+                  className={`w-full h-14 rounded-xl text-lg font-bold tracking-wide transition-all duration-300 ${canLogin && !loading
+                    ? 'bg-[#5c4ce3] hover:bg-[#6354c9] text-white'
+                    : 'bg-[#5c4ce3] text-white cursor-not-allowed'
+                    }`}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                      </svg>
+                      Loading...
+                    </span>
+                  ) : 'Log In'}
+                </Button>
+              </div>
 
-            {/* Login Button */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <Button
-                type="button"
-                onClick={canLogin ? handleLogin : undefined}
-                disabled={!canLogin || loading}
-                className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${canLogin && !loading
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                    </svg>
-                    Signing In...
-                  </span>
-                ) : canLogin ? 'Sign In' : 'Complete All Fields'}
-              </Button>
-            </motion.div>
-
-            {/* Divider */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="flex items-center my-6"
-            >
-              <div className="flex-grow border-t border-gray-300" />
-              <span className="mx-4 text-gray-500 text-sm">OR</span>
-              <div className="flex-grow border-t border-gray-300" />
-            </motion.div>
-
-            {/* Social Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="space-y-3"
-            >
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full flex items-center justify-center space-x-2 border-gray-300 hover:bg-gray-50"
-              >
-                <Image
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                  alt="Google"
-                  width={20}
-                  height={20}
-                  className="h-5 w-5"
-                />
-                <span>Continue with Google</span>
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full flex items-center justify-center space-x-2 border-gray-300 hover:bg-gray-50"
-              >
-                <Image
-                  src="https://www.svgrepo.com/show/448234/linkedin.svg"
-                  alt="LinkedIn"
-                  width={20}
-                  height={20}
-                  className="h-5 w-5"
-                />
-                <span>Continue with LinkedIn</span>
-              </Button>
-            </motion.div>
-
-            {/* Sign Up Link */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.9 }}
-              className="text-center mt-6"
-            >
-              <p className="text-sm text-gray-600">
-                Don&apos;t have an account?{" "}
-                <Link href="/signeup" className="text-blue-600 hover:text-blue-800 font-semibold">
-                  Sign up
+              {/* Links */}
+              <div className="text-center space-y-3 pt-2">
+                <Link href="/forgot-password" className="text-[#7564ed] hover:text-[#6354c9] text-sm font-semibold hover:underline">
+                  Forgot password?
                 </Link>
-              </p>
-            </motion.div>
+
+                <div className="w-full border-t border-gray-100 my-4"></div>
+
+                <div className="flex justify-center">
+                  <Link
+                    href="/signeup"
+                    className="bg-[#42b72a] hover:bg-[#36a420] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md transition-colors"
+                  >
+                    Create new account
+                  </Link>
+                </div>
+              </div>
+
+            </div> 
+             <div className="text-center mt-8 text-xs text-gray-500">
+            <p>Create a Page for a celebrity, brand or business.</p>
           </div>
-        </div>
-      </motion.div>
+          </div>
+
+        
+        </motion.div>
+
+      </div>
     </div>
   );
 }

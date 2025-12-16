@@ -1,39 +1,21 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
+import { fetchWithToast } from "@/utils/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { Eye, EyeOff, Check, X, AlertCircle, XCircle } from "lucide-react";
+import { Eye, EyeOff, Check, X } from "lucide-react";
 import Link from "next/link";
 
 // Mock function for demonstration
 const signUp = async (email, password, firstName, lastName, phone) => {
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/send-verification-code", {
+    return fetchWithToast("http://localhost:5000/api/auth/send-verification-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password, firstName, lastName, phone }),
     });
-    const data = await res.json();
-    
-    // Handle 409 status (email already exists)
-    if (res.status === 409) {
-      return { error: "This email is already registered. Please use another email." };
-    }
-    
-    // Handle other error statuses
-    if (!res.ok) {
-      return { error: data.error || "Unknown error occurred. Please try again." };
-    }
-    
-    return { data };
-  } catch (error) {
-    console.error("Signup error:", error);
-    return { error: "Network error. Please check your connection and try again." };
-  }
 };
 
 export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, setEmail }) {
@@ -47,8 +29,6 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
 
   // Validation functions
   const validateName = (name) => {
@@ -63,41 +43,10 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
   const validatePhone = (phone) => !!phone.trim();
 
-  const getPasswordStrength = (password) => {
-    if (!password) return { level: 0, text: "", color: "" };
-    
-    let score = 0;
-    const checks = {
-      length: password.length >= 8,
-      lowercase: /[a-z]/.test(password),
-      uppercase: /[A-Z]/.test(password),
-      numbers: /\d/.test(password),
-      symbols: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-      noCommon: !["password", "123456", "qwerty", "admin"].includes(password.toLowerCase())
-    };
-    
-    Object.values(checks).forEach(check => check && score++);
-    
-    if (score < 3) return { level: 0, text: "Weak", color: "text-red-500", bgColor: "bg-red-400" };
-    if (score < 5) return { level: 1, text: "Medium", color: "text-yellow-500", bgColor: "bg-yellow-400" };
-    return { level: 2, text: "Strong", color: "text-green-500", bgColor: "bg-green-500" };
-  };
-
-  const passwordStrength = getPasswordStrength(password);
-
-  const getPasswordRequirements = () => {
-    return [
-      { text: "At least 8 characters", met: password.length >= 8 },
-      { text: "One lowercase letter", met: /[a-z]/.test(password) },
-      { text: "One uppercase letter", met: /[A-Z]/.test(password) },
-      { text: "One number", met: /\d/.test(password) },
-      { text: "One special character", met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
-    ];
-  };
 
   const validateField = (field, value) => {
     const newErrors = { ...errors };
-    
+
     switch (field) {
       case 'firstName':
         if (!value.trim()) {
@@ -108,7 +57,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
           delete newErrors.firstName;
         }
         break;
-        
+
       case 'lastName':
         if (!value.trim()) {
           newErrors.lastName = "Last name is required";
@@ -118,7 +67,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
           delete newErrors.lastName;
         }
         break;
-        
+
       case 'email':
         if (!value.trim()) {
           newErrors.email = "Email is required";
@@ -128,7 +77,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
           delete newErrors.email;
         }
         break;
-        
+
       case 'phone':
         if (value && !validatePhone(value)) {
           newErrors.phone = "Please enter a valid phone number";
@@ -136,17 +85,15 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
           delete newErrors.phone;
         }
         break;
-        
+
       case 'password':
         if (!value) {
           newErrors.password = "Password is required";
-        } else if (passwordStrength.level < 2) {
-          newErrors.password = "Password must be strong";
         } else {
           delete newErrors.password;
         }
         break;
-        
+
       case 'confirmPassword':
         if (!value) {
           newErrors.confirmPassword = "Please confirm your password";
@@ -157,7 +104,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
         }
         break;
     }
-    
+
     setErrors(newErrors);
   };
 
@@ -168,13 +115,13 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
   const handleChange = (field, value) => {
     let sanitizedValue = value;
-    
+
     if (field === 'firstName' || field === 'lastName') {
       sanitizedValue = value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
     } else if (field === 'phone') {
       sanitizedValue = value.replace(/[^+\d\s\-\(\)]/g, '');
     }
-    
+
     switch (field) {
       case 'firstName': setFirstName(sanitizedValue); break;
       case 'lastName': setLastName(sanitizedValue); break;
@@ -183,7 +130,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
       case 'password': setPassword(sanitizedValue); break;
       case 'confirmPassword': setConfirmPassword(sanitizedValue); break;
     }
-    
+
     if (touched[field]) {
       validateField(field, sanitizedValue);
     }
@@ -191,148 +138,47 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
   const allFieldsValid = Object.keys(errors).length === 0;
   const allFieldsFilled = firstName && lastName && email && password && confirmPassword;
-  const canContinue = allFieldsValid && allFieldsFilled && passwordStrength.level >= 2;
+  const canContinue = allFieldsValid && allFieldsFilled;
 
   const handleNext = async () => {
     if (!canContinue) return;
-    
+
     setLoading(true);
-    setApiError("");
-    setShowAlert(false);
-    
+
     try {
-      const { error, data } = await signUp(email, password, firstName, lastName, phone);
-      
-      if (error) {
-        setApiError(error);
-        setShowAlert(true);
-        setLoading(false);
-        return; // Don't proceed to next page if there's an error
-      }
-      
+      await signUp(email, password, firstName, lastName, phone);
+
       // Success - proceed to next page
       setLoading(false);
       onNext();
-      
+
     } catch (error) {
       console.error("Unexpected error:", error);
-      setApiError("An unexpected error occurred. Please try again.");
-      setShowAlert(true);
       setLoading(false);
     }
   };
 
-  const dismissAlert = () => {
-    setShowAlert(false);
-    setApiError("");
-  };
 
   return (
     <div className="flex w-full max-h-[100%] items-center justify-center relative">
-      {/* Alert Overlay */}
-      <AnimatePresence>
-        {showAlert && apiError && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-[#0d0c22] bg-opacity-50 z-40"
-              onClick={dismissAlert}
-            />
-            
-            {/* Alert Dialog */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              transition={{ duration: 0.2 }}
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg shadow-xl border border-red-200 max-w-sm w-full mx-4"
-            >
-              <div className="p-6">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="flex-shrink-0">
-                    <XCircle className="h-6 w-6 text-red-500" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      Registration Failed
-                    </h3>
-                  </div>
-                </div>
-                
-                <p className="text-gray-700 mb-6">
-                  {apiError}
-                </p>
-                
-                <div className="flex justify-end space-x-3">
-                  <Button
-                    onClick={dismissAlert}
-                    variant="outline"
-                    className="px-4 py-2"
-                  >
-                    Try Again
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
 
-      {/* Error Banner (Alternative to modal) */}
-      <AnimatePresence>
-        {apiError && !showAlert && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-4 left-4 right-4 z-30 bg-red-50 border border-red-200 rounded-lg p-4 shadow-lg"
-          >
-            <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-red-800 font-medium">Registration Error</p>
-                <p className="text-red-700 text-sm mt-1">{apiError}</p>
-              </div>
-              <button
-                onClick={() => setApiError("")}
-                className="text-red-500 hover:text-red-700"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md overflow-scroll max-h-[100%] no-scrollbar bg-white rounded-lg px-2 space-y-6"
+      <div
+        className="w-full max-w-xl overflow-scroll max-h-[100%] no-scrollbar bg-white rounded-lg px-2 space-y-6"
       >
         {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+        <div
           className="text-center"
         >
           <h2 className="text-5xl font-bold text-gray-900">Create a secure account</h2>
           <p className="text-sm text-gray-600 mt-2">
             Your security is our priority. Please fill all fields carefully.
           </p>
-        </motion.div>
+        </div>
 
         {/* Form */}
         <div className="space-y-4">
           {/* First and Last Name */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
             className="flex space-x-4"
           >
             <div className="flex-1 space-y-2">
@@ -344,14 +190,12 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                 type="text"
                 placeholder="Enter first name"
                 maxLength={50}
-                className={`w-full border rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400 ${
-                  errors.firstName ? 'border-red-500' : touched.firstName ? 'border-green-500' : 'border-gray-300'
-                }`}
+                className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.firstName ? 'border-red-500' : 'border-gray-200'
+                  }`}
                 value={firstName}
                 onChange={(e) => handleChange('firstName', e.target.value)}
                 onBlur={() => handleBlur('firstName')}
               />
-              {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
             </div>
             <div className="flex-1 space-y-2">
               <Label htmlFor="lastName" className="font-semibold text-gray-700">
@@ -362,22 +206,17 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                 type="text"
                 placeholder="Enter last name"
                 maxLength={50}
-                className={`w-full border rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400 ${
-                  errors.lastName ? 'border-red-500' : touched.lastName ? 'border-green-500' : 'border-gray-300'
-                }`}
+                className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.lastName ? 'border-red-500' : 'border-gray-200'
+                  }`}
                 value={lastName}
                 onChange={(e) => handleChange('lastName', e.target.value)}
                 onBlur={() => handleBlur('lastName')}
               />
-              {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
             </div>
-          </motion.div>
+          </div>
 
           {/* Email and Phone number on the same line */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
+          <div
             className="flex space-x-4"
           >
             {/* Email */}
@@ -390,14 +229,12 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                 type="email"
                 placeholder="you@company.com"
                 maxLength={254}
-                className={`w-full border rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400 ${
-                  errors.email ? 'border-red-500' : touched.email ? 'border-green-500' : 'border-gray-300'
-                }`}
+                className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.email ? 'border-red-500' : 'border-gray-200'
+                  }`}
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); handleChange('email', e.target.value); }}
                 onBlur={() => handleBlur('email')}
               />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
             {/* Phone number */}
             <div className="flex-1 space-y-2">
@@ -418,23 +255,18 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                   type="tel"
                   placeholder="Phone"
                   maxLength={15}
-                  className={`w-full border rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400 rounded-l-none ${
-                    errors.phone ? 'border-red-500' : touched.phone ? 'border-green-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400 rounded-l-none focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.phone ? 'border-red-500' : 'border-gray-200'
+                    }`}
                   value={phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   onBlur={() => handleBlur('phone')}
                 />
               </div>
-              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
             </div>
-          </motion.div>
+          </div>
 
           {/* Password */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 }}
+          <div
             className="space-y-2"
           >
             <Label htmlFor="password" className="font-semibold text-gray-700">
@@ -446,9 +278,8 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a strong password"
                 maxLength={128}
-                className={`w-full border rounded-lg bg-white px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 ${
-                  errors.password ? 'border-red-500' : touched.password ? 'border-green-500' : 'border-gray-300'
-                }`}
+                className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.password ? 'border-red-500' : 'border-gray-200'
+                  }`}
                 value={password}
                 onChange={(e) => handleChange('password', e.target.value)}
                 onBlur={() => handleBlur('password')}
@@ -461,51 +292,10 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            
-            {/* Password strength indicator */}
-            {password && (
-              <div className="space-y-2">
-                <div className="flex space-x-1">
-                  {[0, 1, 2].map((level) => (
-                    <div
-                      key={level}
-                      className={`h-2 flex-1 rounded-full transition-colors ${
-                        passwordStrength.level > level ? passwordStrength.bgColor : 'bg-gray-200'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <p className={`text-xs font-medium ${passwordStrength.color}`}>
-                  {passwordStrength.text}
-                </p>
-              </div>
-            )}
-            
-            {/* Password requirements */}
-            {password && (
-              <div className="space-y-1">
-                {getPasswordRequirements().map((req, index) => (
-                  <div key={index} className="flex items-center space-x-2 text-xs">
-                    {req.met ? (
-                      <Check size={12} className="text-green-500" />
-                    ) : (
-                      <X size={12} className="text-red-500" />
-                    )}
-                    <span className={req.met ? 'text-green-600' : 'text-red-600'}>
-                      {req.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-          </motion.div>
+          </div>
 
           {/* Confirm Password */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.7 }}
+          <div
             className="space-y-2"
           >
             <Label htmlFor="confirmPassword" className="font-semibold text-gray-700">
@@ -517,9 +307,8 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm your password"
                 maxLength={128}
-                className={`w-full border rounded-lg bg-white px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 ${
-                  errors.confirmPassword ? 'border-red-500' : touched.confirmPassword && confirmPassword === password ? 'border-green-500' : 'border-gray-300'
-                }`}
+                className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+                  }`}
                 value={confirmPassword}
                 onChange={(e) => handleChange('confirmPassword', e.target.value)}
                 onBlur={() => handleBlur('confirmPassword')}
@@ -532,25 +321,18 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
-          </motion.div>
+          </div>
           {/* Navigation Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 }}
+          <div
             className="flex w-full mt-8"
           >
-            <motion.button
-              whileHover={{ scale: canContinue ? 1.02 : 1 }}
-              whileTap={{ scale: canContinue ? 0.98 : 1 }}
+            <button
               type="button"
               onClick={canContinue ? handleNext : undefined}
-              className={`px-8 py-3 w-full rounded-lg font-semibold transition-all duration-200 ${
-                canContinue && !loading
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
+              className={`px-8 py-3 w-full rounded-lg font-semibold transition-all duration-200 ${canContinue && !loading
+                ? 'bg-[#5c4ce3] text-white'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               disabled={!canContinue || loading}
             >
               {loading ? (
@@ -562,70 +344,21 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                   Creating Account...
                 </span>
               ) : canContinue ? 'Continue' : 'Continue'}
-            </motion.button>
-          </motion.div>
-        <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.9 }}
-              className="text-center mt-6"
-            >
-              <p className="text-sm text-gray-600">
-                Already have an account? ?{" "}
-                <Link href="/login" className="text-blue-600 hover:text-blue-800 font-semibold">
-                  Log in
-                </Link>
-              </p>
-            </motion.div>
-          {/* Divider */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
-            className="flex items-center my-6"
+            </button>
+          </div>
+          <div
+            className="text-center mt-6"
           >
-            <div className="flex-grow border-t border-gray-300" />
-            <span className="mx-4 text-gray-500 text-sm">OR</span>
-            <div className="flex-grow border-t border-gray-300" />
-          </motion.div>
-
-          {/* Social Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0 }}
-            className="space-y-3"
-          >
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full flex items-center justify-center space-x-2 border-gray-300 hover:bg-gray-50"
-            >
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="Google"
-                className="h-5 w-5"
-              />
-              <span>Continue with Google</span>
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full flex items-center justify-center space-x-2 border-gray-300 hover:bg-gray-50"
-            >
-              <img
-                src="https://www.svgrepo.com/show/448234/linkedin.svg"
-                alt="LinkedIn"
-                className="h-5 w-5"
-              />
-              <span>Continue with LinkedIn</span>
-            </Button>
-          </motion.div>
-
+            <p className="text-sm text-gray-600">
+              Already have an account? ?{" "}
+              <Link href="/login" className="text-blue-600 hover:text-blue-800 font-semibold">
+                Log in
+              </Link>
+            </p>
+          </div>
 
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
