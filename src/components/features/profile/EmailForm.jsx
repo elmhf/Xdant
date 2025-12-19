@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,14 +22,12 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-password", {
+      const data = await apiClient("/api/auth/verify-password", {
         method: "POST",
-        credentials: 'include',
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: userInfo.email, password }),
       });
-      const data = await res.json();
-      if (res.ok && data.valid === true) {
+
+      if (data.valid === true) {
         setStep(2);
       } else {
         pushNotification('error', "Mot de passe incorrect.");
@@ -47,21 +46,15 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/send-email-update-code", {
+      const data = await apiClient("/api/auth/send-email-update-code", {
         method: "POST",
-        credentials: 'include',
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newEmail: email }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        pushNotification('success', "Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
-        setStep(3);
-      } else {
-        pushNotification('error', data.message || "Erreur lors de l'envoi du code de vérification.");
-      }
+
+      pushNotification('success', "Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
+      setStep(3);
     } catch (e) {
-      pushNotification('error', "Erreur réseau");
+      pushNotification('error', e.message || "Erreur lors de l'envoi du code de vérification.");
     }
     setLoading(false);
   };
@@ -74,24 +67,18 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-email-update-code", {
+      const data = await apiClient("/api/auth/verify-email-update-code", {
         method: "POST",
-        credentials: 'include',
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: code.join("") }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        pushNotification('success', "Adresse e-mail modifiée avec succès.");
-        setUserInfo({ email });
-        setTimeout(() => {
-          onBack();
-        }, 1200);
-      } else {
-        pushNotification('error', data.message || "Code incorrect ou expiré.");
-      }
+
+      pushNotification('success', "Adresse e-mail modifiée avec succès.");
+      setUserInfo({ email });
+      setTimeout(() => {
+        onBack();
+      }, 1200);
     } catch (e) {
-      pushNotification('error', "Erreur réseau");
+      pushNotification('error', e.message || "Code incorrect ou expiré.");
     }
     setLoading(false);
   };

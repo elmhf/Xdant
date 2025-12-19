@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiClient } from '@/utils/apiClient';
 
 /**
  * Custom hook to update report data to the server
@@ -22,25 +23,14 @@ export const useUpdateReportData = () => {
         setSuccess(false);
 
         try {
-            const response = await fetch('http://localhost:5000/api/reports/update-data', {
+            const result = await apiClient('/api/reports/update-data', {
                 method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
-                    report_id:reportId,
-                    report_data:data,
+                    report_id: reportId,
+                    report_data: data,
                 }),
             });
 
-            if (!response.ok) {
-                console.log('Failed to update report data',response.json());    
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to update report data');
-            }
-
-            const result = await response.json();
             setSuccess(true);
             setLoading(false);
             return { success: true, data: result };

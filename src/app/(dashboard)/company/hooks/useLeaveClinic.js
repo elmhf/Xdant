@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiClient } from '@/utils/apiClient';
 import useUserStore from '@/components/features/profile/store/userStore';
 
 export const useLeaveClinic = () => {
@@ -17,46 +18,36 @@ export const useLeaveClinic = () => {
     setLeaveMessage("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/clinics/leave-clinic", {
+      const data = await apiClient("/api/clinics/leave-clinic", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include',
         body: JSON.stringify({ clinicId, action, newOwnerId })
       });
 
-      const data = await res.json();
+      setLeaveMessage("Vous avez quitté la clinique avec succès");
 
+      // Remove clinic from userStore
+      const currentClinics = useUserStore.getState().clinicsInfo;
+      const updatedClinics = currentClinics.filter(clinic => clinic.id !== clinicId);
 
-      if (res.ok) {
-        setLeaveMessage("Vous avez quitté la clinique avec succès");
+      useUserStore.getState().setClinicsInfo(updatedClinics);
 
-        // Remove clinic from userStore
-        const currentClinics = useUserStore.getState().clinicsInfo;
-        const updatedClinics = currentClinics.filter(clinic => clinic.id !== clinicId);
-
-        useUserStore.getState().setClinicsInfo(updatedClinics);
-
-        // If this was the current clinic, set another clinic as current
-        const currentClinicId = useUserStore.getState().currentClinicId;
-        if (currentClinicId === clinicId && updatedClinics.length > 0) {
-          useUserStore.getState().setCurrentClinicId(updatedClinics[0].id);
-        } else if (updatedClinics.length === 0) {
-          useUserStore.getState().setCurrentClinicId(null);
-        }
-
-        setShowLeaveDialog(false);
-        setClinicToLeave(null);
-
-        return { success: true, message: "Vous avez quitté la clinique avec succès" };
-      } else {
-        console.log("ErreurErreurErreurErreur", data);
-        setLeaveMessage(data.message || "Erreur lors de la sortie de la clinique");
-        return { success: false, message: data.message || "Erreur lors de la sortie de la clinique" };
+      // If this was the current clinic, set another clinic as current
+      const currentClinicId = useUserStore.getState().currentClinicId;
+      if (currentClinicId === clinicId && updatedClinics.length > 0) {
+        useUserStore.getState().setCurrentClinicId(updatedClinics[0].id);
+      } else if (updatedClinics.length === 0) {
+        useUserStore.getState().setCurrentClinicId(null);
       }
+
+      setShowLeaveDialog(false);
+      setClinicToLeave(null);
+
+      return { success: true, message: "Vous avez quitté la clinique avec succès" };
+
     } catch (error) {
       console.error("Error leaving clinic:", error);
-      setLeaveMessage("Erreur de réseau");
-      return { success: false, message: "Erreur de réseau" };
+      setLeaveMessage(error.message || "Erreur lors de la sortie de la clinique");
+      return { success: false, message: error.message || "Erreur de réseau" };
     } finally {
       setLeaving(false);
     }

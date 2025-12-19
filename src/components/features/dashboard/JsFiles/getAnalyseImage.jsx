@@ -1,11 +1,12 @@
 "use client";
+import { apiClient } from "@/utils/apiClient";
 
 import { toast } from "sonner";
 import useImageStore from '@/stores/ImageStore';
 import { useDentalStore } from "@/stores/dataStore";
 const useAnalyseImage = () => {
   const loadPatientData = useDentalStore(state => state.loadPatientData);
-  const startTime = performance.now();  
+  const startTime = performance.now();
 
   const getAnalyseImage = async () => {
     if (typeof window === "undefined") {
@@ -13,19 +14,15 @@ const useAnalyseImage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/teeth/Test", {
-         method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({ fghjk: "uidfd" }),
+      const data = await apiClient("/api/teeth/Test", {
+        method: "POST",
+        body: JSON.stringify({ fghjk: "uidfd" }),
       });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      const result = data; // apiClient returns the parsed JSON body directly
+      if (result) { // Check validity
+        await loadPatientData(result.data);
       }
-
-      const result = await response.json();
       await loadPatientData(result.data);
       // Update zustand store
 
@@ -40,7 +37,7 @@ const useAnalyseImage = () => {
     }
   };
   const end = performance.now();
-  
+
   // Always return an object, even on the server
   return { getAnalyseImage };
 };

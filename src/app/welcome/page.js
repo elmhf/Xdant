@@ -1,5 +1,5 @@
 "use client";
-import { fetchWithToast } from "@/utils/api";
+import { apiClient } from "@/utils/apiClient";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,10 +14,8 @@ const MapPicker = dynamic(() => import("../(auth)/signeup/SingUpSteps/MapPicker"
 
 // API Helpers
 const sendOtp = async (email) => {
-    return fetchWithToast("http://localhost:5000/api/auth/send-email-otp-code", {
+    return apiClient("/api/auth/send-email-otp-code", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({
             otpKey: "create_clinic",
             email: email
@@ -26,10 +24,8 @@ const sendOtp = async (email) => {
 };
 
 const createClinic = async (code, clinicData) => {
-    return fetchWithToast("http://localhost:5000/api/clinics/create", {
+    return apiClient("/api/clinics/create", {
         method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             code: code,
             otpKey: "create_clinic",
@@ -49,10 +45,8 @@ const createClinic = async (code, clinicData) => {
 };
 
 const inviteMember = async (clinicId, email, role) => {
-    return fetchWithToast("http://localhost:5000/api/clinics/invite-member", {
+    return apiClient("/api/clinics/invite-member", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({
             clinicId: clinicId,
             email: email,

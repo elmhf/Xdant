@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiClient } from '@/utils/apiClient';
 import useUserStore from '@/components/features/profile/store/userStore';
 
 export const useDeleteMember = (onSuccess) => {
@@ -18,33 +19,23 @@ export const useDeleteMember = (onSuccess) => {
     setDeleteMessage("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/clinics/delete-member", {
+      await apiClient("/api/clinics/delete-member", {
         method: "POST",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           clinicId: currentClinic.id,
           memberId: memberId
         }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setDeleteMessage("Membre supprimé avec succès de la clinique");
-        setShowDeleteDialog(false);
-        setMemberToDelete(null);
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        setDeleteMessage(data.error || "Erreur lors de la suppression du membre");
+      setDeleteMessage("Membre supprimé avec succès de la clinique");
+      setShowDeleteDialog(false);
+      setMemberToDelete(null);
+      if (onSuccess) {
+        onSuccess();
       }
     } catch (error) {
       console.error('Delete member error:', error);
-      setDeleteMessage("Erreur de connexion lors de la suppression");
+      setDeleteMessage(error.message || "Erreur lors de la suppression du membre");
     } finally {
       setDeleting(false);
     }

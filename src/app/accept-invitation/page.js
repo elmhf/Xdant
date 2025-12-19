@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Mail, Building, User, Clock, AlertTriangle } from "lucide-react";
 import useUserStore from "@/components/features/profile/store/userStore";
+import { apiClient } from "@/utils/apiClient";
 
 export default function AcceptInvitation() {
   const searchParams = useSearchParams();
@@ -29,28 +30,17 @@ export default function AcceptInvitation() {
 
   const validateInvitation = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/clinics/validate-invitation", {
+      const data = await apiClient("/api/clinics/validate-invitation", {
         method: "POST",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ token }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setInvitation(data.invitation);
-        setStatus("success");
-      } else {
-        setStatus("error");
-        setMessage(data.error || "Token d'invitation invalide");
-      }
+      setInvitation(data.invitation);
+      setStatus("success");
     } catch (error) {
       setStatus("error");
-      setMessage("Erreur de connexion");
-    } finally {
+      setMessage(error.message || "Token d'invitation invalide");
+
       setLoading(false);
     }
   };
@@ -58,29 +48,21 @@ export default function AcceptInvitation() {
   const handleAccept = async () => {
     setProcessing(true);
     try {
-      const response = await fetch("http://localhost:5000/api/clinics/accept-invitation", {
+      await apiClient("/api/clinics/accept-invitation", {
         method: "POST",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ token }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus("success");
-        setMessage("Invitation acceptée avec succès! Vous êtes maintenant membre de la clinique.");
-        // Redirect to dashboard after a delay
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 3000);
-      } else {
-        setStatus("error");
-        setMessage(data.error || "Erreur lors de l'acceptation de l'invitation");
-      }
+      setStatus("success");
+      setMessage("Invitation acceptée avec succès! Vous êtes maintenant membre de la clinique.");
+      // Redirect to dashboard after a delay
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 3000);
     } catch (error) {
+      setStatus("error");
+      setMessage(error.message || "Erreur lors de l'acceptation de l'invitation");
+    } finally {
       setStatus("error");
       setMessage("Erreur de connexion");
     } finally {
@@ -91,29 +73,21 @@ export default function AcceptInvitation() {
   const handleReject = async () => {
     setProcessing(true);
     try {
-      const response = await fetch("http://localhost:5000/api/clinics/reject-invitation", {
+      await apiClient("/api/clinics/reject-invitation", {
         method: "POST",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ token }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus("success");
-        setMessage("Invitation rejetée. Vous serez redirigé vers la page d'accueil.");
-        // Redirect to home after a delay
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 3000);
-      } else {
-        setStatus("error");
-        setMessage(data.error || "Erreur lors du rejet de l'invitation");
-      }
+      setStatus("success");
+      setMessage("Invitation rejetée. Vous serez redirigé vers la page d'accueil.");
+      // Redirect to home after a delay
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 3000);
     } catch (error) {
+      setStatus("error");
+      setMessage(error.message || "Erreur lors du rejet de l'invitation");
+    } finally {
       setStatus("error");
       setMessage("Erreur de connexion");
     } finally {
@@ -241,8 +215,8 @@ export default function AcceptInvitation() {
 
           {message && (
             <div className={`p-4 mx-6 mb-6 rounded-xl text-base font-medium border-2 ${message.includes('succès') || message.includes('acceptée')
-                ? 'bg-green-50 text-green-800 border-green-200'
-                : 'bg-red-50 text-red-800 border-red-200'
+              ? 'bg-green-50 text-green-800 border-green-200'
+              : 'bg-red-50 text-red-800 border-red-200'
               }`}>
               {message}
             </div>

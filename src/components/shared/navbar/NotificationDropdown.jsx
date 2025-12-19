@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { apiClient } from "@/utils/apiClient";
 import { Bell, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -111,21 +112,13 @@ export default function NotificationDropdown({ userId }) {
   const markAllAsRead = async () => {
     console.log("********* Marking all notifications as read");
     try {
-      const response = await fetch('http://localhost:5000/api/notifications/markAllAsRead', {
+      await apiClient('/api/notifications/markAllAsRead', {
         method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ user_id: userId }),
       });
 
-      if (response.ok) {
-        // Refresh notifications after marking as read
-        await fetchNotifications(userId);
-      } else {
-        console.error('Error marking notifications as read');
-      }
+      // Refresh notifications after marking as read
+      await fetchNotifications(userId);
     } catch (error) {
       console.error('Error marking notifications as read:', error);
     }

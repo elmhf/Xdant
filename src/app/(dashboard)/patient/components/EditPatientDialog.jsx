@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiClient } from '@/utils/apiClient';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -135,20 +136,10 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
         treating_doctor_id: treating_doctor_ids
       };
 
-      const response = await fetch(`http://localhost:5000/api/patients/update`, {
+      const data = await apiClient('/api/patients/update', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
         body: JSON.stringify(patientData)
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to update patient');
-      }
 
       setFormSuccess("Patient updated successfully!");
 

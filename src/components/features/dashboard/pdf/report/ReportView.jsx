@@ -275,7 +275,8 @@ export default function ReportView({
   settings,
   getImage,
   pateinInfo,
-  getCurrentClinic
+  getCurrentClinic,
+  staticCanvasImage
 }) {
   const { contextPDFRef } = useContext(PDFContext);
   const currentClinic = getCurrentClinic();
@@ -423,6 +424,7 @@ export default function ReportView({
               image={getImage()}
               ShowSetting={settings}
               stageRef={contextPDFRef}
+              staticImage={staticCanvasImage}
             />
 
           )}

@@ -390,14 +390,14 @@ const ToothChar = ({
                     opacity: isFiltered ? 0.5 : 1,
                     cursor: 'pointer'
                   }}
-                  className="flex flex-col items-center justify-cente rounded-[0.5vw] text-center transition-all duration-200 aspect-[1/2.4] box-border relative bg-clip-padding"
-                  animate={{ borderColor: selected ? "#6366f1" : styles.bg, borderWidth: "0.2vw" }}
-                  whileHover={isFiltered ? {} : { borderColor: "#6366f1", borderWidth: "0.2vw" }}
+                  className="flex flex-col items-center justify-center rounded-md text-center transition-all duration-200 aspect-[1/2.4] box-border  relative bg-clip-padding"
+                  animate={{ borderColor: selected ? "#6366f1" : styles.bg, borderWidth: "2px" }}
+                  whileHover={isFiltered ? {} : { borderColor: "#6366f1", borderWidth: "2px" }}
                   transition={{ type: "spring", stiffness: 100, damping: 5 }}
                 >
                   <div className="w-full h-[70%] flex items-center justify-center">
                     {category === 'Missing' ? (
-                      <IoMdClose className="text-5xl text-center" style={{ color: styles.color }} />
+                      <IoMdClose className="text-xl md:text-2xl text-center" style={{ color: styles.color }} />
                     ) : (
                       <ToothSVG
                         toothNumber={number}
@@ -414,8 +414,8 @@ const ToothChar = ({
                     )}
                   </div>
                   <div
-                    className="font-[400] tracking-wide text-shadow"
-                    style={{ fontSize: 'clamp(15px, 0.6vw, 20px)', color: ['Unknown', 'Healthy'].includes(category) ? '#000' : styles.color }}
+                    className="font-[400] p-1 tracking-wide text-shadow text-xs md:text-sm"
+                    style={{ color: ['Unknown', 'Healthy'].includes(category) ? '#000' : styles.color }}
                   >
                     {number}
                   </div>
@@ -473,7 +473,7 @@ const ToothChar = ({
 
   return (
     <div
-      className={`gap-[0.1vw] grid grid-cols-16 gap-y-2 ${!NumberOnlyMode ? "w-[80%]" : "w-[100%]"}`}
+      className={`gap-0.5 grid grid-cols-16 gap-y-2 ${!NumberOnlyMode ? "w-[80%]" : "w-[100%]"}`}
       style={{ minWidth: NumberOnlyMode ? "max-content" : 0 }}
     >
       {NumberOnlyMode ? renderNumberOnlyMode() : renderNormalMode()}

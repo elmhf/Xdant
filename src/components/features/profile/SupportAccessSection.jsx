@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
-import { X, Loader2, AlertTriangle, Building2 } from "lucide-react";
+import { X, Loader2, AlertTriangle, Building2, Fingerprint, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { initiate2FA, verify2FA, initiateDisable2FA, confirmDisable2FA, getSecurityStatus, updateAutoSave, initiateAccountDeletion, confirmAccountDeletion } from "@/services/securityService";
 import CustomOTPInput from "@/components/ui/CustomOTPInput";
+import { useRouter } from "next/navigation";
+import useUserStore from "./store/userStore";
 import {
     Dialog,
     DialogContent,
@@ -15,10 +17,13 @@ import {
     DialogDescription,
     DialogFooter
 } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function SupportAccessSection({ children, userInfo, setUserInfo }) {
     const { pushNotification } = useNotification();
+    const router = useRouter();
+    const { setCurrentClinicId } = useUserStore();
     const [open, setOpen] = useState(false);
 
     // 2FA States
@@ -158,6 +163,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
             console.error(err);
             if (err.data && err.data.ownedClinics) {
                 setDeleteOwnedClinics(err.data.ownedClinics);
+                console.log(err.data.ownedClinics);
                 setDeleteError(err.message || "Impossible de supprimer le compte car vous êtes propriétaire de cliniques.");
             } else {
                 setDeleteError(err.message || "Une erreur est survenue.");
@@ -202,8 +208,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
             return (
                 <div className="bg-white rounded-xl overflow-hidden">
                     <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                        <DialogTitle className="text-xl font-bold text-red-600 flex items-center gap-2">
-                            <AlertTriangle className="w-5 h-5" />
+                        <DialogTitle className="text-2xl font-bold flex items-center gap-2">
                             Supprimer mon compte
                         </DialogTitle>
                         <button
@@ -218,52 +223,95 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                     </div>
 
                     <div className="p-6">
-                        {/* Error Display (e.g., Owned Clinics) */}
-                        {deleteError && (
-                            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl">
-                                <div className="flex items-start gap-3">
-                                    <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                                    <div className="space-y-1">
-                                        <p className="text-sm font-medium text-red-900">{deleteError}</p>
-                                        {deleteOwnedClinics.length > 0 && (
-                                            <div className="mt-3">
-                                                <p className="text-xs text-red-700 mb-2 font-medium">Cliniques dont vous êtes propriétaire :</p>
-                                                <div className="space-y-2 max-h-[150px] overflow-y-auto pr-2">
-                                                    {deleteOwnedClinics.map(clinic => (
-                                                        <div key={clinic.id} className="flex items-center gap-2 p-2 bg-white rounded-lg border border-red-100 shadow-sm">
-                                                            <Building2 className="w-4 h-4 text-gray-400" />
-                                                            <span className="text-sm text-gray-700 font-medium">{clinic.name}</span>
-                                                        </div>
-                                                    ))}
+                        {deleteOwnedClinics.length > 0 ? (
+                            <div className="space-y-4">
+                                <div className="mb-4">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-1">Action requise</h3>
+                                    <p className="text-sm text-gray-600">Vous devez <span className="font-bold text-[#7564ed]">transférer </span> la propriété  ou <span className="font-bold text-[#7564ed]">supprimer </span> ces cliniques avant de pouvoir supprimer votre compte.</p>
+                                </div>
+                                <div className="space-y-3 max-h-[300px] gap-2 overflow-y-auto pr-2">
+                                    {deleteOwnedClinics.map(clinic => (
+                                        <div
+                                            key={clinic.id}
+                                            onClick={() => {
+                                                setCurrentClinicId(clinic.id);
+                                                router.push('/company');
+                                            }}
+                                            className="flex items-center gap-2  p-2 bg-gray-50/50 hover:bg-gray-100 border border-gray-100 rounded-xl transition-all group cursor-pointer"
+                                        >
+                                            <Avatar className="h-14 w-14 ">
+                                                <AvatarImage src={clinic.logo_url || clinic.logo} className="object-cover" />
+                                                <AvatarFallback className="bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 text-sm font-bold">
+                                                    {clinic.name?.substring(0, 2).toUpperCase()}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <h4 className="text-base font-semibold text-[#0d0c22] truncate">{clinic.name}</h4>
+                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEE7EB] text-[#f43f5e] uppercase tracking-wide">
+                                                        Owner
+                                                    </span>
                                                 </div>
-                                                <p className="text-xs text-red-600 mt-3">
-                                                    Vous devez transférer la propriété ou supprimer ces cliniques avant de pouvoir supprimer votre compte.
-                                                </p>
+                                                <p className="text-sm text-gray-500 truncate font-medium">{clinic.email || clinic.contactEmail || "email@clinic.com"}</p>
                                             </div>
-                                        )}
-                                    </div>
+                                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#7564ed] stroke-2 transition-colors mr-2" />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex justify-end pt-4">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setShowDeleteAccountView(false);
+                                            resetDeleteState();
+                                        }}
+                                    >
+                                        Fermer
+                                    </Button>
                                 </div>
                             </div>
-                        )}
+                        ) : deleteStep === 1 ? (
+                            <div className="space-y-6">
+                                <div className="flex flex-col items-center justify-center text-center space-y-4 mb-4 pt-2">
+                                    <div className="h-20 w-20 bg-[#7564ed] rounded-3xl flex items-center justify-center shadow-md">
+                                        <Fingerprint className="text-white h-10 w-10" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h2 className="text-2xl font-bold text-gray-900">Vérification du mot de passe</h2>
+                                        <p className="text-gray-500 text-base">Entrez votre mot de passe pour <span className="font-semibold text-[#7564ed]">confirmer la suppression</span></p>
+                                    </div>
+                                </div>
 
-                        {deleteStep === 1 ? (
-                            <div className="space-y-4">
-                                {!deleteOwnedClinics.length && (
-                                    <p className="text-sm text-gray-600">
-                                        Cette action est <strong>irréversible</strong>. Toutes vos données personnelles, accès et informations seront définitivement effacés.
-                                        Veuillez saisir votre mot de passe pour confirmer.
-                                    </p>
-                                )}
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-900">Mot de passe actuel</label>
+                                <div className="px-4">
                                     <Input
                                         type="password"
                                         value={deletePassword}
                                         onChange={(e) => setDeletePassword(e.target.value)}
                                         placeholder="Entrez votre mot de passe"
-                                        className="h-11 border-gray-200 focus:ring-red-500/20"
+                                        className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20 transition-all"
                                     />
+                                </div>
+
+                                <div className="flex gap-4 pt-2 w-full justify-end px-4">
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => {
+                                            setShowDeleteAccountView(false);
+                                            resetDeleteState();
+                                        }}
+                                        disabled={deleteLoading}
+                                        className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                                    >
+                                        Annuler
+                                    </Button>
+                                    <Button
+                                        onClick={handleDeleteInitiate}
+                                        disabled={!deletePassword || deleteLoading}
+                                        className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:bg-[#dcd6fa] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                                    >
+                                        {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Vérifier
+                                    </Button>
                                 </div>
                             </div>
                         ) : (
@@ -284,46 +332,32 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                         value={deleteOtp}
                                     />
                                 </div>
+
+                                <div className="flex justify-end gap-3 pt-4">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setShowDeleteAccountView(false);
+                                            resetDeleteState();
+                                        }}
+                                        disabled={deleteLoading}
+                                    >
+                                        Annuler
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={handleDeleteConfirm}
+                                        disabled={deleteOtp.length !== 6 || deleteLoading}
+                                        className="bg-[#FEE7EB] text-[#f43f5e] hover:bg-[#fdd3db] border border-[#f43f5e]/20"
+                                    >
+                                        {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Supprimer définitivement
+                                    </Button>
+                                </div>
                             </div>
                         )}
                     </div>
-
-                    <div className="px-6 py-4 bg-gray-50 flex items-center justify-end gap-3 border-t border-gray-100">
-                        <Button
-                            variant="outline"
-                            onClick={() => {
-                                setShowDeleteAccountView(false);
-                                resetDeleteState();
-                            }}
-                            disabled={deleteLoading}
-                            className="h-10 px-4"
-                        >
-                            Annuler
-                        </Button>
-
-                        {deleteStep === 1 ? (
-                            <Button
-                                variant="destructive"
-                                onClick={handleDeleteInitiate}
-                                disabled={!deletePassword || deleteLoading || deleteOwnedClinics.length > 0}
-                                className="text-md hover:outline-3 hover:outline-[#f43f5e] font-bold bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-lg flex items-center justify-center min-w-[6vw]"
-                            >
-                                {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Continuer
-                            </Button>
-                        ) : (
-                            <Button
-                                variant="destructive"
-                                onClick={handleDeleteConfirm}
-                                disabled={deleteOtp.length !== 6 || deleteLoading}
-                                className="text-md hover:outline-3 hover:outline-[#f43f5e] font-bold bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-lg flex items-center justify-center min-w-[6vw]"
-                            >
-                                {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Supprimer définitivement
-                            </Button>
-                        )}
-                    </div>
-                </div>
+                </div >
             );
         }
 

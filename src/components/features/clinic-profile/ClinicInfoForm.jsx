@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -58,10 +59,8 @@ export default function ClinicInfoForm({ values, onSave, onBack }) {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/clinics/update-info", {
+      const data = await apiClient("/api/clinics/update-info", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include',
         body: JSON.stringify({
           clinicId: currentClinicId,
           clinic_name: form.clinic_name,
@@ -73,18 +72,15 @@ export default function ClinicInfoForm({ values, onSave, onBack }) {
           website: form.website
         }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        pushNotification('success', "Informations modifiées avec succès.");
-        setTimeout(() => {
-          onSave(form);
-        }, 800);
-      } else {
-        pushNotification('error', data.message || "Erreur lors de la modification des informations.");
-      }
+
+      pushNotification('success', "Informations modifiées avec succès.");
+      setTimeout(() => {
+        onSave(form);
+      }, 800);
     } catch (e) {
-      pushNotification('error', "Erreur réseau");
+      pushNotification('error', e.message || "Erreur lors de la modification des informations.");
     }
+
     setLoading(false);
   };
 

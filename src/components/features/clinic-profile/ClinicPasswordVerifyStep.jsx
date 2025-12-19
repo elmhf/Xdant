@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,21 +26,20 @@ export default function ClinicPasswordVerifyStep({
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-password", {
+      const data = await apiClient("/api/auth/verify-password", {
         method: "POST",
-        credentials: 'include',
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: userEmail, password }),
       });
-      const data = await res.json();
-      if (res.ok && data.valid === true) {
+
+      if (data.valid === true) {
         onSuccess();
       } else {
         pushNotification('error', "Mot de passe incorrect.");
       }
     } catch (e) {
-      pushNotification('error', "Erreur réseau");
+      pushNotification('error', e.message || "Erreur réseau");
     }
+
     setLoading(false);
   };
 

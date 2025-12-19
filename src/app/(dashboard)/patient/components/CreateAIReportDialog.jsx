@@ -9,7 +9,7 @@ import { Play, X, Upload, FileText, AlertCircle, Trash2, Folder, File } from "lu
 import UploadToast, { useUploadToast } from './UploadToast';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { fetchWithAuth } from '@/utils/utils/fetchWithAuth';
+import { apiUploadClient } from '@/utils/apiClient';
 
 const CreateAIReportDialog = ({
   isOpen,
@@ -137,15 +137,10 @@ const CreateAIReportDialog = ({
       formData.append('report_type', selectedReport.id);
       formData.append('file', uploadedFiles[0]);
       console.log('file+++++', uploadedFiles[0])
-      const response = await fetchWithAuth({
-        method: 'post',
-        url: 'http://localhost:5000/api/reports/create',
-        data: formData,
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        onUploadProgress: (e) => {
+      const response = await apiUploadClient(
+        '/api/reports/create',
+        formData,
+        (e) => {
           const percent = Math.round((e.loaded * 100) / e.total);
           const currentTime = Date.now();
           const timeDiff = (currentTime - lastTime) / 1000; // seconds
@@ -163,9 +158,8 @@ const CreateAIReportDialog = ({
 
           // Update progress in shared toast
           updateProgress(uploadId, percent, Math.max(speed, 0));
-        },
-        router
-      });
+        }
+      );
 
       // Notify parent component that a new report was created
       if (onReportCreated) {

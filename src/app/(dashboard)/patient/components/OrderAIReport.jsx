@@ -3,7 +3,7 @@ import { useOrderReport } from '../hooks/useOrderReport';
 import CreateAIReportDialog from './CreateAIReportDialog';
 import { Scan, Circle, Box, Upload, Loader2 } from 'lucide-react';
 import useUserStore from "@/components/features/profile/store/userStore";
-import { fetchWithAuth } from '@/utils/utils/fetchWithAuth';
+import { apiClient } from '@/utils/apiClient';
 import { toast } from 'sonner';
 import UploadToast, { useUploadToast } from './UploadToast';
 import GenericUploadDialog from './GenericUploadDialog';
@@ -62,19 +62,17 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
       // Step 1: Get upload URL
       const fileType = file.type || '.' + file.name.split('.').pop().toLowerCase();
 
-      const urlRes = await fetchWithAuth({
+      const urlRes = await apiClient('/api/files/generate-upload-url', {
         method: 'POST',
-        url: 'http://localhost:5000/api/files/generate-upload-url',
-        data: {
+        body: JSON.stringify({
           clinic_id: patient.clinic.id,
           patient_id: patient.id,
           file_name: file.name,
           file_type: fileType
-        },
-        withCredentials: true
+        })
       });
 
-      const { uploadUrl, file: fileInfo } = urlRes.data;
+      const { uploadUrl, file: fileInfo } = urlRes;
 
       // Step 2: Upload directly to Supabase
       // Using axios directly for the PUT request to support progress tracking
@@ -102,11 +100,9 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
       });
 
       // Step 3: Confirm upload
-      await fetchWithAuth({
+      await apiClient('/api/files/confirm-upload', {
         method: 'POST',
-        url: 'http://localhost:5000/api/files/confirm-upload',
-        data: fileInfo,
-        withCredentials: true
+        body: JSON.stringify(fileInfo)
       });
 
       // Clear input (if it was an input, but now it's passed from dialog)

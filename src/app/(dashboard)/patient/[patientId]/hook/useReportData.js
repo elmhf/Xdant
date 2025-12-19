@@ -1,5 +1,6 @@
 // hooks/useReportData.js
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { apiClient } from '@/utils/apiClient';
 import { useDentalStore } from '@/stores/dataStore';
 import { useImageStore } from '@/app/(dashboard)/OrthogonalViews/stores/imageStore';
 
@@ -20,13 +21,8 @@ async function fetchReportDataByPost(reportId, abortSignal) {
   console.log('🔗 URL Parameters:', { patientId, reportId: cleanReportId });
 
   try {
-    const response = await fetch('http://localhost:5000/api/reports/get-data-with-json', {
+    const data = await apiClient('/api/reports/get-data-with-json', {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
       body: JSON.stringify({
         report_id: cleanReportId,
         patient_id: patientId
@@ -34,22 +30,6 @@ async function fetchReportDataByPost(reportId, abortSignal) {
       signal: abortSignal
     });
 
-    console.log('Response:', response);
-
-    if (!response.ok) {
-      let errorMessage = `HTTP ${response.status}`;
-
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorData.message || errorMessage;
-      } catch (parseError) {
-        console.warn('Failed to parse error response:', parseError);
-      }
-
-      throw new Error(errorMessage);
-    }
-
-    const data = await response.json();
     console.log('✅ Data fetched successfully', data);
 
     // Setup image store data

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
 
 export default function PinVerification({ onNext, onBack, email }) {
@@ -15,16 +16,15 @@ export default function PinVerification({ onNext, onBack, email }) {
   // Fetch expiresIn and waitTime on mount
   useEffect(() => {
     if (expiresIn === null && email) {
-      fetch("http://localhost:5000/api/auth/verification-status", {
+      apiClient("/api/auth/verification-status", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       })
-        .then(res => res.json())
         .then(data => {
           if (data.expiresIn !== undefined) setExpiresIn(data.expiresIn);
           if (data.waitTime !== undefined) setWaitTime(data.waitTime);
-        });
+        })
+        .catch(console.error); // Optional: handle initial load error
     }
   }, [email, expiresIn]);
 
@@ -82,19 +82,13 @@ export default function PinVerification({ onNext, onBack, email }) {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-and-signup", {
+      await apiClient("/api/auth/verify-and-signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code: code.join("") }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        onNext(); // Success: move to next step or redirect
-      } else {
-        setError(data.error || "Invalid code.");
-      }
+      onNext(); // Success: move to next step or redirect
     } catch (err) {
-      setError("Server error.");
+      setError(err.message || "Invalid code.");
     } finally {
       setLoading(false);
     }
@@ -105,23 +99,23 @@ export default function PinVerification({ onNext, onBack, email }) {
     setResendMessage("");
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/resend-verification-code", {
+      const data = await apiClient("/api/auth/resend-verification-code", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        setExpiresIn(data.expiresIn);
-        setWaitTime(30); // After resend, always 30s before next resend
-        setResendMessage(`A new code has been sent to your email. You have ${data.expiresIn} seconds to verify before your registration is cancelled.`);
-      } else {
-        setError(data.error || "Failed to resend code.");
-        if (data.expiresIn) setExpiresIn(data.expiresIn);
-        if (data.waitTime !== undefined) setWaitTime(data.waitTime);
-      }
+
+      setExpiresIn(data.expiresIn);
+      setWaitTime(30); // After resend, always 30s before next resend
+      setResendMessage(`A new code has been sent to your email. You have ${data.expiresIn} seconds to verify before your registration is cancelled.`);
+
     } catch (err) {
-      setError("Server error while resending code.");
+      // Logic for error response data (expiresIn, waitTime) if passed via apiClient error object?
+      // apiClient helper usually throws { message, status, data }
+      if (err.data) {
+        if (err.data.expiresIn) setExpiresIn(err.data.expiresIn);
+        if (err.data.waitTime !== undefined) setWaitTime(err.data.waitTime);
+      }
+      setError(err.message || "Failed to resend code.");
     } finally {
       setResendLoading(false);
     }

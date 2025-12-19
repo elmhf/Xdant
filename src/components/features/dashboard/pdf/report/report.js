@@ -94,9 +94,21 @@ export default function ReportPage() {
     return patientData ? { ...patientData, processedImages: patientData.images?.map(img => ({ ...img })) } : null;
   }, [patientData]);
 
+  const [staticCanvasImage, setStaticCanvasImage] = useState(null);
+
   const downloadPDF = useCallback(async () => {
     setIsGenerating(true);
     try {
+      // 1. Capture Canvas as Static Image
+      if (contextPDFRef.current?.[1]) {
+        const stage = contextPDFRef.current[1];
+        const dataUrl = stage.toDataURL({ pixelRatio: 2 });
+        setStaticCanvasImage(dataUrl);
+        // Wait for state update and re-render
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      // 2. Generate PDF
       await generatePDF({
         element: pdfContentRef.current,
         settings,
@@ -113,6 +125,8 @@ export default function ReportPage() {
     } catch (error) {
       toast.error('Unexpected Error', { description: error.message });
     } finally {
+      // 3. Cleanup
+      setStaticCanvasImage(null);
       setIsGenerating(false);
     }
   }, [memoizedPatientData, settings]);
@@ -142,11 +156,11 @@ export default function ReportPage() {
             <motion.div ref={pdfContentRef} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <ReportView
                 patientData={memoizedPatientData}
-
                 settings={settings}
                 getImage={getImage}
                 pateinInfo={patient}
                 getCurrentClinic={getCurrentClinic}
+                staticCanvasImage={staticCanvasImage}
               />
             </motion.div>
 

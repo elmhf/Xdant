@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
+import { apiClient } from '@/utils/apiClient';
 
 const SECRET_KEY = "chams_dont_steal_me";
 
@@ -31,7 +32,7 @@ function useViewSlices(view, numSlices) {
     let isMounted = true;
     let loaded = 0;
     const imgs = [];
-    
+
     const loadImages = async () => {
       for (let i = 0; i < numSlices; i++) {
         try {
@@ -58,7 +59,7 @@ function useViewSlices(view, numSlices) {
         }
       }
     };
-    
+
     if (numSlices > 0) {
       loadImages();
     }
@@ -74,14 +75,14 @@ function useViewSlices(view, numSlices) {
 
 export default function CBCTProgressiveViewer() {
   const [crosshair, setCrosshair] = useState({ x: 0.5, y: 0.5, z: 0.5 });
-  
+
   // إعدادات الـ zoom والـ pan لكل مشهد
   const [viewStates, setViewStates] = useState({
     axial: { zoom: 1, panX: 0, panY: 0 },
     coronal: { zoom: 1, panX: 0, panY: 0 },
     sagittal: { zoom: 1, panX: 0, panY: 0 }
   });
-  
+
   // عدد الشرائح من السيرفر
   const [numSlicesAxial, setNumSlicesAxial] = useState(1);
   const [numSlicesCoronal, setNumSlicesCoronal] = useState(1);
@@ -89,19 +90,13 @@ export default function CBCTProgressiveViewer() {
 
   // جلب عدد الشرائح من السيرفر عند أول تحميل بدون توقيع
   useEffect(() => {
-    fetch('http://localhost:5000/slices-count')
-      .then(res => {
-        
-        return res.json();
-      })
+    apiClient('/slices-count')
       .then(data => {
-        
         setNumSlicesAxial(data.axial || 1);
         setNumSlicesCoronal(data.coronal || 1);
         setNumSlicesSagittal(data.sagittal || 1);
       })
       .catch((err) => {
-        
         setNumSlicesAxial(1);
         setNumSlicesCoronal(1);
         setNumSlicesSagittal(1);
@@ -123,12 +118,12 @@ export default function CBCTProgressiveViewer() {
     const z = Number(e.target.value) / (numSlicesAxial - 1);
     setCrosshair((prev) => ({ ...prev, z }));
   };
-  
+
   const handleSliderCoronal = (e) => {
     const y = 1 - (Number(e.target.value) / (numSlicesCoronal - 1));
     setCrosshair((prev) => ({ ...prev, y }));
   };
-  
+
   const handleSliderSagittal = (e) => {
     const x = Number(e.target.value) / (numSlicesSagittal - 1);
     setCrosshair((prev) => ({ ...prev, x }));
@@ -153,49 +148,49 @@ export default function CBCTProgressiveViewer() {
   // معالج النقر على الـ canvas مع مراعاة الـ zoom والـ pan
   function handleCanvasClick(e, view, canvasRef) {
     if (!canvasRef.current) return;
-    
+
     const rect = canvasRef.current.getBoundingClientRect();
     const canvasX = (e.clientX - rect.left);
     const canvasY = (e.clientY - rect.top);
-    
+
     // تحويل إحداثيات الـ canvas إلى إحداثيات الصورة مع مراعاة الـ zoom والـ pan
     const viewState = viewStates[view];
     const canvas = canvasRef.current;
-    
+
     // حساب موضع الصورة الفعلي على الـ canvas
     const imageWidth = canvas.width * viewState.zoom;
     const imageHeight = canvas.height * viewState.zoom;
     const imageX = (canvas.width - imageWidth) / 2 + viewState.panX;
     const imageY = (canvas.height - imageHeight) / 2 + viewState.panY;
-    
+
     // تحويل النقرة إلى إحداثيات نسبية على الصورة
     const relativeX = (canvasX - imageX) / imageWidth;
     const relativeY = (canvasY - imageY) / imageHeight;
-    
+
     // التأكد من أن الإحداثيات ضمن حدود الصورة
     if (relativeX < 0 || relativeX > 1 || relativeY < 0 || relativeY > 1) {
       return; // النقرة خارج الصورة
     }
-    
+
     // التأكد من أن القيم في النطاق المحدد
     const clampedX = Math.max(0, Math.min(1, relativeX));
     const clampedY = Math.max(0, Math.min(1, relativeY));
-    
+
     if (view === 'axial') {
-      setCrosshair((prev) => ({ 
-        ...prev, 
-        x: clampedX, 
+      setCrosshair((prev) => ({
+        ...prev,
+        x: clampedX,
         y: 1 - clampedY
       }));
     } else if (view === 'coronal') {
-      setCrosshair((prev) => ({ 
-        ...prev, 
-        x: clampedX, 
+      setCrosshair((prev) => ({
+        ...prev,
+        x: clampedX,
         z: 1 - clampedY
       }));
     } else if (view === 'sagittal') {
-      setCrosshair((prev) => ({ 
-        ...prev, 
+      setCrosshair((prev) => ({
+        ...prev,
         y: 1 - clampedX,
         z: 1 - clampedY
       }));
@@ -221,7 +216,7 @@ export default function CBCTProgressiveViewer() {
         updateViewState={updateViewState}
         resetView={resetView}
       />
-      
+
       {/* Coronal View */}
       <ViewerPanel
         title="CORONAL"
@@ -239,7 +234,7 @@ export default function CBCTProgressiveViewer() {
         updateViewState={updateViewState}
         resetView={resetView}
       />
-      
+
       {/* Sagittal View */}
       <ViewerPanel
         title="SAGITTAL"
@@ -257,7 +252,7 @@ export default function CBCTProgressiveViewer() {
         updateViewState={updateViewState}
         resetView={resetView}
       />
-      
+
       {/* عرض إجمالي الإحداثيات في الأسفل */}
       <div className="mt-6 bg-gray-800 p-4 rounded-lg shadow-lg">
         <h4 className="text-white font-bold text-center mb-3">Global Coordinates</h4>
@@ -278,7 +273,7 @@ export default function CBCTProgressiveViewer() {
             <div className="text-blue-300 text-xs">Superior ↔ Inferior</div>
           </div>
         </div>
-        
+
         {/* معلومات إضافية عن الفهارس */}
         <div className="mt-4 grid grid-cols-3 gap-4 text-center text-xs">
           <div className="text-red-300">
@@ -300,15 +295,15 @@ export default function CBCTProgressiveViewer() {
 }
 
 // مكون لوحة العارض مع إضافة أزرار التحكم بالـ zoom
-function ViewerPanel({ 
-  title, 
-  currentSlice, 
-  maxSlice, 
-  canvasRef, 
-  image, 
-  crosshair, 
-  onCanvasClick, 
-  onSliderChange, 
+function ViewerPanel({
+  title,
+  currentSlice,
+  maxSlice,
+  canvasRef,
+  image,
+  crosshair,
+  onCanvasClick,
+  onSliderChange,
   loadingCount,
   numSlices,
   view,
@@ -325,7 +320,7 @@ function ViewerPanel({
           Slice: {currentSlice} / {maxSlice}
         </span>
       </h3>
-      
+
       {/* أزرار التحكم بالـ zoom */}
       <div className="flex gap-2 items-center">
         <button
@@ -353,7 +348,7 @@ function ViewerPanel({
           {(viewState.zoom * 100).toFixed(0)}%
         </span>
       </div>
-      
+
       {!image ? (
         <div className="text-white bg-gray-700 w-80 h-80 flex items-center justify-center rounded">
           Loading slices...
@@ -370,7 +365,7 @@ function ViewerPanel({
           setCrosshair={setCrosshair}
         />
       )}
-      
+
       <input
         type="range"
         min={0}
@@ -383,7 +378,7 @@ function ViewerPanel({
           background: `linear-gradient(to right, #ef4444 0%, #ef4444 ${maxSlice > 0 ? (currentSlice / maxSlice) * 100 : 0}%, #374151 ${maxSlice > 0 ? (currentSlice / maxSlice) * 100 : 0}%, #374151 100%)`
         }}
       />
-      
+
       <div className="text-xs text-gray-400">
         Loaded: {loadingCount} / {numSlices}
         {loadingCount < numSlices && (
@@ -392,7 +387,7 @@ function ViewerPanel({
           </span>
         )}
       </div>
-      
+
       {/* عرض الإحداثيات لكل مشهد */}
       <div className="text-xs text-green-400 bg-gray-700 p-2 rounded text-center">
         {view === 'axial' && (
@@ -417,7 +412,7 @@ function ViewerPanel({
           </div>
         )}
       </div>
-      
+
       {/* معلومات الـ zoom والـ pan */}
       <div className="text-xs text-blue-300 bg-gray-700 p-2 rounded text-center w-full">
         <div>Zoom: {(viewState.zoom * 100).toFixed(0)}%</div>
@@ -451,12 +446,12 @@ function ViewCanvas({ canvasRef, image, crosshair, onClick, view, viewState, upd
     if (isDragging) {
       const deltaX = e.clientX - lastMousePos.x;
       const deltaY = e.clientY - lastMousePos.y;
-      
+
       updateViewState(view, {
         panX: viewState.panX + deltaX,
         panY: viewState.panY + deltaY
       });
-      
+
       setLastMousePos({ x: e.clientX, y: e.clientY });
     }
   };
@@ -571,25 +566,25 @@ function ViewCanvas({ canvasRef, image, crosshair, onClick, view, viewState, upd
   // إضافة event listeners للسحب
   useEffect(() => {
     if (!canvasRef.current || !image) return;
-    
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    
+
     // مسح الـ canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // حساب أبعاد الصورة مع الـ zoom
     const imageWidth = canvas.width * viewState.zoom;
     const imageHeight = canvas.height * viewState.zoom;
     const imageX = (canvas.width - imageWidth) / 2 + viewState.panX;
     const imageY = (canvas.height - imageHeight) / 2 + viewState.panY;
-    
+
     // رسم الصورة مع الـ zoom والـ pan
     ctx.drawImage(image, imageX, imageY, imageWidth, imageHeight);
-    
+
     // رسم الـ crosshair بإحداثيات صحيحة مع مراعاة الـ zoom والـ pan
     let crossX, crossY;
-    
+
     switch (view) {
       case 'axial':
         crossX = crosshair.x * imageWidth + imageX;
@@ -606,7 +601,7 @@ function ViewCanvas({ canvasRef, image, crosshair, onClick, view, viewState, upd
       default:
         return;
     }
-    
+
     // رسم الـ crosshair فقط إذا كان ضمن حدود الـ canvas
     if (crossX >= 0 && crossX <= canvas.width && crossY >= 0 && crossY <= canvas.height) {
       ctx.save();
@@ -615,7 +610,7 @@ function ViewCanvas({ canvasRef, image, crosshair, onClick, view, viewState, upd
       ctx.setLineDash([5, 5]);
       ctx.shadowColor = 'rgba(0,0,0,0.5)';
       ctx.shadowBlur = 2;
-      
+
       ctx.beginPath();
       // خط عمودي
       ctx.moveTo(crossX, 0);
@@ -624,14 +619,14 @@ function ViewCanvas({ canvasRef, image, crosshair, onClick, view, viewState, upd
       ctx.moveTo(0, crossY);
       ctx.lineTo(canvas.width, crossY);
       ctx.stroke();
-      
+
       // رسم نقطة تقاطع
       ctx.setLineDash([]);
       ctx.fillStyle = '#ef4444';
       ctx.beginPath();
       ctx.arc(crossX, crossY, 3, 0, 2 * Math.PI);
       ctx.fill();
-      
+
       ctx.restore();
     }
   }, [image, crosshair, view, viewState]);
@@ -642,7 +637,7 @@ function ViewCanvas({ canvasRef, image, crosshair, onClick, view, viewState, upd
       width={320}
       height={320}
       className="rounded border-2 border-gray-600 hover:border-red-400 transition-colors duration-200"
-      style={{ 
+      style={{
         cursor: isDraggingCrosshair ? 'grabbing' : isDragging ? 'grabbing' : 'crosshair',
         userSelect: 'none'
       }}

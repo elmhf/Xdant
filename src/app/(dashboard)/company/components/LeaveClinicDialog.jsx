@@ -91,7 +91,6 @@ export const LeaveClinicDialog = ({
       <DialogContent className="bg-white border-2 border-gray-200 rounded-2xl max-w-2xl">
         <DialogHeader className="pb-4 border-b border-gray-100">
           <DialogTitle className="flex items-center gap-3 text-gray-900 text-3xl font-bold">
-            <AlertTriangle className="h-8 w-8 text-gray-600" />
             Quitter la clinique
           </DialogTitle>
           <DialogDescription className="text-base text-gray-600 mt-2">

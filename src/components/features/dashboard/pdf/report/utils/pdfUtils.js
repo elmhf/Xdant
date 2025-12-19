@@ -81,10 +81,20 @@ export const generatePDF = async ({
     if (!element) throw new Error('PDF content element not found');
 
     const elementClone = element.cloneNode(true);
-    elementClone.style.position = 'absolute';
-    elementClone.style.left = '-9999px';
+
+    // 1. Enforce explicit dimensions to prevent collapse/shift
+    const fullWidth = element.scrollWidth;
+    const fullHeight = element.scrollHeight;
+
+    elementClone.style.position = 'fixed';
+    elementClone.style.left = '0';
     elementClone.style.top = '0';
-    elementClone.style.width = element.offsetWidth + 'px';
+    elementClone.style.width = `${fullWidth}px`;
+    elementClone.style.height = `${fullHeight}px`;
+    elementClone.style.zIndex = '-9999';
+    elementClone.style.backgroundColor = '#ffffff'; // Force white background
+    elementClone.style.overflow = 'visible'; // Ensure everything is shown
+
     document.body.appendChild(elementClone);
 
     // تحويل كل canvas إلى صورة
@@ -99,7 +109,7 @@ export const generatePDF = async ({
         img.style.display = 'block';
         img.style.maxWidth = '100%';
         canvas.parentNode.replaceChild(img, canvas);
-      } catch (e) {}
+      } catch (e) { }
     });
 
     await processImagesInElement(elementClone);
@@ -110,9 +120,13 @@ export const generatePDF = async ({
       el.style.display = 'none';
     });
 
+    // 2. Aggressive CSS Cleanup
     elementClone.querySelectorAll('*').forEach(el => {
       el.style.boxShadow = 'none';
       el.style.textShadow = 'none';
+      el.style.transform = 'none'; // Remove transforms
+      el.style.transition = 'none'; // Stop transitions
+      el.style.animation = 'none'; // Stop animations
       el.style.WebkitPrintColorAdjust = 'exact';
       el.style.printColorAdjust = 'exact';
     });
@@ -129,19 +143,29 @@ export const generatePDF = async ({
       });
     }));
 
+    // 3. Stabilization Delay (Wait for layout to settle)
+    await new Promise(resolve => setTimeout(resolve, 800));
+
     // تصوير المحتوى
     const canvas = await html2canvas(elementClone, {
+      scale: 2, // Better quality
       useCORS: true,
       allowTaint: true,
       logging: false,
       backgroundColor: '#ffffff',
       scrollX: 0,
       scrollY: 0,
-      width: elementClone.scrollWidth,
-      height: elementClone.scrollHeight,
-      windowWidth: elementClone.scrollWidth,
-      windowHeight: elementClone.scrollHeight,
-      imageTimeout: 15000
+      width: fullWidth,
+      height: fullHeight,
+      windowWidth: fullWidth,
+      windowHeight: fullHeight,
+      imageTimeout: 15000,
+      onclone: (clonedDoc) => {
+        // Double check body size in the clone context if needed
+        const clonedBody = clonedDoc.body;
+        clonedBody.style.width = `${fullWidth}px`;
+        clonedBody.style.height = `${fullHeight}px`;
+      }
     });
 
     document.body.removeChild(elementClone);

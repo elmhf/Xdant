@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiClient } from '@/utils/apiClient';
 import useUserStore from '@/components/features/profile/store/userStore';
 
 export const useLeaveClinicWithVerification = () => {
@@ -20,19 +21,15 @@ export const useLeaveClinicWithVerification = () => {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-password", {
+      const data = await apiClient("/api/auth/verify-password", {
         method: "POST",
-        credentials: 'include',
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: useUserStore.getState().userInfo?.email,
           password
         }),
       });
 
-      const data = await res.json();
-
-      if (res.ok && data.valid === true) {
+      if (data.valid === true) {
         setStep(2);
         setError("");
         return true;
@@ -41,7 +38,7 @@ export const useLeaveClinicWithVerification = () => {
         return false;
       }
     } catch (error) {
-      setError("Erreur réseau");
+      setError(error.message || "Erreur réseau");
       return false;
     } finally {
       setLeaving(false);
@@ -58,50 +55,41 @@ export const useLeaveClinicWithVerification = () => {
     setLeaveMessage("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/clinics/leave-clinic", {
+      await apiClient("/api/clinics/leave-clinic", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include',
         body: JSON.stringify({ clinicId: clinicToLeave.id })
       });
 
-      const data = await res.json();
+      setLeaveMessage("Vous avez quitté la clinique avec succès");
 
+      // Remove clinic from userStore
+      const currentClinics = useUserStore.getState().clinicsInfo;
+      const updatedClinics = currentClinics.filter(clinic => clinic.id !== clinicToLeave.id);
 
-      if (res.ok) {
-        setLeaveMessage("Vous avez quitté la clinique avec succès");
+      useUserStore.getState().setClinicsInfo(updatedClinics);
 
-        // Remove clinic from userStore
-        const currentClinics = useUserStore.getState().clinicsInfo;
-        const updatedClinics = currentClinics.filter(clinic => clinic.id !== clinicToLeave.id);
-
-        useUserStore.getState().setClinicsInfo(updatedClinics);
-
-        // If this was the current clinic, set another clinic as current
-        const currentClinicId = useUserStore.getState().currentClinicId;
-        if (currentClinicId === clinicToLeave.id && updatedClinics.length > 0) {
-          useUserStore.getState().setCurrentClinicId(updatedClinics[0].id);
-        } else if (updatedClinics.length === 0) {
-          useUserStore.getState().setCurrentClinicId(null);
-        }
-
-        setShowLeaveDialog(false);
-        setClinicToLeave(null);
-        setStep(1);
-        setPassword("");
-
-        // Refresh clinics data
-        await useUserStore.getState().fetchMyClinics();
-
-        return { success: true, message: "Vous avez quitté la clinique avec succès" };
-      } else {
-        setLeaveMessage(data.message || "Erreur lors de la sortie de la clinique");
-        return { success: false, message: data.message || "Erreur lors de la sortie de la clinique" };
+      // If this was the current clinic, set another clinic as current
+      const currentClinicId = useUserStore.getState().currentClinicId;
+      if (currentClinicId === clinicToLeave.id && updatedClinics.length > 0) {
+        useUserStore.getState().setCurrentClinicId(updatedClinics[0].id);
+      } else if (updatedClinics.length === 0) {
+        useUserStore.getState().setCurrentClinicId(null);
       }
+
+      setShowLeaveDialog(false);
+      setClinicToLeave(null);
+      setStep(1);
+      setPassword("");
+
+      // Refresh clinics data
+      await useUserStore.getState().fetchMyClinics();
+
+      return { success: true, message: "Vous avez quitté la clinique avec succès" };
+
     } catch (error) {
       console.error("Error leaving clinic:", error);
-      setLeaveMessage("Erreur de réseau");
-      return { success: false, message: "Erreur de réseau" };
+      setLeaveMessage(error.message || "Erreur de réseau");
+      return { success: false, message: error.message || "Erreur de réseau" };
     } finally {
       setLeaving(false);
     }

@@ -1,5 +1,6 @@
 // hooks/useToothSliceData.js
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { apiClient } from '@/utils/apiClient';
 import { useDentalStore } from '@/stores/dataStore';
 import { useImageStore } from '@/app/(dashboard)/OrthogonalViews/stores/imageStore';
 
@@ -24,13 +25,9 @@ async function fetchToothSliceData(toothId, abortSignal) {
 
   try {
     // Use the same API endpoint as useReportData to get all data including slices
-    const response = await fetch('http://localhost:5000/api/reports/get-data-with-json', {
+    // Use the same API endpoint as useReportData to get all data including slices
+    const reportData = await apiClient('/api/reports/get-data-with-json', {
       method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
       body: JSON.stringify({
         report_id: reportId,
         patient_id: patientId,
@@ -38,21 +35,6 @@ async function fetchToothSliceData(toothId, abortSignal) {
       }),
       signal: abortSignal
     });
-    console.log('response:::::', response);
-    if (!response.ok) {
-      let errorMessage = `HTTP ${response.status}`;
-
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorData.message || errorMessage;
-      } catch (parseError) {
-        console.warn('Failed to parse error response:', parseError);
-      }
-
-      throw new Error(errorMessage);
-    }
-
-    const reportData = await response.json();
     console.log('✅ Tooth slice report data fetched successfully:', reportData);
 
     // Extract slices data from the report data

@@ -1,5 +1,6 @@
 // store/notificationsStore.js
 import { create } from "zustand";
+import { apiClient } from '@/utils/apiClient';
 
 const useNotificationStore = create((set, get) => ({
   notifications: [],
@@ -9,12 +10,10 @@ const useNotificationStore = create((set, get) => ({
     console.log('fea')
     set({ loading: true });
     try {
-      const res = await fetch(`http://localhost:5000/api/notifications/getNotifications`, {
+      const data = await apiClient('/api/notifications/getNotifications', {
         method: 'POST',
-        credentials: 'include',
         body: JSON.stringify({ userId })
       });
-      const data = await res.json();
       console.log(data, 'notificationsnotifications')
       set({ notifications: data, loading: false });
     } catch (error) {
@@ -125,19 +124,10 @@ const useNotificationStore = create((set, get) => ({
 
   clearNotifications: async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/notifications/clearAll`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      await apiClient('/api/notifications/clearAll', {
+        method: 'POST'
       });
-
-      if (res.ok) {
-        set({ notifications: [] });
-      } else {
-        console.error("Error clearing notifications");
-      }
+      set({ notifications: [] });
     } catch (error) {
       console.error("Error clearing notifications:", error);
     }

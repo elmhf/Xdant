@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useCallback } from 'react';
+import { apiClient } from "@/utils/apiClient";
 import { useRouter } from 'next/navigation';
 
 import {
@@ -68,9 +69,8 @@ export default function ProfileDropdown() {
   const handleLogout = useCallback(async () => {
     setLoggingOut(true);
     try {
-      await fetch('http://localhost:5000/api/auth/logout', {
+      await apiClient('/api/auth/logout', {
         method: 'POST',
-        credentials: 'include',
       });
       router.push('/login');
     } finally {

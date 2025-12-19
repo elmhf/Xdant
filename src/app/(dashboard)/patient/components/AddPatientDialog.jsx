@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiClient } from '@/utils/apiClient';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,20 +77,10 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
     try {
       const patientData = preparePatientDataForAPI(formData, currentClinic, currentUser);
 
-      const response = await fetch('http://localhost:5000/api/patients/add', {
+      const data = await apiClient('/api/patients/add', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
         body: JSON.stringify(patientData)
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to add patient');
-      }
 
       setFormSuccess("Patient added successfully!");
 

@@ -165,6 +165,7 @@ const useImageLoader = (imageUrl) => {
     }
 
     const img = new window.Image();
+    img.crossOrigin = 'anonymous';
 
     img.onload = () => {
       setImgState({
@@ -385,7 +386,8 @@ const RenderProblemDrw = ({
   image,
   tooth = [],
   ShowSetting = {},
-  Jaw
+  Jaw,
+  staticImage
 }) => {
   const { contextPDFRef } = useContext(PDFContext);
   const containerRef = useRef(null);
@@ -425,6 +427,22 @@ const RenderProblemDrw = ({
     return (
       <div className="flex items-center justify-center h-64 bg-gray-100 rounded-lg">
         <div className="text-gray-500">لا توجد صورة للعرض</div>
+      </div>
+    );
+  }
+
+  // Render Static Image for PDF Export
+  if (staticImage) {
+    return (
+      <div
+        className="w-full overflow-hidden bg-gray-50 relative rounded-xl shadow-lg border border-gray-200"
+        style={{ minHeight: '200px', backgroundColor: '#fafafa' }}
+      >
+        <img
+          src={staticImage}
+          alt="Dental Analysis"
+          style={{ width: '100%', height: 'auto', display: 'block' }}
+        />
       </div>
     );
   }

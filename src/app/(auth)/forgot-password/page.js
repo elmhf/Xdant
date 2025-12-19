@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
+import { apiClient } from '@/utils/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, Mail, Check } from 'lucide-react';
@@ -67,16 +68,10 @@ export default function ForgotPasswordPage() {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:5000/api/auth/reset/sendPasswordReset', {
+            await apiClient('/api/auth/reset/sendPasswordReset', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
             });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Failed to send OTP');
-            }
 
             setStep(2);
             setTimeLeft(300);
@@ -99,18 +94,10 @@ export default function ForgotPasswordPage() {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/reset/verifyResetOtp', {
+            const data = await apiClient('/api/auth/reset/verifyResetOtp', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, code: otpString })
             });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Invalid OTP');
-            }
-
-            const data = await response.json();
 
             if (data.resetToken) {
                 setResetToken(data.resetToken);
@@ -141,20 +128,14 @@ export default function ForgotPasswordPage() {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/reset/updatePassword', {
+            await apiClient('/api/auth/reset/updatePassword', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email,
                     resetToken: resetToken,
                     newPassword
                 })
             });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Failed to update password');
-            }
 
             setSuccess(true);
             setTimeout(() => {
@@ -172,12 +153,10 @@ export default function ForgotPasswordPage() {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:5000/api/auth/reset/sendPasswordReset', {
+            await apiClient('/api/auth/reset/sendPasswordReset', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
             });
-            if (!response.ok) throw new Error('Failed to resend');
             setTimeLeft(300);
             setOtp(['', '', '', '', '', '']);
         } catch (err) {

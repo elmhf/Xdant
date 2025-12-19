@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { fetchWithAuth } from '@/utils/utils/fetchWithAuth';
+import { apiClient } from '@/utils/apiClient';
 import useUserStore from '@/components/features/profile/store/userStore';
 import { format } from 'date-fns';
 
@@ -20,20 +20,18 @@ export const useDentalData = () => {
 
             try {
                 setLoading(true);
-                const response = await fetchWithAuth({
+                const data = await apiClient('/api/files/list', {
                     method: 'POST',
-                    url: 'http://localhost:5000/api/files/list',
-                    data: {
+                    body: JSON.stringify({
                         patient_id: patientId,
                         clinic_id: currentClinicId
-                    },
-                    withCredentials: true
+                    })
                 });
 
-                if (response.data) {
-                    const filesData = Array.isArray(response.data)
-                        ? response.data
-                        : (Array.isArray(response.data.files) ? response.data.files : (Array.isArray(response.data.data) ? response.data.data : []));
+                if (data) {
+                    const filesData = Array.isArray(data)
+                        ? data
+                        : (Array.isArray(data.files) ? data.files : (Array.isArray(data.data) ? data.data : []));
 
                     const finalFiles = Array.isArray(filesData) ? filesData : [];
                     setFiles(finalFiles);
@@ -51,11 +49,9 @@ export const useDentalData = () => {
 
     const deleteFile = async (fileId) => {
         try {
-            await fetchWithAuth({
+            await apiClient('/api/files/delete', {
                 method: 'POST',
-                url: 'http://localhost:5000/api/files/delete',
-                data: { fileId: fileId },
-                withCredentials: true
+                body: JSON.stringify({ fileId: fileId })
             });
 
             setFiles(prev => prev.filter(f => f.id !== fileId));

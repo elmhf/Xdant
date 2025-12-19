@@ -16,7 +16,6 @@ export const ClinicProfileTab = ({ currentClinic, userRole, canEditClinic, openL
             className="px-6 h-12 flex items-center justify-center rounded-xl bg-gray-100 text-xl font-medium text-[#ff254e] border-2 border-[#ff254e] hover:bg-[#ff254e] hover:text-white transition-all duration-200"
             onClick={() => openLeaveDialog(currentClinic)}
           >
-            <LogOut className="h-4 w-4 mr-2" />
             Quitter la clinique
           </Button>
         </div>

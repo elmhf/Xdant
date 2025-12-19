@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,22 +28,22 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/send-email-otp-code", {
+      const data = await apiClient("/api/auth/send-email-otp-code", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include',
         body: JSON.stringify({ newEmail: email, otpKey: "clinicUpdateEmail" }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        pushNotification('success', "Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
-        setStep(2);
-      } else {
-        pushNotification('error', data.message || "Erreur lors de l'envoi du code de vérification.");
-      }
+
+      pushNotification('success', "Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
+      setStep(2);
     } catch (e) {
-      pushNotification('error', "Erreur réseau");
+      // apiClient handles toast errors, but if we want custom message in pushNotification:
+      // However, usually apiClient throws ApiError. 
+      // We can rely on apiClient's toast or keep using pushNotification if we extract message.
+      // Assuming apiClient errors are handled, we might just log or set generic error if needed.
+      // But preserving existing UX:
+      pushNotification('error', e.message || "Erreur réseau");
     }
+
     setLoading(false);
   };
 
