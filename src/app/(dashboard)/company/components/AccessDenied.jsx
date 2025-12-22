@@ -21,8 +21,8 @@ export const AccessDenied = ({ userRole, requiredRole = "Administrateur", messag
               </span>
             )}
           </p>
-          
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+
+          <div className="bg-gray-50 rounded-2xl p-4 mb-6">
             <div className="flex items-center justify-center mb-3">
               <Shield className="h-5 w-5 text-gray-500 mr-2" />
               <span className="text-sm font-medium text-gray-700">Permissions requises</span>
@@ -32,12 +32,12 @@ export const AccessDenied = ({ userRole, requiredRole = "Administrateur", messag
               <span className="text-sm text-gray-600">{requiredRole}</span>
             </div>
           </div>
-          
+
           <p className="text-gray-500 text-sm mb-6">
             Contactez votre administrateur pour obtenir les permissions nécessaires.
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => window.location.href = "/"}
           className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed] h-12 text-base font-semibold px-8"
         >

@@ -119,7 +119,7 @@ const SignaturePad = ({ onSave, disabled = false }) => {
         <p className="text-sm text-slate-600">ارسم توقيعك في المنطقة أدناه</p>
       </div>
 
-      <div className="relative bg-white border-2 border-slate-300 rounded-lg p-2">
+      <div className="relative bg-white border-2 border-slate-300 rounded-2xl p-2">
         <canvas
           ref={canvasRef}
           onMouseDown={startDrawing}
@@ -263,7 +263,7 @@ const ReportSection = ({ title, children, className = "", printClass = "" }) => 
     <h3 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-300 pb-2">
       {title}
     </h3>
-    <div className="bg-white rounded-lg border">
+    <div className="bg-white rounded-2xl border">
       {children}
     </div>
   </div>
@@ -278,6 +278,7 @@ export default function ReportView({
   getCurrentClinic,
   staticCanvasImage
 }) {
+  console.log(patientData, "patientDatapatientDatapatientDatapatientDatapatientDatapatientDatapatientData")
   const { contextPDFRef } = useContext(PDFContext);
   const currentClinic = getCurrentClinic();
   console.log(getCurrentClinic(), "currentClinic")
@@ -290,7 +291,7 @@ export default function ReportView({
     : currentDate;
   console.log(settings, "settings")
   return (
-    <div className="report-pdf-container rounded-lg overflow-hidden min-h-screen bg-white print:bg-white print:shadow-none">
+    <div className="report-pdf-container rounded-2xl overflow-hidden min-h-screen bg-white print:bg-white print:shadow-none">
 
       {/* Print Styles */}
       <style jsx>{`
@@ -366,7 +367,7 @@ export default function ReportView({
         <div className="">
           <h2 className="text-2xl font-bold text-gray-800">CBCT AI Report</h2>
         </div>
-        {settings.CBCTAnalysis.showPatientInfo && (<div className="grid grid-cols-1 md:grid-cols-2 gap-4 border rounded-lg bg-gray-50">
+        {settings.CBCTAnalysis.showPatientInfo && (<div className="grid grid-cols-1 md:grid-cols-2 gap-4 border rounded-2xl bg-gray-50">
           <div>
             <label className="block text-sm font-medium text-gray-700">First Name</label>
             <p className="mt-1 text-gray-600">{pateinInfo?.first_name || 'not specified'}</p>

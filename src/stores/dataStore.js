@@ -192,6 +192,8 @@ export const useDentalStore = create(
         const currentPatientId = get().data?.patientInfo?.patientId;
         const newPatientId = patientData?.patientInfo?.patientId;
 
+        console.log("currentPatientId okok", currentPatientId, "newPatientId okok", patientData);
+
         if (currentPatientId && currentPatientId === newPatientId) {
           console.log("Data already loaded for this patient, skipping reload to preserve changes");
           set({ loading: false });
@@ -205,91 +207,98 @@ export const useDentalStore = create(
           if (!patientData?.patientInfo?.patientId) {
             console.log("Patient ID is missing");
             throw new Error("بيانات المريض ناقصة");
-          } console.log("Formatted data:", patientData);
+          }
           const formattedData = {
             patientInfo: {
               patientId: patientData?.patientInfo?.patientId,
               info: {
-                fullName: patientData.patientInfo?.fullName || "",
-                dateOfBirth: patientData.patientInfo?.dateOfBirth || "",
-                age: patientData.patientInfo?.age || 0,
-                lastScanDate: patientData.patientInfo?.lastScanDate || "",
-                gender: patientData.patientInfo?.gender || "",
-                bloodType: patientData.patientInfo?.bloodType || "",
-                allergies: patientData.patientInfo?.allergies ? [...patientData.patientInfo.allergies] : [],
-                medicalHistory: patientData.patientInfo?.medicalHistory ? [...patientData.patientInfo.medicalHistory] : []
+                fullName: patientData?.patientInfo?.fullName || "",
+                dateOfBirth: patientData?.patientInfo?.dateOfBirth || "",
+                age: patientData?.patientInfo?.age || 0,
+                lastScanDate: patientData?.patientInfo?.lastScanDate || "",
+                gender: patientData?.patientInfo?.gender || "",
+                bloodType: patientData?.patientInfo?.bloodType || "",
+                allergies: Array.isArray(patientData?.patientInfo?.allergies) ? [...patientData?.patientInfo.allergies] : [],
+                medicalHistory: Array.isArray(patientData?.patientInfo?.medicalHistory) ? [...patientData?.patientInfo.medicalHistory] : []
               }
             },
             JAw: {
               upperJaw: {
-                mask: patientData.JAw?.upperJaw?.mask ? [...patientData.JAw.upperJaw.mask] : []
+                mask: Array.isArray(patientData?.JAw?.upperJaw?.mask) ? [...patientData?.JAw?.upperJaw?.mask] : []
               },
               lowerJaw: {
-                mask: patientData.JAw?.lowerJaw?.mask ? [...patientData.JAw.lowerJaw.mask] : []
+                mask: Array.isArray(patientData?.JAw?.lowerJaw?.mask) ? [...patientData?.JAw?.lowerJaw?.mask] : []
               }
             },
-            teeth: patientData.teeth?.map(tooth => ({
-              note: tooth.note || "",
-              toothNumber: tooth.toothNumber,
-              category: tooth.category || "",
-              position: tooth.position ? { ...tooth.position } : { x: 0, y: 0 },
-              boundingBox: tooth.boundingBox ? [...tooth.boundingBox] : [],
-              teeth_mask: tooth.teeth_mask ? [...tooth.teeth_mask] : [],
-              slice: tooth.slice ? tooth.slice : [],
-              sliceRanges: tooth.sliceRanges ? {
-                axial: tooth.sliceRanges.axial ? { ...tooth.sliceRanges.axial } : null,
-                sagittal: tooth.sliceRanges.sagittal ? { ...tooth.sliceRanges.sagittal } : null,
-                coronal: tooth.sliceRanges.coronal ? { ...tooth.sliceRanges.coronal } : null
+            teeth: Array.isArray(patientData?.teeth) ? patientData.teeth.map(tooth => ({
+             
+              note: tooth?.note || "",
+              toothNumber: tooth?.toothNumber,
+              category: tooth?.category || "",
+              position: tooth?.position ? { ...tooth?.position } : { x: 0, y: 0 },
+              boundingBox: tooth?.boundingBox,
+              teeth_mask: tooth?.teeth_mask,
+              slice: tooth?.slice ? JSON.parse(JSON.stringify(tooth.slice)) : [],
+              sliceRanges: tooth?.sliceRanges ? {
+                axial: tooth?.sliceRanges?.axial ? { ...tooth?.sliceRanges?.axial } : null,
+                sagittal: tooth?.sliceRanges?.sagittal ? { ...tooth?.sliceRanges?.sagittal } : null,
+                coronal: tooth?.sliceRanges?.coronal ? { ...tooth?.sliceRanges?.coronal } : null
               } : null,
-              problems: tooth.problems ? tooth.problems.map(problem => ({
+              problems: Array.isArray(tooth?.problems) ? tooth.problems.map(problem => ({
                 ...problem,
-                mask: problem.mask ? [...problem.mask] : [],
-                images: problem.images ? [...problem.images] : []
+                mask: Array.isArray(problem.mask) ? [...problem.mask] : [],
+                images: Array.isArray(problem.images) ? [...problem.images] : []
               })) : [],
               gumHealth: tooth.gumHealth || "",
               lastCheckup: tooth.lastCheckup || "",
-              Endo: tooth.Endo ? { mask: [...tooth.Endo.mask] } : null,
-              Root: tooth.Root ? { mask: [...tooth.Root.mask] } : null,
-              Crown: tooth.Crown ? { mask: [...tooth.Crown.mask] } : null,
-              approved: typeof tooth.approved === 'boolean' ? tooth.approved : false,
-              roots: typeof tooth.roots === 'number' ? tooth.roots : 1,
-              canals: typeof tooth.canals === 'number' ? tooth.canals : 1
-            })) || [],
-            statistics: patientData.statistics ? {
-              ...patientData.statistics,
+              Endo: tooth.Endo ? { mask: Array.isArray(tooth.Endo.mask) ? [...tooth.Endo.mask] : [] } : null,
+              Root: tooth.Root ? { mask: Array.isArray(tooth.Root.mask) ? [...tooth.Root.mask] : [] } : null,
+              Crown: tooth.Crown ? { mask: Array.isArray(tooth.Crown.mask) ? [...tooth.Crown.mask] : [] } : null,
+              approved: typeof tooth?.approved === 'boolean' ? tooth.approved : false,
+              roots: typeof tooth?.roots === 'number' ? tooth.roots : 1,
+              canals: typeof tooth?.canals === 'number' ? tooth.canals : 1
+            })) : [],
+            statistics: {
+              ...JSON.parse(JSON.stringify(initialData.statistics)),
+              ...(patientData?.statistics || {}),
               cariesDistribution: {
-                ...(patientData.statistics.cariesDistribution || {})
+                ...JSON.parse(JSON.stringify(initialData.statistics.cariesDistribution)),
+                ...(patientData?.statistics?.cariesDistribution || {})
               }
-            } : initialData.statistics,
-            scanInfo: patientData.scan ? {
-              ...patientData.scan,
+            },
+            scanInfo: {
+              ...JSON.parse(JSON.stringify(initialData.scanInfo)),
+              ...(patientData?.scan || {}),
               dimensions: {
-                ...(patientData.scan.dimensions || {})
+                ...JSON.parse(JSON.stringify(initialData.scanInfo.dimensions)),
+                ...(patientData?.scan?.dimensions || {})
               }
-            } : initialData.scanInfo,
-            problemDetection: patientData.problemDetective ? [...patientData.problemDetective] : [],
-            treatmentPlan: patientData.treatmentPlan ? patientData.treatmentPlan.map(plan => ({
+            },
+            problemDetection: Array.isArray(patientData?.problemDetective) ? [...patientData?.problemDetective] : [],
+            treatmentPlan: Array.isArray(patientData?.treatmentPlan) ? patientData?.treatmentPlan.map(plan => ({
               ...plan,
-              procedures: plan.procedures?.map(proc => ({
+              procedures: Array.isArray(plan.procedures) ? plan.procedures.map(proc => ({
                 ...proc,
-                prescriptions: [...(proc.prescriptions || [])],
-                materials: [...(proc.materials || [])]
-              })) || [],
+                prescriptions: Array.isArray(proc?.prescriptions) ? [...(proc?.prescriptions || [])] : [],
+                materials: Array.isArray(proc?.materials) ? [...(proc?.materials || [])] : []
+              })) : [],
               followUp: {
-                ...plan.followUp,
-                requiredTests: [...(plan.followUp?.requiredTests || [])]
+                ...plan?.followUp,
+                requiredTests: Array.isArray(plan?.followUp?.requiredTests) ? [...(plan?.followUp?.requiredTests || [])] : []
               }
             })) : [],
-            metadata: patientData.metadata ? {
-              ...patientData.metadata,
+            metadata: {
+              ...JSON.parse(JSON.stringify(initialData.metadata)),
+              ...(patientData?.metadata || {}),
               clinicInfo: {
-                ...(patientData.metadata.clinicInfo || {})
+                ...JSON.parse(JSON.stringify(initialData.metadata.clinicInfo)),
+                ...(patientData?.metadata?.clinicInfo || {})
               }
-            } : initialData.metadata,
-            conclusion: patientData.conclusion || "",
-            conclusionUpdatedAt: patientData.conclusionUpdatedAt || null
+            },
+            conclusion: patientData?.conclusion || "",
+            conclusionUpdatedAt: patientData?.conclusionUpdatedAt || null
           };
-          console.log("Formatted data:", formattedData, patientData, formattedData);
+          console.log("Formatted data:", formattedData, patientData);
           set({
             data: formattedData,
             history: [formattedData],
@@ -299,6 +308,7 @@ export const useDentalStore = create(
 
           return { success: true };
         } catch (error) {
+          console.log("Formatted data:", error);
           set({
             error: error.message,
             loading: false

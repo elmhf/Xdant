@@ -74,7 +74,7 @@ const PatientTable = ({
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-x-auto">
+    <div className="border border-gray-200 rounded-2xl overflow-x-auto">
       <div className="max-h-[60vh] overflow-y-auto">
         <table className="w-full">
           <thead className="bg-white border-b border-gray-200 sticky top-0 z-10">

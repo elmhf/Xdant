@@ -117,18 +117,18 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
         <div className="space-y-6">
           {/* Error/Success Messages */}
           {formError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl">
               {formError}
             </div>
           )}
           {formSuccess && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-2xl">
               {formSuccess}
             </div>
           )}
 
           {/* Patient Info */}
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 p-4 rounded-2xl">
             <h3 className="font-semibold text-gray-900 mb-2">Patient:</h3>
             <p className="text-gray-700">{patient.first_name} {patient.last_name}</p>
           </div>
@@ -219,7 +219,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
                         <SelectItem
                           key={doctor.id}
                           value={doctor.id}
-                          className="rounded-lg cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
+                          className="rounded-2xl cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
                         >
                           <div className="flex items-center gap-3 py-1">
                             <Avatar className="h-8 w-8">
@@ -267,7 +267,7 @@ const AddDoctorDialog = ({ isOpen, onClose, onDoctorAdded, patient, currentTreat
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || selectedDoctors.length === 0}
-              className="flex-1 bg-[#7564ed] hover:bg-[#7558db] disabled:bg-[#7558db] text-white h-12 text-base font-medium rounded-lg transition-colors"
+              className="flex-1 bg-[#7564ed] hover:bg-[#7558db] disabled:bg-[#7558db] text-white h-12 text-base font-medium rounded-2xl transition-colors"
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">

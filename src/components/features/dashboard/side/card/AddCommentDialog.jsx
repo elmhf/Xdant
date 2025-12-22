@@ -25,7 +25,7 @@ const AddCommentDialog = ({
   placeholder,
   buttonText,
   title,
-  onSend = () => {},
+  onSend = () => { },
   toothInfo = { toothNumber: 0 },
 }) => {
   const [open, setOpen] = useState(false);
@@ -199,7 +199,7 @@ const AddCommentDialog = ({
                   {editIdx === idx ? (
                     <>
                       <textarea
-                        className="w-full border border-gray-200 rounded-lg p-2 text-sm mb-2 bg-white focus:border-[#0d0c22] focus:ring-2 focus:ring-[#0d0c22]/10"
+                        className="w-full border border-gray-200 rounded-2xl p-2 text-sm mb-2 bg-white focus:border-[#0d0c22] focus:ring-2 focus:ring-[#0d0c22]/10"
                         value={editText}
                         onChange={e => setEditText(e.target.value)}
                         rows={2}
@@ -285,7 +285,7 @@ const AddCommentDialog = ({
         {/* Actions */}
         <div className="flex items-center justify-end gap-3 px-8 pb-7 pt-4 mt-6">
           {/* Attachment Button */}
-          <label className="p-2 rounded-lg bg-gray-50 border border-gray-100 text-gray-500 hover:bg-gray-100 hover:text-[#0d0c22] transition cursor-pointer" tabIndex={-1}>
+          <label className="p-2 rounded-2xl bg-gray-50 border border-gray-100 text-gray-500 hover:bg-gray-100 hover:text-[#0d0c22] transition cursor-pointer" tabIndex={-1}>
             <Paperclip size={22} />
             <input
               type="file"

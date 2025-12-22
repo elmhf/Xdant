@@ -65,7 +65,7 @@ const DropdownMenu = React.memo(({ items, isOpen, onClose, onItemClick }) => {
       <div className="fixed inset-0 z-40" onClick={onClose} />
       <div className="absolute top-10 right-0 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[160px] z-50 animate-in slide-in-from-top-2 duration-200 flex flex-col gap-0.5">
         {items.map((item) => (
-          <button key={item.id} onClick={() => onItemClick(item)} className="w-full px-2 py-1 hover:bg-gray-100 cursor-pointer flex items-center gap-2 text-left transition-colors duration-150 rounded-lg">
+          <button key={item.id} onClick={() => onItemClick(item)} className="w-full px-2 py-1 hover:bg-gray-100 cursor-pointer flex items-center gap-2 text-left transition-colors duration-150 rounded-2xl">
             {item.icon && <item.icon size={14} className="text-gray-600" />}
             <span className="text-xs text-gray-700 font-medium">{item.label}</span>
           </button>

@@ -151,16 +151,16 @@ export const LeaveClinicDialogWithVerification = ({
             variant="ghost"
             onClick={onBack}
             disabled={leaving}
-            className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+            className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           >
             {step === 1 ? "Annuler" : "Retour"}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={leaving || (step === 1 && !password.trim())}
-            className={`text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw] ${step === 2
-                ? "bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0"
-                : "bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4"
+            className={`text-lg font-bold transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw] ${step === 2
+              ? "bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0"
+              : "bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4"
               }`}
           >
             {leaving

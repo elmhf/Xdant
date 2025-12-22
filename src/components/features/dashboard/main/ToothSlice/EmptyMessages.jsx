@@ -7,7 +7,7 @@ import dataNotFound from '@/components/shared/lottie/Nodatafound.json';
 // ✅ رسالة وقت ما فماش سلايس
 export const NoSliceDataMessage = React.memo(({ view }) => (
     <motion.div
-        className="bg-gray-100 rounded-lg text-center"
+        className="bg-gray-100 rounded-2xl text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -22,7 +22,7 @@ NoSliceDataMessage.displayName = "NoSliceDataMessage";
 // ✅ رسالة إذا السن مفقود
 export const MissingToothMessage = React.memo(({ toothNumber }) => (
     <motion.div
-        className="relative rounded-lg flex flex-col justify-center h-full items-center text-center"
+        className="relative rounded-2xl flex flex-col justify-center h-full items-center text-center"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}

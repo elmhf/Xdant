@@ -63,9 +63,6 @@ export default function AcceptInvitation() {
       setStatus("error");
       setMessage(error.message || "Erreur lors de l'acceptation de l'invitation");
     } finally {
-      setStatus("error");
-      setMessage("Erreur de connexion");
-    } finally {
       setProcessing(false);
     }
   };
@@ -87,9 +84,6 @@ export default function AcceptInvitation() {
     } catch (error) {
       setStatus("error");
       setMessage(error.message || "Erreur lors du rejet de l'invitation");
-    } finally {
-      setStatus("error");
-      setMessage("Erreur de connexion");
     } finally {
       setProcessing(false);
     }

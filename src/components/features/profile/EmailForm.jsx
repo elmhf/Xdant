@@ -142,7 +142,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             <Button
               type="button"
               variant="ghost"
-              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               onClick={onBack}
               disabled={loading}
             >
@@ -150,7 +150,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             </Button>
             <Button
               type="submit"
-              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               disabled={!password || loading}
             >
               {loading ? "Vérification..." : "Vérifier"}
@@ -188,7 +188,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             <Button
               type="button"
               variant="ghost"
-              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               onClick={onBack}
               disabled={loading}
             >
@@ -196,7 +196,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             </Button>
             <Button
               type="submit"
-              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               disabled={!email || loading}
             >
               {loading ? "Envoi..." : "Envoyer le code"}
@@ -243,7 +243,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             <Button
               type="button"
               variant="ghost"
-              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               onClick={onBack}
               disabled={loading}
             >
@@ -251,7 +251,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
             </Button>
             <Button
               type="submit"
-              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               disabled={code.join("").length < 6 || loading}
             >
               {loading ? "Vérification..." : "Valider le code"}

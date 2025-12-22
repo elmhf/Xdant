@@ -213,7 +213,7 @@ export default function NotificationDropdown({ userId }) {
 
                       {/* Status message */}
                       {statusMap[notif.id] && (
-                        <div className="text-xs text-[#7564ED] mt-1 font-medium bg-[#7564ED]/5 p-2 rounded-lg">
+                        <div className="text-xs text-[#7564ED] mt-1 font-medium bg-[#7564ED]/5 p-2 rounded-2xl">
                           {statusMap[notif.id]}
                         </div>
                       )}
@@ -224,7 +224,7 @@ export default function NotificationDropdown({ userId }) {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="h-8 px-4 rounded-lg text-xs font-medium border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 transition-all"
+                            className="h-8 px-4 rounded-2xl text-xs font-medium border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 transition-all"
                             disabled={processingMap[notif.id]}
                             onClick={(e) => {
                               e.preventDefault();
@@ -236,7 +236,7 @@ export default function NotificationDropdown({ userId }) {
 
                           <Button
                             size="sm"
-                            className="h-8 px-4 rounded-lg text-xs font-medium bg-[#7564ED] hover:bg-[#6654d9] text-white shadow-sm border-0 transition-all"
+                            className="h-8 px-4 rounded-2xl text-xs font-medium bg-[#7564ED] hover:bg-[#6654d9] text-white shadow-sm border-0 transition-all"
                             disabled={processingMap[notif.id]}
                             onClick={(e) => {
                               e.preventDefault();

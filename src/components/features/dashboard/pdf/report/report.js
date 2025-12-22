@@ -33,16 +33,12 @@ function PatientDataSkeleton() {
   );
 }
 
+
+
+import ErrorCard from "@/components/shared/ErrorCard";
+
 function ErrorFallback({ error, resetErrorBoundary }) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
-      <p className="text-xl font-semibold text-destructive mb-2">Oops! Something went wrong 😅</p>
-      <p className="text-muted-foreground mb-4">{error.message}</p>
-      <Button onClick={resetErrorBoundary} variant="destructive">
-        Try Again
-      </Button>
-    </div>
-  );
+  return <ErrorCard error={error} onRetry={resetErrorBoundary} />;
 }
 
 export default function ReportPage() {

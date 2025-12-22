@@ -39,7 +39,7 @@ export const DeleteDoctorDialog = ({
         </div>
 
         {message && (
-          <div className={`p-3 rounded-lg text-sm font-medium ${message.includes('success')
+          <div className={`p-3 rounded-2xl text-sm font-medium ${message.includes('success')
             ? 'bg-green-50 text-green-800'
             : 'bg-red-50 text-red-800'
             }`}>
@@ -52,14 +52,14 @@ export const DeleteDoctorDialog = ({
             variant="ghost"
             onClick={close}
             disabled={loading}
-            className="h-10 px-6 text-base font-semibold  text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-lg"
+            className="h-10 px-6 text-base font-semibold  text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-2xl"
           >
             Cancel
           </Button>
           <Button
             onClick={onConfirm}
             disabled={loading}
-            className="h-10 px-6 text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  rounded-lg shadow-none"
+            className="h-10 px-6 text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  rounded-2xl shadow-none"
           >
             {loading ? "Removing..." : "Remove Doctor"}
           </Button>

@@ -47,7 +47,7 @@ export default function ClinicPhoneForm({ value, onSave, onBack }) {
         <Button
           type="button"
           variant="ghost"
-          className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+          className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           onClick={onBack}
           disabled={loading}
         >
@@ -55,7 +55,7 @@ export default function ClinicPhoneForm({ value, onSave, onBack }) {
         </Button>
         <Button
           type="submit"
-          className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+          className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           disabled={!phone || loading}
         >
           {loading ? "Enregistrement..." : "Enregistrer"}

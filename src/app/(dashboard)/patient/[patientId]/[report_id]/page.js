@@ -6,6 +6,7 @@ import { useReportData } from "../hook/useReportData";
 import { useToothSliceData } from "../hook/useToothSliceData";
 import useImageCard from "@/components/features/dashboard/main/ImageXRay/component/useImageCard";
 import ReportLoading from "@/components/shared/report-loading/ReportLoading";
+import ErrorConnect from "@/components/shared/ErrorConnect";
 
 export default function ReportPage() {
   const params = useParams();
@@ -14,14 +15,14 @@ export default function ReportPage() {
 
   const reportId = params.report_id;
   const patientId = params.patientId;
-  const reportType = params.report_type || "unknown";
-
+  const paramsReportType = params.report_type || "unknown";
+  console.log("reportTypereportTypereportTypereportTypereportType", paramsReportType);
   // Always call hooks at top level
   const imageCardHook = useImageCard();
   const reportDataHook = useReportData({ imageCard });
   const toothSliceDataHook = useToothSliceData();
 
-  const activeHook = reportType === "toothSlice" ? toothSliceDataHook : reportDataHook;
+  const activeHook = paramsReportType === "toothSlice" ? toothSliceDataHook : reportDataHook;
 
   const {
     data,
@@ -33,8 +34,9 @@ export default function ReportPage() {
     hasData,
     hasError,
     reportType: detectedReportType,
+    detectReportType,
   } = activeHook;
-
+  console.log("reportTypereportTypereportTypereportTypereportType", detectedReportType, data);
   // Set imageCard when initialized
   useEffect(() => {
     if (imageCardHook && !imageCard) setImageCard(imageCardHook);
@@ -47,7 +49,7 @@ export default function ReportPage() {
 
     lastProcessedId.current = reportId;
     fetchData(reportId).catch((err) => console.error("❌ Fetch failed:", err));
-  }, [reportId, reportType, imageCard, fetchData]);
+  }, [reportId, paramsReportType, imageCard, fetchData]);
 
   // UI helpers
   const getLoadingConfig = () => {
@@ -57,7 +59,7 @@ export default function ReportPage() {
       cbct: { message: "Loading CBCT Report...", icon: "📄" },
       toothSlice: { message: "Loading Tooth Slice...", icon: "🦷" },
     };
-    return map[reportType] || { message: "Loading Report...", icon: "📊" };
+    return map[paramsReportType] || { message: "Loading Report...", icon: "📊" };
   };
 
   const getErrorConfig = () => {
@@ -67,7 +69,7 @@ export default function ReportPage() {
       cbct: { title: "Failed to Load CBCT Report", icon: "📄" },
       toothSlice: { title: "Failed to Load Tooth Slice", icon: "🦷" },
     };
-    return map[reportType] || { title: "Failed to Load Report", icon: "📊" };
+    return map[paramsReportType] || { title: "Failed to Load Report", icon: "📊" };
   };
 
   const getNoDataConfig = () => {
@@ -93,7 +95,7 @@ export default function ReportPage() {
         icon: "🦷",
       },
     };
-    return map[reportType] || {
+    return map[paramsReportType] || {
       title: "No Report Data Available",
       description: "The report could not be loaded. This might be due to network issues or the report may not exist.",
       icon: "📊",
@@ -111,10 +113,6 @@ export default function ReportPage() {
     lastProcessedId.current = null;
   };
 
-  const handleLoadReport = () => {
-    lastProcessedId.current = null;
-    if (reportId && imageCard) fetchData(reportId);
-  };
 
   // Rendering
   if (loading) {
@@ -123,37 +121,18 @@ export default function ReportPage() {
   }
 
   if (hasError) {
-    const { title, icon } = getErrorConfig();
+
     return (
-      <div className="flex w-full flex-col items-center justify-center min-h-screen gap-4 p-6 max-w-md mx-auto">
-        <div className="text-red-500 text-6xl animate-bounce">{icon}</div>
-        <h2 className="text-xl font-semibold text-red-600">{title}</h2>
-        <p className="text-red-500 text-center text-sm bg-red-50 p-3 rounded-lg">{error}</p>
-        <div className="flex gap-3 mt-4">
-          <button
-            onClick={handleRetry}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium shadow-sm"
-          >
-            🔄 Try Again
-          </button>
-          {process.env.NODE_ENV === "development" && (
-            <button
-              onClick={handleClearCache}
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-sm transition-colors shadow-sm"
-            >
-              Clear Cache
-            </button>
-          )}
-        </div>
-      </div>
+      <ErrorConnect onRetry={handleRetry} onClearCache={handleClearCache} />
     );
   }
 
+
   if (hasData && data) {
-    return <Dashboard reportType={detectedReportType || reportType} reportData={data} />;
+    return <Dashboard reportType={detectedReportType || paramsReportType} reportData={data} />;
   }
 
-  if (reportType === "toothSlice") {
+  if (paramsReportType === "toothSlice") {
     const ToothSliceComponent = lazy(() => import("./ToothSlice/[toothId]/page"));
     return (
       <div className="w-full max-h-full mx-auto max-w-[90%] sm:w-full">
@@ -175,23 +154,14 @@ export default function ReportPage() {
 
   const { title, description, icon } = getNoDataConfig();
   return (
-    <div className="flex flex-col w-screen items-center justify-center min-h-screen gap-6 p-6">
-      <div className="text-gray-400 text-6xl">{icon}</div>
-      <div className="text-center">
-        <h2 className="text-lg font-medium text-gray-600 mb-2">{title}</h2>
-        <p className="text-sm text-gray-500 max-w-md">{description}</p>
+    <div className="flex flex-col w-full items-center justify-center min-h-[80vh] gap-4 p-8">
+      <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-2 shadow-sm border border-slate-100">
+        <div className="text-4xl text-slate-300 opacity-80 grayscale">{icon}</div>
       </div>
-      <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">Report ID: {reportId}</div>
-      <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">Patient ID: {patientId}</div>
-      <div className="text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded font-mono">Type: {reportType}</div>
-      <button
-        onClick={handleLoadReport}
-        disabled={!imageCard}
-        className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium shadow-sm disabled:opacity-50"
-      >
-        🔄 Load Report
-      </button>
-      {!imageCard && <div className="text-xs text-gray-500">⏳ Waiting for image viewer to initialize...</div>}
+      <div className="text-center space-y-1">
+        <h2 className="text-xl font-semibold text-slate-700">{title}</h2>
+        <p className="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">{description}</p>
+      </div>
     </div>
   );
 }

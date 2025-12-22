@@ -254,7 +254,7 @@ export default function CBCTProgressiveViewer() {
       />
 
       {/* عرض إجمالي الإحداثيات في الأسفل */}
-      <div className="mt-6 bg-gray-800 p-4 rounded-lg shadow-lg">
+      <div className="mt-6 bg-gray-800 p-4 rounded-2xl shadow-lg">
         <h4 className="text-white font-bold text-center mb-3">Global Coordinates</h4>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="bg-red-900 p-3 rounded">
@@ -312,7 +312,7 @@ function ViewerPanel({
   resetView
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 bg-gray-800 p-4 rounded-lg shadow-lg w-[400px]">
+    <div className="flex flex-col items-center gap-3 bg-gray-800 p-4 rounded-2xl shadow-lg w-[400px]">
       <h3 className="text-white font-bold text-center text-lg">
         {title}
         <br />
@@ -372,7 +372,7 @@ function ViewerPanel({
         max={maxSlice}
         value={currentSlice}
         onChange={onSliderChange}
-        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+        className="w-full h-2 bg-gray-700 rounded-2xl appearance-none cursor-pointer"
         disabled={!image}
         style={{
           background: `linear-gradient(to right, #ef4444 0%, #ef4444 ${maxSlice > 0 ? (currentSlice / maxSlice) * 100 : 0}%, #374151 ${maxSlice > 0 ? (currentSlice / maxSlice) * 100 : 0}%, #374151 100%)`

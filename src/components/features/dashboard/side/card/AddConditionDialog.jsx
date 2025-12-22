@@ -143,7 +143,7 @@ const AddConditionDialog = ({ toothNumber, children }) => {
             Add Condition - Tooth {toothNumber}
           </DialogTitle>
           <DialogClose asChild>
-            <button className="rounded-lg p-2 hover:bg-gray-100 transition">
+            <button className="rounded-2xl p-2 hover:bg-gray-100 transition">
               <X className="w-5 h-5 text-gray-500" />
             </button>
           </DialogClose>
@@ -162,7 +162,7 @@ const AddConditionDialog = ({ toothNumber, children }) => {
                 <Input
                   id="condition"
                   list="condition-list"
-                  className="h-12 rounded-lg  bg-white focus:border-gray-400 focus:ring-0 px-4 text-base text-gray-900 placeholder:text-gray-400"
+                  className="h-12 rounded-2xl  bg-white focus:border-gray-400 focus:ring-0 px-4 text-base text-gray-900 placeholder:text-gray-400"
                   placeholder="Select condition"
                   value={formData.condition}
                   onChange={e => handleInputChange('condition', e.target.value)}
@@ -181,10 +181,10 @@ const AddConditionDialog = ({ toothNumber, children }) => {
                   Severity Level <span className="text-red-500">*</span>
                 </Label>
                 <Select value={formData.severity} onValueChange={v => handleInputChange('severity', v)}>
-                  <SelectTrigger className="h-12 rounded-lg  bg-white focus:border-gray-400 focus:ring-0 px-4 text-base text-gray-900">
+                  <SelectTrigger className="h-12 rounded-2xl  bg-white focus:border-gray-400 focus:ring-0 px-4 text-base text-gray-900">
                     <SelectValue placeholder="Select severity" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-lg border border-gray-200 bg-white">
+                  <SelectContent className="rounded-2xl border border-gray-200 bg-white">
                     <SelectGroup>
                       {severityLevels.map((severity) => (
                         <SelectItem
@@ -220,7 +220,7 @@ const AddConditionDialog = ({ toothNumber, children }) => {
               </Label>
               <Textarea
                 id="description"
-                className="rounded-lg  bg-white focus:border-gray-400 focus:ring-0 min-h-[100px] px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 resize-none"
+                className="rounded-2xl  bg-white focus:border-gray-400 focus:ring-0 min-h-[100px] px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 resize-none"
                 placeholder="Describe the condition in detail..."
                 value={formData.description}
                 onChange={e => handleInputChange('description', e.target.value)}
@@ -235,7 +235,7 @@ const AddConditionDialog = ({ toothNumber, children }) => {
               </Label>
               <Textarea
                 id="notes"
-                className="rounded-lg  bg-white focus:border-gray-400 focus:ring-0 min-h-[80px] px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 resize-none"
+                className="rounded-2xl  bg-white focus:border-gray-400 focus:ring-0 min-h-[80px] px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 resize-none"
                 placeholder="Any additional notes or observations..."
                 value={formData.notes}
                 onChange={e => handleInputChange('notes', e.target.value)}
@@ -249,14 +249,14 @@ const AddConditionDialog = ({ toothNumber, children }) => {
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
-                className="flex-1 h-12 rounded-lg  bg-white text-gray-700 hover:bg-gray-50 text-base font-medium"
+                className="flex-1 h-12 rounded-2xl  bg-white text-gray-700 hover:bg-gray-50 text-base font-medium"
               >
                 Cancel
               </Button>
               <Button
                 type="button"
                 onClick={handleSubmit}
-                className="flex-1 h-12 rounded-lg bg-[#6366f1] text-white hover:bg-[#5558e3] text-base font-semibold shadow-lg shadow-[#6366f1]/30"
+                className="flex-1 h-12 rounded-2xl bg-[#6366f1] text-white hover:bg-[#5558e3] text-base font-semibold shadow-lg shadow-[#6366f1]/30"
                 disabled={!formData.condition || !formData.severity}
               >
                 Add

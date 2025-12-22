@@ -36,7 +36,7 @@ export const DeleteTreatingDoctorDialog = ({
                         Are you sure you want to remove this doctor?
                     </p>
                     {doctor && (
-                        <div className="flex items-center gap-3 mt-4 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <div className="flex items-center gap-3 mt-4 bg-gray-50 p-3 rounded-2xl border border-gray-100">
                             <Avatar className="h-15 w-15 border-2 border-white shadow-sm">
                                 {doctor.profilePhotoUrl ? (
                                     <AvatarImage src={doctor.profilePhotoUrl} />
@@ -63,14 +63,14 @@ export const DeleteTreatingDoctorDialog = ({
                         variant="ghost"
                         onClick={() => onOpenChange(false)}
                         disabled={loading}
-                        className="h-10 px-6 text-base font-semibold  text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-lg"
+                        className="h-10 px-6 text-base font-semibold  text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-2xl"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={onConfirm}
                         disabled={loading}
-                        className="h-10 px-6 text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  rounded-lg shadow-none"
+                        className="h-10 px-6 text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  rounded-2xl shadow-none"
                     >
                         {loading ? "Removing..." : "Remove Doctor"}
                     </Button>

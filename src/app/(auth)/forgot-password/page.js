@@ -202,7 +202,7 @@ export default function ForgotPasswordPage() {
                             </div>
 
                             {error && (
-                                <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100">
+                                <div className="text-red-500 text-sm bg-red-50 p-3 rounded-2xl border border-red-100">
                                     {error}
                                 </div>
                             )}
@@ -255,7 +255,7 @@ export default function ForgotPasswordPage() {
                             </div>
 
                             {error && (
-                                <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100">
+                                <div className="text-red-500 text-sm bg-red-50 p-3 rounded-2xl border border-red-100">
                                     {error}
                                 </div>
                             )}
@@ -339,7 +339,7 @@ export default function ForgotPasswordPage() {
                                 </div>
 
                                 {error && (
-                                    <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100">
+                                    <div className="text-red-500 text-sm bg-red-50 p-3 rounded-2xl border border-red-100">
                                         {error}
                                     </div>
                                 )}

@@ -249,7 +249,7 @@ export default function ProfileDropdown() {
                     e.stopPropagation();
                     setShowSwitch(false);
                   }}
-                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1 hover:bg-gray-100 rounded-2xl transition-colors"
                 >
                   <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
                 </button>

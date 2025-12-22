@@ -208,7 +208,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full overflow-scroll bg-white flex items-center justify-center p-4">
+    <div
+      className="min-h-screen w-full overflow-scroll bg-white flex items-center justify-center p-4"
+      suppressHydrationWarning
+    >
       <div className="w-full h-[90vh] max-w-[90vw] grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
         {/* Left Side - Text, Image, and Tags */}
         <motion.div
@@ -269,10 +272,10 @@ export default function LoginPage() {
           className="w-full max-w-xl flex flex-col justify-center items-center mx-auto"
         >
           <div className="bg-white w-full  rounded-2xl p-8 ">
-      
+
 
             <div className="text-center mb-8">
-   
+
               <div className="text-4xl font-bold text-gray-900">Welcome Back</div>
             </div>
 
@@ -281,7 +284,7 @@ export default function LoginPage() {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="bg-red-50 border border-red-100 text-red-600 rounded-lg px-4 py-3 text-sm font-medium mb-6 flex items-center gap-2"
+                className="bg-red-50 border border-red-100 text-red-600 rounded-2xl px-4 py-3 text-sm font-medium mb-6 flex items-center gap-2"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
                 {loginError}
@@ -367,13 +370,13 @@ export default function LoginPage() {
                 </div>
               </div>
 
-            </div> 
-             <div className="text-center mt-8 text-xs text-gray-500">
-            <p>Create a Page for a celebrity, brand or business.</p>
-          </div>
+            </div>
+            <div className="text-center mt-8 text-xs text-gray-500">
+              <p>Create a Page for a celebrity, brand or business.</p>
+            </div>
           </div>
 
-        
+
         </motion.div>
 
       </div>

@@ -233,56 +233,64 @@ const AIOrdersList = ({
                 `}
               >
                 {order.status === 'error' || order.status === 'failed' ? (
-                  <div className="flex flex-col items-center justify-center h-full bg-white relative">
-                    <div className="absolute top-4 left-4 text-left">
-                      <h3 className="text-xl font-bold text-gray-900">{order.type}</h3>
-                      <p className="text-sm text-gray-500">{formatReportDate(order.date)}</p>
+                  <div className="flex flex-row items-center justify-between p-2 h-full bg-white relative overflow-hidden group">
+
+                    {/* Left Side - Large 3D Visual */}
+                    <div className="relative w-1/3 h-full flex items-center justify-center">
+                      {/* Background Glow */}
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-red-500/20 blur-[40px] rounded-full" />
+                      {/* Large Image */}
+                      <img
+                        src="/error-cone.png"
+                        alt="Error"
+                        className="w-60 h-auto object-contain relative z-10 drop-shadow-xl transform group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
 
-                    {/* Error Icon */}
-                    <div className="w-24 h-24 rounded-full border-4 border-red-500 flex items-center justify-center mb-4">
-                      <XCircle className="w-12 h-12 text-red-500" strokeWidth={2.5} />
-                    </div>
+                    {/* Right Side - Content */}
+                    <div className="flex-1 flex flex-col items-start justify-center pl-2 pr-4 space-y-3">
 
-                    {/* Error Message */}
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">Ooops!</h3>
-                    <spam className="text-gray-400 text-center ">Something went wrong !</spam>
-                    <spam className="text-gray-400 text-center mb-6 ">Report failed to generate</spam>
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-1 tracking-tight">Ooops!</h3>
+                        <p className="text-slate-500 text-sm font-medium">Report failed to generate</p>
+                      </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-3">
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // TODO: Implement retry/regenerate logic
-                          console.log('Retry report:', order.id);
-                        }}
-                        className="bg-[#6366f1] hover:bg-[#5558e3] text-white px-6 py-2 rounded-lg font-medium"
-                      >
-                        Retry
-                      </Button>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReportIssue(order);
-                        }}
-                        variant="outline"
-                        className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-lg font-medium"
-                      >
-                        <MessageSquare className="w-4 h-4 mr-2" />
-                        Report
-                      </Button>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteReport(order);
-                        }}
-                        variant="outline"
-                        className="border-red-500 text-red-500 hover:bg-red-50 px-6 py-2 rounded-lg font-medium"
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
+                      {/* Report Details */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-slate-700 font-semibold text-xs bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+                          {order.type}
+                        </span>
+                        <span className="text-slate-400 text-xs flex items-center">
+                          {formatReportDate(order.date)}
+                        </span>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-1 pt-1">
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleReportIssue(order);
+                          }}
+                          variant="ghost"
+                          className="text-slate-500 hover:text-slate-700 hover:bg-slate-100 h-9 px-3 rounded-lg text-xs font-medium transition-colors"
+                        >
+                          <MessageSquare className="w-4 h-4 mr-2" />
+                          Report
+                        </Button>
+                        <div className="h-4 w-px bg-slate-200 mx-1"></div>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteReport(order);
+                          }}
+                          variant="ghost"
+                          className="text-red-400 hover:text-red-600 hover:bg-red-50 h-9 px-3 rounded-lg text-xs font-medium transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ) : order.status !== 'completed' ? (
@@ -427,7 +435,7 @@ const AIOrdersList = ({
           </DialogHeader>
           <div className="py-4">
             <Textarea
-              className="w-full min-h-[120px] p-3 rounded-lg border border-gray-400 focus:border-[#6366f1] focus:ring-0 outline-none resize-none text-sm"
+              className="w-full min-h-[120px] p-3 rounded-2xl border border-gray-400 focus:border-[#6366f1] focus:ring-0 outline-none resize-none text-sm"
               placeholder="Describe the issue here..."
               value={issueMessage}
               onChange={(e) => setIssueMessage(e.target.value)}

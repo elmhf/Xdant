@@ -92,7 +92,7 @@ export const DeleteMemberDialog = ({
             </div>
 
             {message && (
-              <div className={`p-3 rounded-lg text-sm font-medium mb-4 ${message.includes('succès')
+              <div className={`p-3 rounded-2xl text-sm font-medium mb-4 ${message.includes('succès')
                 ? 'bg-green-50 text-green-800'
                 : 'bg-red-50 text-red-800'
                 }`}>

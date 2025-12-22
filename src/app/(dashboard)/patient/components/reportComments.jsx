@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Pencil } from "lucide-react";
+import { Pencil, FileText } from "lucide-react";
 
 const ReportComments = ({ description = "", onEdit }) => {
   const [desc, setDesc] = useState(description);
@@ -23,7 +23,7 @@ const ReportComments = ({ description = "", onEdit }) => {
   };
 
   return (
-    <div className="bg-white p-3 rounded-lg  border border-gray-200">
+    <div className="bg-white p-3 min-h-[120px] rounded-2xl  border border-gray-200">
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-2xl font-bold text-gray-950">
           Clinical case description
@@ -45,7 +45,9 @@ const ReportComments = ({ description = "", onEdit }) => {
       {desc && desc.trim() !== "" ? (
         <p className="text-gray-600 whitespace-pre-wrap break-words">{desc}</p>
       ) : (
-        <p className="text-gray-400 italic">No description available</p>
+        <div className="flex justify-center items-center py-2">
+          <FileText className="w-8 h-8 text-[#7564ed]" />
+        </div>
       )}
 
       {/* Dialog */}
@@ -58,9 +60,9 @@ const ReportComments = ({ description = "", onEdit }) => {
           </DialogHeader>
 
           <Textarea
-            value={tempValue}
+            value={tempValue || ""}
             onChange={(e) => setTempValue(e.target.value)}
-            className="min-h-[120px] mt-3 bg-white/80 border  rounded-lg text-gray-800"
+            className="min-h-[120px] mt-3 bg-white/80 border  rounded-2xl text-gray-800"
           />
 
           <DialogFooter className="flex justify-end gap-3 mt-5">
@@ -73,7 +75,7 @@ const ReportComments = ({ description = "", onEdit }) => {
             </Button>
             <Button
               onClick={handleSave}
-              className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4   px-6 py-2 rounded-lg shadow-md transition-all duration-200"
+              className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4   px-6 py-2 rounded-2xl shadow-md transition-all duration-200"
             >
               Save
             </Button>

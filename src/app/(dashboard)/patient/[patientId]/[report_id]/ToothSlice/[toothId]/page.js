@@ -246,7 +246,7 @@ export default function ToothSlicePage() {
             {tooth ? (
               <ToothDiagnosis isDragging={isDragging} sliceDrager={sliceDrager} idCard={toothNumber} showDiagnosisDetails={true} ToothSlicemode={true} />
             ) : (
-              <div className="text-yellow-600 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+              <div className="text-yellow-600 bg-yellow-50 p-4 rounded-2xl border border-yellow-200">
                 <strong>Tooth data not loaded</strong>
                 <p className="text-sm mt-1">Tooth number {toothNumber} data is being loaded from report...</p>
               </div>
@@ -280,7 +280,7 @@ export default function ToothSlicePage() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
 
-          <div className="bg-white shadow-lg rounded-lg p-5 min-w-[350px] flex-1">
+          <div className="bg-white shadow-lg rounded-2xl p-5 min-w-[350px] flex-1">
             {/* إذا كان السن مفقوداً، اعرض رسالة بدلاً من الشرائح */}
             {isMissingTooth ? (
               <MissingToothMessage toothNumber={toothNumber} />
@@ -362,7 +362,7 @@ export default function ToothSlicePage() {
             <Button
               variant={tooth?.approved ? "success" : "outline"}
               size="sm"
-              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg  flex items-center min-w-[6vw] "
+              className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl  flex items-center min-w-[6vw] "
               style={{ color: tooth?.approved ? '#16a34a' : undefined, backgroundColor: tooth?.approved ? '#E9FCF0' : undefined }}
               onClick={() => updateToothApproval(toothNumber, !tooth?.approved)}
             >

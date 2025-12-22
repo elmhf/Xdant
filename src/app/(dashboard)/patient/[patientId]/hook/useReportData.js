@@ -52,11 +52,12 @@ async function fetchReportDataByPost(reportId, abortSignal) {
 
 // Function to detect report type based on available image URLs
 function detectReportType(reportData) {
+  console.log("reportTypereportTypereportTypereportTypereportTypereportData", reportData)
   if (!reportData) {
     console.warn('⚠️ No report data found for type detection');
     return 'unknown';
   }
-
+  console.log("reportTypereportTypereportTypereportTypereportType", reportData)
   // Check in multiple places for image URLs and data
   const places = [
     reportData.data,
@@ -74,8 +75,15 @@ function detectReportType(reportData) {
 
   // Check each location for image URLs
   for (const dataToCheck of places) {
+    console.log("reportDatareportDatareportDatareportDatareportDatareportData", reportData.report.report_type)
     if (!dataToCheck) continue;
-
+    // Check for report_type field
+    if (dataToCheck.report_type) {
+      console.log("reportDatareportDatareportDatareportDatareportDatareportData", dataToCheck.report_type)
+      const reportType = String(dataToCheck.report_type).toLowerCase();
+      console.log('📋 Report type detected:', reportType.toUpperCase(), '(from report_type field)');
+      return reportType;
+    }
     // Check for pano image URL first
     if (dataToCheck.pano_image_url) {
       console.log('📋 Report type detected: PANO (found pano_image_url)');
@@ -88,12 +96,7 @@ function detectReportType(reportData) {
       return 'cbct';
     }
 
-    // Check for report_type field
-    if (dataToCheck.report_type) {
-      const reportType = String(dataToCheck.report_type).toLowerCase();
-      console.log('📋 Report type detected:', reportType.toUpperCase(), '(from report_type field)');
-      return reportType;
-    }
+
   }
 
   console.warn('⚠️ Unable to detect report type. Using default: cbct');
@@ -504,9 +507,12 @@ export function useReportData(options = {}) {
 
       // Normalize data structure
       if (reportData?.data) {
+        console
         fetchedData = reportData.data;
       } else {
-        // Fallback or URL fetching logic if needed
+        // Fallback or URL fetching logic if needed4
+
+
         const reportUrl = getReportUrl(reportData, detectedReportType);
         if (reportUrl) {
           try {
@@ -538,8 +544,17 @@ export function useReportData(options = {}) {
         // Process image URL
         const imageUrl = getImageUrl(reportData, detectedReportType) ||
           getImageUrl(reportData?.report, detectedReportType);
+
+        console.log('🖼️ Resolved Image URL:', imageUrl);
+
         if (imageUrl) {
-          setTimeout(() => handleImageUrl(imageUrl), 100);
+          console.log('⏳ Triggering handleImageUrl with delay...');
+          setTimeout(() => {
+            console.log('🚀 Executing delayed handleImageUrl for:', imageUrl);
+            handleImageUrl(imageUrl);
+          }, 100);
+        } else {
+          console.warn('⚠️ No image URL found to process');
         }
       }
 

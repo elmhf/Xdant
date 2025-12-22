@@ -5,16 +5,16 @@ import { useEffect, useState, useRef, useMemo } from "react";
 export function useSliceImage(view, index) {
   // FIXED: Always call all hooks in the same order, no conditional calls
   const getViewImages = useImageStore(state => state.getViewImages);
-  const isViewLoaded=useImageStore(state => state.isViewLoaded)
+  const isViewLoaded = useImageStore(state => state.isViewLoaded)
   const loadViewImages = useImageStore(state => state.loadViewImages);
   const sliceCounts = useImageStore(state => state.sliceCounts);
   const loading = useImageStore(state => state.loading);
   const dentalData = useDentalStore(state => state.data);
-  
+
   // FIXED: Always call these hooks, regardless of conditions
   const images = getViewImages(view);
   const sliceImages = dentalData?.slices?.[view] || dentalData?.sliceImages?.[view];
-  
+
   // FIXED: Memoize the result to avoid unnecessary re-renders
   const resultImage = useMemo(() => {
     return images?.[index] || sliceImages?.[index];
@@ -23,11 +23,11 @@ export function useSliceImage(view, index) {
   useEffect(() => {
     const sliceCount = sliceCounts[view] || 1;
     if (sliceCount > 0 && images.length === 0 && !loading[view]) {
-      
+
       loadViewImages(view, sliceCount);
     }
   }, []);
-  
+
   return resultImage;
 }
 
@@ -35,14 +35,14 @@ export function useSliceImage(view, index) {
  * useSliceRegion - returns a data URL for a cropped region of a slice image (with caching)
  */
 export function useSliceRegion(view, index, region) {
-  
+
   // FIXED: Always call all hooks at the top level
   const getViewImages = useImageStore(state => state.getViewImages);
   const loadViewImages = useImageStore(state => state.loadViewImages);
   const sliceCounts = useImageStore(state => state.sliceCounts);
   const loading = useImageStore(state => state.loading);
   const images = getViewImages(view);
-  
+
   const [croppedUrl, setCroppedUrl] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const cache = useRef(new Map());
@@ -51,7 +51,7 @@ export function useSliceRegion(view, index, region) {
   useEffect(() => {
     const sliceCount = sliceCounts[view] || 1;
     if (sliceCount > 0 && images.length === 0 && !loading[view]) {
-      
+
       loadViewImages(view, sliceCount);
     }
   }, [view, sliceCounts, images.length, loading, loadViewImages]);

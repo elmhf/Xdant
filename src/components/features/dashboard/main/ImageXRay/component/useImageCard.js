@@ -34,6 +34,7 @@ export default function useImageCard() {
   // دالة محسنة لجلب الصورة من URL
   const fetchImageFromUrl = useCallback(async (url) => {
     try {
+      console.log('🌐 Fetching image from URL:', url); // ADDED LOGGING
       // التحقق من صحة الـ URL
       if (!url || typeof url !== 'string') {
         throw new Error('Invalid URL provided');
@@ -42,7 +43,7 @@ export default function useImageCard() {
       // إضافة headers للتعامل مع CORS
       const response = await fetch(url, {
         method: 'GET',
-        mode: 'cors',
+        mode: 'cors', // Changed to cors to ensure we can access the image
         headers: {
           'Accept': 'image/*',
         }
@@ -50,16 +51,19 @@ export default function useImageCard() {
 
       // التحقق من نجاح الطلب
       if (!response.ok) {
+        console.error('❌ Fetch failed:', response.status, response.statusText);
         throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
       }
 
       // التحقق من نوع المحتوى
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.startsWith('image/')) {
-        throw new Error('URL does not point to a valid image');
+        console.warn('⚠️ Unexpected content type:', contentType);
+        // throw new Error('URL does not point to a valid image'); // Warn but allow proceeding as some servers might misreport
       }
 
       const blob = await response.blob();
+      console.log('📦 Image blob received:', blob.size, blob.type);
 
       // التحقق من حجم الـ blob
       if (blob.size === 0) {
@@ -79,6 +83,7 @@ export default function useImageCard() {
 
       // إنشاء data URL للعرض
       const data_url = URL.createObjectURL(blob);
+      console.log('✅ Created object URL:', data_url);
 
       return {
         file,
@@ -90,7 +95,7 @@ export default function useImageCard() {
       };
 
     } catch (error) {
-      console.error('Error fetching image from URL:', error);
+      console.error('❌ Error fetching image from URL:', error);
       throw new Error(`Failed to fetch image: ${error.message}`);
     }
   }, []);

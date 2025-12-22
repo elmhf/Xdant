@@ -9,13 +9,13 @@ import Link from "next/link";
 
 // Mock function for demonstration
 const signUp = async (email, password, firstName, lastName, phone) => {
-    return fetchWithToast("http://localhost:5000/api/auth/send-verification-code", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password, firstName, lastName, phone }),
-    });
+  return fetchWithToast("http://localhost:5000/api/auth/send-verification-code", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password, firstName, lastName, phone }),
+  });
 };
 
 export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, setEmail }) {
@@ -163,7 +163,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
     <div className="flex w-full max-h-[100%] items-center justify-center relative">
 
       <div
-        className="w-full max-w-xl overflow-scroll max-h-[100%] no-scrollbar bg-white rounded-lg px-2 space-y-6"
+        className="w-full max-w-xl overflow-scroll max-h-[100%] no-scrollbar bg-white rounded-2xl px-2 space-y-6"
       >
         {/* Heading */}
         <div
@@ -329,7 +329,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
             <button
               type="button"
               onClick={canContinue ? handleNext : undefined}
-              className={`px-8 py-3 w-full rounded-lg font-semibold transition-all duration-200 ${canContinue && !loading
+              className={`px-8 py-3 w-full rounded-2xl font-semibold transition-all duration-200 ${canContinue && !loading
                 ? 'bg-[#5c4ce3] text-white'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}

@@ -40,7 +40,7 @@ export default function TextEditor({ value, onChange, placeholder = "Formuler un
     };
 
     return (
-        <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+        <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white">
             {/* Toolbar */}
             <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-100 bg-gray-50/50">
                 <ToolbarButton icon={Bold} onClick={() => execCommand('bold')} title="Bold" />

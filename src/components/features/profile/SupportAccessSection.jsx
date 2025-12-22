@@ -300,14 +300,14 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                             resetDeleteState();
                                         }}
                                         disabled={deleteLoading}
-                                        className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                                        className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                     >
                                         Annuler
                                     </Button>
                                     <Button
                                         onClick={handleDeleteInitiate}
                                         disabled={!deletePassword || deleteLoading}
-                                        className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:bg-[#dcd6fa] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                                        className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:bg-[#dcd6fa] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                     >
                                         {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                         Vérifier
@@ -388,7 +388,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
 
                             <div className="flex gap-4 items-start p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 {qrCodeData?.qrCode && (
-                                    <div className="bg-white p-2 rounded-lg border border-gray-200 shrink-0">
+                                    <div className="bg-white p-2 rounded-2xl border border-gray-200 shrink-0">
                                         <img src={qrCodeData.qrCode} alt="QR Code" className="w-32 h-32 object-contain" />
                                     </div>
                                 )}
@@ -438,7 +438,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                             id={`setup-otp-${index}`}
                                             type="text"
                                             maxLength={1}
-                                            className="w-10 h-10 text-center text-lg font-bold border-1 border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition bg-white text-gray-900"
+                                            className="w-10 h-10 text-center text-lg font-bold border-1 border-gray-300 rounded-2xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition bg-white text-gray-900"
                                             value={twoFactorCode[index] || ""}
                                             onChange={(e) => {
                                                 const value = e.target.value;
@@ -503,7 +503,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                         <DialogTitle className="text-2xl font-bold text-gray-900">
                             Désactiver l'authentification à deux facteurs
                         </DialogTitle>
-                        <button onClick={() => { setShow2FADisableDialog(false); setDisableStep(1); setDisablePassword(""); setDisableCode(""); }} className="rounded-lg p-2 hover:bg-gray-100 transition">
+                        <button onClick={() => { setShow2FADisableDialog(false); setDisableStep(1); setDisablePassword(""); setDisableCode(""); }} className="rounded-2xl p-2 hover:bg-gray-100 transition">
                             <X className="w-5 h-5 text-gray-500" />
                         </button>
                     </div>
@@ -535,7 +535,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                                 id={`disable-otp-${index}`}
                                                 type="text"
                                                 maxLength={1}
-                                                className="w-10 h-10 text-center text-lg font-bold border-1 border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition bg-white text-gray-900"
+                                                className="w-10 h-10 text-center text-lg font-bold border-1 border-gray-300 rounded-2xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition bg-white text-gray-900"
                                                 value={disableCode[index] || ""}
                                                 onChange={(e) => {
                                                     const value = e.target.value;
@@ -579,7 +579,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                         <div className="flex justify-end gap-3 mt-4">
                             <Button variant="outline" onClick={() => { setShow2FADisableDialog(false); setDisableStep(1); setDisablePassword(""); setDisableCode(""); }}>Annuler</Button>
                             <Button
-                                className="text-md font-bold hover:outline-3 hover:outline-[#7564ed]  bg-[#EBE8FC]  border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center justify-center min-w-[6vw]"
+                                className="text-md font-bold hover:outline-3 hover:outline-[#7564ed]  bg-[#EBE8FC]  border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center justify-center min-w-[6vw]"
                                 variant="destructive"
                                 onClick={handleDisable2FA}
                                 disabled={is2FALoading || (disableStep === 1 ? !disablePassword : disableCode.length !== 6)}
@@ -602,7 +602,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                         Accès au support
                     </DialogTitle>
                     <DialogClose asChild>
-                        <button className="rounded-lg p-2 hover:bg-gray-100 transition">
+                        <button className="rounded-2xl p-2 hover:bg-gray-100 transition">
                             <X className="w-5 h-5 text-gray-500" />
                         </button>
                     </DialogClose>
@@ -620,7 +620,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                             <button
                                 onClick={() => setShow2FADisableDialog(true)}
                                 disabled={is2FALoading}
-                                className="text-md hover:outline-3 hover:outline-[#f43f5e] font-bold bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-lg flex items-center justify-center min-w-[6vw]"
+                                className="text-md hover:outline-3 hover:outline-[#f43f5e] font-bold bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center justify-center min-w-[6vw]"
                             >
                                 {is2FALoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Désactiver
@@ -659,7 +659,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                             <h4 className="text-base font-semibold text-gray-900 mb-1">Déconnexion de tous les appareils</h4>
                             <p className="text-sm text-gray-600">Déconnectez-vous de toutes les autres sessions actives sur d'autres appareils que celui-ci.</p>
                         </div>
-                        <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                        <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
                             Se déconnecter
                         </button>
                     </div>
@@ -671,7 +671,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                             <p className="text-sm text-gray-600">Supprimez définitivement le compte et supprimez l'accès à tous les espaces de travail.</p>
                         </div>
                         <button
-                            className="text-md font-bold hover:outline-3 hover:outline-[#f43f5e] bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-lg flex items-center justify-center min-w-[6vw]"
+                            className="text-md font-bold hover:outline-3 hover:outline-[#f43f5e] bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center justify-center min-w-[6vw]"
                             onClick={() => setShowDeleteAccountView(true)}
                         >
                             Supprimer le compte

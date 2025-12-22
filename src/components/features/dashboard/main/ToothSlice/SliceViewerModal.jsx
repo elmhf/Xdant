@@ -99,7 +99,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                                 view === 'sagittal' ? 'Vue sagittale' :
                                     view === 'coronal' ? 'Vue coronale' : `${view} View`}
                         </h3>
-            
+
                     </div>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
                         <X size={24} />
@@ -111,7 +111,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
 
                     {/* Image Container */}
                     <div
-                        className="flex-1 bg-gray-100 m-4 mr-0 rounded-lg overflow-hidden relative flex items-center justify-center cursor-default group"
+                        className="flex-1 bg-gray-100 m-4 mr-0 rounded-2xl overflow-hidden relative flex items-center justify-center cursor-default group"
                         ref={containerRef}
                     >
                         {croppedUrl ? (
@@ -188,7 +188,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                                 step="0.1"
                                 value={zoom}
                                 onChange={(e) => setZoom(parseFloat(e.target.value))}
-                                className="h-full w-2 appearance-none bg-gray-200 rounded-lg outline-none cursor-pointer slider-vertical"
+                                className="h-full w-2 appearance-none bg-gray-200 rounded-2xl outline-none cursor-pointer slider-vertical"
                                 style={{ writingMode: 'bt-lr', WebkitAppearance: 'slider-vertical', height: '100%' }}
                                 title="Zoom Level"
                             />

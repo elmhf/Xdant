@@ -45,14 +45,14 @@ export const DeletePatientDialog = ({
             variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="h-10 px-6 text-base font-semibold  text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-lg"
+            className="h-10 px-6 text-base font-semibold  text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-2xl"
           >
             Cancel
           </Button>
           <Button
             onClick={onConfirm}
             disabled={loading}
-            className="h-10 px-6 text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  rounded-lg shadow-none"
+            className="h-10 px-6 text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  rounded-2xl shadow-none"
           >
             {loading ? "Deleting..." : "Delete Patient"}
           </Button>

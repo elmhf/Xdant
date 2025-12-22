@@ -96,7 +96,7 @@ const fileTools = [
 ];
 
 const colors = [
-  '#ef4444', '#f97316', '#eab308', '#22c55e', 
+  '#ef4444', '#f97316', '#eab308', '#22c55e',
   '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899',
   '#000000', '#6b7280', '#ffffff'
 ];
@@ -154,7 +154,7 @@ export default function EnhancedMeasurementPanel() {
         <div className="p-4 pb-3">
           <label className="block text-sm font-medium text-gray-700 mb-2">Investigation Type</label>
           <Select defaultValue="select">
-            <SelectTrigger className="w-full h-9 rounded-lg bg-gray-50 border-gray-200 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+            <SelectTrigger className="w-full h-9 rounded-2xl bg-gray-50 border-gray-200 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
               <SelectValue placeholder="Select Investigation" />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-200">
@@ -173,7 +173,7 @@ export default function EnhancedMeasurementPanel() {
         {/* Measurement Tools */}
         <div className="p-4 pb-3">
           <label className="block text-sm font-medium text-gray-700 mb-2">Measurement Tools</label>
-          <div className="grid grid-cols-4 gap-2 bg-gray-50 rounded-lg p-3 border border-gray-200">
+          <div className="grid grid-cols-4 gap-2 bg-gray-50 rounded-2xl p-3 border border-gray-200">
             {measurementTools.map((tool) => {
               const Icon = tool.icon;
               return (
@@ -181,11 +181,10 @@ export default function EnhancedMeasurementPanel() {
                   key={tool.id}
                   variant={activeTool === tool.id ? "default" : "ghost"}
                   size="icon"
-                  className={`h-9 w-9 rounded-lg transition-all ${
-                    activeTool === tool.id 
-                      ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700' 
+                  className={`h-9 w-9 rounded-2xl transition-all ${activeTool === tool.id
+                      ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700'
                       : 'text-gray-500 hover:bg-white hover:text-gray-700 hover:shadow-sm'
-                  }`}
+                    }`}
                   onClick={() => handleToolChange(tool.id)}
                   title={tool.label}
                 >
@@ -201,7 +200,7 @@ export default function EnhancedMeasurementPanel() {
         {/* Drawing Tools */}
         <div className="p-4 pb-3">
           <label className="block text-sm font-medium text-gray-700 mb-2">Drawing Tools</label>
-          <div className="grid grid-cols-3 gap-2 bg-gray-50 rounded-lg p-3 border border-gray-200">
+          <div className="grid grid-cols-3 gap-2 bg-gray-50 rounded-2xl p-3 border border-gray-200">
             {drawingTools.map((tool) => {
               const Icon = tool.icon;
               return (
@@ -209,11 +208,10 @@ export default function EnhancedMeasurementPanel() {
                   key={tool.id}
                   variant={activeTool === tool.id ? "default" : "ghost"}
                   size="icon"
-                  className={`h-9 w-9 rounded-lg transition-all ${
-                    activeTool === tool.id 
-                      ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700' 
+                  className={`h-9 w-9 rounded-2xl transition-all ${activeTool === tool.id
+                      ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700'
                       : 'text-gray-500 hover:bg-white hover:text-gray-700 hover:shadow-sm'
-                  }`}
+                    }`}
                   onClick={() => handleToolChange(tool.id)}
                   title={tool.label}
                 >
@@ -229,15 +227,14 @@ export default function EnhancedMeasurementPanel() {
         {/* Color Palette */}
         <div className="p-4 pb-3">
           <label className="block text-sm font-medium text-gray-700 mb-2">Colors</label>
-          <div className="flex flex-wrap gap-2 bg-gray-50 rounded-lg p-3 border border-gray-200">
+          <div className="flex flex-wrap gap-2 bg-gray-50 rounded-2xl p-3 border border-gray-200">
             {colors.map((color) => (
               <button
                 key={color}
-                className={`w-7 h-7 rounded-full border-2 transition-all hover:scale-110 ${
-                  selectedColor === color 
-                    ? 'border-gray-400 shadow-md' 
+                className={`w-7 h-7 rounded-full border-2 transition-all hover:scale-110 ${selectedColor === color
+                    ? 'border-gray-400 shadow-md'
                     : 'border-gray-300 hover:border-gray-400'
-                }`}
+                  }`}
                 style={{ backgroundColor: color }}
                 onClick={() => handleColorChange(color)}
                 title={`Select ${color}`}
@@ -251,7 +248,7 @@ export default function EnhancedMeasurementPanel() {
         {/* Panel Tools */}
         <div className="p-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Panel Tools</label>
-          <div className="grid grid-cols-4 gap-2 bg-gray-50 rounded-lg p-3 border border-gray-200">
+          <div className="grid grid-cols-4 gap-2 bg-gray-50 rounded-2xl p-3 border border-gray-200">
             {panelTools.map((tool) => {
               const Icon = tool.icon;
               return (
@@ -259,7 +256,7 @@ export default function EnhancedMeasurementPanel() {
                   key={tool.id}
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 rounded-lg text-gray-500 hover:bg-white hover:text-gray-700 hover:shadow-sm transition-all"
+                  className="h-9 w-9 rounded-2xl text-gray-500 hover:bg-white hover:text-gray-700 hover:shadow-sm transition-all"
                   onClick={() => {
                     if (tool.id === 'visibility') toggleLayers();
                     console.log(`${tool.label} clicked`);
@@ -290,7 +287,7 @@ export default function EnhancedMeasurementPanel() {
           </div>
           <div className="space-y-2">
             {['Measurements', 'Drawings', 'Annotations', 'Grid'].map((layer, index) => (
-              <div key={layer} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-200">
+              <div key={layer} className="flex items-center justify-between p-2 rounded-2xl bg-gray-50 border border-gray-200">
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -308,7 +305,7 @@ export default function EnhancedMeasurementPanel() {
             ))}
           </div>
         </Card>
-        
+
       )}
 
       {/* Status Bar */}

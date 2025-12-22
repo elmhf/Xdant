@@ -40,6 +40,12 @@ const Dashboard = ({ reportType }) => {
     viewMode: layoutKey === 'VIEW'
   }), [layoutKey])
 
+  // ØªØ®ØµÙŠØµ ØªØ®Ø·ÙŠØ· ØµÙØ­Ø© Pano
+  const isPanoType = reportType === 'pano ai' || reportType === 'pano';
+
+  // State for hovering highlights
+  const [hoveredProblem, setHoveredProblem] = useState(null);
+
   // ØªØ­Ø³ÙŠÙ† Context Value
   const contextValue = useMemo(() => ({
     data,
@@ -55,7 +61,10 @@ const Dashboard = ({ reportType }) => {
     toothNumberSelect,
     setToothNumberSelect,
     selectedTeeth,
-    setSelectedTeeth
+    hoveredProblem,
+    setHoveredProblem,
+    setSelectedTeeth,
+    isPanoType // Add this
   }), [
     data,
     image,
@@ -63,7 +72,8 @@ const Dashboard = ({ reportType }) => {
     layoutModes,
     selectedTooth,
     toothNumberSelect,
-    selectedTeeth
+    selectedTeeth,
+    isPanoType
   ])
 
   // Ø§Ø³ØªØ®Ø¯Ø§Ù… useCallback Ù„ØªØ­Ø³ÙŠÙ† Ø§Ù„Ø£Ø¯Ø§Ø¡
@@ -126,7 +136,7 @@ const Dashboard = ({ reportType }) => {
   }, [router]);
 
   // ØªØ®ØµÙŠØµ ØªØ®Ø·ÙŠØ· ØµÙØ­Ø© Pano
-  const isPanoType = reportType === 'pano ai' || reportType === 'pano';
+
 
   useEffect(() => {
     if (reportType) {

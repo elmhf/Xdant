@@ -416,7 +416,7 @@ export default function SignatureCard({ signature, onSave }) {
               {/* Action Button */}
               <div className="px-0 py-4 bg-white border-t border-gray-100 flex items-end justify-end">
                 <button
-                  className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                  className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                   onClick={() => setEditing(true)}
                   disabled={isSaving}
                 >
@@ -441,7 +441,7 @@ export default function SignatureCard({ signature, onSave }) {
               {!isSaving && hasSignatureData && (
                 <button
                   onClick={clearSignature}
-                  className="absolute top-2 right-2 z-10 p-2 bg-red-50 hover:bg-red-100 rounded-lg transition-colors group"
+                  className="absolute top-2 right-2 z-10 p-2 bg-red-50 hover:bg-red-100 rounded-2xl transition-colors group"
                   disabled={isSaving}
                 >
                   <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -519,7 +519,7 @@ export default function SignatureCard({ signature, onSave }) {
                   </Button> <Button
                     variant="outline"
                     size="sm"
-                    className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                    className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                     onClick={saveSignature}
                     disabled={!hasSignatureData || isSaving}
                   >

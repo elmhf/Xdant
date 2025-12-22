@@ -148,7 +148,7 @@ export default function PinVerification({ onNext, onBack, email }) {
                 onChange={e => handleChange(i, e.target.value)}
                 onKeyDown={e => handleKeyDown(i, e)}
                 onPaste={i === 0 ? handlePaste : undefined}
-                className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:border-green-600 focus:ring-2 focus:ring-green-100 outline-none transition"
+                className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-2xl focus:border-green-600 focus:ring-2 focus:ring-green-100 outline-none transition"
                 autoFocus={i === 0}
               />
             ))}
@@ -166,7 +166,7 @@ export default function PinVerification({ onNext, onBack, email }) {
           </div>
           <Button
             type="submit"
-            className="w-full bg-[#0d0c22] hover:bg-white hover:text-[#0d0c22]  rounded-lg font-bold text-base py-3 mt-2"
+            className="w-full bg-[#0d0c22] hover:bg-white hover:text-[#0d0c22]  rounded-2xl font-bold text-base py-3 mt-2"
             disabled={loading}
           >
             {loading ? (

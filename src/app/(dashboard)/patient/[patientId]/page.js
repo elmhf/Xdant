@@ -15,7 +15,6 @@ import EditPatientDialog from '../components/EditPatientDialog';
 import OrderAIReport from '../components/OrderAIReport';
 import AIOrdersList from '../components/AIOrdersList';
 import { usePatientWebSocket } from '../hooks/usePatientWebSocket';
-import Lottie from "lottie-react";
 import {
   usePatientStore,
   useCurrentPatient,
@@ -26,11 +25,13 @@ import {
   useFilteredReports
 } from '@/stores/patientStore';
 import { useDentalStore } from '@/stores/dataStore';
+import useImageStore from "@/stores/ImageStore";
 import ReportComments from '../components/ReportComments';
 import { FolderIcon } from "lucide-react";
 import { DentalDateGroupCard } from './dental-data/components/DentalDateGroupCard';
 import { useDentalData } from './dental-data/hooks/useDentalData';
 import { FilePreviewDialog } from './dental-data/components/FilePreviewDialog';
+import ErrorCard from "@/components/shared/ErrorCard";
 
 const calculateAge = (dateOfBirth) => {
   if (!dateOfBirth) return 'Unknown';
@@ -53,17 +54,21 @@ export default function PatientDetailPage() {
   const router = useRouter();
   const patientId = params.patientId;
   const resetDentalStore = useDentalStore(state => state.resetData);
+  const resetImageStore = useImageStore(state => state.reset);
 
   // Clear dental store data when entering patient detail page
   useEffect(() => {
     // 1. Reset Zustand store state
     resetDentalStore();
+    resetImageStore();
     console.log("🧹 Dental store reset on patient page entry");
 
     // 2. Clear storage manually to be 100% sure
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('dental-storage');
       localStorage.removeItem('dental-storage');
+      sessionStorage.removeItem('image-storage');
+      localStorage.removeItem('image-storage');
       console.log("🧹 Storage keys cleared (session & local)");
     }
   }, []); // Run once on mount
@@ -108,150 +113,8 @@ export default function PatientDetailPage() {
     user: user ? 'User found' : 'No user'
   });
 
-  // استخدام WebSocket للمريض
-  const {
-    isConnected: wsConnected,
-    connectionStatus: wsConnectionStatus,
-    patientReports: wsPatientReports,
-    lastUpdate: wsLastUpdate,
-    notifications: wsNotifications,
-    updateReport: wsUpdateReport,
-    addReport: wsAddReport,
-    deleteReport: wsDeleteReport,
-    clearNotifications: wsClearNotifications,
-    removeNotification: wsRemoveNotification,
-    hasActiveReports: wsHasActiveReports,
-    pendingReports: wsPendingReports,
-    completedReports: wsCompletedReports
-  } = usePatientWebSocket(patientId, userId, clinicId);
-
-  console.log('📊 WebSocket Status in Patient Page:', {
-    isConnected: wsConnected,
-    connectionStatus: wsConnectionStatus,
-    patientReportsCount: wsPatientReports.length,
-    notificationsCount: wsNotifications.length,
-    hasLastUpdate: !!wsLastUpdate,
-    pendingReports: wsPendingReports,
-    completedReports: wsCompletedReports
-  });
-
-  // Update WebSocket connection status in store
-  useEffect(() => {
-    const store = usePatientStore.getState();
-    if (store.wsConnected !== wsConnected || store.wsConnectionStatus !== wsConnectionStatus) {
-      store.setWsConnection(wsConnected, wsConnectionStatus);
-    }
-  }, [wsConnected, wsConnectionStatus]);
-
-  // Update WebSocket last update in store
-  useEffect(() => {
-    if (wsLastUpdate && wsLastUpdate.timestamp) {
-      const store = usePatientStore.getState();
-      if (!store.wsLastUpdate || store.wsLastUpdate.timestamp !== wsLastUpdate.timestamp) {
-        store.setWsLastUpdate(wsLastUpdate);
-      }
-    }
-  }, [wsLastUpdate?.timestamp]);
-
-  // معالجة تحديثات WebSocket
-  useEffect(() => {
-    console.log('🔄 Syncing WebSocket Reports Update Effect:', {
-      wsPatientReportsCount: wsPatientReports.length,
-      currentReportsCount: reports.length
-    });
-
-    if (wsPatientReports.length > 0) {
-
-      // دمج تقارير WebSocket مع التقارير المحلية مع تحديث الحالات
-      const updatedReports = reports.map(localReport => {
-        // البحث عن التقرير المقابل في WebSocket reports
-        const wsReport = wsPatientReports.find(ws => ws.id === localReport.id);
-        if (wsReport) {
-          return {
-            ...localReport,
-            status: wsReport.status,
-            updatedAt: wsReport.updatedAt || wsReport.updated_at,
-            // إضافة البيانات الجديدة من WebSocket
-            ...(wsReport.reportUrl && { reportUrl: wsReport.reportUrl }),
-            ...(wsReport.dataUrl && { dataUrl: wsReport.dataUrl }),
-            ...(wsReport.reportType && { reportType: wsReport.reportType }),
-            ...(wsReport.patientName && { patientName: wsReport.patientName }),
-            ...(wsReport.message && { message: wsReport.message })
-          };
-        }
-        return localReport;
-      });
-
-      // إضافة التقارير الجديدة من WebSocket
-      const existingReportIds = new Set(reports.map(r => r.id));
-      const newReports = wsPatientReports.filter(report => !existingReportIds.has(report.id));
-
-      console.log('📋 Reports sync:', {
-        existingCount: reports.length,
-        updatedCount: updatedReports.length,
-        newReportsCount: newReports.length,
-        totalAfterSync: updatedReports.length + newReports.length
-      });
-
-      // تحديث التقارير في الـ store
-      const finalReports = [...updatedReports, ...newReports];
-      if (finalReports.length !== reports.length ||
-        JSON.stringify(finalReports.map(r => ({ id: r.id, status: r.status }))) !==
-        JSON.stringify(reports.map(r => ({ id: r.id, status: r.status })))) {
-        usePatientStore.getState().setReports(finalReports);
-      }
-    }
-  }, [wsPatientReports]); // إزالة reports من dependency array
-
-  // معالجة آخر تحديث
-  useEffect(() => {
-    if (wsLastUpdate && wsLastUpdate.timestamp) {
-      console.log('🔄 Last WebSocket update:', {
-        type: wsLastUpdate.type,
-        timestamp: wsLastUpdate.timestamp,
-        data: wsLastUpdate.data
-      });
-
-      // معالجة خاصة لتحديث الحالة
-      if (
-        wsLastUpdate.type === 'report_status_changed_realtime' ||
-        wsLastUpdate.type === 'report_status_changed_detailed_realtime' ||
-        wsLastUpdate.type === 'report_status_changed_notification' ||
-        wsLastUpdate.type === 'report_status'
-      ) {
-        console.log('📊 Processing status change in patient page:', {
-          reportId: wsLastUpdate.data.reportId,
-          oldStatus: wsLastUpdate.data.oldStatus,
-          newStatus: wsLastUpdate.data.newStatus
-        });
-        // تحديث التقرير في الـ store
-        usePatientStore.getState().updateReport(wsLastUpdate.data.reportId, {
-          status: wsLastUpdate.data.newStatus,
-          updatedAt: wsLastUpdate.timestamp
-        });
-      }
-
-      // معالجة خاصة لحذف التقارير (شامل جميع الأنواع)
-      if (
-        wsLastUpdate.type === 'report_deleted_realtime' ||
-        wsLastUpdate.type === 'report_deleted' ||
-        wsLastUpdate.type === 'report_deleted_detailed_realtime'
-      ) {
-        console.log('🗑️ Processing report deletion in patient page:', {
-          reportId: wsLastUpdate.data.reportId,
-          reportType: wsLastUpdate.data.reportType,
-          deletedBy: wsLastUpdate.data.deletedBy,
-          type: wsLastUpdate.type
-        });
-        if (wsLastUpdate.data && wsLastUpdate.data.reportId) {
-          usePatientStore.getState().removeReport(wsLastUpdate.data.reportId);
-          console.log('✅ Called removeReport for reportId:', wsLastUpdate.data.reportId);
-        } else {
-          console.warn('⚠️ No reportId found in wsLastUpdate.data for deletion');
-        }
-      }
-    }
-  }, [wsLastUpdate?.timestamp, wsLastUpdate?.type, wsLastUpdate?.data?.reportId]); // استخدام خصائص محددة بدلاً من الكائن كاملاً
+  // WebSocket Integration via Hook
+  const { wsConnected } = usePatientWebSocket(patientId);
 
   // Clear report cache on mount
   useEffect(() => {
@@ -351,21 +214,7 @@ export default function PatientDetailPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen w-full bg-transparent">
-        <div className="text-center max-w-md mx-auto p-6">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-red-600 mb-2">
-              Erreur
-            </h2>
-            <p className="text-gray-600 text-lg mb-4">
-              {error}
-            </p>
-            <Button onClick={handleBack} className="bg-[#7564ed] hover:bg-[#6a4fd879] text-white">
-              Retour aux patients
-            </Button>
-          </div>
-        </div>
-      </div>
+      <ErrorCard error={error} onClose={handleBack} />
     );
   }
 
@@ -390,10 +239,14 @@ export default function PatientDetailPage() {
   }
 
   return (
-    <div className="min-h-full w-full bg-transparent max-h-[calc(100vh-max(7vh,50px))] overflow-y-auto overflow-x-hidden p-2 scrollbar-hide" style={{
-      scrollbarWidth: 'none', /* Firefox */
-      msOverflowStyle: 'none', /* IE and Edge */
-    }}>
+    <div
+      className="min-h-full w-full bg-transparent max-h-[calc(100vh-max(7vh,50px))] overflow-y-auto overflow-x-hidden p-2 scrollbar-hide"
+      style={{
+        scrollbarWidth: 'none', /* Firefox */
+        msOverflowStyle: 'none', /* IE and Edge */
+      }}
+      suppressHydrationWarning
+    >
       <style jsx>{`
         div::-webkit-scrollbar {
           display: none; /* Chrome, Safari and Opera */
@@ -435,7 +288,7 @@ export default function PatientDetailPage() {
             <div className="space-y-6">
               {/* Top Row - Doctor Cards */}
               {/* Treating doctors card */}
-              <div className="bg-white rounded-lg p-[12px] shadow-sm border border-gray-200">
+              <div className="bg-white rounded-2xl p-[12px] shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-3xl font-bold text-gray-950">Treating doctors</h2>
                   <Button
@@ -451,7 +304,7 @@ export default function PatientDetailPage() {
                 <div className="space-y-0">
                   {currentPatient.treating_doctors && currentPatient.treating_doctors.length > 0 ? (
                     currentPatient.treating_doctors.map((doctor, index) => (
-                      <div key={doctor.id || index} className="flex items-center justify-between p-1 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div key={doctor.id || index} className="flex items-center justify-between p-1 rounded-2xl hover:bg-gray-50 transition-colors">
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
                             <AvatarImage src={doctor.profilePhotoUrl} />
@@ -500,7 +353,7 @@ export default function PatientDetailPage() {
 
               {/* Dental Data Gallery Card */}
               {dentalLoading ? (
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 h-48 flex items-center justify-center">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 h-48 flex items-center justify-center">
                   <Loader2 className="w-8 h-8 animate-spin text-[#7564ed]" />
                 </div>
               ) : sortedDates.length > 0 ? (
@@ -527,8 +380,8 @@ export default function PatientDetailPage() {
               loading={reportsLoading}
               onReportDeleted={store.removeReport}
               wsConnected={wsConnected}
-              wsConnectionStatus={wsConnectionStatus}
-              wsLastUpdate={wsLastUpdate}
+              wsConnectionStatus={wsConnected ? 'connected' : 'disconnected'}
+              wsLastUpdate={null}
             />
           </div>
         </div>

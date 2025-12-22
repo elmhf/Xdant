@@ -340,7 +340,7 @@ export default function WelcomePage() {
                                             document.getElementById(`otp-${Math.min(pastedData.length - 1, 5)}`)?.focus();
                                         }
                                     }}
-                                    className="w-12 h-14 text-center text-2xl font-bold border-2 rounded-lg focus:ring-[#5c4ce3] focus:border-[#5c4ce3] bg-gray-50 text-gray-900"
+                                    className="w-12 h-14 text-center text-2xl font-bold border-2 rounded-2xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3] bg-gray-50 text-gray-900"
                                     maxLength={1}
                                 />
                                 {index === 2 && <span className="text-gray-400 font-bold text-xl "><Minus className="h-7 w-7" /></span>}
@@ -376,7 +376,7 @@ export default function WelcomePage() {
             {invitedEmails.length > 0 && (
                 <div className="w-full mb-6 flex flex-wrap gap-2 justify-center">
                     {invitedEmails.map((email, idx) => (
-                        <div key={idx} className="flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm font-medium border border-green-100">
+                        <div key={idx} className="flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-2xl text-sm font-medium border border-green-100">
                             <CheckCircle2 className="w-4 h-4 mr-1.5" />
                             {email}
                         </div>

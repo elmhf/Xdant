@@ -1,14 +1,14 @@
 "use client"
 import React, { useState } from "react";
-import { 
-  Search, 
-  Play, 
-  Edit3, 
-  Eraser, 
-  RotateCw, 
-  Crop, 
-  Pen, 
-  Minus, 
+import {
+  Search,
+  Play,
+  Edit3,
+  Eraser,
+  RotateCw,
+  Crop,
+  Pen,
+  Minus,
   Triangle,
   ZoomIn,
   Eye,
@@ -23,15 +23,15 @@ import { Switch } from "@/components/ui/switch";
 // Custom Crosshair Icon Component
 function CrosshairIcon({ size = 24, className = "" }) {
   return (
-    <svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
     >
       <line x1="12" y1="2" x2="12" y2="22" />
@@ -90,10 +90,10 @@ function CBCTToolBar({ isCrosshairActive, onToggleCrosshair }) {
 // Tree Item Component
 function TreeItem({ title, children, defaultExpanded = false, hasCheckbox = false, checked = false }) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-  
+
   return (
     <div className="select-none">
-      <div 
+      <div
         className="flex items-center gap-2 py-1.5 px-2 text-sm text-gray-300 hover:bg-[#2a2a3e] rounded cursor-pointer transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -103,8 +103,8 @@ function TreeItem({ title, children, defaultExpanded = false, hasCheckbox = fals
           </span>
         )}
         {hasCheckbox && (
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             checked={checked}
             readOnly
             className="w-3 h-3 rounded accent-green-500"
@@ -113,7 +113,7 @@ function TreeItem({ title, children, defaultExpanded = false, hasCheckbox = fals
         )}
         <span className="flex-1">{title}</span>
       </div>
-      
+
       {children && isExpanded && (
         <div className="ml-4 border-l border-[#3a3a4e] pl-2">
           {children}
@@ -196,11 +196,11 @@ export default function MedicalSidebar({ isCrosshairActive, onToggleCrosshair })
       {/* Main Content */}
       <div className="flex-1 p-4 gap-4 flex overflow-y-scroll flex-col">
         {/* Run AI Button */}
-        <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg mb-4 transition-colors">
+        <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-2xl mb-4 transition-colors">
           Run AI
         </button>
         {/* Warning Notice */}
-        <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 mb-6">
+        <div className="bg-yellow-50 border border-yellow-300 rounded-2xl p-3 mb-6">
           <div className="flex items-start gap-2">
             <span className="text-yellow-500 text-lg">⚠</span>
             <div className="text-yellow-700 text-xs leading-relaxed">
@@ -210,7 +210,7 @@ export default function MedicalSidebar({ isCrosshairActive, onToggleCrosshair })
             </div>
           </div>
         </div>
-     
+
 
         {/* Liste des couches (layers) avec switch shadcn */}
         <div className=" w-full max-w-md bg-white   flex flex-col gap-2">
@@ -228,8 +228,8 @@ export default function MedicalSidebar({ isCrosshairActive, onToggleCrosshair })
             </div>
           ))}
         </div>
-                {/* Légendages */}
-                <div className="">
+        {/* Légendages */}
+        <div className="">
           <div className="font-semibold text-base mb-2">Légendages</div>
           {LEGEND_SWITCHES.map(s => (
             <div key={s.key} className="flex items-center justify-between mb-2">

@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import React, { useState, useEffect, useMemo, useCallback, useContext } from "react";
-import { Loader2, Smile, Check } from "lucide-react";
+import { Loader2, Smile, Check, ShieldCheck } from "lucide-react";
 import TextEditor from "@/components/ui/TextEditor";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const { selectedTeeth } = useContext(DataContext);
+  const dataaaaaaa = useDentalStore((state) => state.data);
   const { data: dentalData, setConclusion: setConclusionStore, getConclusionUpdatedAt, updateToothApproval } = useDentalStore();
   const [isLoading, setIsLoading] = useState(true);
   const [visibleImages, setVisibleImages] = useState({});
@@ -42,6 +43,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
 
   // Load conclusion from store
   useEffect(() => {
+    console.log("dentalData?.conclusion", dentalData, dataaaaaaa);
     if (dentalData?.conclusion) {
       setConclusion(dentalData.conclusion);
       setIsConclusionSaved(true);
@@ -64,7 +66,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
     if (selectedTeeth !== null) {
       result = result.filter(item => selectedTeeth.includes(item.toothNumber));
     }
-
+    console.log(dentalData?.teeth, dentalData, "dentalData");
     return result;
   }, [dentalData, selectedTeeth]);
 
@@ -185,7 +187,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
                   <div className="flex justify-end">
                     <Button
                       size="sm"
-                      className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg  flex items-center min-w-[6vw] "
+                      className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl  flex items-center min-w-[6vw] "
                       onClick={() => {
                         console.log('Save conclusion:', conclusion);
                         setConclusionStore(conclusion);
@@ -217,7 +219,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg  flex items-center min-w-[6vw] "
+                      className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl  flex items-center min-w-[6vw] "
                       onClick={() => setIsConclusionSaved(false)}
                     >
                       Modifier
@@ -301,43 +303,53 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
 
       {/* Approval Confirmation Dialog */}
       <Dialog open={showApproveDialog} onOpenChange={setShowApproveDialog}>
-        <DialogContent className="">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Confirmer l'approbation</DialogTitle>
-            <DialogDescription className="text-gray-600">
-              Les dents suivantes ne sont pas encore approuvées. Voulez-vous les approuver toutes ?
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-3xl border-0 shadow-2xl">
+          <div className="bg-white p-6 pb-0">
+            {/* Header Icon */}
+            <div className="mx-auto w-16 h-16 bg-[#F3F0FF] rounded-full flex items-center justify-center mb-4 ring-8 ring-[#F3F0FF]/50">
+              <ShieldCheck className="w-8 h-8 text-[#7564ed]" strokeWidth={2} />
+            </div>
 
-          <div className="max-h-[300px] overflow-y-auto my-4">
-            <div className="grid grid-cols-6 gap-2">
-              {unapprovedTeeth.map((tooth) => (
-                <div
-                  key={tooth.toothNumber}
-                  className="flex items-center justify-center p-3 bg-amber-50 border border-amber-200 rounded-lg"
-                >
-                  <span className="text-sm font-semibold text-amber-900">
-                    {tooth.toothNumber}
-                  </span>
-                </div>
-              ))}
+            <DialogHeader className="text-center space-y-2 mb-6">
+              <DialogTitle className="text-2xl font-bold text-gray-900 tracking-tight">
+                Confirmer l'approbation
+              </DialogTitle>
+              <DialogDescription className="text-base text-gray-500 max-w-[90%] mx-auto leading-relaxed">
+                Vous êtes sur le point d'approuver <span className="font-semibold text-gray-900">{unapprovedTeeth.length} dents</span> détectées. Cette action validera le diagnostic pour les dents suivantes :
+              </DialogDescription>
+            </DialogHeader>
+
+            {/* Teeth Grid Container */}
+            <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 mb-2 max-h-[220px] overflow-y-auto custom-scrollbar">
+              <div className="flex flex-wrap gap-2 justify-center">
+                {unapprovedTeeth.map((tooth) => (
+                  <div
+                    key={tooth.toothNumber}
+                    className="flex flex-col items-center justify-center w-12 h-12 bg-white border border-gray-200 shadow-sm rounded-xl transition-transform hover:scale-105"
+                  >
+                    <span className="text-sm font-bold text-gray-800">
+                      {tooth.toothNumber}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <DialogFooter className="gap-2">
+          <DialogFooter className="bg-gray-50 p-6 flex flex-col sm:flex-row gap-3 border-t border-gray-100">
             <Button
               variant="outline"
               onClick={() => setShowApproveDialog(false)}
-              className="border-gray-300"
+              className="flex-1 border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 py-6 text-base rounded-xl font-medium shadow-sm"
             >
               Annuler
             </Button>
             <Button
               onClick={handleApproveAll}
-              className="bg-[#7564ed] hover:bg-[#6454d7] text-white"
+              className="flex-1 bg-[#7564ed] hover:bg-[#6454d7] text-white py-6 text-base rounded-xl font-bold shadow-md shadow-indigo-200 transition-all active:scale-[0.98]"
             >
-              <Check className="w-4 h-4 mr-2" />
-              Approuver tout ({unapprovedTeeth.length})
+              <Check className="w-5 h-5 mr-2" strokeWidth={2.5} />
+              Tout Approuver
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -370,7 +370,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                         key={`logo-${logoRefreshKey}`} // إضافة key فريد
                         src={logoSrc}
                         alt="Logo preview"
-                        className="max-w-full max-h-full w-auto h-auto object-contain rounded-lg"
+                        className="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl"
                         crossOrigin="anonymous"
                         onError={(e) => {
                           console.error("Error loading logo image:", e);
@@ -397,7 +397,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                       <div className="text-4xl mb-3 font-bold">+</div>
                       <div className="text-lg font-semibold">selectionner le logo</div>
                       {logoError && (
-                        <div className="text-red-600 text-sm mt-3 p-2 bg-red-50 rounded-lg border border-red-200">
+                        <div className="text-red-600 text-sm mt-3 p-2 bg-red-50 rounded-2xl border border-red-200">
                           {logoError}
                         </div>
                       )}
@@ -448,7 +448,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                         key={`stamp-${stampRefreshKey}`} // إضافة key فريد
                         src={stampSrc}
                         alt="Stamp preview"
-                        className="max-w-full max-h-full w-auto h-auto object-contain rounded-lg"
+                        className="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl"
                         crossOrigin="anonymous"
                         onError={(e) => {
                           console.error("Error loading stamp image:", e);
@@ -475,7 +475,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                       <div className="text-4xl mb-3 font-[500]">+</div>
                       <div className="text-lg font-[500]">selectionner le cachet</div>
                       {stampError && (
-                        <div className="text-red-600 text-sm mt-3 p-2 bg-red-50 rounded-lg border border-red-200">
+                        <div className="text-red-600 text-sm mt-3 p-2 bg-red-50 rounded-2xl border border-red-200">
                           {stampError}
                         </div>
                       )}

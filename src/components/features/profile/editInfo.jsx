@@ -62,7 +62,7 @@ export default function EditInfo({
                 />
                 <button
                   onClick={handleUsernameEdit}
-                  className="p-3 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-3 hover:bg-gray-100 rounded-2xl transition-colors"
                 >
                   <Edit2 className="w-5 h-5 text-gray-600" />
                 </button>
@@ -146,7 +146,7 @@ export default function EditInfo({
             {/* My Profile Section */}
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-">My Profile</h3>
-              
+
               {/* Profile Picture */}
               <div className="flex items-start gap-4 mb-6">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#7564ed] to-[#6a4fd8] flex items-center justify-center text-white text-xl font-bold overflow-hidden">
@@ -158,10 +158,10 @@ export default function EditInfo({
                 </div>
                 <div className="flex-1">
                   <div className="flex gap-3 mb-2">
-                    <button className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2">
+                    <button className="px-4 py-2 bg-gray-900 text-white rounded-2xl hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2">
                       <span>+</span> Change Image
                     </button>
-                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-2xl hover:bg-gray-200 transition-colors text-sm font-medium">
                       Remove Image
                     </button>
                   </div>
@@ -193,7 +193,7 @@ export default function EditInfo({
             {/* Account Security Section */}
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-6">Account Security</h3>
-              
+
               {/* Email */}
               <div className="space-y-2 mb-6">
                 <label className="text-sm font-medium text-gray-900">Email</label>
@@ -203,7 +203,7 @@ export default function EditInfo({
                     disabled
                     className="h-11 text-base bg-gray-50 flex-1"
                   />
-                  <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                  <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
                     Change email
                   </button>
                 </div>
@@ -219,7 +219,7 @@ export default function EditInfo({
                     disabled
                     className="h-11 text-base bg-gray-50 flex-1"
                   />
-                  <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                  <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
                     Change password
                   </button>
                 </div>
@@ -238,7 +238,7 @@ export default function EditInfo({
             {/* Support Access Section */}
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-6">Support Access</h3>
-              
+
               {/* Support Access Toggle */}
               <div className="flex items-start justify-between py-4 mb-6">
                 <div className="flex-1">
@@ -254,7 +254,7 @@ export default function EditInfo({
                   <h4 className="text-base font-semibold text-gray-900 mb-1">Log out of all devices</h4>
                   <p className="text-sm text-gray-600">Log out of all other active sessions on other devices besides this one.</p>
                 </div>
-                <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
                   Log out
                 </button>
               </div>
@@ -265,7 +265,7 @@ export default function EditInfo({
                   <h4 className="text-base font-semibold text-red-600 mb-1">Delete my account</h4>
                   <p className="text-sm text-gray-600">Permanently delete the account and remove access from all workspaces.</p>
                 </div>
-                <button className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                <button className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
                   Delete Account
                 </button>
               </div>
@@ -313,7 +313,7 @@ export default function EditInfo({
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${isActive
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left transition-all ${isActive
                       ? 'bg-white text-gray-900 font-medium shadow-sm'
                       : 'text-gray-600 hover:bg-white/60'
                       }`}

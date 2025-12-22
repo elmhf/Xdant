@@ -28,8 +28,8 @@ export default function ViewPanel({
   smoothedPaths,
   animationFrame,
   isFullView = false,
-  onFullView = () => {},
-  onExitFullView = () => {}
+  onFullView = () => { },
+  onExitFullView = () => { }
 }) {
   const containerRef = useRef();
   const layerRef = useRef();
@@ -197,10 +197,10 @@ export default function ViewPanel({
           </Stage>
           {/* Loading overlay */}
           {isLoading && (
-            <div className="absolute top-2 right-2 flex flex-col items-center justify-center z-50 bg-[#0d0c22]/40 rounded-lg px-3 py-2">
+            <div className="absolute top-2 right-2 flex flex-col items-center justify-center z-50 bg-[#0d0c22]/40 rounded-2xl px-3 py-2">
               <svg className="animate-spin h-6 w-6 text-white mb-1" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4" fill="none"/>
-                <path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
               </svg>
               <span className="text-white font-bold text-base">{percent}%</span>
             </div>

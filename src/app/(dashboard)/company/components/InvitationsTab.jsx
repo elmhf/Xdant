@@ -80,7 +80,7 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
                     {(invitation.status === 'accepted' || invitation.status === 'rejected') ? (
                       <Button
                         variant="outline"
-                        className="h-10 px-4 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 font-medium rounded-lg"
+                        className="h-10 px-4 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 font-medium rounded-2xl"
                         onClick={() => openDeleteInvitationDialog(invitation)}
                       >
                         Remove
@@ -88,7 +88,7 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
                     ) : (
                       <Button
                         variant="outline"
-                        className="h-10 px-4 text-gray-600 border-gray-200 hover:bg-gray-100 font-medium rounded-lg"
+                        className="h-10 px-4 text-gray-600 border-gray-200 hover:bg-gray-100 font-medium rounded-2xl"
                         onClick={() => openDeleteInvitationDialog(invitation)}
                       >
                         Cancel

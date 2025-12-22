@@ -23,7 +23,7 @@ const GroupHeader = React.memo(
     const allTrue = areAllTrue(path);
 
     return (
-      <div className="flex items-center justify-between mb-3 p-2 bg-zinc-100 rounded-lg border border-zinc-300">
+      <div className="flex items-center justify-between mb-3 p-2 bg-zinc-100 rounded-2xl border border-zinc-300">
         <div className="flex items-center gap-2">
           <button
             onClick={() => onToggleCollapse(path.join("-"))}
@@ -179,7 +179,7 @@ export default function VisibilityPanel() {
             placeholder="Search items..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 pl-10 bg-white border border-zinc-300 text-zinc-800 placeholder-zinc-400 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            className="w-full px-4 py-2 pl-10 bg-white border border-zinc-300 text-zinc-800 placeholder-zinc-400 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             whileFocus={{ scale: 1.04, boxShadow: "0 0 0 4px #a78bfa44" }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           />

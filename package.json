@@ -19,6 +19,7 @@
     "@kitware/vtk.js": "^34.5.0",
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "@material-tailwind/react": "^2.1.10",
+    "@next/bundle-analyzer": "^16.1.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.9",

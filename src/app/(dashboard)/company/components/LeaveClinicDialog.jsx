@@ -171,7 +171,7 @@ export const LeaveClinicDialog = ({
               )}
 
               {action === 'delete' && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-800">
                   <strong>Attention :</strong> Cette action est irréversible. Toutes les données de la clinique seront perdues.
                 </div>
               )}
@@ -221,7 +221,7 @@ export const LeaveClinicDialog = ({
           )}
 
           {message && (
-            <div className={`mt-3 p-3 rounded-lg text-sm ${message.includes('succès') || message.includes('success')
+            <div className={`mt-3 p-3 rounded-2xl text-sm ${message.includes('succès') || message.includes('success')
               ? 'bg-green-50 text-green-800 border border-green-200'
               : 'bg-red-50 text-red-800 border border-red-200'
               }`}>
@@ -236,14 +236,14 @@ export const LeaveClinicDialog = ({
             variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={loading}
-            className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+            className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           >
             Annuler
           </Button>
           <Button
             onClick={handleConfirm}
             disabled={loading || (isOwner && action === 'transfer' && !newOwnerId) || (!isOwner && (!confirmUnderstand || !confirmLoseAccess))}
-            className="text-lg font-bold bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+            className="text-lg font-bold bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           >
             {loading
               ? "Traitement..."

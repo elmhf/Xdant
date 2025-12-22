@@ -2,93 +2,95 @@
 import React, { useEffect, useState, useRef, useContext, useCallback } from "react";
 import { Stage, Layer, Image, Line, Group, Text, Circle, Rect } from "react-konva";
 import { DataContext } from "../dashboard";
+import { getToothBoundingBox } from "@/utils/toothUtils";
+import { toast } from "sonner";
 
 const COLOR_PALETTE = {
   // Main structures - refined colors with balanced opacity and softer shadows
-  tooth: { 
+  tooth: {
     fill: 'rgba(245, 235, 220, 0.2)', // Slightly warmer tone for natural look
     stroke: 'rgba(200, 190, 170, 0.9)', // Subtle stroke for definition
     strokeWidth: 2, // Thinner stroke for elegance
     shadowColor: 'rgba(200, 190, 170, 0.4)', // Softer shadow
     shadowBlur: 6 // Reduced blur for clarity
   },
-  crown: { 
+  crown: {
     fill: 'rgba(255, 245, 235, 0.2)', // Clean, near-white tone for crowns
     stroke: 'rgba(220, 210, 200, 0.3)', // Slightly darker stroke
     strokeWidth: 2,
     shadowColor: 'rgba(220, 210, 200, 0.4)',
     shadowBlur: 6
   },
-  root: { 
+  root: {
     fill: 'rgba(230, 220, 200, 0.3)', // Increased opacity for better visibility
     stroke: 'rgba(200, 190, 170, 0.5)', // Subtle stroke
     strokeWidth: 2,
     shadowColor: 'rgba(200, 190, 170, 0.3)',
     shadowBlur: 5
   },
-  jaw: { 
+  jaw: {
     fill: 'rgba(150, 130, 110, 0.8)', // Slightly darker for contrast
     stroke: 'rgba(130, 110, 90, 0.9)', // Defined stroke
     strokeWidth: 2,
     shadowColor: 'rgba(130, 110, 90, 0.4)',
     shadowBlur: 5
   },
-  
+
   // Problems/Findings - vibrant but professional colors with refined opacity
-  caries: { 
+  caries: {
     fill: 'rgba(200, 50, 100, 0.1)', // Softer pinkish-red for less harshness
-    stroke: 'rgba(180, 40, 90, 0.1)', 
+    stroke: 'rgba(180, 40, 90, 0.1)',
     strokeWidth: 1.5, // Thinner stroke for precision
     shadowColor: 'rgba(180, 40, 90, 0.4)',
     shadowBlur: 8
   },
-  impacted: { 
+  impacted: {
     fill: 'rgba(180, 80, 120, 0.55)', // Muted tone for impacted teeth
     stroke: 'rgba(160, 60, 100, 0.7)',
     strokeWidth: 1.5,
     shadowColor: 'rgba(160, 60, 100, 0.4)',
     shadowBlur: 8
   },
-  lesion: { 
+  lesion: {
     fill: 'rgba(200, 100, 50, 0.5)', // Warmer orange for lesions
     stroke: 'rgba(180, 80, 30, 0.7)',
     strokeWidth: 1.5,
     shadowColor: 'rgba(180, 80, 30, 0.4)',
     shadowBlur: 8
   },
-  restoration: { 
+  restoration: {
     fill: 'rgba(240, 240, 240, 0.95)', // Brighter, cleaner fill
-    stroke: 'rgba(200, 200, 200, 0.8)', 
+    stroke: 'rgba(200, 200, 200, 0.8)',
     strokeWidth: 1, // Thinner stroke for delicate look
     shadowColor: 'rgba(200, 200, 200, 0.3)',
     shadowBlur: 4
   },
-  endo: { 
+  endo: {
     fill: 'rgba(245, 245, 245, 0.85)', // Slightly softer fill
     stroke: 'rgba(220, 220, 220, 0.8)',
     strokeWidth: 1.5,
     shadowColor: 'rgba(220, 220, 220, 0.3)',
     shadowBlur: 4
   },
-  
+
   // UI elements - clean and professional
-  measurement: { 
+  measurement: {
     fill: 'rgba(255, 200, 100, 0.9)', // Softer gold for readability
-    stroke: 'rgba(255, 180, 80, 0.9)', 
+    stroke: 'rgba(255, 180, 80, 0.9)',
     strokeWidth: 1.5,
     shadowColor: 'rgba(255, 180, 80, 0.5)',
     shadowBlur: 6
   },
-  drawing: { 
+  drawing: {
     fill: 'rgba(255, 170, 50, 0.2)', // Less aggressive orange
     stroke: 'rgba(255, 150, 30, 0.2)',
     strokeWidth: 1.5,
     shadowColor: 'rgba(255, 150, 30, 0.5)',
     shadowBlur: 6
   },
-  
+
   // Default for unknown problems
-  problem: { 
+  problem: {
     fill: 'rgba(255, 120, 50, 0.05)', // Softer orange for general problems
     stroke: 'rgba(230, 100, 30, 0.1)',
     strokeWidth: 1.5,
@@ -123,33 +125,32 @@ const applyShadowProps = (style, scale) => {
   return props;
 };
 
-const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, resetMeasurements, onUndoCallback, showGrid, zoom, isLocked, showLayers }) => {
-  const { stageRef } = useContext(DataContext);
+const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, resetMeasurements, onUndoCallback, showGrid = true, zoom, isLocked, showLayers, selectedTooth, onToothClick }) => {
+  const { stageRef, hoveredProblem } = useContext(DataContext);
   const containerRef = useRef(null);
   const imageNodeRef = useRef(null);
   const animationFrameRef = useRef(null);
   const lastUpdateRef = useRef(Date.now());
   const fpsCountRef = useRef(0);
   const fpsTimeRef = useRef(Date.now());
-  
   // حالات الصورة والحاوية
   const [imgObj, setImgObj] = useState(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [currentFPS, setCurrentFPS] = useState(0);
-  
+
   // حالات التحويل (Transform) مع تحسين الأداء
   const [transform, setTransform] = useState({
     scale: 1,
     x: 0,
     y: 0
   });
-  
+
   // حالات التفاعل المحسنة للـ 120 FPS
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [lastPointerPos, setLastPointerPos] = useState({ x: 0, y: 0 });
   const [{ brightness, contrast, saturation }] = useFilter;
-  
+
   // State for measurement tool
   const [measurementLines, setMeasurementLines] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -163,7 +164,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   const [drawnPoints, setDrawnPoints] = useState([]);
 
   // Enhanced UX states
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+
   const [isHoveringCanvas, setIsHoveringCanvas] = useState(false);
 
   // History system for undo functionality
@@ -204,7 +205,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   const undo = useCallback(() => {
     if (historyIndex >= 0) {
       const lastAction = history[historyIndex];
-      
+
       switch (lastAction.action) {
         case 'measurement':
           setMeasurementLines(prev => prev.slice(0, -1));
@@ -218,7 +219,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
         default:
           break;
       }
-      
+
       setHistoryIndex(prev => prev - 1);
     }
   }, [history, historyIndex]);
@@ -270,7 +271,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   const updateFPS = useCallback(() => {
     const now = Date.now();
     fpsCountRef.current++;
-    
+
     if (now - fpsTimeRef.current >= 1000) {
       setCurrentFPS(fpsCountRef.current);
       fpsCountRef.current = 0;
@@ -284,52 +285,52 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
 
     const applyFilters = () => {
       if (!imageNodeRef.current) return;
-      
+
       // تحسين أداء الفلاتر باستخدام Web Workers (محاكاة)
       const startTime = performance.now();
-      
+
       imageNodeRef.current.cache();
       imageNodeRef.current.filters([
         function (imageData) {
           const data = imageData.data;
           const len = data.length;
-          
+
           // تحسين الحلقات للأداء العالي
           const brightnessFactor = brightness / 100;
           const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
           const saturationFactor = saturation / 100;
-          
+
           // معالجة البيانات بكفاءة أعلى
           for (let i = 0; i < len; i += 4) {
             let r = data[i];
             let g = data[i + 1];
             let b = data[i + 2];
-            
+
             // تطبيق السطوع
             r = Math.min(255, Math.max(0, r * brightnessFactor));
             g = Math.min(255, Math.max(0, g * brightnessFactor));
             b = Math.min(255, Math.max(0, b * brightnessFactor));
-            
+
             // تطبيق التباين
             r = Math.min(255, Math.max(0, contrastFactor * (r - 128) + 128));
             g = Math.min(255, Math.max(0, contrastFactor * (g - 128) + 128));
             b = Math.min(255, Math.max(0, contrastFactor * (b - 128) + 128));
-            
+
             // تطبيق التشبع
             const avg = (r + g + b) / 3;
             r = Math.min(255, Math.max(0, avg + (r - avg) * saturationFactor));
             g = Math.min(255, Math.max(0, avg + (g - avg) * saturationFactor));
             b = Math.min(255, Math.max(0, avg + (b - avg) * saturationFactor));
-            
+
             data[i] = r;
             data[i + 1] = g;
             data[i + 2] = b;
           }
         }
       ]);
-      
+
       const endTime = performance.now();
-            
+
       imageNodeRef.current.getLayer()?.batchDraw();
     };
 
@@ -338,41 +339,14 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
 
   // حساب المقياس الأدنى لملء الحاوية
   const getMinScale = useCallback(() => {
-    if (!imgObj || !containerSize.width || !containerSize.height) return 0.1;
-    
-    const scaleX = containerSize.width / imgObj.naturalWidth;
-    const scaleY = containerSize.height / imgObj.naturalHeight;
-    return Math.min(scaleX, scaleY);
-  }, [imgObj, containerSize]);
+    return 0.1; // Allow zooming out further than container
+  }, []);
 
   // حساب الموضع المحدود للصورة مع تحسين للـ 120 FPS
   const getBoundedPosition = useCallback((newScale, newX, newY) => {
-    if (!imgObj) return { x: 0, y: 0 };
-
-    const imageWidth = imgObj.naturalWidth * newScale;
-    const imageHeight = imgObj.naturalHeight * newScale;
-
-    let boundedX = newX;
-    let boundedY = newY;
-
-    // حدود X محسنة
-    if (imageWidth <= containerSize.width) {
-      boundedX = (containerSize.width - imageWidth) / 2;
-    } else {
-      const minX = containerSize.width - imageWidth;
-      boundedX = Math.max(minX, Math.min(0, newX));
-    }
-
-    // حدود Y محسنة
-    if (imageHeight <= containerSize.height) {
-      boundedY = (containerSize.height - imageHeight) / 2;
-    } else {
-      const minY = containerSize.height - imageHeight;
-      boundedY = Math.max(minY, Math.min(0, newY));
-    }
-
-    return { x: boundedX, y: boundedY };
-  }, [imgObj, containerSize]);
+    // Remove strict bounds to allow free movement
+    return { x: newX, y: newY };
+  }, []);
 
   // تحديث الموضع بنعومة عالية للـ 120 FPS
   const updateTransformSmooth = useCallback((updates) => {
@@ -383,7 +357,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
     animationFrameRef.current = requestAnimationFrame(() => {
       const now = performance.now();
       updateFPS();
-      
+
       setTransform(prev => {
         const newTransform = { ...prev, ...updates };
         const boundedPosition = getBoundedPosition(newTransform.scale, newTransform.x, newTransform.y);
@@ -393,7 +367,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
           y: boundedPosition.y
         };
       });
-      
+
       lastUpdateRef.current = now;
     });
   }, [getBoundedPosition, updateFPS]);
@@ -402,16 +376,20 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   const resetView = useCallback(() => {
     if (!imgObj || !containerSize.width || !containerSize.height) return;
 
-    const minScale = getMinScale();
-    const imageWidth = imgObj.naturalWidth * minScale;
-    const imageHeight = imgObj.naturalHeight * minScale;
+    // Calculate scale to fit image in container for reset/initial view
+    const scaleX = containerSize.width / imgObj.naturalWidth;
+    const scaleY = containerSize.height / imgObj.naturalHeight;
+    const fitScale = Math.min(scaleX, scaleY);
+
+    const imageWidth = imgObj.naturalWidth * fitScale;
+    const imageHeight = imgObj.naturalHeight * fitScale;
 
     updateTransformSmooth({
-      scale: minScale,
+      scale: fitScale,
       x: (containerSize.width - imageWidth) / 2,
       y: (containerSize.height - imageHeight) / 2
     });
-  }, [imgObj, containerSize, getMinScale, updateTransformSmooth]);
+  }, [imgObj, containerSize, updateTransformSmooth]);
 
   // معالجة اختصارات لوحة المفاتيح مع دعم 120 FPS
   useEffect(() => {
@@ -422,7 +400,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
         const step = e.shiftKey ? 20 : 5; // خطوات أكبر للحركة السريعة
         let deltaX = 0;
         let deltaY = 0;
-        
+
         switch (e.code) {
           case 'ArrowUp':
             deltaY = step;
@@ -437,7 +415,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
             deltaX = -step;
             break;
         }
-        
+
         updateTransformSmooth({
           x: transform.x + deltaX,
           y: transform.y + deltaY
@@ -450,7 +428,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
-    
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
@@ -459,33 +437,97 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
 
   // تطبيق الوضع الافتراضي عند تحميل الصورة أو تغيير حجم الحاوية
   useEffect(() => {
-    if (imgObj && containerSize.width && containerSize.height) {
+    if (imgObj && containerSize.width && containerSize.height && !selectedTooth) {
       resetView();
     }
-  }, [imgObj, containerSize, resetView]);
+  }, [imgObj, containerSize, resetView, selectedTooth]);
+
+  // Effect to handle tooth selection zooming and cropping
+  useEffect(() => {
+    // If no tooth selected, reset view (handled by above effect or explicit reset)
+    // Actually, we should probably only reset if we were previously zoomed in on a tooth?
+    // For now, let's keep it simple: if selectedTooth changes to null, reset.
+    if (!selectedTooth) {
+      if (imgObj && containerSize.width && containerSize.height) {
+        resetView();
+      }
+      return;
+    }
+
+    if (!tooth || !imgObj || !containerSize.width || !containerSize.height) return;
+
+    const selectedFinding = tooth.find(f => f.toothNumber == selectedTooth);
+    if (!selectedFinding) {
+      toast.warning(`Tooth ${selectedTooth} not found in image analysis.`);
+      return;
+    }
+
+    const boundingBox = getToothBoundingBox(selectedFinding);
+    if (!boundingBox) {
+      toast.warning(`Position data unavailable for Tooth ${selectedTooth}.`);
+      return;
+    }
+
+    const { x, y, width, height } = boundingBox;
+
+    // Calculate scale to fit the tooth in the container with some padding
+    const padding = Math.min(width, height) * 0.5; // 50% padding
+
+    // Target display area (to center it) based on container aspect ratio
+    // User requested that the image NOT be the size of the container (i.e., not full screen/huge)
+    // We will target a smaller portion of the screen, e.g., 40% of the container dimensions
+    const targetContainerWidth = containerSize.width * 0.4;
+    const targetContainerHeight = containerSize.height * 0.6; // Allow a bit more height
+
+    const scaleX = targetContainerWidth / (width + padding * 2);
+    const scaleY = targetContainerHeight / (height + padding * 2);
+
+    // Choose the smaller scale to ensure it fits
+    let newScale = Math.min(scaleX, scaleY);
+
+    // Ensure we don't zoom out too much (minimum 1) and don't zoom in *too* much (cap at 3)
+    newScale = Math.max(1, Math.min(newScale, 3));
+
+    // Calculate new position to center the tooth
+    // formatting: center of viewport = (center of tooth) * scale + offset
+    // offset = center of viewport - (center of tooth) * scale
+
+    const toothCenterX = x + width / 2;
+    const toothCenterY = y + height / 2;
+
+    const newX = (containerSize.width / 2) - (toothCenterX * newScale);
+    const newY = (containerSize.height / 2) - (toothCenterY * newScale);
+
+    updateTransformSmooth({
+      scale: newScale,
+      x: newX,
+      y: newY
+    });
+
+  }, [selectedTooth, tooth, imgObj, containerSize]);
 
   // معالجة عجلة الماوس للزوم مع دعم 120 FPS
   const handleWheel = useCallback((e) => {
     if (isLocked) return;
     e.evt.preventDefault();
-    
+
     const stage = stageRef.current;
     if (!stage || !imgObj) return;
 
     const now = performance.now();
     const timeDiff = now - lastUpdateRef.current;
-    
+
     // تحسين معدل الاستجابة للـ 120 FPS
     if (timeDiff < FRAME_TIME * 0.5) return; // تقليل الحد الأدنى للوقت
 
     const pointer = stage.getPointerPosition();
     const minScale = getMinScale();
     const maxScale = 8; // زيادة الحد الأقصى للزوم
-    
+
     // حساب المقياس الجديد مع تحسين التدرج للـ 120 FPS
     const scaleBy = 1.05; // قيمة أصغر للنعومة الفائقة
     const oldScale = transform.scale;
-    const newScale = e.evt.deltaY > 0 
+    const newScale = e.evt.deltaY > 0
       ? Math.max(minScale, oldScale / scaleBy)
       : Math.min(maxScale, oldScale * scaleBy);
 
@@ -525,24 +567,24 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
 
     const now = performance.now();
     const timeDiff = now - lastUpdateRef.current;
-    
+
     // تحسين معدل التحديث للـ 120 FPS - إزالة القيود تقريباً
     if (timeDiff < FRAME_TIME * 0.3) return; // ~2.5ms فقط
-    
+
     const stage = stageRef.current;
     const pointer = stage.getPointerPosition();
-    
+
     // حساب التغيير في الموضع مع تنعيم الحركة
     const deltaX = pointer.x - lastPointerPos.x;
     const deltaY = pointer.y - lastPointerPos.y;
-    
+
     // تطبيق تنعيم للحركة
     const smoothFactor = 0.95; // تنعيم خفيف
     const smoothDeltaX = deltaX * smoothFactor;
     const smoothDeltaY = deltaY * smoothFactor;
-    
+
     setLastPointerPos({ x: pointer.x, y: pointer.y });
-    
+
     updateTransformSmooth({
       x: transform.x + smoothDeltaX,
       y: transform.y + smoothDeltaY
@@ -613,7 +655,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
         const p1 = { x: finalPoints[0], y: finalPoints[1] };
         const p2 = { x: finalPoints[2], y: finalPoints[3] };
         const distance = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-        
+
         const newMeasurement = { points: finalPoints, text: `${distance.toFixed(2)} px` };
         setMeasurementLines(prev => [...prev, newMeasurement]);
         saveToHistory('measurement', newMeasurement);
@@ -623,51 +665,44 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
       return; // Prevent dragging when using measurement tool
     }
 
-    if (e.target === e.target.getStage()) {
-      handleDragStart(e);
-    }
+    handleDragStart(e);
   }, [activeTool, isDrawing, stageRef, transform, handleDragStart, currentLinePoints, saveToHistory, isLocked]);
 
   const handleStageMouseMove = useCallback((e) => {
-    // Track cursor position for drawing guides
-    const stage = stageRef.current;
-    if (stage) {
-      const pos = stage.getPointerPosition();
-      setCursorPosition(pos);
-    }
+
 
     // Measurement tool logic
     if (isDrawing && activeTool === 'linear') {
-        const stage = stageRef.current;
-        if (!stage) return;
-        const pos = stage.getPointerPosition();
-        const transformedPos = {
-            x: (pos.x - transform.x) / transform.scale,
-            y: (pos.y - transform.y) / transform.scale,
-        };
-        setCurrentLinePoints(prev => [prev[0], prev[1], transformedPos.x, transformedPos.y]);
-        return;
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pos = stage.getPointerPosition();
+      const transformedPos = {
+        x: (pos.x - transform.x) / transform.scale,
+        y: (pos.y - transform.y) / transform.scale,
+      };
+      setCurrentLinePoints(prev => [prev[0], prev[1], transformedPos.x, transformedPos.y]);
+      return;
     }
 
     // Rectangle drawing logic
     if (isDrawingShape && activeTool === 'rectangle' && currentRectangle) {
-        const stage = stageRef.current;
-        if (!stage) return;
-        const pos = stage.getPointerPosition();
-        const transformedPos = {
-            x: (pos.x - transform.x) / transform.scale,
-            y: (pos.y - transform.y) / transform.scale,
-        };
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pos = stage.getPointerPosition();
+      const transformedPos = {
+        x: (pos.x - transform.x) / transform.scale,
+        y: (pos.y - transform.y) / transform.scale,
+      };
 
-        setCurrentRectangle(prev => ({
-            x: prev.x,
-            y: prev.y,
-            width: transformedPos.x - prev.x,
-            height: transformedPos.y - prev.y
-        }));
-        return;
+      setCurrentRectangle(prev => ({
+        x: prev.x,
+        y: prev.y,
+        width: transformedPos.x - prev.x,
+        height: transformedPos.y - prev.y
+      }));
+      return;
     }
-    
+
     if (isDragging) {
       handleDragMove(e);
     }
@@ -731,7 +766,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
 
   // Separate findings into structures and problems for layered rendering
   const structuralElements = ['tooth', 'crown', 'root', 'jaw'];
-  
+
   const structures = tooth.filter(f => structuralElements.includes(f.type));
   const problems = tooth.filter(f => !structuralElements.includes(f.type));
 
@@ -826,7 +861,23 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
               // تحسين الأداء للمجموعة
               perfectDrawEnabled={false}
               shadowForStrokeEnabled={false}
-              hitGraphEnabled={false}
+              hitGraphEnabled={true}
+              clip={(() => {
+                if (!selectedTooth || !tooth) return undefined;
+                const finding = tooth.find(f => f.toothNumber == selectedTooth);
+                const bb = getToothBoundingBox(finding);
+                if (bb) {
+                  // Add some padding to the specific clip as well effectively acting as the crop
+                  const padding = Math.min(bb.width, bb.height) * 0.1;
+                  return {
+                    x: bb.x - padding,
+                    y: bb.y - padding,
+                    width: bb.width + (padding * 2),
+                    height: bb.height + (padding * 2)
+                  };
+                }
+                return undefined;
+              })()}
             >
               <Image
                 ref={imageNodeRef}
@@ -836,55 +887,56 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
                 perfectDrawEnabled={false}
                 imageSmoothingEnabled={true}
                 pixelRatio={window.devicePixelRatio || 1}
+                listening={false}
               />
               {/* إذا كانت الطبقات مفعلة، اعرض كل الرسومات */}
-              {showLayers && (
+              {true && (
                 <>
                   {/* Grid Overlay */}
                   {showGrid && imgObj && (
                     <Group listening={false}>
                       {/* Vertical lines */}
                       {[...Array(Math.ceil(imgObj.naturalWidth / 50))].map((_, i) => (
-                          <Line 
-                              key={`grid-v-${i}`} 
-                              points={[i * 50, 0, i * 50, imgObj.naturalHeight]} 
-                              stroke="rgba(255,255,255,0.15)" 
-                              strokeWidth={1 / transform.scale} 
-                          />
+                        <Line
+                          key={`grid-v-${i}`}
+                          points={[i * 50, 0, i * 50, imgObj.naturalHeight]}
+                          stroke="rgba(255,255,255,0.15)"
+                          strokeWidth={1 / transform.scale}
+                        />
                       ))}
                       {/* Horizontal lines */}
                       {[...Array(Math.ceil(imgObj.naturalHeight / 50))].map((_, i) => (
-                          <Line 
-                              key={`grid-h-${i}`} 
-                              points={[0, i * 50, imgObj.naturalWidth, i * 50]} 
-                              stroke="rgba(255,255,255,0.15)" 
-                              strokeWidth={1 / transform.scale} 
-                          />
+                        <Line
+                          key={`grid-h-${i}`}
+                          points={[0, i * 50, imgObj.naturalWidth, i * 50]}
+                          stroke="rgba(255,255,255,0.15)"
+                          strokeWidth={1 / transform.scale}
+                        />
                       ))}
                       {/* Grid numbers */}
                       {transform.scale > 0.5 && (
                         <>
                           {[...Array(Math.ceil(imgObj.naturalWidth / 100))].map((_, i) => (
-                              <Text
-                                  key={`grid-x-${i}`}
-                                  x={i * 100 + 5}
-                                  y={15}
-                                  text={`${i * 100}`}
-                                  fontSize={10 / transform.scale}
-                                  fill="rgba(255,255,255,0.6)"
-                                  listening={false}
-                              />
+                            <Text
+                              key={`grid-x-${i}`}
+                              x={i * 100 + 5}
+                              y={15}
+                              text={`${i * 100}`}
+                              fontSize={10 / transform.scale}
+                              fill="rgba(255,255,255,0.6)"
+                              listening={false}
+                            />
                           ))}
                           {[...Array(Math.ceil(imgObj.naturalHeight / 100))].map((_, i) => (
-                              <Text
-                                  key={`grid-y-${i}`}
-                                  x={5}
-                                  y={i * 100 + 15}
-                                  text={`${i * 100}`}
-                                  fontSize={10 / transform.scale}
-                                  fill="rgba(255,255,255,0.6)"
-                                  listening={false}
-                              />
+                            <Text
+                              key={`grid-y-${i}`}
+                              x={5}
+                              y={i * 100 + 15}
+                              text={`${i * 100}`}
+                              fontSize={10 / transform.scale}
+                              fill="rgba(255,255,255,0.6)"
+                              listening={false}
+                            />
                           ))}
                         </>
                       )}
@@ -893,7 +945,8 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
                   {/* رسم الأسنان والعناصر الطبية والفك */}
                   {findingsToRender.map((finding, index) => {
                     const style = getProblemStyle(finding.type);
-                    const points = adjustCoordinates(finding.polygon);
+                    const points = adjustCoordinates(finding.polygon || finding.teeth_mask || finding.mask);
+
                     return (
                       <React.Fragment key={`finding-${index}`}>
                         {ShowSetting.showTeeth && (
@@ -901,18 +954,56 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
                             points={points}
                             {...applyShadowProps(style, transform.scale)}
                             closed
+                            onClick={(e) => {
+                              console.log('Tooth clicked:', finding.toothNumber);
+                              if (onToothClick && finding.toothNumber) {
+                                e.cancelBubble = true;
+                                onToothClick(finding.toothNumber);
+                              }
+                            }}
+                            onTap={(e) => {
+                              if (onToothClick && finding.toothNumber) {
+                                e.cancelBubble = true;
+                                onToothClick(finding.toothNumber);
+                              }
+                            }}
                           />
+                        )}
+                        {selectedTooth == finding.toothNumber && (
+                          (() => {
+                            const boundingBox = getToothBoundingBox(finding);
+
+                            if (!boundingBox) {
+                              // console.log('Could not determine bounding box for tooth', finding.toothNumber);
+                              return null;
+                            }
+
+                            const { x, y, width, height } = boundingBox;
+                            console.log(x, y, width, height, "boundingBox");
+                            return (
+                              <Rect
+                                x={x}
+                                y={y}
+                                width={width}
+                                height={height}
+                                stroke="#00ff00"
+                                strokeWidth={2 / transform.scale}
+                                dash={[5 / transform.scale, 5 / transform.scale]}
+                                listening={false}
+                              />
+                            );
+                          })()
                         )}
                         {finding.problems?.filter(problem => ShowSetting.problems[`show${problem.type}`])
                           .map((problem, pIndex) => {
                             const style = getProblemStyle(problem.type);
                             return (
-                                <Line
-                                  key={`problem-${index}-${pIndex}`}
-                                  points={adjustCoordinates(problem.mask)}
-                                  {...applyShadowProps(style, transform.scale)}
-                                  closed
-                                />
+                              <Line
+                                key={`problem-${index}-${pIndex}`}
+                                points={adjustCoordinates(problem.mask)}
+                                {...applyShadowProps(style, transform.scale)}
+                                closed
+                              />
                             );
                           })}
                         {ShowSetting.showRoots && finding.Root?.mask && (
@@ -932,117 +1023,137 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
                       </React.Fragment>
                     );
                   })}
+                  {/* Hover Highlight */}
+                  {hoveredProblem && (() => {
+                    console.log('hoveredProblem', hoveredProblem);
+                    const bb = getToothBoundingBox(hoveredProblem);
+                    if (bb) {
+                      return (
+                        <Rect
+                          x={bb.x}
+                          y={bb.y}
+                          width={bb.width}
+                          height={bb.height}
+                          stroke="#FFFF00"
+                          strokeWidth={3 / transform.scale}
+                          fill="rgba(255, 255, 0, 0.2)"
+                          listening={false}
+                        />
+                      );
+                    }
+                    return null;
+                  })()}
                   {/* Measurement Lines and Text */}
                   {measurementLines.map((line, i) => {
-                      const style = COLOR_PALETTE.measurement;
-                      const textContent = line.text;
-                      const fontSize = 14 / transform.scale;
-                      const textWidth = (textContent.length * fontSize * 0.6);
-                      const textHeight = fontSize * 1.2;
-                      const paddingX = 8 / transform.scale;
-                      const paddingY = 4 / transform.scale;
-                      const textX = (line.points[0] + line.points[2]) / 2;
-                      const textY = (line.points[1] + line.points[3]) / 2 - (textHeight + 10 / transform.scale) ;
-                      return (
-                          <Group key={`m-line-${i}`} listening={false}>
-                              {/* Main line */}
-                              <Line
-                                  points={line.points}
-                                  stroke={style.stroke}
-                                  strokeWidth={style.strokeWidth / transform.scale}
-                                  shadowColor={style.shadowColor}
-                                  shadowBlur={style.shadowBlur / transform.scale}
-                                  shadowOpacity={0.7}
-                                  lineCap="round"
-                              />
-                              {/* Endpoints */}
-                              <Circle
-                                  x={line.points[0]}
-                                  y={line.points[1]}
-                                  radius={4 / transform.scale}
-                                  fill={style.stroke}
-                              />
-                              <Circle
-                                  x={line.points[2]}
-                                  y={line.points[3]}
-                                  radius={4 / transform.scale}
-                                  fill={style.stroke}
-                              />
-                              {/* Text Background */}
-                              <Rect
-                                  x={textX - (textWidth / 2) - paddingX / 2}
-                                  y={textY - (textHeight / 2) - paddingY / 2}
-                                  width={textWidth + paddingX}
-                                  height={textHeight + paddingY}
-                                  fill="rgba(0,0,0,0.75)"
-                                  cornerRadius={4 / transform.scale}
-                              />
-                              {/* Measurement Text */}
-                              <Text
-                                  x={textX}
-                                  y={textY}
-                                  text={textContent}
-                                  fontSize={fontSize}
-                                  fill={style.fill}
-                                  fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
-                                  fontStyle="bold"
-                                  offsetX={textWidth/2}
-                                  offsetY={textHeight/2}
-                              />
-                          </Group>
-                      )
-                  })}
-                  {isDrawing && (
-                      <Group listening={false}>
+                    const style = COLOR_PALETTE.measurement;
+                    const textContent = line.text;
+                    const fontSize = 14 / transform.scale;
+                    const textWidth = (textContent.length * fontSize * 0.6);
+                    const textHeight = fontSize * 1.2;
+                    const paddingX = 8 / transform.scale;
+                    const paddingY = 4 / transform.scale;
+                    const textX = (line.points[0] + line.points[2]) / 2;
+                    const textY = (line.points[1] + line.points[3]) / 2 - (textHeight + 10 / transform.scale);
+                    return (
+                      <Group key={`m-line-${i}`} listening={false}>
+                        {/* Main line */}
                         <Line
-                            points={currentLinePoints}
-                            stroke={COLOR_PALETTE.measurement.stroke}
-                            strokeWidth={2 / transform.scale}
-                            dash={[6 / transform.scale, 3 / transform.scale]}
-                            lineCap="round"
+                          points={line.points}
+                          stroke={style.stroke}
+                          strokeWidth={style.strokeWidth / transform.scale}
+                          shadowColor={style.shadowColor}
+                          shadowBlur={style.shadowBlur / transform.scale}
+                          shadowOpacity={0.7}
+                          lineCap="round"
                         />
-                         <Circle
-                            x={currentLinePoints[0]}
-                            y={currentLinePoints[1]}
-                            radius={4 / transform.scale}
-                            fill={COLOR_PALETTE.measurement.stroke}
+                        {/* Endpoints */}
+                        <Circle
+                          x={line.points[0]}
+                          y={line.points[1]}
+                          radius={4 / transform.scale}
+                          fill={style.stroke}
                         />
                         <Circle
-                            x={currentLinePoints[2]}
-                            y={currentLinePoints[3]}
-                            radius={4 / transform.scale}
-                            fill={COLOR_PALETTE.measurement.stroke}
+                          x={line.points[2]}
+                          y={line.points[3]}
+                          radius={4 / transform.scale}
+                          fill={style.stroke}
+                        />
+                        {/* Text Background */}
+                        <Rect
+                          x={textX - (textWidth / 2) - paddingX / 2}
+                          y={textY - (textHeight / 2) - paddingY / 2}
+                          width={textWidth + paddingX}
+                          height={textHeight + paddingY}
+                          fill="rgba(0,0,0,0.75)"
+                          cornerRadius={4 / transform.scale}
+                        />
+                        {/* Measurement Text */}
+                        <Text
+                          x={textX}
+                          y={textY}
+                          text={textContent}
+                          fontSize={fontSize}
+                          fill={style.fill}
+                          fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                          fontStyle="bold"
+                          offsetX={textWidth / 2}
+                          offsetY={textHeight / 2}
                         />
                       </Group>
+                    )
+                  })}
+                  {isDrawing && (
+                    <Group listening={false}>
+                      <Line
+                        points={currentLinePoints}
+                        stroke={COLOR_PALETTE.measurement.stroke}
+                        strokeWidth={2 / transform.scale}
+                        dash={[6 / transform.scale, 3 / transform.scale]}
+                        lineCap="round"
+                      />
+                      <Circle
+                        x={currentLinePoints[0]}
+                        y={currentLinePoints[1]}
+                        radius={4 / transform.scale}
+                        fill={COLOR_PALETTE.measurement.stroke}
+                      />
+                      <Circle
+                        x={currentLinePoints[2]}
+                        y={currentLinePoints[3]}
+                        radius={4 / transform.scale}
+                        fill={COLOR_PALETTE.measurement.stroke}
+                      />
+                    </Group>
                   )}
                   {/* Drawn Rectangles */}
                   {drawnRectangles.map((rect, i) => (
-                      <Group key={`rect-${i}`}>
-                          <Line
-                              points={[
-                                  rect.x, rect.y,
-                                  rect.x + rect.width, rect.y,
-                                  rect.x + rect.width, rect.y + rect.height,
-                                  rect.x, rect.y + rect.height,
-                                  rect.x, rect.y
-                              ]}
-                              {...applyShadowProps(COLOR_PALETTE.drawing, transform.scale)}
-                          />
-                      </Group>
+                    <Group key={`rect-${i}`}>
+                      <Line
+                        points={[
+                          rect.x, rect.y,
+                          rect.x + rect.width, rect.y,
+                          rect.x + rect.width, rect.y + rect.height,
+                          rect.x, rect.y + rect.height,
+                          rect.x, rect.y
+                        ]}
+                        {...applyShadowProps(COLOR_PALETTE.drawing, transform.scale)}
+                      />
+                    </Group>
                   ))}
                   {/* Current Rectangle (being drawn) */}
                   {currentRectangle && (
-                      <Line
-                          points={[
-                              currentRectangle.x, currentRectangle.y,
-                              currentRectangle.x + currentRectangle.width, currentRectangle.y,
-                              currentRectangle.x + currentRectangle.width, currentRectangle.y + currentRectangle.height,
-                              currentRectangle.x, currentRectangle.y + currentRectangle.height,
-                              currentRectangle.x, currentRectangle.y
-                          ]}
-                          {...applyShadowProps(COLOR_PALETTE.drawing, transform.scale)}
-                          dash={[4 / transform.scale, 4 / transform.scale]}
-                      />
+                    <Line
+                      points={[
+                        currentRectangle.x, currentRectangle.y,
+                        currentRectangle.x + currentRectangle.width, currentRectangle.y,
+                        currentRectangle.x + currentRectangle.width, currentRectangle.y + currentRectangle.height,
+                        currentRectangle.x, currentRectangle.y + currentRectangle.height,
+                        currentRectangle.x, currentRectangle.y
+                      ]}
+                      {...applyShadowProps(COLOR_PALETTE.drawing, transform.scale)}
+                      dash={[4 / transform.scale, 4 / transform.scale]}
+                    />
                   )}
                   {/* Drawn Points */}
                   {drawnPoints.map((point, i) => {

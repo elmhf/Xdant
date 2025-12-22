@@ -138,7 +138,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                     <button
                       onClick={() => fileInputRef.current && fileInputRef.current.click()}
                       disabled={isUploadingPhoto}
-                      className="px-4 py-2 cursor-pointer bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 cursor-pointer bg-gray-900 text-white rounded-2xl hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isUploadingPhoto ? (
                         <>
@@ -154,7 +154,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                     <button
                       onClick={handlePhotoDelete}
                       disabled={!userInfo.profilePhotoUrl || isDeletingPhoto}
-                      className="px-4 py-2 cursor-pointer bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 cursor-pointer bg-gray-100 text-gray-700 rounded-2xl hover:bg-gray-200 transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isDeletingPhoto ? (
                         <>
@@ -181,13 +181,13 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700">Prénom</label>
-           
-                    <Input
-                      value={userInfo?.firstName || ""}
-                      disabled
-                      className="h-12 max-w-sm text-base flex-1"
-                    />
-                
+
+                  <Input
+                    value={userInfo?.firstName || ""}
+                    disabled
+                    className="h-12 max-w-sm text-base flex-1"
+                  />
+
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700">Nom</label>
@@ -199,7 +199,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                     />
                     <button
                       onClick={() => setShowNameForm(true)}
-                      className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors font-medium whitespace-nowrap"
+                      className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap"
                     >
                       Edit
                     </button>
@@ -223,7 +223,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                   />
                   <button
                     onClick={() => setShowEmailForm(true)}
-                    className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors font-medium whitespace-nowrap"
+                    className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap"
                   >
                     Edit
                   </button>
@@ -242,7 +242,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                   />
                   <button
                     onClick={() => setShowPasswordForm(true)}
-                    className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors font-medium whitespace-nowrap"
+                    className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap"
                   >
                     Edit
                   </button>
@@ -256,7 +256,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                   <p className="text-sm text-gray-600">Gérer les paramètres de sécurité et l'accès au support</p>
                 </div>
                 <SupportAccessSection userInfo={userInfo} setUserInfo={setUserInfo}>
-                  <button className="px-4 py-2 cursor-pointer text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium whitespace-nowrap">
+                  <button className="px-4 py-2 cursor-pointer text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
                     Gérer
                   </button>
                 </SupportAccessSection>

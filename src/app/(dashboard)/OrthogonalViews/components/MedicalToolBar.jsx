@@ -72,11 +72,11 @@ export default function MedicalToolBar() {
       <div className="flex-1 p-4 gap-4 flex flex-col">
         {selectedView === "main" ? (
           <>
-            <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg mb-4 transition-colors">
+            <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-2xl mb-4 transition-colors">
               Run AI
             </button>
 
-            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 mb-6">
+            <div className="bg-yellow-50 border border-yellow-300 rounded-2xl p-3 mb-6">
               <div className="flex items-start gap-2">
                 <span className="text-yellow-500 text-lg">⚠</span>
                 <div className="text-yellow-700 text-xs leading-relaxed">

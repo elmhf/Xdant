@@ -34,7 +34,7 @@ export default function ClinicNameForm({ value, onSave, onBack }) {
       />
 
       <div className="flex gap-2 mt-4">
-        <Button type="submit" className="flex-1 bg-[#6a5acd] hover:bg-[#625a97] text-white rounded-lg" disabled={!name || loading}>
+        <Button type="submit" className="flex-1 bg-[#6a5acd] hover:bg-[#625a97] text-white rounded-2xl" disabled={!name || loading}>
           {loading ? "Enregistrement..." : "Enregistrer"}
         </Button>
         <Button type="button" variant="outline" className="flex-1" onClick={onBack} disabled={loading}>

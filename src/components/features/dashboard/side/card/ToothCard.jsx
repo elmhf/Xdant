@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, memo, useRef } from "react";
+import React, { useState, useEffect, memo, useRef, useContext } from "react";
 import RenderAllSlices from "./randerSlice";
 import { useTranslation } from "react-i18next";
 import { useLayout } from "@/stores/setting";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, MessageSquare } from 'lucide-react';
 import AddConditionDialog from './AddConditionDialog';
 import EditConditionsDialog from './EditConditionsDialog';
+import { DataContext } from "../../dashboard";
 import { useDentalStore } from '@/stores/dataStore';
 import { Badge } from "@/components/ui/badge";
 import { useRouter, usePathname } from "next/navigation";
@@ -71,6 +72,8 @@ const ToothDiagnosis = memo(({
     setShowCommentBox(false);
   };
 
+  const { setHoveredProblem } = useContext(DataContext);
+
   const ProblemTags = ({ problems }) => {
     // Filter out problems where targetProblem is explicitly false
     const visibleProblems = (problems || []).filter(p => p.targetProblem !== false);
@@ -101,7 +104,11 @@ const ToothDiagnosis = memo(({
 
       return (
         <React.Fragment key={tagKey}>
-          <span className={`text-[15px] font-[600] px-3 py-2 rounded-md whitespace-nowrap ${tagStyle}`}>
+          <span
+            className={`text-[15px] font-[600] px-3 py-2 rounded-md whitespace-nowrap ${tagStyle} cursor-pointer transition-all duration-200 hover:scale-105`}
+            onMouseEnter={() => setHoveredProblem(p)}
+            onMouseLeave={() => setHoveredProblem(null)}
+          >
             {tagText}
           </span>
           {p.tags && p.tags.map((extraTag, extraIndex) => (
@@ -156,7 +163,7 @@ const ToothDiagnosis = memo(({
       <div className="flex justify-between items-end pt-4 border-t border-gray-100 mt-auto">
         <div className="flex gap-3 w-full flex-wrap">
           <EditConditionsDialog toothNumber={idCard}>
-            <Button variant="outline" size="sm" className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-[#0d0c22] flex items-center" onClick={(e) => e.stopPropagation()}>
+            <Button variant="outline" size="sm" className="text-lg font-medium px-3 py-2 rounded-2xl hover:bg-gray-50 hover:border-[#0d0c22] flex items-center" onClick={(e) => e.stopPropagation()}>
               <PlusCircle className="w-4 h-4 mr-2" />
               {t('side.card.Condition')}
             </Button>
@@ -165,7 +172,7 @@ const ToothDiagnosis = memo(({
           <Button
             variant="outline"
             size="sm"
-            className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center"
+            className="text-lg font-medium px-3 py-2 rounded-2xl hover:bg-gray-50 hover:border-gray-400 flex items-center"
             onClick={(e) => {
               e.stopPropagation();
               setShowCommentBox(v => !v);
@@ -181,7 +188,7 @@ const ToothDiagnosis = memo(({
             <Button
               variant="outline"
               size="sm"
-              className="text-lg font-medium px-3 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 flex items-center ml-2"
+              className="text-lg font-medium px-3 py-2 rounded-2xl hover:bg-gray-50 hover:border-gray-400 flex items-center ml-2"
               onClick={(e) => {
                 e.stopPropagation();
                 router.push(`${pathname}/ToothSlice/${idCard}`);
@@ -194,7 +201,7 @@ const ToothDiagnosis = memo(({
           <Button
             variant={isApproved ? "success" : "outline"}
             size="sm"
-            className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+            className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
             style={{ color: isApproved ? '#16a34a' : undefined, backgroundColor: isApproved ? '#E9FCF0' : undefined }}
             onClick={(e) => {
               e.stopPropagation();
@@ -207,7 +214,7 @@ const ToothDiagnosis = memo(({
       </div>
 
       {showCommentBox && (
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200" onClick={(e) => e.stopPropagation()}>
+        <div className="mt-4 p-3 bg-gray-50 rounded-2xl border border-gray-200" onClick={(e) => e.stopPropagation()}>
           <Textarea
             placeholder={t('side.card.NotePlaceholder') || 'Add a note...'}
             value={newNote}
@@ -245,11 +252,11 @@ const ToothDiagnosis = memo(({
       {notes.length > 0 && (
         <div className="flex flex-col gap-2 mt-4 w-full">
           {notes.slice(0, showAllNotes ? notes.length : 3).map((n, idx) => (
-            <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-base text-gray-800">
+            <div key={idx} className="bg-gray-50 border border-gray-200 rounded-2xl p-3 text-base text-gray-800">
               {editIdx === idx ? (
                 <>
                   <textarea
-                    className="w-full min-h-[200px] border rounded-lg p-2"
+                    className="w-full min-h-[200px] border rounded-2xl p-2"
                     value={editText}
                     onChange={e => setEditText(e.target.value)}
                   />

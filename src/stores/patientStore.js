@@ -551,7 +551,7 @@ export const usePatientStore = create(
         set({ reportsLoading: true });
         try {
           const data = await apiClient(`/api/reports/patient/${patientId}`);
-          const serverReports = data.reports || [];
+          const serverReports = (data && data.reports) || [];
 
           // Merge server reports with existing reports, avoiding duplicates
           set(state => {

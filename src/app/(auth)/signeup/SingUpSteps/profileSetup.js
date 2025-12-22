@@ -113,7 +113,7 @@ export default function ProfileSetup({ onBack, onNext, isFirstStep, isLastStep }
           <div className="space-y-2">
             <Label className="text-gray-700 font-semibold">Upload a profile picture</Label>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-lg bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-2xl bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden">
                 {profileImage ? (
                   <img
                     src={profileImage}
@@ -136,7 +136,7 @@ export default function ProfileSetup({ onBack, onNext, isFirstStep, isLastStep }
                 />
                 <label
                   htmlFor="profile-upload"
-                  className="inline-block px-5 py-2 border-2 border-gray-300 rounded-lg bg-white text-gray-700 font-semibold cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition"
+                  className="inline-block px-5 py-2 border-2 border-gray-300 rounded-2xl bg-white text-gray-700 font-semibold cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition"
                   style={{ boxShadow: 'none' }}
                 >
                   Upload picture
@@ -149,7 +149,7 @@ export default function ProfileSetup({ onBack, onNext, isFirstStep, isLastStep }
           <div className="space-y-2">
             <Label className="text-gray-700 font-semibold">Upload a clinic logo</Label>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-lg bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-2xl bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden">
                 {clinicLogo ? (
                   <img
                     src={clinicLogo}
@@ -172,7 +172,7 @@ export default function ProfileSetup({ onBack, onNext, isFirstStep, isLastStep }
                 />
                 <label
                   htmlFor="logo-upload"
-                  className="inline-block px-5 py-2 border-2 border-gray-300 rounded-lg bg-white text-gray-700 font-semibold cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition"
+                  className="inline-block px-5 py-2 border-2 border-gray-300 rounded-2xl bg-white text-gray-700 font-semibold cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition"
                   style={{ boxShadow: 'none' }}
                 >
                   Upload picture
@@ -185,7 +185,7 @@ export default function ProfileSetup({ onBack, onNext, isFirstStep, isLastStep }
           <div className="space-y-3">
             <Label className="text-gray-700 font-semibold">Digital Signature</Label>
             {/* Signature Mode Toggle supprimé, on garde que Draw */}
-            <div className="border border-gray-300 rounded-lg bg-white p-4">
+            <div className="border border-gray-300 rounded-2xl bg-white p-4">
               <svg
                 ref={svgRef}
                 width="100%"

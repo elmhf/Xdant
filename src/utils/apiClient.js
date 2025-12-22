@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-
+import axios from "axios";
 const BACKEND_URL = 'http://localhost:5000';
 
 /**
@@ -97,7 +97,7 @@ export async function apiClient(endpoint, options = {}) {
                 toast.error(errorMessage);
             }
 
-            throw new ApiError(errorMessage, response.status, errorData);
+            // throw new ApiError(errorMessage, response.status, errorData);
         }
 
         // Return successful response

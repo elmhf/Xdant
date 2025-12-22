@@ -124,7 +124,7 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
           </div>
           <button
             onClick={toggleSelectionMode}
-            className={`px-6 py-2.5 text-base font-bold rounded-lg 
+            className={`px-6 py-2.5 text-base font-bold rounded-2xl 
              bg-[#EBE8FC] text-[#7564ed] hover:bg-[#ddd6fc] 
               `}
           >

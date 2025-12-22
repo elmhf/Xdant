@@ -127,7 +127,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
               type="text"
               value={clinicInfo.clinic_name || ""}
               disabled
-              className="h-12 text-base  max-w-sm  rounded-lg px-3 w-full text-gray-900"
+              className="h-12 text-base  max-w-sm  rounded-2xl px-3 w-full text-gray-900"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
               type="url"
               value={clinicInfo.website || ""}
               disabled
-              className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+              className="h-12 text-base   rounded-2xl px-3 w-full text-gray-900"
             />
           </div>
 
@@ -150,7 +150,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
                 type="text"
                 value={clinicInfo.country || ""}
                 disabled
-                className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+                className="h-12 text-base   rounded-2xl px-3 w-full text-gray-900"
               />
             </div>
             <div className="space-y-2">
@@ -159,7 +159,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
                 type="text"
                 value={clinicInfo.neighbourhood || ""}
                 disabled
-                className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+                className="h-12 text-base   rounded-2xl px-3 w-full text-gray-900"
               />
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
                 type="text"
                 value={clinicInfo.city || ""}
                 disabled
-                className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+                className="h-12 text-base   rounded-2xl px-3 w-full text-gray-900"
               />
             </div>
             <div className="space-y-2">
@@ -181,7 +181,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
                 type="text"
                 value={clinicInfo.postal_code || ""}
                 disabled
-                className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+                className="h-12 text-base   rounded-2xl px-3 w-full text-gray-900"
               />
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
               type="text"
               value={clinicInfo.street_address || ""}
               disabled
-              className="h-12 text-base   rounded-lg px-3 w-full text-gray-900"
+              className="h-12 text-base   rounded-2xl px-3 w-full text-gray-900"
             />
           </div>
 
@@ -202,7 +202,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
             <button
               onClick={() => { setSelectedOption("name"); setStep(1); setOpen(true); }}
               disabled={!canEdit}
-              className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors font-medium whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
             >
               Edit clinic info
             </button>
@@ -219,12 +219,12 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
                   type="email"
                   value={clinicInfo.email || ""}
                   disabled
-                  className="h-12    rounded-lg px-3 flex-1 text-gray-900"
+                  className="h-12    rounded-2xl px-3 flex-1 text-gray-900"
                 />
                 <button
                   onClick={() => { setSelectedOption("email"); setStep(1); setOpen(true); }}
                   disabled={!canEdit}
-                  className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent font-medium whitespace-nowrap"
+                  className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent font-medium whitespace-nowrap"
                 >
                   Edit
                 </button>
@@ -237,12 +237,12 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
                   type="tel"
                   value={clinicInfo.phone || ""}
                   disabled
-                  className="h-12 text-base   rounded-lg px-3 flex-1 text-gray-900"
+                  className="h-12 text-base   rounded-2xl px-3 flex-1 text-gray-900"
                 />
                 <button
                   onClick={() => { setSelectedOption("phone"); setStep(1); setOpen(true); }}
                   disabled={!canEdit}
-                  className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent font-medium whitespace-nowrap"
+                  className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent font-medium whitespace-nowrap"
                 >
                   Edit
                 </button>

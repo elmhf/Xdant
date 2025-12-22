@@ -273,12 +273,12 @@ export default function PatientPage() {
         {/* Filter Bar Above Table */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
           {/* Tabs */}
-          <div className="flex font-[500] space-x-1 p-1 rounded-lg min-w-fit overflow-x-auto">
+          <div className="flex font-[500] space-x-1 p-1 rounded-2xl min-w-fit overflow-x-auto">
             {tabs.map((tab) => (
               <Button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-3 py-2.5 rounded-lg h-12 text-[20px] md:text-[20px]  ${activeTab === tab.id
+                className={`px-3 py-2.5 rounded-2xl h-12 text-[20px] md:text-[20px]  ${activeTab === tab.id
                   ? "bg-[#7564ed] text-white"
                   : "bg-[#979eb02d] text-gray-700  hover:bg-[#7564ed] hover:text-white"
                   }`}

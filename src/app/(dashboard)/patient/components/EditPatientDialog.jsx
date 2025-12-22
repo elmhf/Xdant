@@ -188,12 +188,12 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
         <div className="space-y-6">
           {/* Error/Success Messages */}
           {formError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl">
               {formError}
             </div>
           )}
           {formSuccess && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-2xl">
               {formSuccess}
             </div>
           )}
@@ -210,7 +210,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                 value={formData.first_name || ''}
                 onChange={(e) => handleInputChange('first_name', e.target.value)}
                 className={`h-12 w-full text-base border-1 ${!formData.first_name && formError ? 'border-red-500' : 'border-gray-200'
-                  } focus:border-[#7564ed] rounded-lg`}
+                  } focus:border-[#7564ed] rounded-2xl`}
               />
               {!formData.first_name && formError && (
                 <p className="text-red-500 text-sm">Field is required</p>
@@ -227,7 +227,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                 value={formData.last_name || ''}
                 onChange={(e) => handleInputChange('last_name', e.target.value)}
                 className={`h-12 w-full text-base border-1 ${!formData.last_name && formError ? 'border-red-500' : 'border-gray-200'
-                  } focus:border-[#7564ed] rounded-lg`}
+                  } focus:border-[#7564ed] rounded-2xl`}
               />
               {!formData.last_name && formError && (
                 <p className="text-red-500 text-sm">Field is required</p>
@@ -245,7 +245,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
               type="email"
               value={formData.email || ''}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className="h-12 w-full text-base border-1 border-gray-300  rounded-lg"
+              className="h-12 w-full text-base border-1 border-gray-300  rounded-2xl"
             />
           </div>
 
@@ -260,7 +260,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                 type="tel"
                 value={formData.phone || ''}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-lg"
+                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-2xl"
               />
             </div>
 
@@ -273,7 +273,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                 type="text"
                 value={formData.address || ''}
                 onChange={(e) => handleInputChange('address', e.target.value)}
-                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-lg"
+                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-2xl"
               />
             </div>
           </div>
@@ -291,7 +291,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                     key={gender}
                     type="button"
                     onClick={() => handleInputChange('gender', gender.toLowerCase())}
-                    className={`px-6 py-2 rounded-lg text-sm font-[500] transition-colors ${formData.gender === gender.toLowerCase()
+                    className={`px-6 py-2 rounded-2xl text-sm font-[500] transition-colors ${formData.gender === gender.toLowerCase()
                       ? 'bg-[#7564ed] text-white border-[#7564ed]'
                       : 'bg-gray-100 text-gray-700 hover:border-[#7564ed]'
                       }`}
@@ -316,7 +316,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                   onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
                   max={new Date().toISOString().split('T')[0]}
                   className={`h-12 w-full text-base border-1 ${!formData.date_of_birth && formError ? 'border-red-500' : 'border-gray-200'
-                    } focus:border-[#7564ed] rounded-lg`}
+                    } focus:border-[#7564ed] rounded-2xl`}
                 />
               </div>
               {!formData.date_of_birth && formError && (
@@ -411,7 +411,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                             <SelectItem
                               key={doctor.id}
                               value={doctor.id}
-                              className="rounded-lg cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
+                              className="rounded-2xl cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
                             >
                               <div className="flex items-center gap-3 py-1">
                                 <Avatar className="h-8 w-8">
@@ -459,7 +459,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
               onClick={() => {
                 if (onDelete) onDelete(patient);
               }}
-              className="bg-red-50 hover:bg-red-100 text-red-600 hover:outline-red-600 hover:outline-2 h-12 px-6 rounded-lg flex items-center gap-2 transition-colors"
+              className="bg-red-50 hover:bg-red-100 text-red-600 hover:outline-red-600 hover:outline-2 h-12 px-6 rounded-2xl flex items-center gap-2 transition-colors"
             >
               <Trash2 className="w-5 h-5" />
               <span className="font-semibold">Remove</span>
@@ -478,7 +478,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  h-12 px-8 text-base font-semibold rounded-lg transition-all shadow-sm hover:shadow-md"
+                className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  h-12 px-8 text-base font-semibold rounded-2xl transition-all shadow-sm hover:shadow-md"
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">

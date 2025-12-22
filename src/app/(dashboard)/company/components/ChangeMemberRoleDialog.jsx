@@ -131,7 +131,7 @@ export const ChangeMemberRoleDialog = ({
 
 
               {message && (
-                <div className={`p-3 rounded-lg text-sm font-medium ${message.includes('succès')
+                <div className={`p-3 rounded-2xl text-sm font-medium ${message.includes('succès')
                   ? 'bg-green-50 text-green-800'
                   : 'bg-red-50 text-red-800'
                   }`}>
@@ -146,14 +146,14 @@ export const ChangeMemberRoleDialog = ({
                 variant="ghost"
                 onClick={() => handleOpenChange(false)}
                 disabled={loading}
-                className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               >
                 Cancel
               </Button>
               <Button
                 onClick={onConfirm}
                 disabled={loading || !newRole || newRole === mapRoleToAPI(member.role)}
-                className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               >
                 {loading ? "Updating..." : "Save Changes"}
               </Button>

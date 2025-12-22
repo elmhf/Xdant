@@ -9,7 +9,7 @@ import { toast } from "sonner";
  * @throws {Error} - Throws an error if the request fails, after showing a toast.
  */
 import { apiClient, ApiError } from "./apiClient";
-import { toast } from "sonner";
+
 
 /**
  * A wrapper around the native fetch API that handles errors with toast notifications.

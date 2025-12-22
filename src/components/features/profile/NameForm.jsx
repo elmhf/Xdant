@@ -77,7 +77,7 @@ export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) 
         <Button
           type="button"
           variant="ghost"
-          className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+          className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           onClick={onBack}
           disabled={loading}
         >
@@ -85,7 +85,7 @@ export default function NameForm({ onBack, userInfo, setUserInfo, changeName }) 
         </Button>
         <Button
           type="submit"
-          className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+          className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           disabled={!firstName.trim() || !lastName.trim() || loading}
         >
           {loading ? "Enregistrement..." : "Enregistrer"}

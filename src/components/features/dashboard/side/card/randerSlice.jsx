@@ -59,7 +59,7 @@ function RenderAllSlices({ teeth, isDragging, sliceDrager, ToothSlicemode }) {
       {/* Add Image Card */}
       {ToothSlicemode && (
         <div
-          className="h-[140px] w-[140px] flex flex-col items-center justify-center border-2 border-dashed border-[#7564ed] bg-white rounded-lg cursor-pointer hover:bg-[#f8f7ff] transition-colors gap-1"
+          className="h-[140px] w-[140px] flex flex-col items-center justify-center border-2 border-dashed border-[#7564ed] bg-white rounded-2xl cursor-pointer hover:bg-[#f8f7ff] transition-colors gap-1"
         >
           <span className="text-[#7564ed] text-lg font-bold">Add image</span>
           <span className="text-sm text-gray-400 text-center leading-tight px-1">drag&drop images here</span>
@@ -70,7 +70,7 @@ function RenderAllSlices({ teeth, isDragging, sliceDrager, ToothSlicemode }) {
         <div
           className="absolute inset-0 z-[1000] p-20 flex flex-col items-center justify-center 
                      bg-white opacity-80 border-4 border-dashed hover:[border-style:solid] border-[#7564ed] 
-                     rounded-lg text-center transition-all duration-200"
+                     rounded-2xl text-center transition-all duration-200"
           onMouseEnter={() => {
             setsliceselectlocal(sliceDrager)
             setIsHovering(true)

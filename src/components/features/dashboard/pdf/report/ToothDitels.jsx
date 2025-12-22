@@ -114,12 +114,12 @@ const ToothDetailsForPDF = ({ tooth, settings }) => {
 
 
   return (
-    <div className="bg-white  w-full rounded-lg  print:break-inside-avoid print:shadow-none shadow-sm ">
+    <div className="bg-white  w-full rounded-2xl  print:break-inside-avoid print:shadow-none shadow-sm ">
       {/* --- Header --- */}
       <div className="">
         <h2 className="text-2xl font-bold text-gray-800">
-        
-            {t("Tooth")} {tooth.toothNumber}
+
+          {t("Tooth")} {tooth.toothNumber}
         </h2>
       </div>
 
@@ -156,7 +156,7 @@ const ToothDetailsForPDF = ({ tooth, settings }) => {
           <ProblemTags problems={tooth?.problems} />
 
           {/* 🖼️ Image / Slices */}
-{settings?.CBCTAnalysis.ShowSlices && (          <div className="flex flex-col w-full items-center justify-center bg-gray-50 rounded-md border border-gray-200 ">
+          {settings?.CBCTAnalysis.ShowSlices && (<div className="flex flex-col w-full items-center justify-center bg-gray-50 rounded-md border border-gray-200 ">
             <RenderAllSlices
               teeth={tooth}
               ToothSlicemode={false}

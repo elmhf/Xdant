@@ -1,26 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const LottiePlayer = dynamic(
-  () => import("@lottiefiles/react-lottie-player").then(mod => mod.Player),
-  { ssr: false }
-);
-import animationData from "@/components/shared/lottie/404.json";
+import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-8">
-      <div className="w-64 h-64 mb-4">
-        <LottiePlayer autoplay loop src={animationData} style={{ height: '100%', width: '100%' }} />
+    <div
+      className="flex flex-col items-center justify-center min-h-screen w-full bg-white p-4"
+      suppressHydrationWarning
+    >
+      <div className="flex flex-wrap min-w-full flex-col md:flex-row items-center justify-center w-full ">
+        {/* Left: Illustration */}
+        <div className="w-full md:w-1/2 flex justify-center items-center">
+          <div className="text-[300px] md:text-[350px] font-bold text-gray-900 tracking-tight">
+            404
+          </div>
+        </div>
+
+        {/* Right: Text Content */}
+        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left space-y-6">
+          <h1 className="text-6xl md:text-8xl font-bold text-gray-900 tracking-tight">
+            Oops!
+          </h1>
+          <h2 className="text-xl md:text-2xl font-medium text-gray-400 max-w-md">
+            We couldn't find the page <br className="hidden md:block" />
+            you were looking for
+          </h2>
+
+          <Link
+            href="/"
+            className="group flex items-center gap-2 px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all duration-300 mt-4"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Go home</span>
+          </Link>
+        </div>
       </div>
-      <h1 className="text-5xl font-bold text-red-500 mb-4">404</h1>
-      <h2 className="text-2xl font-semibold mb-2">الصفحة غير موجودة</h2>
-      <p className="text-gray-600 mb-6">عذراً، الصفحة التي تبحث عنها غير متوفرة.</p>
-      <Link href="/">
-        <span className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">العودة للصفحة الرئيسية</span>
-      </Link>
     </div>
   );
-} 
+}

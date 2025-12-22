@@ -265,7 +265,7 @@ const CreateAIReportDialog = ({
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 text-[#7564ed]  rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 text-[#7564ed]  rounded-2xl flex items-center justify-center">
                         <File className="w-10 h-10" />
                       </div>
                       <div>
@@ -304,7 +304,7 @@ const CreateAIReportDialog = ({
             <Button
               onClick={handleOrderReportWithState}
               disabled={isOrdering || uploadedFiles.length === 0}
-              className="bg-[#7564ed] hover:bg-[#6d28d9] text-white px-8 rounded-lg font-medium shadow-sm"
+              className="bg-[#7564ed] hover:bg-[#6d28d9] text-white px-8 rounded-2xl font-medium shadow-sm"
             >
               {isOrdering ? (
                 <div className="flex items-center gap-2">

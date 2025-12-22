@@ -116,12 +116,12 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
         <div className="space-y-6">
           {/* Error/Success Messages */}
           {formError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl">
               {formError}
             </div>
           )}
           {formSuccess && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-2xl">
               {formSuccess}
             </div>
           )}
@@ -138,7 +138,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                 value={formData.first_name}
                 onChange={(e) => handleInputChange('first_name', e.target.value)}
                 className={`h-12 w-full text-base border-1 ${!formData.first_name && formError ? 'border-red-500' : 'border-gray-200'
-                  } focus:border-[#7564ed] rounded-lg`}
+                  } focus:border-[#7564ed] rounded-2xl`}
               />
               {!formData.first_name && formError && (
                 <p className="text-red-500 text-sm">Field is required</p>
@@ -155,7 +155,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                 value={formData.last_name}
                 onChange={(e) => handleInputChange('last_name', e.target.value)}
                 className={`h-12 w-full text-base border-1 ${!formData.last_name && formError ? 'border-red-500' : 'border-gray-200'
-                  } focus:border-[#7564ed] rounded-lg`}
+                  } focus:border-[#7564ed] rounded-2xl`}
               />
               {!formData.last_name && formError && (
                 <p className="text-red-500 text-sm">Field is required</p>
@@ -173,7 +173,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className="h-12 w-full text-base border-1 border-gray-300  rounded-lg"
+              className="h-12 w-full text-base border-1 border-gray-300  rounded-2xl"
             />
           </div>
 
@@ -188,7 +188,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-lg"
+                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-2xl"
               />
             </div>
 
@@ -201,7 +201,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                 type="text"
                 value={formData.address}
                 onChange={(e) => handleInputChange('address', e.target.value)}
-                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-lg"
+                className="h-12 w-full text-base border-1 border-gray-300 focus:border-[#7564ed] rounded-2xl"
               />
             </div>
           </div>
@@ -219,7 +219,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                     key={gender}
                     type="button"
                     onClick={() => handleInputChange('gender', gender.toLowerCase())}
-                    className={`px-6 py-2 rounded-lg text-sm font-[500] transition-colors ${formData.gender === gender.toLowerCase()
+                    className={`px-6 py-2 rounded-2xl text-sm font-[500] transition-colors ${formData.gender === gender.toLowerCase()
                       ? 'bg-[#7564ed] text-white border-[#7564ed]'
                       : 'bg-gray-100 text-gray-700 hover:border-[#7564ed]'
                       }`}
@@ -244,7 +244,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                   onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
                   max={new Date().toISOString().split('T')[0]}
                   className={`h-12 w-full text-base border-1 ${!formData.date_of_birth && formError ? 'border-red-500' : 'border-gray-200'
-                    } focus:border-[#7564ed] rounded-lg`}
+                    } focus:border-[#7564ed] rounded-2xl`}
                 />
               </div>
               {!formData.date_of_birth && formError && (
@@ -348,7 +348,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                           <SelectItem
                             key={doctor.id}
                             value={doctor.id}
-                            className="rounded-lg cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
+                            className="rounded-2xl cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
                           >
                             <div className="flex items-center gap-3 py-1">
                               <Avatar className="h-8 w-8">
@@ -390,7 +390,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
             <Button
               type="button"
               onClick={onClose}
-              className="flex-1 w-10 h-12 text-base   text-gray-600 hover:bg-gray-50 rounded-lg"
+              className="flex-1 w-10 h-12 text-base   text-gray-600 hover:bg-gray-50 rounded-2xl"
             >
               Cancel
             </Button>
@@ -398,7 +398,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="flex-1 bg-[#7564ed] hover:bg-[#7553db] disabled:bg-purple-300 text-white h-12 text-base font-medium rounded-lg transition-colors"
+              className="flex-1 bg-[#7564ed] hover:bg-[#7553db] disabled:bg-purple-300 text-white h-12 text-base font-medium rounded-2xl transition-colors"
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">

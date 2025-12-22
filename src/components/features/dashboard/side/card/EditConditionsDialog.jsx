@@ -301,13 +301,13 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                                 <div className="flex items-center gap-1 ml-auto">
                                                     <button
                                                         onClick={() => handleEditProblem(index)}
-                                                        className="p-1.5 text-gray-400 hover:text-[#7564ed] rounded-lg transition-colors"
+                                                        className="p-1.5 text-gray-400 hover:text-[#7564ed] rounded-2xl transition-colors"
                                                     >
                                                         <Pencil className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeleteProblem(index)}
-                                                        className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
+                                                        className="p-1.5 text-gray-400 hover:text-red-500 rounded-2xl transition-colors"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
@@ -364,7 +364,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                         </Label>
                                         <Input
                                             id="condition"
-                                            className="h-11 rounded-lg  focus:border-[#7564ed] "
+                                            className="h-11 rounded-2xl  focus:border-[#7564ed] "
                                             value={formData.condition}
                                             onChange={e => handleAddInputChange('condition', e.target.value)}
 
@@ -386,7 +386,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                                 type="number"
                                                 min="0"
                                                 max="100"
-                                                className="h-11 rounded-lg  focus:border-[#7564ed]  pr-8"
+                                                className="h-11 rounded-2xl  focus:border-[#7564ed]  pr-8"
                                                 placeholder="95"
                                                 value={formData.percentage || ''}
                                                 onChange={e => handleAddInputChange('percentage', e.target.value)}
@@ -402,7 +402,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                         value={formData.type}
                                         onValueChange={(value) => handleAddInputChange('type', value)}
                                     >
-                                        <SelectTrigger className="h-11 rounded-lg bg-white border-1 border-gray-400 focus:border-[#7564ed] focus:ring-4 focus:ring-[#7564ed]/10 transition-all">
+                                        <SelectTrigger className="h-11 rounded-2xl bg-white border-1 border-gray-400 focus:border-[#7564ed] focus:ring-4 focus:ring-[#7564ed]/10 transition-all">
                                             <SelectValue placeholder="Select status" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -417,7 +417,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                     <Label htmlFor="description" className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Description</Label>
                                     <Textarea
                                         id="description"
-                                        className="min-h-[100px] rounded-lg border-2 border-gray-400 focus:border-[#7564ed] resize-none"
+                                        className="min-h-[100px] rounded-2xl border-2 border-gray-400 focus:border-[#7564ed] resize-none"
                                         placeholder="Optional details..."
                                         value={formData.description}
                                         onChange={e => handleAddInputChange('description', e.target.value)}
@@ -443,14 +443,14 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                         });
                                         setViewMode("LIST");
                                     }}
-                                    className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                                    className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                 >
                                     Cancel
                                 </Button>
                                 <Button
                                     type="button"
                                     onClick={handleAddSubmit}
-                                    className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-lg flex items-center min-w-[6vw]"
+                                    className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                     disabled={!formData.condition}
                                 >
                                     {editingIndex !== null ? "Update" : "Save"}

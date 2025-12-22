@@ -112,7 +112,7 @@ const GenericUploadDialog = ({
                             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-purple-100 text-[#7564ed] rounded-lg flex items-center justify-center">
+                                        <div className="w-10 h-10 bg-purple-100 text-[#7564ed] rounded-2xl flex items-center justify-center">
                                             <File className="w-6 h-6" />
                                         </div>
                                         <div className="text-left">

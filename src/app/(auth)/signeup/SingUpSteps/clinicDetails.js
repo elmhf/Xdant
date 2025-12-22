@@ -74,7 +74,7 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
               className="space-y-2"
             >
               <Label htmlFor="clinicName" className="font-semibold">Clinic Name</Label>
-              <Input id="clinicName" type="text" placeholder="Clinic name" className="w-full border border-gray-300 rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
+              <Input id="clinicName" type="text" placeholder="Clinic name" className="w-full border border-gray-300 rounded-2xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
             </motion.div>
 
             {/* Auto-filled address fields */}
@@ -85,7 +85,7 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
               className="space-y-2"
             >
               <Label htmlFor="address" className="font-semibold">Street Address</Label>
-              <Input id="road" value={address.road} onChange={handleAddressChange} placeholder="Street" className="w-full border border-gray-300 rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
+              <Input id="road" value={address.road} onChange={handleAddressChange} placeholder="Street" className="w-full border border-gray-300 rounded-2xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
             </motion.div>
 
             <motion.div
@@ -96,11 +96,11 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
             >
               <div className="flex-1 space-y-2">
                 <Label htmlFor="suburb" className="font-semibold">Neighbourhood</Label>
-                <Input id="suburb" value={address.suburb} onChange={handleAddressChange} placeholder="Suburb" className="w-full border border-gray-300 rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
+                <Input id="suburb" value={address.suburb} onChange={handleAddressChange} placeholder="Suburb" className="w-full border border-gray-300 rounded-2xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
               </div>
               <div className="flex-1 space-y-2">
                 <Label htmlFor="city" className="font-semibold">City</Label>
-                <Input id="city" value={address.city} onChange={handleAddressChange} placeholder="City" className="w-full border border-gray-300 rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
+                <Input id="city" value={address.city} onChange={handleAddressChange} placeholder="City" className="w-full border border-gray-300 rounded-2xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
               </div>
             </motion.div>
 
@@ -112,11 +112,11 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
             >
               <div className="flex-1 space-y-2">
                 <Label htmlFor="postcode" className="font-semibold">Postal Code</Label>
-                <Input id="postcode" value={address.postcode} onChange={handleAddressChange} placeholder="Postal Code" className="w-full border border-gray-300 rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
+                <Input id="postcode" value={address.postcode} onChange={handleAddressChange} placeholder="Postal Code" className="w-full border border-gray-300 rounded-2xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
               </div>
               <div className="flex-1 space-y-2">
                 <Label htmlFor="country" className="font-semibold">Country</Label>
-                <Input id="country" value={address.country} onChange={handleAddressChange} placeholder="Country" className="w-full border border-gray-300 rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
+                <Input id="country" value={address.country} onChange={handleAddressChange} placeholder="Country" className="w-full border border-gray-300 rounded-2xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
               </div>
             </motion.div>
 
@@ -128,7 +128,7 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
               className="space-y-2"
             >
               <Label htmlFor="phone" className="font-semibold">Phone</Label>
-              <Input id="phone" type="tel" placeholder="Phone number" className="w-full border border-gray-300 rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
+              <Input id="phone" type="tel" placeholder="Phone number" className="w-full border border-gray-300 rounded-2xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
             </motion.div>
 
             <motion.div
@@ -138,7 +138,7 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
               className="space-y-2"
             >
               <Label htmlFor="email" className="font-semibold">Email</Label>
-              <Input id="email" type="email" placeholder="you@clinic.com" className="w-full border border-gray-300 rounded-lg bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
+              <Input id="email" type="email" placeholder="you@clinic.com" className="w-full border border-gray-300 rounded-2xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400" />
             </motion.div>
 
             <motion.div
@@ -181,7 +181,7 @@ export default function ClinicDetails({ onBack, onNext, isFirstStep, isLastStep 
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#0d0c22] bg-opacity-80 text-white px-4 py-2 rounded-lg flex items-center space-x-4 shadow-lg"
+            className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#0d0c22] bg-opacity-80 text-white px-4 py-2 rounded-2xl flex items-center space-x-4 shadow-lg"
           >
             <span className="text-lg font-semibold">Lat: {location.lat.toFixed(5)}</span>
             <span className="text-lg font-semibold">Lng: {location.lng.toFixed(5)}</span>

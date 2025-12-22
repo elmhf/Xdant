@@ -7,12 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { 
-  Zap, 
-  Eye, 
-  Settings, 
-  Download, 
-  RotateCcw, 
+import {
+  Zap,
+  Eye,
+  Settings,
+  Download,
+  RotateCcw,
   Microscope,
   Activity,
   Sun,
@@ -145,7 +145,7 @@ export default function ProfessionalXRayPanel() {
     saturation: [30],
     highlights: [15],
     shadows: [-10],
-    
+
     // Enhancement Features
     dentalEnhancement: true,
     noiseReduction: true,
@@ -154,7 +154,7 @@ export default function ProfessionalXRayPanel() {
     motionCorrection: true,
     artifactReduction: true,
     metalArtifactReduction: false,
-    
+
     // Analysis Tools
     measurementTool: 'ruler',
     aiAssistance: true,
@@ -162,7 +162,7 @@ export default function ProfessionalXRayPanel() {
     autoCalibration: true,
     zoom: [150],
     rotation: [0],
-    
+
     // Anatomical Visibility
     showTeeth: true,
     showCrown: true,
@@ -173,7 +173,7 @@ export default function ProfessionalXRayPanel() {
     showProblems: true,
     showAnnotations: true,
     showMeasurements: true,
-    
+
     // Advanced Features
     histogramEqualization: false,
     waveletDenoising: true,
@@ -219,11 +219,11 @@ export default function ProfessionalXRayPanel() {
   });
 
   const [diagnosticFindings, setDiagnosticFindings] = useState([
-    { 
-      id: 'dx_001', 
-      type: 'تسوس الأسنان', 
-      location: 'الضرس الأول العلوي الأيمن', 
-      severity: 'متوسط', 
+    {
+      id: 'dx_001',
+      type: 'تسوس الأسنان',
+      location: 'الضرس الأول العلوي الأيمن',
+      severity: 'متوسط',
       confidence: 94,
       priority: 'عالي',
       enabled: true,
@@ -231,11 +231,11 @@ export default function ProfessionalXRayPanel() {
       timestamp: '2024-06-21 15:42:33',
       recommendations: ['علاج تحفظي', 'حشوة مركبة', 'متابعة دورية']
     },
-    { 
-      id: 'dx_002', 
-      type: 'التهاب اللثة', 
-      location: 'الأسنان الأمامية السفلية', 
-      severity: 'خفيف', 
+    {
+      id: 'dx_002',
+      type: 'التهاب اللثة',
+      location: 'الأسنان الأمامية السفلية',
+      severity: 'خفيف',
       confidence: 87,
       priority: 'متوسط',
       enabled: true,
@@ -243,11 +243,11 @@ export default function ProfessionalXRayPanel() {
       timestamp: '2024-06-21 15:42:28',
       recommendations: ['تنظيف عميق', 'تحسين نظافة الفم', 'زيارة دورية كل 3 أشهر']
     },
-    { 
-      id: 'dx_003', 
-      type: 'ضرس العقل المدفون', 
-      location: 'الضرس الثالث السفلي الأيسر', 
-      severity: 'شديد', 
+    {
+      id: 'dx_003',
+      type: 'ضرس العقل المدفون',
+      location: 'الضرس الثالث السفلي الأيسر',
+      severity: 'شديد',
       confidence: 96,
       priority: 'عالي',
       enabled: false,
@@ -387,8 +387,8 @@ export default function ProfessionalXRayPanel() {
   };
 
   const toggleDiagnostic = (id) => {
-    setDiagnosticFindings(prev => 
-      prev.map(finding => 
+    setDiagnosticFindings(prev =>
+      prev.map(finding =>
         finding.id === id ? { ...finding, enabled: !finding.enabled } : finding
       )
     );
@@ -396,7 +396,7 @@ export default function ProfessionalXRayPanel() {
 
   return (
     <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50 text-gray-900 w-full max-w-[420px] min-w-[320px] h-screen border-r border-gray-200 shadow-2xl overflow-hidden">
-      
+
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
         <div className="flex items-center justify-between mb-4">
@@ -410,20 +410,19 @@ export default function ProfessionalXRayPanel() {
             </div>
           </div>
           <div className="flex flex-col items-end gap-1">
-            <Badge className={`text-white border-0 shadow-sm ${
-              systemStatus === 'healthy' ? 'bg-gradient-to-r from-emerald-500 to-green-600' :
-              systemStatus === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-orange-600' :
-              'bg-gradient-to-r from-red-500 to-red-600'
-            }`}>
+            <Badge className={`text-white border-0 shadow-sm ${systemStatus === 'healthy' ? 'bg-gradient-to-r from-emerald-500 to-green-600' :
+                systemStatus === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-orange-600' :
+                  'bg-gradient-to-r from-red-500 to-red-600'
+              }`}>
               <div className="w-2 h-2 rounded-full bg-white mr-2 animate-pulse"></div>
               {systemStatus === 'healthy' ? 'نشط' : systemStatus === 'warning' ? 'تحذير' : 'خطأ'}
             </Badge>
             <span className="text-xs text-gray-500 font-mono">v4.2.1</span>
           </div>
         </div>
-        
+
         {/* Status Bar */}
-        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-100">
+        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl border border-gray-100">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-blue-600" />
@@ -440,10 +439,10 @@ export default function ProfessionalXRayPanel() {
             <Battery className="w-4 h-4 text-green-500" />
           </div>
         </div>
-        
+
         {/* Processing Indicator */}
         {isProcessing && (
-          <div className="mt-3 p-2 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="mt-3 p-2 bg-blue-50 rounded-2xl border border-blue-200">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-blue-800">معالجة الصورة...</span>
               <span className="text-sm font-bold text-blue-600">{analysisProgress}%</span>
@@ -459,11 +458,10 @@ export default function ProfessionalXRayPanel() {
           {tabs.map(({ id, label, icon: Icon, count }) => (
             <button
               key={id}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                activeTab === id 
-                  ? 'text-blue-700 border-b-2 border-blue-600 bg-blue-50' 
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 text-sm font-medium transition-all duration-200 whitespace-nowrap ${activeTab === id
+                  ? 'text-blue-700 border-b-2 border-blue-600 bg-blue-50'
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
+                }`}
               onClick={() => setActiveTab(id)}
             >
               <Icon className="w-4 h-4" />
@@ -480,7 +478,7 @@ export default function ProfessionalXRayPanel() {
 
       {/* Content Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        
+
         {/* Processing Tab */}
         {activeTab === 'processing' && (
           <>
@@ -491,14 +489,13 @@ export default function ProfessionalXRayPanel() {
                 {presets.map(({ value, label, icon: Icon, color, description }) => (
                   <button
                     key={value}
-                    className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${
-                      currentPreset === value 
-                        ? 'bg-blue-50 border-blue-200 text-blue-800 shadow-sm' 
+                    className={`flex items-center gap-3 p-3 rounded-2xl border transition-all duration-200 ${currentPreset === value
+                        ? 'bg-blue-50 border-blue-200 text-blue-800 shadow-sm'
                         : 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700'
-                    }`}
+                      }`}
                     onClick={() => setCurrentPreset(value)}
                   >
-                    <div className={`w-8 h-8 ${color} rounded-lg flex items-center justify-center`}>
+                    <div className={`w-8 h-8 ${color} rounded-2xl flex items-center justify-center`}>
                       <Icon className="w-4 h-4 text-white" />
                     </div>
                     <div className="flex-1 text-right">
@@ -567,11 +564,10 @@ export default function ProfessionalXRayPanel() {
                 {measurementTools.map(({ icon: Icon, label, value, desc, unit }) => (
                   <button
                     key={value}
-                    className={`p-3 border rounded-lg text-center transition-all duration-200 ${
-                      settings.measurementTool === value 
-                        ? 'bg-blue-600 text-white border-blue-600 shadow-lg transform scale-105' 
+                    className={`p-3 border rounded-2xl text-center transition-all duration-200 ${settings.measurementTool === value
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-lg transform scale-105'
                         : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:shadow-md'
-                    }`}
+                      }`}
                     onClick={() => updateSetting('measurementTool', value)}
                   >
                     <Icon className="w-5 h-5 mx-auto mb-2" />
@@ -580,10 +576,10 @@ export default function ProfessionalXRayPanel() {
                   </button>
                 ))}
               </div>
-              
+
               {/* Zoom and Rotation Controls */}
               <div className="space-y-3">
-                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                <div className="bg-gray-50 rounded-2xl p-3 border border-gray-100">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">مستوى التكبير</span>
                     <span className="text-lg font-bold text-blue-600">{settings.zoom[0]}%</span>
@@ -597,8 +593,8 @@ export default function ProfessionalXRayPanel() {
                     className="w-full"
                   />
                 </div>
-                
-                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+
+                <div className="bg-gray-50 rounded-2xl p-3 border border-gray-100">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">زاوية الدوران</span>
                     <span className="text-lg font-bold text-blue-600">{settings.rotation[0]}°</span>
@@ -641,7 +637,7 @@ export default function ProfessionalXRayPanel() {
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
             <Label className="text-sm font-semibold text-gray-800 mb-3 block">التحليل الذكي</Label>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border">
                 <div className="flex items-center gap-3">
                   <Brain className="w-5 h-5 text-blue-600" />
                   <div className="text-sm font-medium text-gray-700">
@@ -655,8 +651,8 @@ export default function ProfessionalXRayPanel() {
                   className="bg-gray-200"
                 />
               </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border">
                 <div className="flex items-center gap-3">
                   <Clock className="w-5 h-5 text-blue-600" />
                   <div className="text-sm font-medium text-gray-700">
@@ -670,8 +666,8 @@ export default function ProfessionalXRayPanel() {
                   className="bg-gray-200"
                 />
               </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border">
                 <div className="flex items-center gap-3">
                   <RefreshCw className="w-5 h-5 text-blue-600" />
                   <div className="text-sm font-medium text-gray-700">
@@ -697,7 +693,7 @@ export default function ProfessionalXRayPanel() {
               <Label className="text-sm font-semibold text-gray-800 mb-3 block">نتائج التشخيص</Label>
               <div className="space-y-2">
                 {diagnosticFindings.map(({ id, type, location, severity, confidence, priority, enabled, description, timestamp, recommendations }) => (
-                  <div key={id} className={`p-3 rounded-lg border transition-all duration-200 ${enabled ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                  <div key={id} className={`p-3 rounded-2xl border transition-all duration-200 ${enabled ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <div className={`w-3 h-3 rounded-full ${enabled ? 'bg-green-600' : 'bg-red-600'}`}></div>
@@ -724,7 +720,7 @@ export default function ProfessionalXRayPanel() {
                         onClick={() => toggleDiagnostic(id)}
                         className="text-xs"
                       >
-                        {enabled ? 'إلغاء التفعيل' : 'تفعيل التحليل'} 
+                        {enabled ? 'إلغاء التفعيل' : 'تفعيل التحليل'}
                       </Button>
                     </div>
                   </div>

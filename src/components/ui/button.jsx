@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-lg font-[500] transition-all border-0 cursor-pointer disabled:pointer-events-none disabled:opacity-50  ",
+  "inline-flex items-center justify-center gap-2 rounded-2xl font-[500] transition-all border-0 cursor-pointer disabled:pointer-events-none disabled:opacity-50  ",
   {
     variants: {
       variant: {
@@ -37,7 +37,7 @@ function Button({ className, variant, size, asChild = false, ...props }) {
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      whileHover={{  cursor: "pointer" }}
+      whileHover={{ cursor: "pointer" }}
       {...props}
     />
   )
