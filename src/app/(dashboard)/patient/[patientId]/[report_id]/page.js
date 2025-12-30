@@ -15,6 +15,7 @@ export default function ReportPage() {
 
   const reportId = params.report_id;
   const patientId = params.patientId;
+
   const paramsReportType = params.report_type || "unknown";
   console.log("reportTypereportTypereportTypereportTypereportType", paramsReportType);
   // Always call hooks at top level

@@ -1,7 +1,8 @@
+"use client";
 import { toast } from "sonner";
 import axios from "axios";
-const BACKEND_URL = 'http://localhost:5000';
-
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
+// const BACKEND_URL = RAW_BACKEND_URL.replace(/\/$/, '');
 /**
  * Custom error class for API requests
  */
@@ -28,11 +29,11 @@ export class ApiError extends Error {
  * @returns {Promise<any>} - The parsed JSON response.
  */
 export async function apiClient(endpoint, options = {}) {
+
     // Ensure endpoint starts with / if not a full URL
     const url = endpoint.startsWith('http')
         ? endpoint
         : `${BACKEND_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
-
     const defaultHeaders = {
         'Content-Type': 'application/json',
     };
@@ -53,7 +54,7 @@ export async function apiClient(endpoint, options = {}) {
 
     try {
         let response = await fetch(url, config);
-
+        console.log(response);
         // Handle 401 Unauthorized (Token Expiry)
         if (response.status === 401) {
             // Attempt to refresh token
@@ -79,16 +80,24 @@ export async function apiClient(endpoint, options = {}) {
             }
         }
 
-        // Handle other errors
+        // Read response data once
+        let data = null;
+        try {
+            // Check if there is content to read (204 No Content has no body)
+            if (response.status !== 204) {
+                data = await response.json();
+            }
+        } catch (e) {
+            // Failed to parse JSON, data remains null
+        }
+
+        // Handle errors
         if (!response.ok) {
             let errorMessage = 'An error occurred';
-            let errorData = null;
 
-            try {
-                errorData = await response.json();
-                errorMessage = errorData.message || errorData.error || errorMessage;
-            } catch (e) {
-                // Fallback for non-JSON errors
+            if (data) {
+                errorMessage = data.message || data.error || errorMessage;
+            } else {
                 errorMessage = response.statusText;
             }
 
@@ -97,16 +106,11 @@ export async function apiClient(endpoint, options = {}) {
                 toast.error(errorMessage);
             }
 
-            // throw new ApiError(errorMessage, response.status, errorData);
+            // Throw error with data if available
+            throw new ApiError(errorMessage, response.status, data);
         }
 
-        // Return successful response
-        // Handle 204 No Content
-        if (response.status === 204) {
-            return null;
-        }
-
-        return await response.json();
+        return data;
 
     } catch (error) {
         // If it's already our ApiError, rethrow it

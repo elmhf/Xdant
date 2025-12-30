@@ -66,7 +66,6 @@ const AIOrdersList = ({
 
   // Convert reports to orders format
   const orders = convertReportsToOrders(reports);
-  console.log('Converted orders:', orders);
   // ترتيب الطلبات حسب الوقت (الأحدث أولاً)
   const sortedOrders = useMemo(() => {
     return [...orders].sort((a, b) => {
@@ -79,7 +78,6 @@ const AIOrdersList = ({
   // Filter orders based on date and type filters
   const filteredOrders = useMemo(() => {
     return sortedOrders.filter(order => {
-      console.log(order, "orderorderorder")
       let orderDateStr = order.createdAt || order.created_at;
       let matchesDate = true;
       if (dateFilter) {

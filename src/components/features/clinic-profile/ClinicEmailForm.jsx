@@ -56,23 +56,19 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/clinics//update-email", {
+      await apiClient("/api/clinics/update-email", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include',
         body: JSON.stringify({ code: otp.join(""), otpKey: "clinicUpdateEmail", clinicData: { email, clinicId: currentClinicId } }),
       });
-      const data = await res.json();
-      if (res.ok) {
-        pushNotification('success', "Adresse e-mail modifiée avec succès.");
-        setTimeout(() => {
-          onSave(email);
-        }, 1200);
-      } else {
-        pushNotification('error', data.message || "Code incorrect ou expiré.");
-      }
+
+      pushNotification('success', "Adresse e-mail modifiée avec succès.");
+      setTimeout(() => {
+        onSave(email);
+      }, 1200);
+
     } catch (e) {
-      pushNotification('error', "Erreur réseau");
+      const message = e.data?.message || e.message || "Code incorrect ou expiré.";
+      pushNotification('error', message);
     }
     setLoading(false);
   };

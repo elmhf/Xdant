@@ -421,7 +421,7 @@ const useUserStore = create((set, get) => ({
   getUserInfo: async () => {
     try {
       const data = await apiClient("/api/users/me", {
-        method: "POST",
+        method: "GET",
       });
       console.log('mee', data)
 

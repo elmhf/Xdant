@@ -1,35 +1,45 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import useUserStore from "@/components/features/profile/store/userStore";
 import { usePatientStore } from '@/stores/patientStore';
 
-export const usePatientWebSocket = (patientId) => {
+// Badel l URL kanou mokhtalef fi production
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+export const usePatientWebSocket = (patientId, userId, clinicId) => {
   const [wsConnected, setWsConnected] = useState(false);
-  const user = useUserStore((state) => state.user);
+  const socketRef = useRef(null);
+
+  // Njibou user mil store
+  const user = useUserStore((state) => state.userInfo);
   const store = usePatientStore();
 
-  const userId = user?.id || 'anonymous';
-  const clinicId = user?.clinic_id || 'default-clinic';
-
   useEffect(() => {
-    if (!user || !patientId) return;
+    // Manconnectiw ken ma ebdech 3anna l ma3loumat lkol
+    console.log(" 🐍patientId", patientId);
+    console.log("🐍userId", userId);
+    console.log("🐍clinicId", clinicId);
+    if (!userId || !clinicId || !patientId) return;
 
-    // 1. Connect to Socket
-    const socket = io('http://localhost:5000', {
+    // 1. Connect
+    const socket = io(SOCKET_URL, {
       withCredentials: true,
+      transports: ['websocket'],
+      reconnectionAttempts: 5,
     });
+    socketRef.current = socket;
 
     socket.on('connect', () => {
       console.log('✅ Connected to WebSocket');
       setWsConnected(true);
 
-      // 2. Join Patient Room
+      // 2. Join Room
       socket.emit('select_patient', {
-        userId: user.id || userId,
-        clinicId: user.clinic_id || clinicId,
-        patientId: patientId
+        userId,
+        clinicId,
+        patientId
       });
-      console.log('📡 Joined patient room:', patientId);
+      console.log(`📡 Joined patient room: ${patientId}`);
     });
 
     socket.on('disconnect', () => {
@@ -37,7 +47,7 @@ export const usePatientWebSocket = (patientId) => {
       setWsConnected(false);
     });
 
-    // 3. Listen for Updates
+    // 3. Listen for Updates & Update Store
 
     // A. New Report
     socket.on('report_created_realtime', (data) => {
@@ -47,18 +57,19 @@ export const usePatientWebSocket = (patientId) => {
       }
     });
 
-    // B. Report Status Changed
+    // B. Status Changed
     socket.on('report_status_changed_detailed_realtime', (data) => {
       console.log('🔄 Report status changed:', data);
       if (data && data.reportId) {
+        // Houni n-updatiw l report specific
         store.updateReport(data.reportId, {
           status: data.newStatus,
-          updatedAt: new Date().toISOString()
+          // Ay haja okhra t7eb tbaddalha
         });
       }
     });
 
-    // C. Report Deleted
+    // C. Deleted
     socket.on('report_deleted_detailed_realtime', (data) => {
       console.log('🗑️ Report deleted:', data);
       if (data && data.reportId) {
@@ -66,12 +77,26 @@ export const usePatientWebSocket = (patientId) => {
       }
     });
 
-    // Cleanup
+    // D. Patient Info Updated
+    socket.on('updated_patient', (data) => {
+      console.log('👤 Patient info updated (updated_patient):', data);
+      if (data) {
+        // If data is the patient object itself
+        if (data.id) {
+          store.updatePatient(data);
+        }
+        // If data is wrapped in a property like { patient: ... }
+        else if (data.patient) {
+          store.updatePatient(data.patient);
+        }
+      }
+    });
+
     return () => {
-      console.log('🔌 Cleaning up WebSocket');
       socket.disconnect();
+      socketRef.current = null;
     };
-  }, [patientId, user, userId, clinicId]); // Removed 'store' from deps to avoid unnecessary re-runs if store obj changes
+  }, [patientId, userId, clinicId]);
 
   return { wsConnected };
 };

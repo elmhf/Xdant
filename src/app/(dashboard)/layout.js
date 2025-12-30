@@ -1,7 +1,28 @@
 "use client"
 import Navbar from '@/components/shared/navbar/NavBar';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { apiClient } from '@/utils/apiClient';
 
 export default function DashboardLayout({ children }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // Verify session with a protected route
+        await apiClient('/api/users/me');
+        // If successful, user is authenticated
+      } catch (error) {
+        // If 401 or error, redirect to login
+        // apiClient handles 401 redirects mostly, but valid to reinforce here
+        router.push('/login');
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
   return (
     <div className="min-h-screen p-0 w-full flex flex-col space-y-4 overflow-hidden">
       {/* Fixed Navbar with transparent backdrop */}

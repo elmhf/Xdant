@@ -58,7 +58,7 @@ function DialogContent({
                 data-slot="dialog-content"
                 {...props}
                 className={cn(
-                    "bg-background max-w-xl sm:max-w-xl overflow-y-scroll no-scrollbar  max-h-[90vh]  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full  translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border p-6 shadow-lg duration-200 outline-none ",
+                    "bg-background max-w-xl sm:max-w-xl overflow-y-scroll no-scrollbar  max-h-[90vh]  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-[51] grid w-full  translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border p-6 shadow-lg duration-200 outline-none ",
                     className
                 )}
             >

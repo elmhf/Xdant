@@ -10,7 +10,7 @@ function Input({
   ...props
 }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 w-full">
       {label && (
         <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
           {label}

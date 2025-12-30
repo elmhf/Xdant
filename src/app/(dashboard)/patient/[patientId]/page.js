@@ -11,10 +11,12 @@ import useUserStore from "@/components/features/profile/store/userStore";
 import { formatPatientName, formatDateOfBirth, getPatientAvatarInitials } from '../utils/patientUtils';
 import AddDoctorDialog from '../components/AddDoctorDialog';
 import { DeleteTreatingDoctorDialog } from '../components/DeleteTreatingDoctorDialog';
+import { DeletePatientDialog } from '../components/DeletePatientDialog';
 import EditPatientDialog from '../components/EditPatientDialog';
 import OrderAIReport from '../components/OrderAIReport';
 import AIOrdersList from '../components/AIOrdersList';
 import { usePatientWebSocket } from '../hooks/usePatientWebSocket';
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 import {
   usePatientStore,
   useCurrentPatient,
@@ -55,6 +57,7 @@ export default function PatientDetailPage() {
   const patientId = params.patientId;
   const resetDentalStore = useDentalStore(state => state.resetData);
   const resetImageStore = useImageStore(state => state.reset);
+  const { pushNotification } = useNotification();
 
   // Clear dental store data when entering patient detail page
   useEffect(() => {
@@ -84,9 +87,7 @@ export default function PatientDetailPage() {
 
   // استخدام selectors محسنة للأداء
   const currentPatient = useCurrentPatient();
-  console.log(currentPatient, "currentPatient.treating_doctors ")
   const reports = useReportsSelector();
-  console.log(reports, "reportsreports")
   const loading = usePatientStore(state => state.loading);
   const error = usePatientStore(state => state.error);
   const reportsLoading = useReportsLoading();
@@ -98,13 +99,18 @@ export default function PatientDetailPage() {
   const isEditPatientOpen = usePatientStore(state => state.isEditPatientOpen);
   const doctorToDelete = usePatientStore(state => state.doctorToDelete);
 
+  // Delete Patient Dialog State
+  const [isDeletePatientOpen, setIsDeletePatientOpen] = useState(false);
+  const [deletePatientLoading, setDeletePatientLoading] = useState(false);
+
   // استخدام actions من store
   const store = usePatientStore();
 
   // WebSocket setup
-  const user = useUserStore.getState().user;
-  const userId = user?.id || 'anonymous';
-  const clinicId = user?.clinic_id || 'default-clinic';
+  const user = useUserStore((state) => state.userInfo);
+  const currentClinicId = useUserStore((state) => state.currentClinicId);
+  const userId = user?.user_id || 'anonymous';
+  const clinicId = currentClinicId || 'default-clinic';
 
   console.log('🏥 Patient Page - WebSocket Setup:', {
     patientId,
@@ -114,7 +120,7 @@ export default function PatientDetailPage() {
   });
 
   // WebSocket Integration via Hook
-  const { wsConnected } = usePatientWebSocket(patientId);
+  const { wsConnected } = usePatientWebSocket(patientId, userId, clinicId);
 
   // Clear report cache on mount
   useEffect(() => {
@@ -130,12 +136,7 @@ export default function PatientDetailPage() {
     }
   }, [patientId]);
 
-  // Fetch additional reports from server if needed
-  useEffect(() => {
-    if (currentPatient?.id) {
-      store.fetchReports(currentPatient.id);
-    }
-  }, [currentPatient?.id]); // إزالة store من dependency array
+
 
   const handleBack = useCallback(() => {
     router.push('/patient');
@@ -192,6 +193,29 @@ export default function PatientDetailPage() {
       alert(`Error: ${result.message}`);
     }
   }, [currentPatient, favoriteLoading]); // إزالة store من dependency array
+
+  const handleConfirmDeletePatient = useCallback(async () => {
+    if (!currentPatient) return;
+
+    setDeletePatientLoading(true);
+
+    try {
+      const result = await useUserStore.getState().deletePatient(currentPatient.id);
+
+      if (result.success) {
+        pushNotification("success", "Patient deleted successfully");
+        router.push('/patient'); // Redirect to patient list
+      } else {
+        pushNotification("error", result.message || "Error deleting patient");
+      }
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      pushNotification("error", "Network error while deleting patient");
+    } finally {
+      setDeletePatientLoading(false);
+      setIsDeletePatientOpen(false);
+    }
+  }, [currentPatient, router, pushNotification]);
 
   if (loading) {
     return (
@@ -403,6 +427,19 @@ export default function PatientDetailPage() {
         onPatientUpdated={handlePatientUpdated}
         patient={currentPatient}
         hideTreatingDoctors={true}
+        onDelete={() => {
+          store.closeEditPatientDialog();
+          setIsDeletePatientOpen(true);
+        }}
+      />
+
+      {/* Delete Patient Dialog */}
+      <DeletePatientDialog
+        open={isDeletePatientOpen}
+        onOpenChange={setIsDeletePatientOpen}
+        patient={currentPatient}
+        onConfirm={handleConfirmDeletePatient}
+        loading={deletePatientLoading}
       />
 
       {/* Delete Doctor Dialog */}

@@ -18,7 +18,7 @@ import { ClinicProfileTab } from "./components/ClinicProfileTab";
 import { MembersTab } from "./components/MembersTab";
 import { InvitationsTab } from "./components/InvitationsTab";
 import { AccessDenied } from "./components/AccessDenied";
-import { BillingTab } from "./components/BillingTab";
+
 import useUserStore from "@/components/features/profile/store/userStore";
 
 export default function page() {
@@ -242,12 +242,7 @@ export default function page() {
                   >
                     Invitations
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="billing"
-                    className="px-4 h-12 flex items-center justify-center rounded-xl bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7564ed] data-[state=active]:!bg-[#7564ed] data-[state=active]:!text-white"
-                  >
-                    Billing
-                  </TabsTrigger>
+
                 </>
               )}
             </TabsList>
@@ -282,9 +277,7 @@ export default function page() {
                 <InvitationsTab currentClinic={currentClinic} invitations={invitations} loading={invitationsLoading} error={invitationsError} />
               </TabsContent>
 
-              <TabsContent value="billing" className="">
-                <BillingTab currentClinic={currentClinic} />
-              </TabsContent>
+
             </>
           )}
         </Tabs>

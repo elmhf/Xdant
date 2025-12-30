@@ -1,3 +1,4 @@
+import { apiClient } from './apiClient';
 
 export function parseJwt(token) {
   if (!token) return null
@@ -90,7 +91,7 @@ export function clearTokensHttpOnly(res) {
   res.setHeader('Set-Cookie', cookieStrings)
 }
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
 export async function fetchWithHttpOnlyAuth(url, options = {}) {
   // إضافة credentials للتأكد من إرسال الكوكيز
@@ -99,13 +100,13 @@ export async function fetchWithHttpOnlyAuth(url, options = {}) {
     credentials: 'include', // مهم جداً لإرسال HttpOnly cookies
   }
   // Use full backend URL if not already absolute
-  const fullUrl = url.startsWith('http') ? url : BACKEND_URL + url;
+  const fullUrl = url.startsWith('http') ? url : (BACKEND_URL.replace(/\/$/, '') + (url.startsWith('/') ? '' : '/') + url);
   const response = await fetch(fullUrl, fetchOptions)
 
   // إذا كانت الاستجابة 401، فهذا يعني أن التوكن منتهي الصلاحية
   if (response.status === 401) {
     // محاولة تجديد التوكن
-    const refreshResponse = await fetch(BACKEND_URL + '/api/refresh-token', {
+    const refreshResponse = await fetch(BACKEND_URL.replace(/\/$/, '') + '/api/refresh-token', {
       method: 'POST',
       credentials: 'include',
     })
@@ -127,19 +128,11 @@ export async function fetchWithHttpOnlyAuth(url, options = {}) {
 
 export async function checkAuthStatus() {
   try {
-    const response = await fetch(BACKEND_URL + '/api/auth/status', {
-      credentials: 'include',
-    })
-
-    if (response.ok) {
-      const data = await response.json()
-      return {
-        isAuthenticated: data.isAuthenticated,
-        user: data.user || null,
-      }
+    const data = await apiClient('/api/auth/status');
+    return {
+      isAuthenticated: data.isAuthenticated,
+      user: data.user || null,
     }
-
-    return { isAuthenticated: false, user: null }
   } catch {
     return { isAuthenticated: false, user: null }
   }
@@ -147,11 +140,7 @@ export async function checkAuthStatus() {
 
 export async function logout() {
   try {
-    await fetch(BACKEND_URL + '/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    })
-
+    await apiClient('/api/auth/logout', { method: 'POST' });
     if (typeof window !== 'undefined') {
       window.location.href = '/login'
     }
@@ -161,24 +150,10 @@ export async function logout() {
 }
 
 export async function login(email, password) {
-  const response = await fetch(BACKEND_URL + '/api/auth/login', {
+  const data = await apiClient('/api/auth/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', // مهم جداً باش يرسل الكوكيز تلقائياً
     body: JSON.stringify({ email, password }),
-  })
-
-  if (!response.ok) {
-    let err;
-    try {
-      err = await response.json();
-    } catch {
-      err = { error: await response.text() };
-    }
-    throw new Error(err.error || 'Login failed')
-  }
-
-  const data = await response.json()
+  });
 
   // Check for 2FA requirement
   if (data.state === '2fa_required') {
@@ -193,24 +168,10 @@ export async function login(email, password) {
 }
 
 export async function login2FA(code, email, tempToken) {
-  const response = await fetch(BACKEND_URL + '/api/auth/login-2fa', { // Corrected endpoint from plan
+  const data = await apiClient('/api/auth/login-2fa', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
     body: JSON.stringify({ code, email, tempToken }),
   });
-
-  if (!response.ok) {
-    let err;
-    try {
-      err = await response.json();
-    } catch {
-      err = { error: await response.text() };
-    }
-    throw new Error(err.error || '2FA Verification failed');
-  }
-
-  const data = await response.json();
   return data.user;
 }
 

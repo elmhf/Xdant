@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { X, Loader2, AlertTriangle, Building2, Fingerprint, ChevronRight } from "lucide-react";
+import { apiClient } from "@/utils/apiClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { initiate2FA, verify2FA, initiateDisable2FA, confirmDisable2FA, getSecurityStatus, updateAutoSave, initiateAccountDeletion, confirmAccountDeletion } from "@/services/securityService";
@@ -48,6 +49,30 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
     const [deleteOwnedClinics, setDeleteOwnedClinics] = useState([]);
+
+    // Logout All Devices States
+    const [showLogoutAllView, setShowLogoutAllView] = useState(false);
+    const [logoutAllPassword, setLogoutAllPassword] = useState("");
+    const [logoutAllLoading, setLogoutAllLoading] = useState(false);
+
+    // Logout All Handler
+    const handleLogoutAll = async () => {
+        if (!logoutAllPassword) return;
+        setLogoutAllLoading(true);
+        try {
+            await apiClient("/api/auth/logout-all", {
+                method: "POST",
+                body: JSON.stringify({ password: logoutAllPassword }),
+            });
+            pushNotification("success", "Déconnexion de tous les appareils réussie.");
+            setShowLogoutAllView(false);
+            setLogoutAllPassword("");
+        } catch (error) {
+            pushNotification("error", error.message || "Erreur lors de la déconnexion.");
+        } finally {
+            setLogoutAllLoading(false);
+        }
+    };
 
     // Fetch Security Status on Open
     useEffect(() => {
@@ -201,8 +226,75 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
         setDeleteLoading(false);
     };
 
-
     const renderContent = () => {
+        // VIEW: Logout All Devices
+        if (showLogoutAllView) {
+            return (
+                <div className="bg-white rounded-xl overflow-hidden">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                        <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                            Déconnexion de tous les appareils
+                        </DialogTitle>
+                        <button
+                            onClick={() => {
+                                setShowLogoutAllView(false);
+                                setLogoutAllPassword("");
+                            }}
+                            className="rounded-full p-2 hover:bg-gray-100 transition-colors"
+                        >
+                            <X className="w-4 h-4 text-gray-500" />
+                        </button>
+                    </div>
+
+                    <div className="p-6">
+                        <div className="space-y-6">
+                            <div className="flex flex-col items-center justify-center text-center space-y-4 mb-4 pt-2">
+                                <div className="h-20 w-20 bg-[#7564ed] rounded-3xl flex items-center justify-center shadow-md">
+                                    <Fingerprint className="text-white h-10 w-10" />
+                                </div>
+                                <div className="space-y-2">
+                                    <h2 className="text-2xl font-bold text-gray-900">Vérification du mot de passe</h2>
+                                    <p className="text-gray-500 text-base">Entrez votre mot de passe pour <span className="font-semibold text-[#7564ed]">confirmer la déconnexion</span></p>
+                                </div>
+                            </div>
+
+                            <div className="px-4">
+                                <Input
+                                    type="password"
+                                    value={logoutAllPassword}
+                                    onChange={(e) => setLogoutAllPassword(e.target.value)}
+                                    placeholder="Entrez votre mot de passe"
+                                    className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20 transition-all"
+                                />
+                            </div>
+
+                            <div className="flex gap-4 pt-2 w-full justify-end px-4">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => {
+                                        setShowLogoutAllView(false);
+                                        setLogoutAllPassword("");
+                                    }}
+                                    disabled={logoutAllLoading}
+                                    className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
+                                >
+                                    Annuler
+                                </Button>
+                                <Button
+                                    onClick={handleLogoutAll}
+                                    disabled={!logoutAllPassword || logoutAllLoading}
+                                    className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:bg-[#dcd6fa] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
+                                >
+                                    {logoutAllLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    Se déconnecter
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         // VIEW: Delete Account
         if (showDeleteAccountView) {
             return (
@@ -367,7 +459,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 <div className="bg-white rounded-xl overflow-hidden">
                     <div className="p-6 pb-0">
                         <div className="flex items-center justify-between mb-2">
-                            <h2 className="text-xl font-bold text-gray-900">Setup Authenticator App</h2>
+                            <DialogTitle className="text-xl font-bold text-gray-900">Setup Authenticator App</DialogTitle>
                             <button onClick={() => setShow2FAEnableDialog(false)} className="text-gray-400 hover:text-gray-500">
                                 <X className="w-5 h-5" />
                             </button>
@@ -659,7 +751,10 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                             <h4 className="text-base font-semibold text-gray-900 mb-1">Déconnexion de tous les appareils</h4>
                             <p className="text-sm text-gray-600">Déconnectez-vous de toutes les autres sessions actives sur d'autres appareils que celui-ci.</p>
                         </div>
-                        <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
+                        <button
+                            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap"
+                            onClick={() => setShowLogoutAllView(true)}
+                        >
                             Se déconnecter
                         </button>
                     </div>
@@ -693,6 +788,8 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 setDisablePassword("");
                 setDisableCode("");
                 setShowDeleteAccountView(false);
+                setShowLogoutAllView(false);
+                setLogoutAllPassword("");
                 resetDeleteState();
             }
         }}>
