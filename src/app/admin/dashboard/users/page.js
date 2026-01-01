@@ -174,7 +174,7 @@ export default function UsersPage() {
                                 placeholder="Search"
                                 value={searchQuery}
                                 onChange={handleSearch}
-                                className="pl-10 h-10 w-full bg-white border-gray-200 focus-visible:ring-1 focus-visible:ring-gray-400 rounded-lg shadow-sm"
+                                className="pl-10 h-10 w-ful"
                             />
                             {searchQuery && (
                                 <button

@@ -1,4 +1,4 @@
-import { apiClient } from '@/utils/apiClient';
+import { apiClient, apiUploadClient } from '@/utils/apiClient';
 
 export const adminService = {
     // Users
@@ -242,5 +242,51 @@ export const adminService = {
 
     getBucketContent: async (bucketName, path = '') => {
         return await apiClient(`/api/admin/storage/bucket/${bucketName}?path=${encodeURIComponent(path)}`);
+    },
+
+    downloadFile: async (bucketName, filePath) => {
+        return await apiClient(`/api/admin/storage/bucket/${bucketName}/download?filePath=${encodeURIComponent(filePath)}`, {
+            responseType: 'blob'
+        });
+    },
+
+    deleteFile: async (bucketName, filePath) => {
+        return await apiClient(`/api/admin/storage/bucket/${bucketName}/file`, {
+            method: 'DELETE',
+            body: JSON.stringify({ filePath })
+        });
+    },
+
+    uploadFile: async (bucketName, path, file, onProgress) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (path) {
+            formData.append('path', path);
+        }
+
+        return await apiUploadClient(
+            `/api/admin/storage/bucket/${bucketName}/upload`,
+            formData,
+            onProgress
+        );
+    },
+
+    createBucket: async (name, isPublic) => {
+        return await apiClient('/api/admin/storage/bucket', {
+            method: 'POST',
+            body: JSON.stringify({ name, public: isPublic })
+        });
+    },
+
+    deleteBucket: async (bucketName) => {
+        return await apiClient(`/api/admin/storage/bucket/${bucketName}`, {
+            method: 'DELETE'
+        });
+    },
+
+    emptyBucket: async (bucketName) => {
+        return await apiClient(`/api/admin/storage/bucket/${bucketName}/empty`, {
+            method: 'POST'
+        });
     }
 };

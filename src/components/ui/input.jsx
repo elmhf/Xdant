@@ -22,7 +22,7 @@ function Input({
         data-slot="input"
         className={cn(
           // Base styles matching the design
-          "flex h-11 w-full text-semibold rounded-2xl border-1 border-gray-300 bg-white px-4 py-3",
+          "flex h-11 w-full text-semibold rounded-2xl border-1 border-gray-400 bg-white px-4 py-3",
           "text-sm text-gray-600 bg-white",
           "hover:border-[#7564ed] hover:border-2",
           "focus:border-[#7564ed] focus:border-2 focus:outline-none focus:ring-0",

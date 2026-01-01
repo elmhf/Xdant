@@ -80,11 +80,23 @@ export async function apiClient(endpoint, options = {}) {
             }
         }
 
-        // Read response data once
+        // Read response data based on responseType
         let data = null;
         try {
-            // Check if there is content to read (204 No Content has no body)
-            if (response.status !== 204) {
+            if (options.responseType === 'blob') {
+                if (response.ok) {
+                    data = await response.blob();
+                } else {
+                    // Try to read error as json or text
+                    const text = await response.text();
+                    try {
+                        data = JSON.parse(text);
+                    } catch {
+                        data = { message: text };
+                    }
+                }
+            } else if (response.status !== 204) {
+                // Check if there is content to read (204 No Content has no body)
                 data = await response.json();
             }
         } catch (e) {

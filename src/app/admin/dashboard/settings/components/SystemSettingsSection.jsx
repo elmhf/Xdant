@@ -180,14 +180,7 @@ export default function SystemSettingsSection() {
         return acc;
     }, {});
 
-    const getGroupIcon = (group) => {
-        switch (group) {
-            case 'frontend': return <Monitor className="w-4 h-4 text-blue-500" />;
-            case 'server_api': return <Key className="w-4 h-4 text-amber-500" />;
-            case 'server_ai': return <Cpu className="w-4 h-4 text-purple-500" />;
-            default: return <Database className="w-4 h-4 text-gray-500" />;
-        }
-    };
+
 
     const formatTitle = (text) => text.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
@@ -199,12 +192,12 @@ export default function SystemSettingsSection() {
     const hasChanges = settingsList.some(item => String(config[item.key]) !== String(item.value));
 
     return (
-        <section className="space-y-10 animate-in fade-in duration-500">
+        <section className="space-y-10 max-w-6xl animate-in fade-in duration-500">
             {/* Header / Management Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-10 border-b border-gray-100">
                 <div className="space-y-1">
-                    <h3 className="text-lg font-semibold text-gray-900">System Configuration</h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-3xl font-bold text-gray-900">System Configuration</p>
+                    <p className="text-lg text-gray-500">
                         {isManageMode
                             ? "Management Mode Active: Add, Edit Metadata, or Delete settings."
                             : "Manage configuration dynamically."}
@@ -304,11 +297,8 @@ export default function SystemSettingsSection() {
             {Object.keys(groupedSettings).map((group, index) => (
                 <div key={group} className={`grid grid-cols-1 md:grid-cols-3 gap-8 ${index !== Object.keys(groupedSettings).length - 1 ? 'pb-10 border-b border-gray-100' : ''}`}>
                     <div className="md:col-span-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                            {getGroupIcon(group)}
-                            <h3 className="text-lg font-semibold text-gray-900">{formatTitle(group)}</h3>
-                        </div>
-                        <p className="text-sm text-gray-500">Configure settings for the {formatTitle(group)} module.</p>
+                        <p className="text-2xl font-semibold text-gray-900">{formatTitle(group)}</p>
+                        <p className="text-md text-gray-500">Configure settings for the {formatTitle(group)} module.</p>
                     </div>
 
                     <div className="md:col-span-2 space-y-6">
@@ -316,10 +306,10 @@ export default function SystemSettingsSection() {
                             {groupedSettings[group].map((setting) => (
                                 <div key={setting.key} className="relative group space-y-2">
                                     <div className="flex justify-between items-center">
-                                        <Label htmlFor={setting.key} className="text-gray-700 font-medium flex items-center gap-2 cursor-pointer">
+                                        <Label htmlFor={setting.key} className="text-gray-900 font-medium flex items-center gap-2 cursor-pointer">
                                             {formatTitle(setting.key)}
                                             {isManageMode && (
-                                                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-normal">{setting.category}</span>
+                                                <span className="text-md bg-gray-100 px-2 py-0.5 rounded text-gray-900 font-normal">{setting.category}</span>
                                             )}
                                         </Label>
                                     </div>

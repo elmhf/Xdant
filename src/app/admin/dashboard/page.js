@@ -9,6 +9,7 @@ import RecentReportsTable from '@/components/admin/RecentReportsTable';
 
 import DashboardChart from '@/components/admin/DashboardChart';
 import IncidentReportsCard from '@/components/admin/IncidentReportsCard';
+import ProjectStorageCard from '@/components/admin/storage/ProjectStorageCard';
 
 export default function AdminDashboardPage() {
     const [stats, setStats] = useState({
@@ -25,6 +26,7 @@ export default function AdminDashboardPage() {
         incidentReports: [],
         chartData: []
     });
+    const [storageStats, setStorageStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const [adminName, setAdminName] = useState('Admin');
@@ -43,12 +45,14 @@ export default function AdminDashboardPage() {
             }
 
             // Fetch top 5 items (index 0 to 4) for tables + counts
-            const [usersData, clinicsData, patientsData, reportsData, incidentReportsData] = await Promise.all([
+            // Fetch top 5 items (index 0 to 4) for tables + counts
+            const [usersData, clinicsData, patientsData, reportsData, incidentReportsData, storageData] = await Promise.all([
                 adminService.getAllUsers('0', '4'),
                 adminService.getAllClinics('0', '4'),
                 adminService.getAllPatients('0', '4'),
                 adminService.getAllReports('0', '4'),
-                adminService.getIncidentReports('0', '7')
+                adminService.getIncidentReports('0', '2'),
+                adminService.getStorageStats()
             ]);
 
             // Update counts
@@ -67,6 +71,7 @@ export default function AdminDashboardPage() {
                 reports: reportsData.data || [],
                 incidentReports: incidentReportsData.data || [],
             });
+            setStorageStats(storageData);
 
         } catch (error) {
             console.error("Failed to fetch dashboard stats:", error);
@@ -105,7 +110,7 @@ export default function AdminDashboardPage() {
                             </div>
 
                             <p className="text-3xl md:text-5xl font-bold tracking-tight mt-2">
-                                Welcome back, {adminName}! 
+                                Welcome back, {adminName}!
                             </p>
 
                             <p className="text-lg text-indigo-100 max-w-xl mt-2 font-medium">
@@ -118,6 +123,12 @@ export default function AdminDashboardPage() {
                 {/* Incident Reports (1/3 width, Spans 2 Rows) */}
                 <div className="lg:col-span-1 lg:row-span-2">
                     <IncidentReportsCard reports={data.incidentReports} loading={loading} />
+
+                </div>
+
+                {/* Project Storage Card (Under Welcome) */}
+                <div className="lg:col-span-2">
+                    <ProjectStorageCard stats={storageStats} loading={loading} />
                 </div>
 
                 {/* Dashboard Chart (Bottom Left - 2 Cols) */}
@@ -126,8 +137,9 @@ export default function AdminDashboardPage() {
                 </div>
             </div>
 
+
             {/* Data Tables Grid */}
-            <div className="grid bg-white grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <RecentUsersTable users={data.users} loading={loading} onRefresh={fetchStats} />
                 <RecentClinicsTable clinics={data.clinics} loading={loading} />
                 <RecentPatientsTable patients={data.patients} loading={loading} />

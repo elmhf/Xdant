@@ -14,7 +14,10 @@ export default function RecentReportsTable({ reports, loading }) {
     return (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col h-full">
             <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                <p className="text-4xl font-bold text-gray-900">Recent Reports</p>
+                <div className="space-y-1">
+                    <p className="text-4xl font-semibold text-gray-900">Recent Reports</p>
+                    <p className="text-md font-medium text-gray-500">Most recent radiological reports generated.</p>
+                </div>
                 <Link href="/admin/dashboard/reports">
                     <button className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-600">
                         <ArrowRight className="h-5 w-5" />
@@ -23,11 +26,11 @@ export default function RecentReportsTable({ reports, loading }) {
             </div>
             <div className="overflow-x-auto flex-1">
                 <table className="w-full">
-                    <thead className="bg-gray-100/70 border-b border-gray-200 sticky top-0 z-10 filter backdrop-blur-sm">
+                    <thead className="bg-gray-100/20 border-b border-gray-200 sticky top-0 z-10 filter backdrop-blur-sm">
                         <tr>
-                            <th className="min-w-32 text-left py-3 px-6 text-md font-medium text-gray-500">Type</th>
-                            <th className="min-w-64 text-left py-3 px-6 text-md font-medium text-gray-500">Patient</th>
-                            <th className="min-w-32 text-left py-3 px-6 text-md font-medium text-gray-500">Date</th>
+                            <th className="min-w-32 text-left py-3 px-6 text-lg font-medium text-gray-700">Type</th>
+                            <th className="min-w-64 text-left py-3 px-6 text-lg font-medium text-gray-700">Patient</th>
+                            <th className="min-w-32 text-left py-3 px-6 text-lg font-medium text-gray-700">Date</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">

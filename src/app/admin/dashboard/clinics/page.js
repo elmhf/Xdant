@@ -141,7 +141,7 @@ export default function ClinicsPage() {
                             placeholder="Search"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-9 h-10 w-full bg-white border-gray-200 focus-visible:ring-1 focus-visible:ring-gray-400"
+                            className="pl-9 h-10 w-full "
                         />
                         {searchTerm && (
                             <button

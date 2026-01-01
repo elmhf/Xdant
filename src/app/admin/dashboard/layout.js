@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Home, Users, Settings, LogOut, Menu, X, Building2, FileText, User, ChevronRight, Database } from 'lucide-react';
+import { Home, Users, Settings, LogOut, Menu, X, Building2, FileText, User, ChevronRight, Database, Blocks, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { adminService } from '@/services/adminService';
@@ -59,10 +59,12 @@ export default function AdminDashboardLayout({ children }) {
                 { label: 'System Configuration', href: '/admin/dashboard/settings/system' },
             ]
         },
+        { icon: AlertTriangle, label: 'Incident Reports', href: '/admin/dashboard/incident-reports' },
+        { icon: Blocks, label: 'Integrations', href: '/admin/dashboard/integration' },
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50 flex">
+        <div className="min-h-screen bg-[#e4e7eb] flex">
             {/* Sidebar */}
             <aside
                 className={`fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-100 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -144,40 +146,44 @@ export default function AdminDashboardLayout({ children }) {
             </aside>
 
             {/* Main Content */}
-            <div className="flex-1 overflow-hidden flex flex-col min-w-0 bg-gray-50">
+            <div className="flex-1 overflow-hidden flex flex-col min-w-0 bg-[#e4e7eb]">
                 {/* Top Bar / Breadcrumbs */}
                 <header className=" h-16 flex items-center px-6 sticky top-0 z-20">
                     <div className="flex items-center gap-1 text-sm">
                         {/* Logo Icon */}
                         <div className="w-6 h-6 rounded-md bg-gradient-to-br from-rose-500 via-purple-500 to-blue-500 shadow-sm shrink-0"></div>
 
-                        <ChevronRight className="w-8 h-8 text-gray-300" />
 
-                        {/* Current Page Name */}
-                        {pathname.includes('/settings/') ? (
-                            <div className="flex items-center gap-1">
-                                <span className="font-semibold text-2xl text-gray-500">Settings</span>
-                                <ChevronRight className="w-6 h-6 text-gray-300" />
-                                <span className="font-semibold text-2xl text-gray-900">
-                                    {{
-                                        '/admin/dashboard/settings/profile': 'Profile settings',
-                                        '/admin/dashboard/settings/system': 'System settings',
-                                    }[pathname] || 'Settings'}
-                                </span>
-                            </div>
-                        ) : (
-                            <span className="font-semibold text-2xl text-gray-900">
-                                {{
-                                    '/admin/dashboard': 'Overview',
-                                    '/admin/dashboard/users': 'User management',
-                                    '/admin/dashboard/patients': 'Patient management',
-                                    '/admin/dashboard/clinics': 'Clinic management',
-                                    '/admin/dashboard/reports': 'Reports',
-                                    '/admin/dashboard/storage': 'Storage Management',
-                                    '/admin/dashboard/settings': 'Settings',
-                                }[pathname] || 'Dashboard'}
-                            </span>
-                        )}
+                        {/* Dynamic Breadcrumbs */}
+                        <div className="flex items-center gap-1">
+                            {pathname.split('/').filter(p => p && p !== 'admin').map((segment, index, array) => {
+                                const isLast = index === array.length - 1;
+                                const pathLabels = {
+                                    'dashboard': 'Dashboard',
+                                    'users': 'User Management',
+                                    'patients': 'Patient Management',
+                                    'clinics': 'Clinic Management',
+                                    'reports': 'Reports',
+                                    'incident-reports': 'Incident Reports',
+                                    'storage': 'Storage',
+                                    'settings': 'Settings',
+                                    'profile': 'Profile',
+                                    'system': 'System Configuration',
+                                    'integration': 'Integrations',
+                                };
+
+                                const label = pathLabels[segment.toLowerCase()] || decodeURIComponent(segment);
+
+                                return (
+                                    <div key={index} className="flex items-center gap-1">
+                                        {index > 0 && <ChevronRight className="w-8 h-8 text-[#7564ed]" />}
+                                        <span className={`text-xl ${isLast ? 'font-semibold text-gray-900' : 'font-medium text-[#7564ed]'}`}>
+                                            {label}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </header>
 

@@ -7,7 +7,7 @@ import circleLoader from "@/components/shared/lottie/Insider-loading.json";
 export default function IncidentReportsCard({ reports = [], loading = false }) {
     if (loading) {
         return (
-            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl shadow-indigo-100/20 h-full flex flex-col">
+            <div className="bg-white p-6 rounded-3xl border-1 border-gray-400 shadow-xl shadow-indigo-100/20 h-full flex flex-col">
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-xl font-bold text-gray-900">Incident Reports</h3>
                 </div>
@@ -33,7 +33,7 @@ export default function IncidentReportsCard({ reports = [], loading = false }) {
     };
 
     return (
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl shadow-indigo-100/20 h-full flex flex-col">
+        <div className="bg-white p-6 rounded-3xl border-1 border-gray-300 shadow-xl shadow-indigo-100/20 h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
 

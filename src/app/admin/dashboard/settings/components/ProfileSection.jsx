@@ -107,18 +107,18 @@ export default function ProfileSection() {
     };
 
     return (
-        <section className="space-y-10 animate-in fade-in duration-500">
+        <section className="space-y-10 max-w-6xl animate-in fade-in duration-500">
             {/* Personal Info Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10 border-b border-gray-100">
                 <div className="md:col-span-1 space-y-1">
-                    <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
-                    <p className="text-sm text-gray-500">Update your photo and personal details here.</p>
+                    <p className="text-md font-semibold text-gray-900">Personal Information</p>
+                    <p className="text-md text-gray-500">Update your photo and personal details here.</p>
                 </div>
 
                 <div className="md:col-span-2 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-2">
-                            <Label htmlFor="firstName" className="text-gray-700 font-medium">First name</Label>
+                            <Label htmlFor="firstName" className="text-gray-900 font-medium">First name</Label>
                             <Input
                                 id="firstName"
                                 value={profileData.first_name}
@@ -127,7 +127,7 @@ export default function ProfileSection() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="lastName" className="text-gray-700 font-medium">Last name</Label>
+                            <Label htmlFor="lastName" className="text-gray-900 font-medium">Last name</Label>
                             <Input
                                 id="lastName"
                                 value={profileData.last_name}
@@ -138,7 +138,7 @@ export default function ProfileSection() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="text-gray-700 font-medium">Email address</Label>
+                        <Label htmlFor="email" className="text-gray-900 font-medium">Email address</Label>
                         <div className="flex gap-4">
                             <Input
                                 id="email"
@@ -162,13 +162,13 @@ export default function ProfileSection() {
             {/* Password Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-1 space-y-1">
-                    <h3 className="text-lg font-semibold text-gray-900">Secure Your Account</h3>
-                    <p className="text-sm text-gray-500">Ensure your account is using a long, random password to stay secure.</p>
+                    <p className="text-md font-semibold text-gray-900">Secure Your Account</p>
+                    <p className="text-md text-gray-500">Ensure your account is using a long random password to stay secure.</p>
                 </div>
 
                 <div className="md:col-span-2 space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="current" className="text-gray-700 font-medium">Current Password</Label>
+                        <Label htmlFor="current" className="text-gray-900 font-medium">Current Password</Label>
                         <Input
                             id="current"
                             type="password"
@@ -179,7 +179,7 @@ export default function ProfileSection() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-2">
-                            <Label htmlFor="new" className="text-gray-700 font-medium">New Password</Label>
+                            <Label htmlFor="new" className="text-gray-900 font-medium">New Password</Label>
                             <Input
                                 id="new"
                                 type="password"
@@ -189,7 +189,7 @@ export default function ProfileSection() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="confirm" className="text-gray-700 font-medium">Confirm Password</Label>
+                            <Label htmlFor="confirm" className="text-gray-900 font-medium">Confirm Password</Label>
                             <Input
                                 id="confirm"
                                 type="password"

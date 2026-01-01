@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, MoreVertical, FileText, User, Calendar, AlertCircle, X } from 'lucide-react';
 import { adminService } from '@/services/adminService';
 import { DeleteReportDialog } from './components/DeleteReportDialog';
-
+import { Input } from '@/components/ui/input';
 import ReportsTable from './components/ReportsTable';
 
 export default function ReportsPage() {
@@ -139,12 +139,12 @@ export default function ReportsPage() {
                     {/* Search */}
                     <div className="relative flex-1 md:min-w-[500px]">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                        <input
+                        <Input
                             type="text"
                             placeholder="Search reports by patient or ID..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-9 h-10 w-full bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
+                            className="pl-9 h-10 w-full  rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
                         />
                         {searchTerm && (
                             <button
