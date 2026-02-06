@@ -91,7 +91,7 @@ export function clearTokensHttpOnly(res) {
   res.setHeader('Set-Cookie', cookieStrings)
 }
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://serverrouter.onrender.com/';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://serverrouter.onrender.com';
 
 export async function fetchWithHttpOnlyAuth(url, options = {}) {
   // إضافة credentials للتأكد من إرسال الكوكيز
