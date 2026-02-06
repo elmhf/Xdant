@@ -13,7 +13,7 @@ const generateHash = async (text) => {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 80);
 };
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'http://localhost:5000';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'https://serverrouter.onrender.com';
 
 const generateCDNUrl = async (view, index, w = 500, q = 80) => {
   const raw = `${view}-${index}-${w}-${q}-${SECRET_KEY}`;

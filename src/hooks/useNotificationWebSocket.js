@@ -51,7 +51,7 @@ export const useNotificationWebSocket = (userId, clinicId = null) => {
         console.log('🔌 Initializing notification WebSocket for user:', userId);
 
         // إنشاء اتصال WebSocket
-        const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'http://localhost:5000';
+        const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'https://serverrouter.onrender.com';
         socketRef.current = io(SOCKET_URL, {
             withCredentials: true,
             transports: ['websocket', 'polling'],

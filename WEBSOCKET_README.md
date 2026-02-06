@@ -103,7 +103,7 @@ const PORT = 5000; // تغيير الرقم حسب الحاجة
 
 ### تغيير عنوان الخادم في العميل:
 ```javascript
-socketRef.current = io('http://localhost:5000', {
+socketRef.current = io('https://serverrouter.onrender.com', {
   // الخيارات
 });
 ```

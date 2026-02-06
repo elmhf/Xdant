@@ -28,7 +28,7 @@ const loadImage = (url) => {
 
 export const useImageStore = create((set, get) => ({
   // Base path configuration
-  basePath: process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'http://localhost:5000',
+  basePath: process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'https://serverrouter.onrender.com',
 
   images: { axial: [], coronal: [], sagittal: [] },
   loading: { axial: false, coronal: false, sagittal: false },

@@ -4,7 +4,7 @@ import useUserStore from "@/components/features/profile/store/userStore";
 import { usePatientStore } from '@/stores/patientStore';
 
 // Badel l URL kanou mokhtalef fi production
-const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'http://localhost:5000';
+const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'https://serverrouter.onrender.com';
 
 export const usePatientWebSocket = (patientId, userId, clinicId) => {
   const [wsConnected, setWsConnected] = useState(false);
