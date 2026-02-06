@@ -35,8 +35,12 @@ async function fetchReportDataByPost(reportId, abortSignal) {
     // Setup image store data
     const setupFromReport = useImageStore.getState().setupFromReport;
     if (setupFromReport) {
-      console.log("✅ Data fetched successfully", data.report)
-      await setupFromReport(data.report);
+      // Prefer the full JSON data (report_data) which has scanInfo/dimensions
+      // If not available, fall back to the DB record (report)
+      console.log("dataddddd", data)
+      const dataForStore = data.report_data || data.report;
+      console.log("✅ Data sent to imageStore:", dataForStore ? "Found Data" : "Empty");
+      await setupFromReport(dataForStore);
     }
 
     return data;

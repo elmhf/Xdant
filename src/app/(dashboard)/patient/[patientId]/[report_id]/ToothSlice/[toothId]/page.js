@@ -287,8 +287,9 @@ export default function ToothSlicePage() {
             ) : (
               /* Range controls and SlicesSection for each view */
               ['axial', 'coronal', 'sagittal'].map(view => {
-                const start = sliceRanges[view].start;
-                const end = sliceRanges[view].end;
+                console.log("NoSliceDataMessage",sliceRanges);
+                const start = sliceRanges[view].start || sliceRanges[view].min;
+                const end = sliceRanges[view].end || sliceRanges[view].max;
 
                 return (
                   <div key={view} className=" mb-5">

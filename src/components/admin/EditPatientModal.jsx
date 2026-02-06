@@ -3,7 +3,7 @@ import { Save, Trash2, UserMinus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { adminService } from '@/services/adminService';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     Dialog,

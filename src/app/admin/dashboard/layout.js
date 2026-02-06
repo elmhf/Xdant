@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Home, Users, Settings, LogOut, Menu, X, Building2, FileText, User, ChevronRight, Database, Blocks, AlertTriangle } from 'lucide-react';
+import { Home, Users, Settings, LogOut, Menu, X, Building2, FileText, User, ChevronRight, Database, Blocks, AlertTriangle, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { adminService } from '@/services/adminService';
@@ -60,6 +60,7 @@ export default function AdminDashboardLayout({ children }) {
             ]
         },
         { icon: AlertTriangle, label: 'Incident Reports', href: '/admin/dashboard/incident-reports' },
+        { icon: BrainCircuit, label: 'AI Models', href: '/admin/dashboard/ai-models' },
         { icon: Blocks, label: 'Integrations', href: '/admin/dashboard/integration' },
     ];
 
@@ -170,6 +171,7 @@ export default function AdminDashboardLayout({ children }) {
                                     'profile': 'Profile',
                                     'system': 'System Configuration',
                                     'integration': 'Integrations',
+                                    'ai-models': 'AI Models',
                                 };
 
                                 const label = pathLabels[segment.toLowerCase()] || decodeURIComponent(segment);

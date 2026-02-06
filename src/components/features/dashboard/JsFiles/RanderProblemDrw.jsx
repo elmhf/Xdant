@@ -8,32 +8,32 @@ import { toast } from "sonner";
 const COLOR_PALETTE = {
   // Main structures - refined colors with balanced opacity and softer shadows
   tooth: {
-    fill: 'rgba(245, 235, 220, 0.2)', // Slightly warmer tone for natural look
-    stroke: 'rgba(200, 190, 170, 0.9)', // Subtle stroke for definition
-    strokeWidth: 2, // Thinner stroke for elegance
-    shadowColor: 'rgba(200, 190, 170, 0.4)', // Softer shadow
-    shadowBlur: 6 // Reduced blur for clarity
+    fill: 'rgba(255, 255, 255, 0.9)', // White fill for clean look
+    stroke: '#000000', // Black stroke as requested
+    strokeWidth: 1.5, // Clean width
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowBlur: 2
   },
   crown: {
-    fill: 'rgba(255, 245, 235, 0.2)', // Clean, near-white tone for crowns
-    stroke: 'rgba(220, 210, 200, 0.3)', // Slightly darker stroke
-    strokeWidth: 2,
-    shadowColor: 'rgba(220, 210, 200, 0.4)',
-    shadowBlur: 6
+    fill: 'rgba(255, 255, 255, 0.9)',
+    stroke: '#000000',
+    strokeWidth: 1.5,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowBlur: 2
   },
   root: {
-    fill: 'rgba(230, 220, 200, 0.3)', // Increased opacity for better visibility
-    stroke: 'rgba(200, 190, 170, 0.5)', // Subtle stroke
-    strokeWidth: 2,
-    shadowColor: 'rgba(200, 190, 170, 0.3)',
-    shadowBlur: 5
+    fill: 'rgba(255, 255, 255, 0.9)',
+    stroke: '#000000',
+    strokeWidth: 1.5,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowBlur: 2
   },
   jaw: {
-    fill: 'rgba(150, 130, 110, 0.8)', // Slightly darker for contrast
-    stroke: 'rgba(130, 110, 90, 0.9)', // Defined stroke
-    strokeWidth: 2,
-    shadowColor: 'rgba(130, 110, 90, 0.4)',
-    shadowBlur: 5
+    fill: 'rgba(240, 240, 240, 0.5)',
+    stroke: '#333333',
+    strokeWidth: 1,
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowBlur: 2
   },
 
   // Problems/Findings - vibrant but professional colors with refined opacity

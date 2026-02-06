@@ -18,7 +18,7 @@ import { useRouter, useParams } from "next/navigation";
 
 const TOOTH_CATEGORIES = {
   Healthy: {
-    color: 'white',
+    color: '#000',
     border: '1px solid black ',
     bg: 'white'
   },
@@ -38,7 +38,7 @@ const TOOTH_CATEGORIES = {
     bg: 'rgba(var(--color-Unhealthy), 0.2)'
   },
   Unknown: {
-    color: '#e5e7eb',
+    color: '#000',
     border: '1px solid #4b5563',
     bg: 'rgba(var(--color-UNKNOWN-Tooth), 0)'
   }
@@ -127,7 +127,7 @@ function ToothSVG({ toothNumber, className, toothSVGs, color, strokeColor }) {
       );
       elementsWithStroke.forEach(el => {
         if (!el.hasAttribute('stroke-width')) {
-          el.setAttribute('stroke-width', '3');
+          el.setAttribute('stroke-width', '1.5');
         }
       });
     }
@@ -404,12 +404,8 @@ const ToothChar = ({
                         className="max-w-full max-h-full h-full  object-contain transition-transform duration-200"
 
                         toothSVGs={toothSVGs}
-                        color={styles.color}
-                        strokeColor={
-                          ["Missing", "Unhealthy", "Treated"].includes(category)
-                            ? "#ffff"
-                            : ["Unknown", "Healthy"].includes(category) ? "#000" : "#0000"
-                        }
+                        color={"white"} // White fill
+                        strokeColor={"#000000"} // Always black stroke
                       />
                     )}
                   </div>
