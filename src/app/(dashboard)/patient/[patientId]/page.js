@@ -28,7 +28,7 @@ import {
 } from '@/stores/patientStore';
 import { useDentalStore } from '@/stores/dataStore';
 import useImageStore from "@/stores/ImageStore";
-import ReportComments from '../components/ReportComments';
+import ReportComments from '../components/reportComments';
 import { FolderIcon } from "lucide-react";
 import { DentalDateGroupCard } from './dental-data/components/DentalDateGroupCard';
 import { useDentalData } from './dental-data/hooks/useDentalData';

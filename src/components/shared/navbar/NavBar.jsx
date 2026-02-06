@@ -27,7 +27,7 @@ import circleLoaderAnimation from '@/components/shared/lottie/circle-loader.json
 import { useNotificationWebSocket } from '@/hooks/useNotificationWebSocket';
 import { useUpdateReportData } from '@/app/(dashboard)/patient/hooks';
 import { useDentalStore } from '@/stores/dataStore';
-import Breadcrumb from '@/components/ui/Breadcrumb';
+import Breadcrumb from '@/components/ui/breadcrumb';
 
 const userData = {
   name: "Paul Fisher",
