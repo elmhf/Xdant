@@ -1,7 +1,7 @@
 "use client";
 import { toast } from "sonner";
 import axios from "axios";
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://serverrouter.onrender.com/';
 // const BACKEND_URL = RAW_BACKEND_URL.replace(/\/$/, '');
 /**
  * Custom error class for API requests

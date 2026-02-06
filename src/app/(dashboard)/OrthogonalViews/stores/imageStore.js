@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 
-const SECRET_KEY = "chams_dont_steal_me";
 
 const generateHash = async (text) => {
   const encoder = new TextEncoder();
@@ -29,7 +28,7 @@ const loadImage = (url) => {
 
 export const useImageStore = create((set, get) => ({
   // Base path configuration
-  basePath: 'http://localhost:5000',
+  basePath: process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'http://localhost:5000',
 
   images: { axial: [], coronal: [], sagittal: [] },
   loading: { axial: false, coronal: false, sagittal: false },
@@ -190,7 +189,7 @@ export const useImageStore = create((set, get) => ({
 
       // Extract slice counts for each view
       // Extract slice counts from scanInfo (Preferred) or metadata (Fallback)
-      console.log("reportData.metadata",reportData.metadata);
+      console.log("reportData.metadata", reportData.metadata);
       const sliceCounts = {
         axial: reportData.scanInfo?.dimensions?.z || reportData.metadata?.slice_count?.axial || 200,
         coronal: reportData.scanInfo?.dimensions?.y || reportData.metadata?.slice_count?.coronal || 200,

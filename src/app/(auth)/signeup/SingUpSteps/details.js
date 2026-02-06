@@ -163,8 +163,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/auth/google-url');
-      const data = await res.json();
+      const data = await apiClient('/api/auth/google-url');
 
       if (data.url) {
         window.location.href = data.url;
@@ -332,8 +331,8 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
               type="button"
               onClick={canContinue ? handleNext : undefined}
               className={`w-full h-12 rounded-full text-base font-semibold tracking-wide transition-all duration-300 ${canContinue && !loading
-                  ? 'bg-[#0055FF] hover:bg-[#0044CC] text-white shadow-lg shadow-blue-500/20'
-                  : 'bg-[#0055FF] opacity-70 text-white cursor-not-allowed'
+                ? 'bg-[#0055FF] hover:bg-[#0044CC] text-white shadow-lg shadow-blue-500/20'
+                : 'bg-[#0055FF] opacity-70 text-white cursor-not-allowed'
                 }`}
               disabled={!canContinue || loading}
             >

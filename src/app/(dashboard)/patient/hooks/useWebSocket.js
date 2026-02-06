@@ -10,7 +10,8 @@ export const useWebSocket = (userId, clinicId) => {
 
   useEffect(() => {
     // إنشاء اتصال WebSocket
-    socketRef.current = io('http://localhost:5000', {
+    const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '') || 'http://localhost:5000';
+    socketRef.current = io(SOCKET_URL, {
       withCredentials: true,
       transports: ['websocket', 'polling'],
       reconnection: true,
