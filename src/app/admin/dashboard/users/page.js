@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Filter, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -160,10 +161,10 @@ export default function UsersPage() {
 
                 {/* Actions Row */}
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                {/* Left: Title */}
-                <p className="text-4xl font-bold text-gray-900">
-                    All users <span className="text-gray-400 font-normal ml-2">{users?.length || 0}</span>
-                </p>
+                    {/* Left: Title */}
+                    <p className="text-4xl font-bold text-gray-900">
+                        All users <span className="text-gray-400 font-normal ml-2">{users?.length || 0}</span>
+                    </p>
 
                     {/* Right: Actions */}
                     <div className="flex items-center gap-3 w-full md:w-auto">

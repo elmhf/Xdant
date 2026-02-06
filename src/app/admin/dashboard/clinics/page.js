@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Filter, X } from 'lucide-react';
 import { adminService } from '@/services/adminService';

@@ -6,6 +6,9 @@ import { icons } from "lucide-react";
 import { LayoutProvider } from '@/contexts/LayoutContext';
 import "leaflet/dist/leaflet.css";
 
+// Force all pages to be dynamic (no static generation during build)
+export const dynamic = "force-dynamic";
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],

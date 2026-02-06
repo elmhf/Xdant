@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '@/utils/apiClient';
 import IncidentReportsTable from '@/components/admin/IncidentReportsTable';

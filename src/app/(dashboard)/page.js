@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import "leaflet/dist/leaflet.css";
 import { useState, useEffect, useRef } from 'react';
 import PatientPage from './patient/page';
