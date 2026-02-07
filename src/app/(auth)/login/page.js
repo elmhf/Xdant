@@ -1,39 +1,50 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Lock, Loader2, ArrowRight, User } from "lucide-react";
+import Image from "next/image";
+import { Mail, Lock, Loader2 } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [banData, setBanData] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const WEBSITE_NAME = process.env.NEXT_PUBLIC_WEBSITE_NAME || "Xdental";
 
-  // Report Dialog State
-  const [isReportOpen, setIsReportOpen] = useState(false);
-  const [reportSubject, setReportSubject] = useState("");
-  const [reportMessage, setReportMessage] = useState("");
-  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+  // Check if user is already authenticated (client-side)
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://serverrouter.onrender.com';
+        const response = await fetch(`${BACKEND_URL}/api/users/me`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          router.push('/');
+        } else {
+          setCheckingAuth(false);
+        }
+      } catch (error) {
+        setCheckingAuth(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,7 +52,6 @@ export default function LoginPage() {
 
     setLoading(true);
     setError("");
-    setBanData(null);
 
     try {
       await apiClient("/api/auth/login", {
@@ -49,322 +59,191 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      // Login successful
-      router.push("/");
+      const redirectPath = searchParams.get("redirect") || "/";
+      router.push(redirectPath);
     } catch (err) {
       console.error("Login error:", err);
-
-      // Handle Ban Case
-      if (err.status === 403 && err.data?.code === 'USER_BANNED') {
-        setBanData(err.data);
-      } else {
-        setError(err.message || "Invalid email or password");
+      if (err.data?.state === 'pending_verification') {
+        toast.error("Please verify your email to continue");
+        router.push(`/signeup?step=1&email=${encodeURIComponent(email)}`);
+        return;
       }
+      setError(err.message || "Invalid email or password");
+      toast.error(err.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmitReport = async () => {
-    if (!reportSubject || !reportMessage) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-
-    setIsSubmittingReport(true);
-    try {
-      // TODO: Connect to actual support/appeal endpoint
-      // await apiClient("/api/support/appeal", { ... })
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Mock delay
-
-      toast.success("Report submitted successfully. We will review your appeal.");
-      setIsReportOpen(false);
-      setReportSubject("");
-      setReportMessage("");
-    } catch (err) {
-      toast.error("Failed to submit report. Please try again.");
-    } finally {
-      setIsSubmittingReport(false);
-    }
+  const handleGoogleLogin = () => {
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://serverrouter.onrender.com';
+    window.location.href = `${BACKEND_URL}/api/auth/google`;
   };
 
-  // If user is banned, show the Facebook-style ban screen
-  if (banData) {
-    // Extract user name from email if available for the greeting
-    const userName = email ? email.split('@')[0] : 'User';
-    // Capitalize first letter
-    const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
-
-    const isPermanent = banData.details?.type === 'PERMANENT';
-    const formattedEndDate = banData.details?.end_date
-      ? new Date(banData.details.end_date).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-      : null;
-
-    // Dynamic text based on ban type
-    const headerTitle = isPermanent
-      ? `${displayName}, your account has been disabled`
-      : `${displayName}, your account has been locked`;
-
-    const headerDescription = isPermanent
-      ? "Your account has been permanently disabled because it violated our Community Standards and Terms of Service."
-      : "We noticed some activity on your account that violates our Community Standards, so we have temporarily locked it.";
-
-    const infoBoxTitle = isPermanent
-      ? "Account Disabled"
-      : (formattedEndDate ? `Locked until ${formattedEndDate}` : "Account Locked");
-
-    const infoBoxDescription = isPermanent
-      ? `This decision is final. You can no longer use ${WEBSITE_NAME}.`
-      : (formattedEndDate
-        ? "Your account will be automatically unlocked after this time. Until then, your profile is not visible and you cannot access your account."
-        : `To protect our community, your profile is not visible to people on ${WEBSITE_NAME} and you can't use your account.`);
-
+  // Show loading while checking authentication
+  if (checkingAuth) {
     return (
-      <div className="min-h-screen w-full flex flex-col items-center pt-20 p-4 bg-white">
-        <div className="w-full max-w-[500px] animate-in fade-in zoom-in duration-300">
-
-          {/* Header Image (Purple Lock) */}
-          <div className="flex justify-center mb-8">
-            <div className="relative">
-              {/* Simple illustration representation */}
-              <div className="w-48 h-24 bg-[#edecfa] rounded-t-lg relative overflow-visible flex items-center justify-center">
-                <div className="w-full h-full absolute inset-0 bg-gradient-to-b from-[#edecfa] to-[#edecfa]/50"></div>
-                {/* Lock Icon */}
-                <div className="relative z-10 -mb-6">
-                  <div className="w-24 h-24 bg-[#584be3] rounded-2xl flex items-center justify-center shadow-lg transform rotate-[-5deg]">
-                    <Lock className="w-12 h-12 text-white/90" strokeWidth={2.5} />
-                    {/* Chain decoration */}
-                    <div className="absolute -right-4 top-1/2 w-8 h-2 bg-gray-300 rounded-full"></div>
-                    <div className="absolute -left-4 top-1/2 w-8 h-2 bg-gray-300 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Title */}
-          <div className="text-center px-4 mb-4 mt-8">
-            <p className="text-2xl font-bold text-gray-900 leading-tight mb-4">
-              {headerTitle}
-            </p>
-            <p className="text-[15px] text-gray-600 leading-relaxed text-left">
-              {headerDescription}
-            </p>
-          </div>
-
-          {/* Info Box */}
-          <div className="mx-4 bg-[#f0f2f5] rounded-lg p-4 flex items-start gap-4 mb-8 border border-gray-100">
-            <div className="bg-[#1877f2] rounded-full p-2 shrink-0 mt-0.5">
-              <Lock className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900 mb-1">
-                {infoBoxTitle}
-              </p>
-              <p className="text-[13px] text-gray-600 leading-snug">
-                {infoBoxDescription}
-              </p>
-            </div>
-          </div>
-
-          {/* Action Section */}
-          {/* Only show appeal options if it's not a permanent ban, or if we want to allow appeals for perma-bans too. 
-                        Usually perma-bans might have a different flow, but keeping it simple for now. */}
-          <div className="mx-4 border-t border-gray-200 pt-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-2">
-              What can I do?
-            </h2>
-            <p className="text-gray-600 text-sm mb-6">
-              If you think we made a mistake, you can submit an appeal to our review team.
-            </p>
-
-            <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
-              <DialogTrigger asChild>
-                <Button className="w-full bg-[#1877f2] hover:bg-[#166fe5] text-white font-bold h-10 rounded-md text-sm">
-                  Appeal Decision
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>Submit an Appeal</DialogTitle>
-                  <DialogDescription>
-                    If you believe your account was locked in error, please provide details below.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <label htmlFor="subject" className="text-sm font-medium">Subject</label>
-                    <Input
-                      id="subject"
-                      value={reportSubject}
-                      onChange={(e) => setReportSubject(e.target.value)}
-                      placeholder="Brief summary of the issue"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <label htmlFor="message" className="text-sm font-medium">Message</label>
-                    <Textarea
-                      id="message"
-                      value={reportMessage}
-                      onChange={(e) => setReportMessage(e.target.value)}
-                      placeholder="Explain why your account should be unlocked..."
-                      className="min-h-[150px]"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsReportOpen(false)}>Cancel</Button>
-                  <Button onClick={handleSubmitReport} disabled={isSubmittingReport}>
-                    {isSubmittingReport ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      "Submit Report"
-                    )}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-            <Button
-              variant="ghost"
-              className="w-full mt-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              onClick={() => {
-                setBanData(null);
-                setEmail("");
-                setPassword("");
-              }}
-            >
-              Back to Login
-            </Button>
-          </div>
-
+      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-gray-500">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 bg-white">
-      <div className="w-full max-w-[480px] p-6 sm:p-8">
+    <div className="min-h-screen w-full flex items-center justify-center bg-white">
+      {/* Main Card Container - Full Width & Height */}
+      <div className="w-full h-screen bg-white overflow-hidden">
+        <div className="flex flex-col md:flex-row h-full">
 
-        {/* Header Image (Purple User) - Matching Ban Style */}
-        <div className="flex justify-center mb-8">
-          <div className="relative">
-            <div className="w-48 h-24 bg-[#edecfa] rounded-t-lg relative overflow-visible flex items-center justify-center">
-              <div className="w-full h-full absolute inset-0 bg-gradient-to-b from-[#edecfa] to-[#edecfa]/50"></div>
-              {/* User Icon */}
-              <div className="relative z-10 -mb-6">
-                <div className="w-24 h-24 bg-[#584be3] rounded-2xl flex items-center justify-center shadow-lg transform rotate-[-5deg]">
-                  <User className="w-12 h-12 text-white/90" strokeWidth={2.5} />
-                  {/* Decorative elements */}
-                  <div className="absolute -right-4 top-1/2 w-8 h-2 bg-gray-300 rounded-full"></div>
-                  <div className="absolute -left-4 top-1/2 w-8 h-2 bg-gray-300 rounded-full"></div>
+          {/* Left Side - Illustration */}
+          <div className="hidden md:flex md:w-1/2 bg-white items-center justify-center p-4 relative">
+            {/* Logo in Top-Left */}
+            <div className="absolute top-8 left-8 z-20">
+              <Image
+                src="/XDENTAL.png"
+                alt="Xdent Logo"
+                width={120}
+                height={40}
+                className="h-10 w-auto rounded-full overflow-hidden object-contain"
+              />
+            </div>
+
+            {/* Image with Border Radius */}
+            <div className="relative w-full h-full rounded-3xl overflow-hidden">
+              <Image
+                src="/loginside.png"
+                alt="Dental Illustration"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Right Side - Form */}
+          <div className="w-full md:w-2/3 p-6 md:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto relative">
+            {/* Top Right Signup Link */}
+            <div className="absolute top-6 right-6 md:top-10 md:right-10">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{' '}
+                <Link href="/signeup" className="font-bold text-black  transition-colors">
+                  Sign up
+                </Link>
+              </p>
+            </div>
+
+            {/* Mobile Logo */}
+            <div className="md:hidden mb-8 text-center pt-10">
+              <Image
+                src="/XDENTAL.png"
+                alt="Xdental Logo"
+                width={120}
+                height={40}
+                className="h-12 w-auto mx-auto object-contain"
+              />
+            </div>
+
+            {/* Form Container with Max Width */}
+            <div className="w-full max-w-md mx-auto">
+              {/* Header */}
+              <div className="mb-8">
+                <p className="text-6xl font-semibold text-gray-900 mb-4">Sign in</p>
+              </div>
+              <div className="mb-6">
+                <p className="text-sm font-semibold text-gray-900 mb-4">Sign in with Open account</p>
+              </div>
+
+              {/* Social Login Buttons */}
+              <div className="flex gap-4 mb-8">
+                {/* Google Button */}
+                <Button
+                  onClick={handleGoogleLogin}
+                  type="button"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border-gray-300 bg-white border-1 rounded-xl hover:bg-gray-50 transition-all hover:border-gray-300 font-medium text-gray-700 "
+                >
+                  <FcGoogle className="w-5 h-5" />
+                  <span className="text-sm">Continue with Google</span>
+                </Button>
+              </div>
+
+              {/* Divider */}
+              <div className="relative mb-6">
+                <div className="relative flex text-sm">
+                  <span className=" bg-white text-gray-900 font-semibold">Or continue with email address</span>
                 </div>
               </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+                  <p className="text-sm text-red-600 font-medium">{error}</p>
+                </div>
+              )}
+
+              {/* Login Form */}
+              <form onSubmit={handleLogin} className="space-y-5">
+                {/* Email Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email address</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="email"
+                      placeholder="user@xdents.tn"
+                      className="w-full pl-12 pr-4 py-3.5 bg-gray-100 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all placeholder:text-gray-400"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Password Input */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                    <Link href="/forgot-password" className="text-sm font-medium text-black font-bold transition-colors">
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="password"
+                      placeholder="••••••••••••"
+                      className="w-full pl-12 pr-4 py-3.5 bg-gray-100 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all placeholder:text-gray-400"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-3xl font-semibold transition-all  mt-6"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="animate-spin h-5 w-5" />
+                      Signing in...
+                    </span>
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              </form>
             </div>
           </div>
-        </div>
-
-        {/* Title */}
-        <div className="text-center px-4 mb-8 mt-8">
-          <p className="text-2xl font-bold text-gray-900 leading-tight mb-2">
-            Welcome Back
-          </p>
-          <p className="text-[15px] text-gray-600 leading-relaxed">
-            Sign in to access your account
-          </p>
-        </div>
-
-        {/* Error Banner */}
-        {error && (
-          <div className="w-full bg-red-50 border border-red-100 text-red-600 rounded-lg px-4 py-3 text-sm font-medium mb-6 flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-            {error}
-          </div>
-        )}
-
-        {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-5">
-          <div className="space-y-2">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
-              </div>
-              <Input
-                type="email"
-                placeholder="Email address"
-                className="w-full h-12 pl-10 bg-gray-50 border-gray-200 focus:bg-white transition-all text-base"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
-              </div>
-              <Input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                className="w-full h-12 pl-10 pr-10 bg-gray-50 border-gray-200 focus:bg-white transition-all text-base"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end">
-            <Link
-              href="/forgot-password"
-              className="text-sm font-medium text-blue-600 hover:text-blue-500"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 shadow-lg shadow-blue-600/20 text-base"
-            disabled={loading}
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <Loader2 className="animate-spin h-5 w-5" />
-                Signing in...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
-                Sign In <ArrowRight className="w-5 h-5" />
-              </span>
-            )}
-          </Button>
-        </form>
-
-        <div className="mt-8 text-center text-sm text-gray-500">
-          Don't have an account?{' '}
-          <Link href="/signeup" className="font-semibold text-blue-600 hover:text-blue-500">
-            Create account
-          </Link>
         </div>
       </div>
     </div>

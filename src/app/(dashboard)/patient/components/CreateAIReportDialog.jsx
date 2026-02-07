@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,9 @@ const CreateAIReportDialog = ({
   const [isOrdering, setIsOrdering] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState(null);
+
+  // Store AbortControllers for active uploads
+  const abortControllersRef = useRef(new Map());
 
   // Enhanced upload toast hook
   const {
@@ -113,15 +116,21 @@ const CreateAIReportDialog = ({
   const handleOrderReportWithState = async () => {
     if (!selectedReport || uploadedFiles.length === 0) return;
 
+    // Create AbortController for this upload
+    const abortController = new AbortController();
+
     // Add upload to shared toast
     const uploadId = addUpload({
       fileName: uploadedFiles[0].name,
       reportType: selectedReport?.name,
       onCancel: () => {
-        // Cancel upload logic here - you can implement actual cancellation
-        console.log('Upload cancelled');
+        abortController.abort();
+        abortControllersRef.current.delete(uploadId);
       }
     });
+
+    // Store controller reference
+    abortControllersRef.current.set(uploadId, abortController);
 
     // Close dialog immediately when upload starts
     handleClose();
@@ -158,7 +167,8 @@ const CreateAIReportDialog = ({
 
           // Update progress in shared toast
           updateProgress(uploadId, percent, Math.max(speed, 0));
-        }
+        },
+        { signal: abortController.signal } // Pass abort signal
       );
 
       // Notify parent component that a new report was created
@@ -168,6 +178,12 @@ const CreateAIReportDialog = ({
 
     } catch (error) {
       console.error('Error creating AI report:', error);
+
+      // Handle cancellation specifically - don't treat as error
+      if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+        console.log('Upload cancelled by user');
+        return; // Exit silently
+      }
 
       // Handle different types of errors
       let errorMessage = 'An error occurred while creating the AI report.';
@@ -195,6 +211,9 @@ const CreateAIReportDialog = ({
 
       // Set error in shared toast
       setUploadError(uploadId);
+    } finally {
+      // Clean up controller reference
+      abortControllersRef.current.delete(uploadId);
     }
   };
 

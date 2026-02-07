@@ -122,67 +122,65 @@ export default function PinVerification({ onNext, onBack, email }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full">
-      <div className="w-full max-w-md  mx-auto bg-white  flex flex-col items-center">
-        <div className="mb-6 text-center">
-          <div className="mb-2 text-2xl font-bold text-gray-900">Verify your email</div>
-          <div className="text-gray-600 text-sm mb-2">
-            We sent a code to <span className="font-semibold">{email}</span>
+    <div className="w-full flex flex-col items-center">
+      <div className="mb-6 text-center">
+        <div className="mb-2 text-2xl font-bold text-gray-900">Verify your email</div>
+        <div className="text-gray-600 text-sm mb-2">
+          We sent a code to <span className="font-semibold">{email}</span>
+        </div>
+        {expiresIn !== null && (
+          <div className="text-xs text-gray-500 mt-1">
+            Time left to verify: <span className="font-semibold">{expiresIn} seconds</span>
           </div>
-          {expiresIn !== null && (
-            <div className="text-xs text-gray-500 mt-1">
-              Time left to verify: <span className="font-semibold">{expiresIn} seconds</span>
-            </div>
+        )}
+      </div>
+      <form className="flex flex-col items-center w-full" onSubmit={e => { e.preventDefault(); handleContinue(); }}>
+        <div className="flex gap-4 mb-4">
+          {code.map((digit, i) => (
+            <input
+              key={i}
+              ref={inputsRef[i]}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={digit}
+              onChange={e => handleChange(i, e.target.value)}
+              onKeyDown={e => handleKeyDown(i, e)}
+              onPaste={i === 0 ? handlePaste : undefined}
+              className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-2xl focus:border-green-600 focus:ring-2 focus:ring-green-100 outline-none transition"
+              autoFocus={i === 0}
+            />
+          ))}
+        </div>
+        {error && <div className="text-red-500 text-xs mb-2">{error}</div>}
+        {resendMessage && <div className="text-green-600 text-xs mb-2">{resendMessage}</div>}
+        <div className="mb-4 text-xs text-gray-500">
+          Didn't get a code? {waitTime > 0 ? (
+            <span className="text-gray-400">Resend in {waitTime}s</span>
+          ) : (
+            <button type="button" className="text-[#0d0c22] font-semibold hover:underline" onClick={handleResend} disabled={resendLoading}>
+              {resendLoading ? "Sending..." : "Click to resend"}
+            </button>
           )}
         </div>
-        <form className="flex flex-col items-center w-full" onSubmit={e => { e.preventDefault(); handleContinue(); }}>
-          <div className="flex gap-4 mb-4">
-            {code.map((digit, i) => (
-              <input
-                key={i}
-                ref={inputsRef[i]}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={e => handleChange(i, e.target.value)}
-                onKeyDown={e => handleKeyDown(i, e)}
-                onPaste={i === 0 ? handlePaste : undefined}
-                className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-2xl focus:border-green-600 focus:ring-2 focus:ring-green-100 outline-none transition"
-                autoFocus={i === 0}
-              />
-            ))}
-          </div>
-          {error && <div className="text-red-500 text-xs mb-2">{error}</div>}
-          {resendMessage && <div className="text-green-600 text-xs mb-2">{resendMessage}</div>}
-          <div className="mb-4 text-xs text-gray-500">
-            Didn't get a code? {waitTime > 0 ? (
-              <span className="text-gray-400">Resend in {waitTime}s</span>
-            ) : (
-              <button type="button" className="text-[#0d0c22] font-semibold hover:underline" onClick={handleResend} disabled={resendLoading}>
-                {resendLoading ? "Sending..." : "Click to resend"}
-              </button>
-            )}
-          </div>
-          <Button
-            type="submit"
-            className="w-full bg-[#0d0c22] hover:bg-white hover:text-[#0d0c22]  rounded-2xl font-bold text-base py-3 mt-2"
-            disabled={loading}
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
-                Verifying...
-              </span>
-            ) : (
-              "Continue"
-            )}
-          </Button>
-        </form>
-      </div>
+        <Button
+          type="submit"
+          className="w-full bg-[#0d0c22] hover:bg-white hover:text-[#0d0c22]  rounded-2xl font-bold text-base py-3 mt-2"
+          disabled={loading}
+        >
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              </svg>
+              Verifying...
+            </span>
+          ) : (
+            "Continue"
+          )}
+        </Button>
+      </form>
     </div>
   );
 } 

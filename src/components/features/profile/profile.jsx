@@ -7,16 +7,21 @@ import SignatureCard from "./SignatureCard";
 import SupportAccessSection from "./SupportAccessSection";
 import { useState, useEffect, useRef } from "react";
 import useUserStore from "./store/userStore";
-import { Edit2 } from "lucide-react";
+import { Edit2, LogOut } from "lucide-react";
 import NameForm from "./NameForm";
 import EmailForm from "./EmailForm";
 import PasswordForm from "./PasswordForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import { apiClient } from "@/utils/apiClient";
+import { useRouter } from "next/navigation";
 
 // --------------------------- Component ---------------------------
 export default function AccountInfoCard({ firstName, lastName, email }) {
+  // ======= Router =======
+  const router = useRouter();
+
   // ======= State & Store =======
   const { userInfo, setUserInfo, changePassword, changeName, getUserInfo } = useUserStore();
   const getImageFromCache = useUserStore(state => state.getImageFromCache);
@@ -31,6 +36,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isDeletingPhoto, setIsDeletingPhoto] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // File input ref
   const fileInputRef = useRef(null);
@@ -105,6 +111,21 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       pushNotification('success', 'Photo de profil supprimée avec succès');
     } else {
       pushNotification('error', result.message || "Erreur lors de la suppression de la photo");
+    }
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await apiClient('/api/auth/logout', {
+        method: 'POST',
+      });
+      router.push('/login');
+    } catch (error) {
+      pushNotification('error', 'Erreur lors de la déconnexion');
+      console.error('Logout error:', error);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -249,17 +270,25 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                 </div>
               </div>
 
-              {/* Support Access Button */}
-              <div className="flex items-start justify-between py-4 border-t border-gray-200">
-                <div className="flex-1">
-                  <h4 className="text-base font-semibold text-gray-900 mb-1">Accès au support</h4>
-                  <p className="text-sm text-gray-600">Gérer les paramètres de sécurité et l'accès au support</p>
-                </div>
-                <SupportAccessSection userInfo={userInfo} setUserInfo={setUserInfo}>
-                  <button className="px-4 py-2 cursor-pointer text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
-                    Gérer
-                  </button>
-                </SupportAccessSection>
+              {/* Logout Button */}
+              <div className="mb-6 pt-4 border-t border-gray-200">
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoggingOut ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Déconnexion en cours...
+                    </>
+                  ) : (
+                    <>
+                      <LogOut className="w-5 h-5" />
+                      Se déconnecter
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </CardContent>

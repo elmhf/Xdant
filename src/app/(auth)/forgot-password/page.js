@@ -292,7 +292,7 @@ export default function ForgotPasswordPage() {
                         className="bg-white rounded-[20px] p-10 w-full max-w-[500px] "
                     >
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create new password</h1>
+                            <p className="text-6xl font-bold text-gray-900 mb-2">Create new password</p>
                             <p className="text-gray-500 text-[15px]">
                                 Enter your new password below to<br />
                                 complete the reset process

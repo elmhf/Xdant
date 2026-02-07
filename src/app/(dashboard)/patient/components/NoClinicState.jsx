@@ -21,7 +21,7 @@ export default function NoClinicState() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
                         <Button
-                            onClick={() => router.push('/welcome')}
+                            onClick={() => router.push('/create-clinic')}
                             className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed] h-12 font-semibold px-6"
                         >
                             Créer une clinique

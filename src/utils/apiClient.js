@@ -162,12 +162,19 @@ export async function apiUploadClient(endpoint, formData, onUploadProgress, opti
             ...options.headers,
         },
         onUploadProgress,
+        signal: options.signal, // Add abort signal support
     };
 
     try {
         const response = await axios.post(url, formData, config);
         return response.data;
     } catch (error) {
+        // Handle cancellation error specifically (user clicked Cancel)
+        if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+            console.log('Upload cancelled by user');
+            throw error; // Re-throw to be caught by caller
+        }
+
         if (axios.isAxiosError(error) && error.response?.status === 401) {
             // Attempt refresh
             try {

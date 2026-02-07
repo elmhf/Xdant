@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { reverseGeocode } from "../../../(dashboard)/welcome/welcomsteps/utils/reverseGeocode";
+import { reverseGeocode } from "@/utils/geocoding";
 
 const MapPicker = dynamic(() => import("./MapPicker"), { ssr: false });
 

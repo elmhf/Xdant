@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useOrderReport } from '../hooks/useOrderReport';
 import CreateAIReportDialog from './CreateAIReportDialog';
 import { Scan, Circle, Box, Upload, Loader2 } from 'lucide-react';
@@ -20,6 +20,9 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
   const [selectedReport, setSelectedReport] = useState(null);
   const [existingReports, setExistingReports] = useState([]);
   const user = useUserStore(state => state.user);
+
+  // Store AbortControllers for active uploads
+  const abortControllersRef = useRef(new Map());
 
   const {
     uploads,
@@ -48,11 +51,20 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
       return;
     }
 
+    // Create AbortController for this upload
+    const abortController = new AbortController();
+
     const uploadId = addUpload({
       fileName: file.name,
       reportType: 'Generic Upload',
-      onCancel: () => console.log('Upload cancelled')
+      onCancel: () => {
+        abortController.abort();
+        abortControllersRef.current.delete(uploadId);
+      }
     });
+
+    // Store controller reference
+    abortControllersRef.current.set(uploadId, abortController);
 
     // Track upload start time for speed calculation
     let lastLoaded = 0;
@@ -77,6 +89,7 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
       // Step 2: Upload directly to Supabase
       // Using axios directly for the PUT request to support progress tracking
       await axios.put(uploadUrl, file, {
+        signal: abortController.signal, // Add abort signal
         headers: {
           'Content-Type': file.type, // Supabase requires matching content-type
           'x-upsert': 'false'
@@ -108,7 +121,17 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
       // Clear input (if it was an input, but now it's passed from dialog)
     } catch (error) {
       console.error("Upload error:", error);
+
+      // Handle cancellation specifically - don't treat as error
+      if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+        console.log('Upload cancelled by user');
+        return; // Exit silently
+      }
+
       setUploadError(uploadId);
+    } finally {
+      // Clean up controller reference
+      abortControllersRef.current.delete(uploadId);
     }
   };
 

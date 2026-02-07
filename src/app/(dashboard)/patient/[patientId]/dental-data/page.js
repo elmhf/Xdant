@@ -93,9 +93,11 @@ const DentalDataPage = () => {
             />
 
             <DeleteFileDialog
-                fileToDelete={fileToDelete}
+                open={!!fileToDelete}
+                file={fileToDelete}
                 onOpenChange={(open) => !open && setFileToDelete(null)}
                 onConfirm={confirmDelete}
+                loading={false}
             />
         </div >
     );

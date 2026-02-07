@@ -178,7 +178,12 @@ export default function ProfileDropdown() {
           {!showSwitch ? (
             <>
               {/* User Account Section - ثابت */}
-              <div onClick={() => { router.push('/profile'); setOpen(false); }} className="px-2 py-2 border-b cursor-pointer border-gray-100">
+              <div onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push('/profile');
+                setOpen(false);
+              }} className="px-2 py-2 border-b cursor-pointer border-gray-100">
                 <div className="flex items-center gap-3  p-2 overflow-hidden rounded-md hover:bg-gray-100">
                   {renderUserAvatar(realUser, "h-10 w-10 sm:h-12 sm:w-12", false)}
                   <div className="flex flex-col flex-1">
@@ -190,7 +195,12 @@ export default function ProfileDropdown() {
 
               {/* Current Clinic Section */}
               {currentCompany && (
-                <div onClick={() => { router.push('/company'); setOpen(false); }} className="px-2 py-2 border-b cursor-pointer border-gray-100">
+                <div onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  router.push('/company');
+                  setOpen(false);
+                }} className="px-2 py-2 border-b cursor-pointer border-gray-100">
                   <div className="flex items-center gap-3  p-2 overflow-hidden rounded-md hover:bg-gray-100 ">
                     {renderCompanyAvatar(currentCompany, "h-10 w-10 sm:h-12 sm:w-12")}
                     <div className="flex flex-col flex-1">

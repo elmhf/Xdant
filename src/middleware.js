@@ -20,9 +20,9 @@ export function middleware(req) {
   // إذا كان المسار عام، خلّي المستخدم يدخل
   if (isPublicRoute) {
     // لكن إذا كان مسجل دخول وحاول يدخل login → وجهه للداشبورد
-    // if ((pathname === '/login' || pathname === "signeup") && isAuthenticated) {
-    //   return NextResponse.redirect(new URL('/', req.url))
-    // }
+    if ((pathname === '/login' || pathname === "signeup") && isAuthenticated) {
+      return NextResponse.redirect(new URL('/', req.url))
+    }
     return NextResponse.next()
   }
 
