@@ -32,15 +32,23 @@ async function fetchReportDataByPost(reportId, abortSignal) {
 
     console.log('✅ Data fetched successfully', data);
 
-    // Setup image store data
+    // Setup image store data (ONLY for 3D/CBCT reports)
     const setupFromReport = useImageStore.getState().setupFromReport;
     if (setupFromReport) {
-      // Prefer the full JSON data (report_data) which has scanInfo/dimensions
-      // If not available, fall back to the DB record (report)
-      console.log("dataddddd", data)
-      const dataForStore = data.report_data || data.report;
-      console.log("✅ Data sent to imageStore:", dataForStore ? "Found Data" : "Empty");
-      await setupFromReport(dataForStore);
+      // Detect type from fetched data
+      const detectedType = detectReportType(data);
+      console.log('📊 Initializing Image Store for type:', detectedType);
+
+      if (detectedType === 'cbct' || detectedType === 'toothSlice' || detectedType === '3d model ai') {
+        // Prefer the full JSON data (report_data) which has scanInfo/dimensions
+        // If not available, fall back to the DB record (report)
+        console.log("dataddddd", data)
+        const dataForStore = data.report_data || data.report;
+        console.log("✅ Data sent to imageStore:", dataForStore ? "Found Data" : "Empty");
+        await setupFromReport(dataForStore);
+      } else {
+        console.log('⏭️ Skipping 3D Image Store setup for non-3D report type:', detectedType);
+      }
     }
 
     return data;

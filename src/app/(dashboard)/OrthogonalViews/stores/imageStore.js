@@ -16,12 +16,15 @@ const generateCDNUrl = async (view, index, basePath, w = 700, q = 100) => {
   return url;
 };
 const loadImage = (url) => {
-  console.log("loadImage", url);
+  // console.log("loadImage", url);
   return new Promise((resolve, reject) => {
     const img = new window.Image();
     img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+    img.onerror = () => {
+      console.warn(`Failed to load image (suppressed): ${url}`);
+      resolve(null);
+    };
     img.src = url;
   });
 };
@@ -98,7 +101,10 @@ export const useImageStore = create((set, get) => ({
           }
           return loadImage(url);
         })
-        .then(img => ({ index: i, image: img }))
+        .then(img => {
+          if (!img) return null;
+          return { index: i, image: img };
+        })
         .catch(error => {
           console.error(`Failed to load ${view} image ${i}:`, error);
           return null;
