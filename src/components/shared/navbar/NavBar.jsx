@@ -43,7 +43,7 @@ export default function Navbar() {
   // State to manage client-side rendering
   const [isMounted, setIsMounted] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true); // Handled in parent layout
   const [autoSaveStatus, setAutoSaveStatus] = useState('idle'); // 'idle', 'saving', 'saved', 'error'
   const [lastSaveTime, setLastSaveTime] = useState(null);
 
@@ -56,20 +56,6 @@ export default function Navbar() {
   const fetchMyClinics = useUserStore(state => state.fetchMyClinics);
   const getCurrentClinic = useUserStore(state => state.getCurrentClinic);
 
-  // Memoize data loading function
-  const loadData = useCallback(async () => {
-    try {
-      await Promise.all([
-        getUserInfo(),
-        fetchMyClinics()
-      ]);
-    } catch (error) {
-      console.error("Error loading data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [getUserInfo, fetchMyClinics]);
-
   useEffect(() => {
     setIsMounted(true);
     // Retrieve saved language
@@ -79,10 +65,10 @@ export default function Navbar() {
     document.documentElement.lang = savedLanguage;
     document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
 
-    // Load data
-    loadData();
+    // Data loading is now handled in dashboard layout
+    // loadData(); 
 
-  }, [i18n, loadData]);
+  }, [i18n]);
 
   const reportData = useMemo(() => ({
     patientName: t('navbar.patientName') || "Felicia Hall",
@@ -191,14 +177,10 @@ export default function Navbar() {
   //   return () => clearInterval(interval);
   // }, [performAutoSave]);
 
-  if (!isMounted || loading) {
+  if (!isMounted) {
     return (
       <div className="w-full flex items-center justify-center py-6">
-        <Lottie
-          animationData={circleLoaderAnimation}
-          loop={true}
-          style={{ width: 60, height: 60 }}
-        />
+        <div className="h-10 w-10 animate-pulse bg-gray-200 rounded-full"></div>
       </div>
     );
   }

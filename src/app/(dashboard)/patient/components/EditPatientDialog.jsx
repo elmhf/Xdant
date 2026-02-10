@@ -34,8 +34,17 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
 
   // Get clinic members as available doctors
   const { clinicMembers, currentClinic } = useClinicMembers();
-  const { userInfo } = useUserStore();
+  const { userInfo, mapRoleToAPI } = useUserStore();
   const currentUser = userInfo;
+
+  // Get role from rolesByClinic using current clinic ID
+  const userRole = currentClinic?.id && currentUser?.rolesByClinic ? currentUser.rolesByClinic[currentClinic.id] : null;
+
+  console.log("currentUser", currentUser);
+  console.log("currentClinic", currentClinic);
+  console.log("userRole derived", userRole);
+
+  const canManageDoctors = ['full_access', 'admin', 'owner'].includes(userRole) || mapRoleToAPI(userRole) === 'full_access';
 
   const availableDoctors = clinicMembers.map(member => ({
     id: member.user_id || member.id,
@@ -346,8 +355,8 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                     return (
                       <div
                         key={doctor.id}
-                        onClick={() => removeTreatingDoctor(doctor.id)}
-                        className="flex items-center justify-between p-2 rounded-xl border-1 border-gray-200 bg-gray-100  cursor-pointer transition-all group"
+                        onClick={() => canManageDoctors && removeTreatingDoctor(doctor.id)}
+                        className={`flex items-center justify-between p-2 rounded-xl border-1 border-gray-200 bg-gray-100 transition-all group ${canManageDoctors ? 'cursor-pointer' : ''}`}
                       >
                         <div className="flex items-center gap-3">
                           <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
@@ -365,15 +374,17 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                           </div>
                         </div>
 
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeTreatingDoctor(doctor.id)}
-                          className="h-8 w-8 p-0 text-gray-400 hover:text-red-600  rounded-full opacity-0 group-hover:opacity-100 transition-all"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {canManageDoctors && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeTreatingDoctor(doctor.id)}
+                            className="h-8 w-8 p-0 text-gray-400 hover:text-red-600  rounded-full opacity-0 group-hover:opacity-100 transition-all"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     );
                   })}
@@ -381,65 +392,67 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
               )}
 
               {/* Add Doctor Dropdown */}
-              <div className="relative">
-                <Select onValueChange={addTreatingDoctor}>
-                  <SelectTrigger className={`h-12 w-full text-base bg-white border-dashed border-2 ${formData.treating_doctors.length === 0 && formError ? 'border-red-300 bg-red-50/10' : 'border-gray-200 hover:border-[#7564ed] hover:bg-[#7564ed]/5'
-                    } rounded-xl px-4 transition-all group text-gray-500 hover:text-[#7564ed]`}>
-                    <div className="flex items-center gap-2 justify-center w-full font-medium">
-                      <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                      <span>Add treating doctor</span>
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60 p-1">
-                    {availableDoctors
-                      .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
-                      .length > 0 ? (
-                      availableDoctors
-                        .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
-                        .map((doctor, index) => {
-                          const colors = [
-                            'bg-[#a855f7]',
-                            'bg-[#22c55e]',
-                            'bg-[#3b82f6]',
-                            'bg-[#f59e0b]',
-                            'bg-[#ec4899]',
-                            'bg-[#14b8a6]',
-                          ];
-                          const avatarColor = colors[index % colors.length];
-
-                          return (
-                            <SelectItem
-                              key={doctor.id}
-                              value={doctor.id}
-                              className="rounded-2xl cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
-                            >
-                              <div className="flex items-center gap-3 py-1">
-                                <Avatar className="h-8 w-8">
-                                  <AvatarImage src={doctor.profilePhotoUrl} />
-                                  <AvatarFallback className={`${avatarColor} text-white text-xs font-bold`}>
-                                    {((doctor.first_name || '').slice(0, 1) +
-                                      (doctor.last_name || '').slice(0, 1)).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="flex flex-col text-left">
-                                  <span className="font-semibold text-sm text-gray-900">
-                                    Dr. {doctor.first_name || ""} {doctor.last_name || ""}
-                                  </span>
-                                  <span className="text-xs text-gray-500">{doctor.email}</span>
-                                </div>
-                              </div>
-                            </SelectItem>
-                          );
-                        })
-                    ) : (
-                      <div className="p-4 text-sm text-gray-500 text-center flex flex-col items-center gap-2">
-                        <UserPlus className="h-8 w-8 text-gray-300" />
-                        <p>All available doctors added</p>
+              {canManageDoctors && (
+                <div className="relative">
+                  <Select onValueChange={addTreatingDoctor}>
+                    <SelectTrigger className={`h-12 w-full text-base bg-white border-dashed border-2 ${formData.treating_doctors.length === 0 && formError ? 'border-red-300 bg-red-50/10' : 'border-gray-200 hover:border-[#7564ed] hover:bg-[#7564ed]/5'
+                      } rounded-xl px-4 transition-all group text-gray-500 hover:text-[#7564ed]`}>
+                      <div className="flex items-center gap-2 justify-center w-full font-medium">
+                        <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span>Add treating doctor</span>
                       </div>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60 p-1">
+                      {availableDoctors
+                        .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
+                        .length > 0 ? (
+                        availableDoctors
+                          .filter(doctor => !formData.treating_doctors.find(d => d.id === doctor.id))
+                          .map((doctor, index) => {
+                            const colors = [
+                              'bg-[#a855f7]',
+                              'bg-[#22c55e]',
+                              'bg-[#3b82f6]',
+                              'bg-[#f59e0b]',
+                              'bg-[#ec4899]',
+                              'bg-[#14b8a6]',
+                            ];
+                            const avatarColor = colors[index % colors.length];
+
+                            return (
+                              <SelectItem
+                                key={doctor.id}
+                                value={doctor.id}
+                                className="rounded-2xl cursor-pointer my-1 focus:bg-[#7564ed]/10 focus:text-[#7564ed]"
+                              >
+                                <div className="flex items-center gap-3 py-1">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={doctor.profilePhotoUrl} />
+                                    <AvatarFallback className={`${avatarColor} text-white text-xs font-bold`}>
+                                      {((doctor.first_name || '').slice(0, 1) +
+                                        (doctor.last_name || '').slice(0, 1)).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex flex-col text-left">
+                                    <span className="font-semibold text-sm text-gray-900">
+                                      Dr. {doctor.first_name || ""} {doctor.last_name || ""}
+                                    </span>
+                                    <span className="text-xs text-gray-500">{doctor.email}</span>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            );
+                          })
+                      ) : (
+                        <div className="p-4 text-sm text-gray-500 text-center flex flex-col items-center gap-2">
+                          <UserPlus className="h-8 w-8 text-gray-300" />
+                          <p>All available doctors added</p>
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               {formData.treating_doctors.length === 0 && formError && (
                 <p className="text-red-500 text-sm flex items-center gap-1 mt-1">
@@ -454,16 +467,21 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
           {/* Action Buttons */}
           <div className="flex justify-between items-center pt-4 mt-6">
             {/* Remove Button */}
-            <Button
-              type="button"
-              onClick={() => {
-                if (onDelete) onDelete(patient);
-              }}
-              className="bg-red-50 hover:bg-red-100 text-red-600 hover:outline-red-600 hover:outline-2 h-12 px-6 rounded-2xl flex items-center gap-2 transition-colors"
-            >
-              <Trash2 className="w-5 h-5" />
-              <span className="font-semibold">Remove</span>
-            </Button>
+            {/* Remove Button */}
+            {canManageDoctors ? (
+              <Button
+                type="button"
+                onClick={() => {
+                  if (onDelete) onDelete(patient);
+                }}
+                className="bg-red-50 hover:bg-red-100 text-red-600 hover:outline-red-600 hover:outline-2 h-12 px-6 rounded-2xl flex items-center gap-2 transition-colors"
+              >
+                <Trash2 className="w-5 h-5" />
+                <span className="font-semibold">Remove</span>
+              </Button>
+            ) : (
+              <div></div> // Empty div to maintain flex layout spacing if button is hidden
+            )}
 
             <div className="flex gap-3">
               <Button
