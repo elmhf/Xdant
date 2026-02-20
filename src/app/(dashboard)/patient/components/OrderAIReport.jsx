@@ -88,11 +88,11 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
 
       // Step 2: Upload directly to Supabase
       // Using axios directly for the PUT request to support progress tracking
+      // Note: We use a fresh headers object to avoid interference from any global axios defaults
       await axios.put(uploadUrl, file, {
-        signal: abortController.signal, // Add abort signal
+        signal: abortController.signal,
         headers: {
-          'Content-Type': file.type, // Supabase requires matching content-type
-          'x-upsert': 'false'
+          'Content-Type': file.type || 'application/octet-stream',
         },
         onUploadProgress: (e) => {
           const percent = Math.round((e.loaded * 100) / e.total);
@@ -195,12 +195,6 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
           onUpload={handleGenericFileUpload}
         />
       </div>
-      <UploadToast
-        isVisible={isToastVisible}
-        uploads={uploads}
-        onClose={closeToast}
-        onCancelUpload={cancelUpload}
-      />
     </>
   );
 };

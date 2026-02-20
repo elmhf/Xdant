@@ -119,85 +119,21 @@ const UploadToast = ({
   );
 };
 
-// Enhanced Toast Manager Hook
+// Enhanced Toast Manager Hook - Now uses Global Zustand Store
+import useUploadStore from '@/stores/uploadStore';
+
 export const useUploadToast = () => {
-  const [uploads, setUploads] = useState([]);
-  const [isToastVisible, setIsToastVisible] = useState(false);
-
-  const addUpload = ({ fileName, reportType, onCancel }) => {
-    const uploadId = Date.now() + Math.random();
-    const newUpload = {
-      id: uploadId,
-      fileName,
-      reportType: reportType === 'Generic Upload' ? 'File' : reportType, // Cleaner label
-      progress: 0,
-      speed: '0.00',
-      status: 'uploading',
-      onCancel
-    };
-
-    setUploads(prev => [...prev, newUpload]);
-    setIsToastVisible(true);
-    return uploadId;
-  };
-
-  const updateProgress = (uploadId, progress, speed) => {
-    setUploads(prev =>
-      prev.map(upload =>
-        upload.id === uploadId
-          ? {
-            ...upload,
-            progress,
-            speed: typeof speed === 'number' ? speed.toFixed(2) : speed,
-            status: progress >= 100 ? 'success' : 'uploading'
-          }
-          : upload
-      )
-    );
-  };
-
-  const setUploadError = (uploadId) => {
-    setUploads(prev =>
-      prev.map(upload =>
-        upload.id === uploadId
-          ? { ...upload, status: 'error' }
-          : upload
-      )
-    );
-  };
-
-  const cancelUpload = (uploadId) => {
-    const upload = uploads.find(u => u.id === uploadId);
-    if (upload && upload.onCancel) {
-      upload.onCancel();
-    }
-    removeUpload(uploadId);
-  };
-
-  const removeUpload = (uploadId) => {
-    setUploads(prev => {
-      const newUploads = prev.filter(upload => upload.id !== uploadId);
-      if (newUploads.length === 0) {
-        setIsToastVisible(false);
-      }
-      return newUploads;
-    });
-  };
-
-  const closeToast = () => {
-    setIsToastVisible(false);
-    setUploads([]);
-  };
+  const store = useUploadStore();
 
   return {
-    uploads,
-    isToastVisible,
-    addUpload,
-    updateProgress,
-    setUploadError,
-    cancelUpload,
-    removeUpload,
-    closeToast
+    uploads: store.uploads,
+    isToastVisible: store.isToastVisible,
+    addUpload: store.addUpload,
+    updateProgress: store.updateProgress,
+    setUploadError: store.setUploadError,
+    cancelUpload: store.cancelUpload,
+    removeUpload: store.removeUpload,
+    closeToast: store.closeToast
   };
 };
 

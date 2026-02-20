@@ -338,13 +338,6 @@ const CreateAIReportDialog = ({
         </DialogContent>
       </Dialog>
 
-      {/* Render Single Shared Upload Toast */}
-      <UploadToast
-        isVisible={isToastVisible}
-        uploads={uploads}
-        onClose={closeToast}
-        onCancelUpload={cancelUpload}
-      />
     </>
   );
 };

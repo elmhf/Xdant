@@ -1,34 +1,38 @@
+import React from 'react';
 import { Button } from "@/components/ui/button";
-import { useRouter } from 'next/navigation';
+import { Building2, Plus } from "lucide-react";
+import Link from 'next/link';
 
-export default function NoClinicState() {
-    const router = useRouter();
-
+const NoClinicState = () => {
     return (
-        <div className="flex items-center justify-center min-h-screen w-full bg-transparent">
-            <div className="text-center max-w-md mx-auto p-6">
-                <div className="mb-6">
-                    <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                        Aucune clinique trouvée
-                    </h2>
-                    <p className="text-gray-600 text-lg mb-6">
-                        Vous devez créer une clinique ou rejoindre une clinique existante pour gérer les patients.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <Button
-                            onClick={() => router.push('/create-clinic')}
-                            className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed] h-12 font-semibold px-6"
-                        >
-                            Créer une clinique
-                        </Button>
-                    </div>
-                </div>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center bg-white/50 backdrop-blur-sm rounded-3xl border-2 border-dashed border-gray-200 shadow-sm">
+            <div className="w-24 h-24 bg-[#7564ed]/10 rounded-full flex items-center justify-center mb-6">
+                <Building2 className="w-12 h-12 text-[#7564ed]" />
+            </div>
+
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                No Clinic Selected
+            </h2>
+
+            <p className="text-gray-600 max-w-md mb-8 text-lg">
+                You need to select a clinic to view and manage its patients.
+                If you don't have a clinic yet, you can create one or wait for an invitation.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/create-clinic">
+                    <Button className="bg-[#7564ed] hover:bg-[#6a5ad6] text-white px-8 h-12 rounded-2xl text-lg font-semibold shadow-lg shadow-[#7564ed]/20 transition-all hover:scale-105">
+                        <Plus className="w-5 h-5 mr-2" />
+                        Create New Clinic
+                    </Button>
+                </Link>
+
+                <Button variant="outline" onClick={() => window.location.reload()} className="border-gray-200 text-gray-700 px-8 h-12 rounded-2xl text-lg font-semibold hover:bg-gray-50">
+                    Refresh Page
+                </Button>
             </div>
         </div>
     );
-}
+};
+
+export default NoClinicState;
