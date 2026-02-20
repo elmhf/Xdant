@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { X, Loader2, Paperclip, Smile, Pencil, Trash } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import EmojiPicker from 'emoji-picker-react';
 import { useDentalStore } from '@/stores/dataStore';
@@ -28,6 +28,7 @@ const AddCommentDialog = ({
   onSend = () => { },
   toothInfo = { toothNumber: 0 },
 }) => {
+  const { pushNotification } = useNotification();
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState('');
   const [file, setFile] = useState(null);
@@ -80,16 +81,16 @@ const AddCommentDialog = ({
 
   const handleSend = async () => {
     if (!note.trim() && !file) {
-      toast.error(t('validation.required') || 'Note is required');
+      pushNotification('error', t('validation.required') || 'Note is required');
       return;
     }
     setLoading(true);
     try {
       await onSend({ note, file });
-      toast.success(t('notifications.success') || 'Note added successfully');
+      pushNotification('success', t('notifications.success') || 'Note added successfully');
       setOpen(false);
     } catch (err) {
-      toast.error(t('notifications.error') || 'Failed to add note');
+      pushNotification('error', t('notifications.error') || 'Failed to add note');
     } finally {
       setLoading(false);
     }

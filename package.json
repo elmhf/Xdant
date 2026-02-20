@@ -99,7 +99,6 @@
     "recharts": "^3.6.0",
     "rsuite": "^5.80.0",
     "socket.io-client": "^4.8.1",
-    "sonner": "^2.0.3",
     "svg-path-parser": "^1.1.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",

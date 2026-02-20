@@ -3,7 +3,8 @@ import React, { useEffect, useState, useRef, useContext, useCallback } from "rea
 import { Stage, Layer, Image, Line, Group, Text, Circle, Rect } from "react-konva";
 import { DataContext } from "../dashboard";
 import { getToothBoundingBox } from "@/utils/toothUtils";
-import { toast } from "sonner";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import Navigator from "./Navigator";
 
 const COLOR_PALETTE = {
   // Main structures - refined colors with balanced opacity and softer shadows
@@ -125,7 +126,8 @@ const applyShadowProps = (style, scale) => {
   return props;
 };
 
-const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, resetMeasurements, onUndoCallback, showGrid = true, zoom, isLocked, showLayers, selectedTooth, onToothClick }) => {
+const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, resetMeasurements, onUndoCallback, showGrid = true, zoom, isLocked, showLayers, selectedTooth, onToothClick, selectedColor = 'rgba(255, 80, 80, 0.85)' }) => {
+  const { pushNotification } = useNotification();
   const { stageRef, hoveredProblem } = useContext(DataContext);
   const containerRef = useRef(null);
   const imageNodeRef = useRef(null);
@@ -133,6 +135,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   const lastUpdateRef = useRef(Date.now());
   const fpsCountRef = useRef(0);
   const fpsTimeRef = useRef(Date.now());
+  const lastMouseUpTimeRef = useRef(0); // guard against double-click restarting draw
   // حالات الصورة والحاوية
   const [imgObj, setImgObj] = useState(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -163,6 +166,11 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   const [drawnRectangles, setDrawnRectangles] = useState([]);
   const [drawnPoints, setDrawnPoints] = useState([]);
 
+  // State for freehand draw tool
+  const [isDrawingFreehand, setIsDrawingFreehand] = useState(false);
+  const [currentFreehandPoints, setCurrentFreehandPoints] = useState([]);
+  const [drawnFreehandPaths, setDrawnFreehandPaths] = useState([]);
+
   // Enhanced UX states
 
   const [isHoveringCanvas, setIsHoveringCanvas] = useState(false);
@@ -171,12 +179,17 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
+  // Navigator Visibility
+  const [showNavigator, setShowNavigator] = useState(false);
+  const [userClosedNavigator, setUserClosedNavigator] = useState(false);
+
   // Get cursor style based on active tool
   const getCursorStyle = useCallback(() => {
     if (isDragging) return 'grabbing';
     switch (activeTool) {
       case 'pointer': return 'default';
       case 'pan': return 'grab';
+      case 'draw': return 'crosshair';
       case 'linear': return 'crosshair';
       case 'rectangle': return 'crosshair';
       case 'point': return 'crosshair';
@@ -215,6 +228,9 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
           break;
         case 'point':
           setDrawnPoints(prev => prev.slice(0, -1));
+          break;
+        case 'freehand':
+          setDrawnFreehandPaths(prev => prev.slice(0, -1));
           break;
         default:
           break;
@@ -372,6 +388,19 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
     });
   }, [getBoundedPosition, updateFPS]);
 
+  // Auto-show navigator based on zoom level
+  useEffect(() => {
+    // If zoom is more than 1.2x (or some threshold), show navigator
+    // unless the user manually closed it for this session
+    if (transform.scale > 1.2 && !userClosedNavigator) {
+      setShowNavigator(true);
+    } else if (transform.scale <= 1.2) {
+      // Hide automatically when zoomed out, and reset user closure preference
+      setShowNavigator(false);
+      setUserClosedNavigator(false);
+    }
+  }, [transform.scale, userClosedNavigator]);
+
   // إعادة تعيين الصورة للوضع الافتراضي
   const resetView = useCallback(() => {
     if (!imgObj || !containerSize.width || !containerSize.height) return;
@@ -458,13 +487,11 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
 
     const selectedFinding = tooth.find(f => f.toothNumber == selectedTooth);
     if (!selectedFinding) {
-      toast.warning(`Tooth ${selectedTooth} not found in image analysis.`);
       return;
     }
 
     const boundingBox = getToothBoundingBox(selectedFinding);
     if (!boundingBox) {
-      toast.warning(`Position data unavailable for Tooth ${selectedTooth}.`);
       return;
     }
 
@@ -631,10 +658,26 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
         y: (pos.y - transform.y) / transform.scale,
       };
 
-      const newPoint = { x: transformedPos.x, y: transformedPos.y };
+      const newPoint = { x: transformedPos.x, y: transformedPos.y, color: selectedColor };
       setDrawnPoints(prev => [...prev, newPoint]);
       saveToHistory('point', newPoint);
       return; // Prevent dragging when using point tool
+    }
+
+    // Freehand draw tool logic
+    if (activeTool === 'draw') {
+      // Ignore if fired within 300ms of last mouseup (double-click guard)
+      if (Date.now() - lastMouseUpTimeRef.current < 300) return;
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pos = stage.getPointerPosition();
+      const transformedPos = {
+        x: (pos.x - transform.x) / transform.scale,
+        y: (pos.y - transform.y) / transform.scale,
+      };
+      setCurrentFreehandPoints([transformedPos.x, transformedPos.y]);
+      setIsDrawingFreehand(true);
+      return;
     }
 
     // Measurement tool logic
@@ -670,6 +713,18 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
 
   const handleStageMouseMove = useCallback((e) => {
 
+    // Freehand draw tool logic
+    if (isDrawingFreehand && activeTool === 'draw') {
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pos = stage.getPointerPosition();
+      const transformedPos = {
+        x: (pos.x - transform.x) / transform.scale,
+        y: (pos.y - transform.y) / transform.scale,
+      };
+      setCurrentFreehandPoints(prev => [...prev, transformedPos.x, transformedPos.y]);
+      return;
+    }
 
     // Measurement tool logic
     if (isDrawing && activeTool === 'linear') {
@@ -706,14 +761,27 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
     if (isDragging) {
       handleDragMove(e);
     }
-  }, [isDragging, handleDragMove, isDrawing, activeTool, stageRef, transform, isDrawingShape, currentRectangle, isLocked]);
+  }, [isDragging, handleDragMove, isDrawing, activeTool, stageRef, transform, isDrawingShape, currentRectangle, isLocked, isDrawingFreehand, currentFreehandPoints]);
 
   const handleStageMouseUp = useCallback(() => {
+    // Finish freehand drawing
+    if (isDrawingFreehand && activeTool === 'draw') {
+      if (currentFreehandPoints.length > 2) {
+        const newPath = { points: currentFreehandPoints, color: selectedColor };
+        setDrawnFreehandPaths(prev => [...prev, newPath]);
+        saveToHistory('freehand', newPath);
+      }
+      setCurrentFreehandPoints([]);
+      setIsDrawingFreehand(false);
+      lastMouseUpTimeRef.current = Date.now(); // record time for double-click guard
+    }
+
     // Finish rectangle drawing
     if (isDrawingShape && activeTool === 'rectangle' && currentRectangle) {
       if (Math.abs(currentRectangle.width) > 5 && Math.abs(currentRectangle.height) > 5) {
-        setDrawnRectangles(prev => [...prev, currentRectangle]);
-        saveToHistory('rectangle', currentRectangle);
+        const newRect = { ...currentRectangle, color: selectedColor };
+        setDrawnRectangles(prev => [...prev, newRect]);
+        saveToHistory('rectangle', newRect);
       }
       setCurrentRectangle(null);
       setIsDrawingShape(false);
@@ -722,7 +790,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
     if (isDragging) {
       handleDragEnd();
     }
-  }, [isDragging, handleDragEnd, isDrawingShape, activeTool, currentRectangle, saveToHistory, isLocked]);
+  }, [isDragging, handleDragEnd, isDrawingShape, activeTool, currentRectangle, saveToHistory, isLocked, isDrawingFreehand, currentFreehandPoints]);
 
   const handleStageMouseEnter = useCallback(() => {
     setIsHoveringCanvas(true);
@@ -758,6 +826,9 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
       setCurrentRectangle(null);
       setCurrentPoint(null);
       setIsDrawingShape(false);
+      setDrawnFreehandPaths([]);
+      setCurrentFreehandPoints([]);
+      setIsDrawingFreehand(false);
       // Clear history when resetting
       setHistory([]);
       setHistoryIndex(-1);
@@ -788,6 +859,8 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
     setCurrentLinePoints([]);
     setIsDrawingShape(false);
     setCurrentRectangle(null);
+    setIsDrawingFreehand(false);
+    setCurrentFreehandPoints([]);
   }, [activeTool]);
 
   // إلغاء وضع الرسم عند الضغط خارج الصورة
@@ -892,56 +965,6 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
               {/* إذا كانت الطبقات مفعلة، اعرض كل الرسومات */}
               {true && (
                 <>
-                  {/* Grid Overlay */}
-                  {showGrid && imgObj && (
-                    <Group listening={false}>
-                      {/* Vertical lines */}
-                      {[...Array(Math.ceil(imgObj.naturalWidth / 50))].map((_, i) => (
-                        <Line
-                          key={`grid-v-${i}`}
-                          points={[i * 50, 0, i * 50, imgObj.naturalHeight]}
-                          stroke="rgba(255,255,255,0.15)"
-                          strokeWidth={1 / transform.scale}
-                        />
-                      ))}
-                      {/* Horizontal lines */}
-                      {[...Array(Math.ceil(imgObj.naturalHeight / 50))].map((_, i) => (
-                        <Line
-                          key={`grid-h-${i}`}
-                          points={[0, i * 50, imgObj.naturalWidth, i * 50]}
-                          stroke="rgba(255,255,255,0.15)"
-                          strokeWidth={1 / transform.scale}
-                        />
-                      ))}
-                      {/* Grid numbers */}
-                      {transform.scale > 0.5 && (
-                        <>
-                          {[...Array(Math.ceil(imgObj.naturalWidth / 100))].map((_, i) => (
-                            <Text
-                              key={`grid-x-${i}`}
-                              x={i * 100 + 5}
-                              y={15}
-                              text={`${i * 100}`}
-                              fontSize={10 / transform.scale}
-                              fill="rgba(255,255,255,0.6)"
-                              listening={false}
-                            />
-                          ))}
-                          {[...Array(Math.ceil(imgObj.naturalHeight / 100))].map((_, i) => (
-                            <Text
-                              key={`grid-y-${i}`}
-                              x={5}
-                              y={i * 100 + 15}
-                              text={`${i * 100}`}
-                              fontSize={10 / transform.scale}
-                              fill="rgba(255,255,255,0.6)"
-                              listening={false}
-                            />
-                          ))}
-                        </>
-                      )}
-                    </Group>
-                  )}
                   {/* رسم الأسنان والعناصر الطبية والفك */}
                   {findingsToRender.map((finding, index) => {
                     const style = getProblemStyle(finding.type);
@@ -1137,7 +1160,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
                           rect.x, rect.y + rect.height,
                           rect.x, rect.y
                         ]}
-                        {...applyShadowProps(COLOR_PALETTE.drawing, transform.scale)}
+                        {...applyShadowProps({ ...COLOR_PALETTE.drawing, stroke: rect.color || selectedColor }, transform.scale)}
                       />
                     </Group>
                   ))}
@@ -1151,8 +1174,36 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
                         currentRectangle.x, currentRectangle.y + currentRectangle.height,
                         currentRectangle.x, currentRectangle.y
                       ]}
-                      {...applyShadowProps(COLOR_PALETTE.drawing, transform.scale)}
+                      {...applyShadowProps({ ...COLOR_PALETTE.drawing, stroke: selectedColor }, transform.scale)}
                       dash={[4 / transform.scale, 4 / transform.scale]}
+                    />
+                  )}
+                  {/* Drawn Freehand Paths */}
+                  {drawnFreehandPaths.map((path, i) => (
+                    <Line
+                      key={`freehand-${i}`}
+                      points={path.points || path}
+                      stroke={path.color || selectedColor}
+                      strokeWidth={3 / transform.scale}
+                      lineCap="round"
+                      lineJoin="round"
+                      tension={0.4}
+                      listening={false}
+                      shadowColor={path.color || selectedColor}
+                      shadowBlur={4 / transform.scale}
+                    />
+                  ))}
+                  {/* Current Freehand Path Being Drawn */}
+                  {isDrawingFreehand && currentFreehandPoints.length > 2 && (
+                    <Line
+                      points={currentFreehandPoints}
+                      stroke={selectedColor}
+                      strokeWidth={3 / transform.scale}
+                      lineCap="round"
+                      lineJoin="round"
+                      tension={0.4}
+                      listening={false}
+                      dash={[6 / transform.scale, 3 / transform.scale]}
                     />
                   )}
                   {/* Drawn Points */}
@@ -1163,10 +1214,10 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
                         key={`point-${i}`}
                         x={point.x}
                         y={point.y}
-                        radius={8}
+                        radius={8 / transform.scale}
                         fill={style.fill}
-                        stroke={style.stroke}
-                        strokeWidth={style.strokeWidth}
+                        stroke={point.color || selectedColor}
+                        strokeWidth={style.strokeWidth / transform.scale}
                         shadowColor={style.shadowColor}
                         shadowBlur={style.shadowBlur}
                         shadowOpacity={0.9}
@@ -1178,8 +1229,47 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
               )}
             </Group>
           )}
+          {/* Fixed Grid Overlay — covers full container, not affected by pan/zoom */}
+          {showGrid && containerSize.width > 0 && (
+            <Group listening={false} x={0} y={0}>
+              {/* Vertical lines */}
+              {[...Array(Math.ceil(containerSize.width / 50) + 1)].map((_, i) => (
+                <Line
+                  key={`fgrid-v-${i}`}
+                  points={[i * 50, 0, i * 50, containerSize.height]}
+                  stroke="rgba(255,255,255,0.12)"
+                  strokeWidth={1}
+                  listening={false}
+                />
+              ))}
+              {/* Horizontal lines */}
+              {[...Array(Math.ceil(containerSize.height / 50) + 1)].map((_, i) => (
+                <Line
+                  key={`fgrid-h-${i}`}
+                  points={[0, i * 50, containerSize.width, i * 50]}
+                  stroke="rgba(255,255,255,0.12)"
+                  strokeWidth={1}
+                  listening={false}
+                />
+              ))}
+            </Group>
+          )}
         </Layer>
       </Stage>
+
+      {/* Zoom Navigator Overlay */}
+      {showNavigator && imgObj && (
+        <Navigator
+          image={imgObj}
+          transform={transform}
+          containerSize={containerSize}
+          onTransformChange={updateTransformSmooth}
+          onClose={() => {
+            setShowNavigator(false);
+            setUserClosedNavigator(true);
+          }}
+        />
+      )}
     </div>
   );
 };

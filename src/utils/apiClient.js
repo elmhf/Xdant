@@ -1,5 +1,5 @@
 "use client";
-import { toast } from "sonner";
+import { notification } from "@/components/shared/jsFiles/NotificationProvider";
 import axios from "axios";
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://serverrouter.onrender.com';
 // const BACKEND_URL = RAW_BACKEND_URL.replace(/\/$/, '');
@@ -115,7 +115,7 @@ export async function apiClient(endpoint, options = {}) {
 
             // Show toast for non-401 errors (401 is handled by redirect usually)
             if (response.status !== 401) {
-                toast.error(errorMessage);
+                notification.error(errorMessage);
             }
 
             // Throw error with data if available
@@ -192,7 +192,7 @@ export async function apiUploadClient(endpoint, formData, onUploadProgress, opti
 
         // Handle other errors
         const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Upload failed';
-        toast.error(message);
+        notification.error(message);
         throw new ApiError(message, error.response?.status || 500, error.response?.data);
     }
 }

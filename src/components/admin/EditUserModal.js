@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Save, ChevronDown, ChevronUp, LogOut, Trash2, Eye, EyeOff } from 'lucide-react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { adminService } from '@/services/adminService';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function EditUserModal({ user, open, onOpenChange, onUpdate }) {
+    const { pushNotification } = useNotification();
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -62,12 +63,12 @@ export default function EditUserModal({ user, open, onOpenChange, onUpdate }) {
     const handleUpdateRole = async (clinicId, newRole) => {
         try {
             await adminService.updateUserClinicRole(user.user_id || user.id, clinicId, newRole);
-            toast.success('Role updated successfully');
+            pushNotification('success', 'Role updated successfully');
             // Optimistic update or refetch
             setClinics(prev => prev.map(c => c.id === clinicId ? { ...c, role: newRole } : c));
         } catch (error) {
             console.error('Failed to update role:', error);
-            toast.error('Failed to update role');
+            pushNotification('error', 'Failed to update role');
         }
     };
 
@@ -76,11 +77,11 @@ export default function EditUserModal({ user, open, onOpenChange, onUpdate }) {
 
         try {
             await adminService.removeUserFromClinic(user.user_id || user.id, clinicId);
-            toast.success('User removed from clinic');
+            pushNotification('success', 'User removed from clinic');
             setClinics(prev => prev.filter(c => c.id !== clinicId));
         } catch (error) {
             console.error('Failed to remove user from clinic:', error);
-            toast.error('Failed to remove user from clinic');
+            pushNotification('error', 'Failed to remove user from clinic');
         }
     };
 
@@ -89,12 +90,12 @@ export default function EditUserModal({ user, open, onOpenChange, onUpdate }) {
         setLoading(true);
         try {
             await adminService.deleteUser(user.user_id || user.id);
-            toast.success('User deleted successfully');
+            pushNotification('success', 'User deleted successfully');
             onUpdate();
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to delete user:', error);
-            toast.error('Failed to delete user');
+            pushNotification('error', 'Failed to delete user');
         } finally {
             setLoading(false);
         }
@@ -117,12 +118,12 @@ export default function EditUserModal({ user, open, onOpenChange, onUpdate }) {
                 delete dataToUpdate.password;
             }
             await adminService.updateUser(user.user_id || user.id, dataToUpdate);
-            toast.success('User updated successfully');
+            pushNotification('success', 'User updated successfully');
             onUpdate(); // Refresh parent list
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to update user:', error);
-            toast.error('Failed to update user');
+            pushNotification('error', 'Failed to update user');
         } finally {
             setLoading(false);
         }

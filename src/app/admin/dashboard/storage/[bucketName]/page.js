@@ -26,9 +26,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { adminService } from '@/services/adminService';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 
 export default function BucketDetailPage() {
+    const { pushNotification } = useNotification();
     const { bucketName } = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -50,7 +51,7 @@ export default function BucketDetailPage() {
                 setBucketData(data);
             } catch (error) {
                 console.error("Failed to fetch bucket content", error);
-                toast.error(`Failed to load bucket content`);
+                pushNotification('error', `Failed to load bucket content`);
             } finally {
                 setLoading(false);
             }
@@ -135,11 +136,11 @@ export default function BucketDetailPage() {
                 link.click();
                 link.remove();
                 window.URL.revokeObjectURL(url);
-                toast.success(`Downloading ${file.name}`);
+                pushNotification('success', `Downloading ${file.name}`);
             }
         } catch (error) {
             console.error("Failed to download file", error);
-            toast.error("Failed to download file");
+            pushNotification('error', "Failed to download file");
         }
     };
 
@@ -154,14 +155,14 @@ export default function BucketDetailPage() {
         try {
             const fullPath = currentPath ? `${currentPath}${fileToDelete.name}` : fileToDelete.name;
             await adminService.deleteFile(bucketName, fullPath);
-            toast.success('File deleted successfully');
+            pushNotification('success', 'File deleted successfully');
 
             // Refresh content
             const data = await adminService.getBucketContent(bucketName, currentPath);
             setBucketData(data);
         } catch (error) {
             console.error("Failed to delete file", error);
-            toast.error("Failed to delete file");
+            pushNotification('error', "Failed to delete file");
         } finally {
             setFileToDelete(null);
         }
@@ -174,7 +175,7 @@ export default function BucketDetailPage() {
         // Reset input
         e.target.value = '';
 
-        const toastId = toast.loading(`Uploading ${file.name}...`);
+        const notificationId = pushNotification('loading', `Uploading ${file.name}...`);
 
         try {
             // Upload
@@ -183,7 +184,7 @@ export default function BucketDetailPage() {
                 // Optional: Update toast message with percentage if supported, or just log
             });
 
-            toast.success(`Successfully uploaded ${file.name}`, { id: toastId });
+            pushNotification('success', `Successfully uploaded ${file.name}`, { id: notificationId });
 
             // Refresh content
             const data = await adminService.getBucketContent(bucketName, currentPath);
@@ -191,7 +192,7 @@ export default function BucketDetailPage() {
 
         } catch (error) {
             console.error("Upload failed", error);
-            toast.error(`Failed to upload ${file.name}: ${error.message}`, { id: toastId });
+            pushNotification('error', `Failed to upload ${file.name}: ${error.message}`, { id: notificationId });
         }
     };
 

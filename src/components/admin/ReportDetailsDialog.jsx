@@ -16,9 +16,10 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { apiClient } from "@/utils/apiClient";
-import { toast } from "sonner";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function ReportDetailsDialog({ open, onOpenChange, report, onUpdate }) {
+    const { pushNotification } = useNotification();
     const [status, setStatus] = useState(report?.status || 'pending');
     const [loading, setLoading] = useState(false);
 
@@ -41,11 +42,11 @@ export default function ReportDetailsDialog({ open, onOpenChange, report, onUpda
                 })
             });
             setStatus(newStatus);
-            toast.success("Status updated successfully");
+            pushNotification('success', "Status updated successfully");
             if (onUpdate) onUpdate();
         } catch (error) {
             console.error("Failed to update status:", error);
-            toast.error("Failed to update status");
+            pushNotification('error', "Failed to update status");
         } finally {
             setLoading(false);
         }

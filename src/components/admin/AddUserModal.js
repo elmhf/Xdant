@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { adminService } from '@/services/adminService';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function AddUserModal({ open, onOpenChange, onUserAdded }) {
+    const { pushNotification } = useNotification();
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -39,12 +40,12 @@ export default function AddUserModal({ open, onOpenChange, onUserAdded }) {
         try {
             // Validation (Basic)
             if (!formData.first_name || !formData.last_name || !formData.email || !formData.password) {
-                toast.error("Please fill in all required fields");
+                pushNotification('error', "Please fill in all required fields");
                 return;
             }
 
             await adminService.createUser(formData);
-            toast.success('User created successfully');
+            pushNotification('success', 'User created successfully');
             if (onUserAdded) onUserAdded();
             onOpenChange(false);
             // Reset form optionally here if needed, but component might unmount/remount

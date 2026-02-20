@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { useDentalStore } from '@/stores/dataStore';
-import { toast } from "sonner";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 import { X, Save } from 'lucide-react';
 
 import {
@@ -54,6 +54,7 @@ const severityLevels = [
 ];
 
 const AddConditionDialog = ({ toothNumber, children }) => {
+  const { pushNotification } = useNotification();
   const { t } = useTranslation();
   const { addToothProblem, updateTooth } = useDentalStore();
 
@@ -75,12 +76,12 @@ const AddConditionDialog = ({ toothNumber, children }) => {
 
   const handleSubmit = () => {
     if (!formData.condition) {
-      toast.error(t("addCondition.selectConditionError") || "Please select a condition");
+      pushNotification('error', t("addCondition.selectConditionError") || "Please select a condition");
       return;
     }
 
     if (!formData.severity) {
-      toast.error(t("addCondition.selectSeverityError") || "Please select severity level");
+      pushNotification('error', t("addCondition.selectSeverityError") || "Please select severity level");
       return;
     }
 
@@ -112,11 +113,11 @@ const AddConditionDialog = ({ toothNumber, children }) => {
         updateTooth(toothNumber, { category: formData.condition });
       }
 
-      toast.success(t("addCondition.successMessage") || "Condition added successfully");
+      pushNotification('success', t("addCondition.successMessage") || "Condition added successfully");
       handleReset();
       setOpen(false);
     } catch (error) {
-      toast.error(t("addCondition.errorMessage") || "Failed to add condition");
+      pushNotification('error', t("addCondition.errorMessage") || "Failed to add condition");
       console.error("Error adding condition:", error);
     }
   };

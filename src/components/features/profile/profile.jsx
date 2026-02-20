@@ -143,7 +143,14 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
           <CardContent className="p-6">
             {/* My Profile Section */}
             <div className="mb-10">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Account info</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-gray-900">Account info</h2>
+                <SupportAccessSection userInfo={userInfo} setUserInfo={setUserInfo}>
+                  <button className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap">
+                    Accès au support
+                  </button>
+                </SupportAccessSection>
+              </div>
 
               {/* Profile Picture */}
               <div className="flex items-start gap-4 mb-6">

@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect, useMemo, useCallback, createContext
 import { motion } from 'framer-motion';
 import { useDentalStore } from "@/stores/dataStore";
 import useImageStore from '@/stores/ImageStore';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDentalSettings } from '@/hooks/SettingHooks/useDentalSettings ';
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 }
 
 export default function ReportPage() {
+  const { pushNotification } = useNotification();
   const { getCurrentClinic } = useUserStore();
   const pdfContentRef = useRef(null);
   const contextPDFRef = useRef([]);
@@ -70,7 +71,7 @@ export default function ReportPage() {
       try {
         await useDentalStore.getState().fetchPatientData();
       } catch (error) {
-        toast.error('Failed to load patient data', { description: error.message });
+        pushNotification('error', 'Failed to load patient data', { description: error.message });
       } finally {
         setIsLoading(false);
       }
@@ -110,16 +111,16 @@ export default function ReportPage() {
         settings,
         patientId: memoizedPatientData?.patientInfo?.patientId,
         onSuccess: (fileSize, totalPages) => {
-          toast.success('PDF Generated Successfully', {
+          pushNotification('success', 'PDF Generated Successfully', {
             description: `Size: ${fileSize} KB | Pages: ${totalPages}`,
           });
         },
         onError: (error) => {
-          toast.error('PDF Generation Failed', { description: error.message });
+          pushNotification('error', 'PDF Generation Failed', { description: error.message });
         },
       });
     } catch (error) {
-      toast.error('Unexpected Error', { description: error.message });
+      pushNotification('error', 'Unexpected Error', { description: error.message });
     } finally {
       // 3. Cleanup
       setStaticCanvasImage(null);

@@ -1,10 +1,11 @@
 "use client";
 import { apiClient } from "@/utils/apiClient";
 
-import { toast } from "sonner";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 import useImageStore from '@/stores/ImageStore';
 import { useDentalStore } from "@/stores/dataStore";
 const useAnalyseImage = () => {
+  const { pushNotification } = useNotification();
   const loadPatientData = useDentalStore(state => state.loadPatientData);
   const startTime = performance.now();
 
@@ -31,7 +32,7 @@ const useAnalyseImage = () => {
 
     } catch (error) {
       console.error("Error analyzing image:", error);
-      toast.error("Failed to analyze image");
+      pushNotification('error', "Failed to analyze image");
       // Reset states on error
 
     }

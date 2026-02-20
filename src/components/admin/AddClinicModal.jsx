@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { adminService } from '@/services/adminService';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function AddClinicModal({ open, onOpenChange, onClinicAdded }) {
+    const { pushNotification } = useNotification();
     const [formData, setFormData] = useState({
         clinic_name: '',
         email: '',
@@ -38,7 +39,7 @@ export default function AddClinicModal({ open, onOpenChange, onClinicAdded }) {
         setLoading(true);
         try {
             await adminService.createClinic(formData);
-            toast.success('Clinic added successfully');
+            pushNotification('success', 'Clinic added successfully');
             setFormData({
                 clinic_name: '',
                 email: '',
@@ -54,7 +55,7 @@ export default function AddClinicModal({ open, onOpenChange, onClinicAdded }) {
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to add clinic:', error);
-            toast.error('Failed to add clinic');
+            pushNotification('error', 'Failed to add clinic');
         } finally {
             setLoading(false);
         }

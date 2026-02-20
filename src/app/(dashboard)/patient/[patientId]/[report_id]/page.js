@@ -46,6 +46,7 @@ export default function ReportPage() {
   // Fetch report when reportId or imageCard changes
   useEffect(() => {
     if (!reportId || reportId === lastProcessedId.current) return;
+    if (paramsReportType === "toothSlice") return;
     if (!imageCard) return;
 
     lastProcessedId.current = reportId;
@@ -129,10 +130,6 @@ export default function ReportPage() {
   }
 
 
-  if (hasData && data) {
-    return <Dashboard reportType={detectedReportType || paramsReportType} reportData={data} />;
-  }
-
   if (paramsReportType === "toothSlice") {
     const ToothSliceComponent = lazy(() => import("./ToothSlice/[toothId]/page"));
     return (
@@ -151,6 +148,10 @@ export default function ReportPage() {
         </Suspense>
       </div>
     );
+  }
+
+  if (hasData && data) {
+    return <Dashboard reportType={detectedReportType || paramsReportType} reportData={data} />;
   }
 
   const { title, description, icon } = getNoDataConfig();

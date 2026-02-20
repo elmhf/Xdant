@@ -153,8 +153,8 @@ const Dashboard = ({ reportType }) => {
           {isPanoType ? (
             <>
               {/* ImageCard Ø¹Ù„Ù‰ Ø§Ù„ÙŠÙ…ÙŠÙ† */}
-              <div className="flex-none w-full lg:w-[60%] h-[350px] lg:h-auto flex items-center justify-center">
-                <ImageCard settings={settings} SettingChange={SettingChange} setSettings={setSettings} />
+              <div className="flex-none w-full lg:w-[60%] h-[400px] lg:h-auto flex items-center justify-center">
+                <ImageCard settings={settings} SettingChange={SettingChange} setSettings={setSettings} showToolBar={true} />
               </div>
               {/* Toothlabels ÙÙˆÙ‚ SideCardes */}
               <div className="flex flex-col w-full lg:w-[40%]">

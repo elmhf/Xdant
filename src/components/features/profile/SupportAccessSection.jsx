@@ -702,6 +702,18 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
 
                 {/* Content */}
                 <div className="px-8 py-6">
+                    {/* Support Access toggle */}
+                    <div className="flex items-start justify-between py-4 mb-6 border-b border-gray-100">
+                        <div className="flex-1">
+                            <h4 className="text-base font-semibold text-gray-900 mb-1">Autoriser l'accès au support</h4>
+                            <p className="text-sm text-gray-600">Permettez à l'équipe technique d'accéder temporairement à votre compte pour vous aider.</p>
+                        </div>
+                        <Switch
+                            checked={false} // Placeholder for now
+                            onCheckedChange={() => pushNotification("info", "Fonctionnalité d'accès au support bientôt disponible.")}
+                        />
+                    </div>
+
                     {/* 2-Step Verification */}
                     <div className="flex items-start justify-between py-4 mb-6">
                         <div className="flex-1">

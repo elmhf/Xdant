@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/utils/apiClient';
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function AddIntegrationModal({ open, onOpenChange, onIntegrationAdded }) {
+    const { pushNotification } = useNotification();
     const [formData, setFormData] = useState({
         Integrations: '',
         deiscription: '',
@@ -33,7 +34,7 @@ export default function AddIntegrationModal({ open, onOpenChange, onIntegrationA
 
         try {
             if (!formData.Integrations || !formData.deiscription) {
-                toast.error("Please fill in all required fields");
+                pushNotification('error', "Please fill in all required fields");
                 return;
             }
 
@@ -42,7 +43,7 @@ export default function AddIntegrationModal({ open, onOpenChange, onIntegrationA
                 body: JSON.stringify(formData)
             });
 
-            toast.success('Integration created successfully');
+            pushNotification('success', 'Integration created successfully');
             if (onIntegrationAdded) onIntegrationAdded();
             onOpenChange(false);
             setFormData({

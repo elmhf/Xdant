@@ -23,9 +23,10 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Settings, Eye, EyeOff, Save, Key, Monitor, Cpu, Database, Plus, Trash2, Edit2, Pencil, Check, Fingerprint, X, Loader2 } from "lucide-react";
 import { adminService } from '@/services/adminService';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 
 export default function SystemSettingsSection() {
+    const { pushNotification } = useNotification();
     const [loading, setLoading] = useState(false);
     const [dataLoading, setDataLoading] = useState(true);
     const [showSecrets, setShowSecrets] = useState({});
@@ -71,7 +72,7 @@ export default function SystemSettingsSection() {
             }
         } catch (error) {
             console.error("Failed to fetch system config", error);
-            toast.error("Failed to load system configuration");
+            pushNotification('error', "Failed to load system configuration");
         } finally {
             setDataLoading(false);
         }
@@ -95,13 +96,13 @@ export default function SystemSettingsSection() {
         setLoading(true);
         try {
             await adminService.updateSystemConfig(config, password);
-            toast.success("System configuration updated successfully");
+            pushNotification('success', "System configuration updated successfully");
             await fetchConfig();
             setIsPasswordModalOpen(false);
             setConfirmPassword('');
         } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to update configuration");
+            pushNotification('error', error.message || "Failed to update configuration");
         } finally {
             setLoading(false);
         }
@@ -109,18 +110,18 @@ export default function SystemSettingsSection() {
 
     const onAddSetting = async () => {
         if (!newSetting.key || !newSetting.target_service) {
-            toast.error("Key and Target Service are required");
+            pushNotification('error', "Key and Target Service are required");
             return;
         }
         try {
             await adminService.addSystemConfig(newSetting);
-            toast.success("Setting added successfully");
+            pushNotification('success', "Setting added successfully");
             setIsAddModalOpen(false);
             setNewSetting({ key: '', value: '', category: 'General', target_service: 'frontend', input_type: 'text' });
             await fetchConfig();
         } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to add setting");
+            pushNotification('error', error.message || "Failed to add setting");
         }
     };
 
@@ -128,11 +129,11 @@ export default function SystemSettingsSection() {
         if (!confirm(`Are you sure you want to delete ${key}?`)) return;
         try {
             await adminService.deleteSystemConfig(key);
-            toast.success("Setting deleted successfully");
+            pushNotification('success', "Setting deleted successfully");
             await fetchConfig();
         } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to delete setting");
+            pushNotification('error', error.message || "Failed to delete setting");
         }
     };
 
@@ -146,7 +147,7 @@ export default function SystemSettingsSection() {
     const executeUpdateMetadata = async (password) => {
         try {
             await adminService.updateSystemConfig(editingSetting, password);
-            toast.success("Setting metadata updated successfully");
+            pushNotification('success', "Setting metadata updated successfully");
             setIsEditModalOpen(false);
             setEditingSetting(null);
             await fetchConfig();
@@ -154,13 +155,13 @@ export default function SystemSettingsSection() {
             setConfirmPassword('');
         } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to update metadata");
+            pushNotification('error', error.message || "Failed to update metadata");
         }
     };
 
     const handleConfirmPassword = () => {
         if (!confirmPassword) {
-            toast.error("Please enter your password");
+            pushNotification('error', "Please enter your password");
             return;
         }
         if (pendingAction) {

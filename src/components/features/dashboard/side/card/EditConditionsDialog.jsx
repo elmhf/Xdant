@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import { useDentalStore } from '@/stores/dataStore';
-import { toast } from "sonner";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 import { X, Search, Check, ChevronLeft, Plus, Save, Trash2, ChevronDown, ChevronUp, Pencil } from 'lucide-react';
 
 import {
@@ -38,6 +38,7 @@ const availableConditions = [
 
 
 const EditConditionsDialog = ({ toothNumber, children }) => {
+    const { pushNotification } = useNotification();
     const { t } = useTranslation();
     const getToothByNumber = useDentalStore(state => state.getToothByNumber);
     const updateToothProblems = useDentalStore(state => state.updateToothProblems);
@@ -105,7 +106,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
         const newProblems = problems.filter((_, i) => i !== index);
         setProblems(newProblems);
         updateToothProblems(toothNumber, newProblems);
-        toast.success("Condition removed");
+        pushNotification('success', "Condition removed");
     };
 
     const handleUpdateDetails = (index, field, value) => {
@@ -140,7 +141,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
 
     const handleAddSubmit = () => {
         if (!formData.condition) {
-            toast.error("Please select a condition");
+            pushNotification('error', "Please select a condition");
             return;
         }
 
@@ -162,7 +163,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                     description: formData.description,
                     notes: formData.notes
                 };
-                toast.success("Condition updated");
+                pushNotification('success', "Condition updated");
             } else {
                 // Add new
                 const newCondition = {
@@ -180,7 +181,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                     notes: formData.notes
                 };
                 newProblemsList = [...problems, newCondition];
-                toast.success("Condition added successfully");
+                pushNotification('success', "Condition added successfully");
             }
 
             setProblems(newProblemsList);
@@ -207,7 +208,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
             setViewMode("LIST");
         } catch (error) {
             console.error(error);
-            toast.error("Failed to save condition");
+            pushNotification('error', "Failed to save condition");
         }
     };
 

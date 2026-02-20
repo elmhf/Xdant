@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { adminService } from '@/services/adminService';
 import { ArrowLeft, Mail, Shield, Calendar, UserCheck, Trash2, Activity, MapPin } from 'lucide-react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 
 export default function UserDetailPage() {
+    const { pushNotification } = useNotification();
     const params = useParams();
     const router = useRouter();
     const [user, setUser] = useState(null);
@@ -31,7 +32,7 @@ export default function UserDetailPage() {
             setUser(userData);
         } catch (error) {
             console.error('Failed to fetch user details:', error);
-            toast.error('Failed to load user details');
+            pushNotification('error', 'Failed to load user details');
         } finally {
             setLoading(false);
         }
@@ -41,10 +42,10 @@ export default function UserDetailPage() {
         if (!confirm('Promote this user to Admin?')) return;
         try {
             await adminService.promoteToAdmin(user.email);
-            toast.success('User promoted to Admin successfully');
+            pushNotification('success', 'User promoted to Admin successfully');
             fetchUser(user.id); // Refresh data
         } catch (error) {
-            toast.error('Failed to promote user');
+            pushNotification('error', 'Failed to promote user');
         }
     };
 
@@ -52,10 +53,10 @@ export default function UserDetailPage() {
         if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
         try {
             await adminService.deleteUser(user.id);
-            toast.success('User deleted successfully');
+            pushNotification('success', 'User deleted successfully');
             router.push('/admin/dashboard/users');
         } catch (error) {
-            toast.error('Failed to delete user');
+            pushNotification('error', 'Failed to delete user');
         }
     };
 

@@ -33,11 +33,7 @@ function RenderAllSlices({ teeth, isDragging, sliceDrager, ToothSlicemode }) {
   return (
     <div
       onMouseEnter={() => {
-
-        setIsHovering(true)
-        if (!isDragging && sliceselectlocal?.view != null) {
-          addToothSlice(tooth.toothNumber, sliceselectlocal.view, sliceselectlocal.index);
-        }
+        setIsHovering(true);
       }}
       className="relative h-fit   flex flex-wrap gap-1 ">
       {allSlices.map((slice) => (
@@ -74,8 +70,11 @@ function RenderAllSlices({ teeth, isDragging, sliceDrager, ToothSlicemode }) {
           onMouseEnter={() => {
             setsliceselectlocal(sliceDrager)
             setIsHovering(true)
-            if (!isDragging) {
-
+          }}
+          onMouseUp={() => {
+            if (sliceDrager && sliceDrager.view && sliceDrager.index != null) {
+              console.log("Dropping slice:", sliceDrager);
+              addToothSlice(tooth.toothNumber, sliceDrager.view, sliceDrager.index);
             }
           }}
           onMouseLeave={() => { setIsHovering(false); setsliceselectlocal({ "view": null, "slice": null }) }}

@@ -248,7 +248,7 @@ export default function PatientPage() {
         <div className="px-0 sm:px-0 lg:px-0 py-2">
           <div className="flex items-center flex-wrap justify-between">
             <h1 className="text-3xl md:text-4xl font-[500] text-gray-900">
-              <span className="text-8xl md:text-8xl font-[700]">Patients</span>
+              <span className="text-7xl md:text-7xl font-[700]">Patients</span>
               <span className="text-lg md:text-xl font-bold text-gray-600 ml-2">
                 {currentClinic?.clinic_name || 'Clinic'}
               </span>

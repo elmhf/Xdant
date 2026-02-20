@@ -183,9 +183,9 @@ export const useImageStore = create((set, get) => ({
 
       // Extract voxel sizes from scan data
       const voxelSizes = {
-        x_spacing_mm: reportData.report?.metadata?.slice_count?.x_spacing_mm || 1,
-        y_spacing_mm: reportData.report?.metadata?.slice_count?.y_spacing_mm || 1,
-        z_spacing_mm: reportData.report?.metadata?.slice_count?.z_spacing_mm || 1,
+        x_spacing_mm: reportData.report?.metadata?.slice_count?.x_spacing_mm || reportData.metadata?.slice_count?.x_spacing_mm || 1,
+        y_spacing_mm: reportData.report?.metadata?.slice_count?.y_spacing_mm || reportData.metadata?.slice_count?.y_spacing_mm || 1,
+        z_spacing_mm: reportData.report?.metadata?.slice_count?.z_spacing_mm || reportData.metadata?.slice_count?.z_spacing_mm || 1,
         unit: 'mm',
         loading: false,
         error: null

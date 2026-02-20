@@ -138,6 +138,13 @@ export default function PatientDetailPage() {
 
 
 
+  // Check permissions
+  const canManageDoctors = React.useMemo(() => {
+    if (!user || !currentClinicId) return false;
+    const role = user.rolesByClinic?.[currentClinicId];
+    return ['admin', 'owner', 'full_access'].includes(role);
+  }, [user, currentClinicId]);
+
   const handleBack = useCallback(() => {
     router.push('/patient');
   }, [router]);
@@ -315,14 +322,16 @@ export default function PatientDetailPage() {
               <div className="bg-white rounded-2xl p-[12px] shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-3xl font-bold text-gray-950">Treating doctors</h2>
-                  <Button
-                    onClick={handleAddDoctor}
-                    variant="ghost"
-                    size="sm"
-                    className=" p-0 border-0 border-white  text-[#7564ed] "
-                  >
-                    <Plus className="w-7 h-7 stroke-4 " />
-                  </Button>
+                  {canManageDoctors && (
+                    <Button
+                      onClick={handleAddDoctor}
+                      variant="ghost"
+                      size="sm"
+                      className=" p-0 border-0 border-white  text-[#7564ed] "
+                    >
+                      <Plus className="w-7 h-7 stroke-4 " />
+                    </Button>
+                  )}
                 </div>
 
                 <div className="space-y-0">
@@ -344,14 +353,16 @@ export default function PatientDetailPage() {
                             <p className="text-gray-500 text-xs"></p>
                           </div>
                         </div>
-                        <Button
-                          onClick={() => handleDeleteDoctor(doctor)}
-                          variant="ghost"
-                          size="sm"
-                          className="p-1 border-0 text-gray-400 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 className="w-6 h-6" />
-                        </Button>
+                        {canManageDoctors && (
+                          <Button
+                            onClick={() => handleDeleteDoctor(doctor)}
+                            variant="ghost"
+                            size="sm"
+                            className="p-1 border-0 text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 className="w-6 h-6" />
+                          </Button>
+                        )}
                       </div>
                     ))
                   ) : (
@@ -427,6 +438,7 @@ export default function PatientDetailPage() {
         onPatientUpdated={handlePatientUpdated}
         patient={currentPatient}
         hideTreatingDoctors={true}
+        canManageDoctors={canManageDoctors}
         onDelete={() => {
           store.closeEditPatientDialog();
           setIsDeletePatientOpen(true);

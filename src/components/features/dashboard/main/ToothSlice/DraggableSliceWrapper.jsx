@@ -7,7 +7,8 @@ import CroppedSlice from './CroppedSlice';
 function DraggableSliceWrapper({ view, index, dragerstate, toothNumber, onView }) {
     const [isDragging, setIsDragging] = useState(false);
     const { setIfDragging, setslicedrager } = dragerstate
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+    // Remove position state to avoid re-renders
+    // const [position, setPosition] = useState({ x: 0, y: 0 });
     const dragRef = useRef(null);
     const startPos = useRef({ x: 0, y: 0 });
     const hasMoved = useRef(false);
@@ -27,23 +28,17 @@ function DraggableSliceWrapper({ view, index, dragerstate, toothNumber, onView }
         const handleMouseMove = (moveEvent) => {
             const dx = Math.abs(moveEvent.clientX - startPos.current.x);
             const dy = Math.abs(moveEvent.clientY - startPos.current.y);
-            if (dx > 5 || dy > 5) { // Threshold for drag
+
+            if (!hasMoved.current && (dx > 5 || dy > 5)) { // Threshold for drag start
                 hasMoved.current = true;
-                if (!isDragging) {
-                    setIsDragging(true);
-                    setIfDragging(true);
-                    setslicedrager({ 'view': view, 'index': index });
-                    setPosition({
-                        x: moveEvent.clientX - 70,
-                        y: moveEvent.clientY - 70
-                    });
-                }
+                setIsDragging(true);
+                setIfDragging(true);
+                setslicedrager({ 'view': view, 'index': index });
             }
-            if (hasMoved.current) {
-                setPosition({
-                    x: moveEvent.clientX - 70,
-                    y: moveEvent.clientY - 70
-                });
+
+            if (hasMoved.current && dragRef.current) {
+                // Direct DOM manipulation for performance
+                dragRef.current.style.transform = `translate(${moveEvent.clientX - 70}px, ${moveEvent.clientY - 70}px) scale(1.05)`;
             }
         };
 
@@ -60,7 +55,7 @@ function DraggableSliceWrapper({ view, index, dragerstate, toothNumber, onView }
 
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
-    }, [view, index, isDragging, setIfDragging, setslicedrager]);
+    }, [view, index, setIfDragging, setslicedrager]);
 
     const handleClick = (e) => {
         if (!hasMoved.current && onView) {
@@ -68,18 +63,28 @@ function DraggableSliceWrapper({ view, index, dragerstate, toothNumber, onView }
         }
     };
 
+    // Use a ref callback to set initial position when the portal mounts
+    const setInitialPosition = useCallback((node) => {
+        if (node && startPos.current) {
+            dragRef.current = node;
+            // Set initial position
+            node.style.transform = `translate(${startPos.current.x - 70}px, ${startPos.current.y - 70}px) scale(1.05)`;
+        }
+    }, []);
+
     const floatingSlice = isDragging && createPortal(
         <div
-            ref={dragRef}
+            ref={setInitialPosition}
             style={{
                 position: 'fixed',
-                left: position.x,
-                top: position.y,
+                left: 0,
+                top: 0,
                 zIndex: 9999,
                 pointerEvents: 'none',
-                transform: 'scale(1.05)',
+                // transform is set via JS
                 border: '2px dashed #7564ed',
-                borderRadius: '0.5vw'
+                borderRadius: '0.5vw',
+                willChange: 'transform' // Hint for browser optimization
             }}
         >
             <CroppedSlice view={view} index={index} isSelected={isSelected} />

@@ -1,26 +1,28 @@
 "use client";
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
-  MousePointer, Hand, RotateCcw, Grid3X3, Download, Eye, EyeOff, Ruler, ZoomIn, ZoomOut, Maximize, Lock, Unlock, Square, Undo, MapPin, Trash
+  Hand, RotateCcw, Grid3X3, Download, Eye, EyeOff, Ruler, ZoomIn, ZoomOut, Maximize, Square, Undo, MapPin, Trash, Pencil, X
 } from 'lucide-react';
 import { useLayout } from '@/contexts/LayoutContext';
 
-const ToolButton = React.memo(({ tool, isSelected, onClick, variant = 'default', disabled = false, isCircular = false }) => {
+const COLORS = [
+  { id: 'red', value: '#FF5050', label: 'Red' },
+  { id: 'green', value: '#4ADE80', label: 'Green' },
+  { id: 'blue', value: '#60A5FA', label: 'Blue' }
+];
+
+const ToolButton = React.memo(({ tool, isSelected, onClick, variant = 'default', disabled = false, isCircular = false, className = "" }) => {
   const getButtonStyles = () => {
-    const baseStyles = isCircular ? "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 group relative shadow-sm mb-2" : "w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 group relative shadow-sm mb-2";
-    const variants = {
-      blue: 'bg-blue-100 border-2 border-blue-300 text-blue-700 hover:bg-blue-200 hover:border-blue-400',
-      green: 'bg-green-100 border-2 border-green-300 text-green-700 hover:bg-green-200 hover:border-green-400',
-      purple: 'bg-purple-100 border-2 border-purple-300 text-purple-700 hover:bg-purple-200 hover:border-purple-400',
-      indigo: 'bg-indigo-100 border-2 border-indigo-300 text-indigo-700 hover:bg-indigo-200 hover:border-indigo-400',
-      red: 'bg-red-100 border-2 border-red-300 text-red-700 hover:bg-red-200 hover:border-red-400',
-      orange: 'bg-orange-100 border-2 border-orange-300 text-orange-700 hover:bg-orange-200 hover:border-orange-400',
-      default: 'bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-800 border-2 border-transparent hover:border-gray-200'
-    };
+    const baseStyles = isCircular ? `w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 group relative mb-1 ${className}` : `w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 group relative mb-1 ${className}`;
+
+    const inactiveStyle = 'bg-[#1e1e2e] text-gray-400 hover:text-white border border-white/5 shadow-inner';
+    const activeStyle = 'bg-[#6366f1] text-white border border-white/10 scale-105 shadow-xl';
+
     if (disabled) {
-      return `${baseStyles} bg-gray-100 text-gray-400 border-2 border-gray-200 cursor-not-allowed`;
+      return `${baseStyles} bg-gray-800/50 text-gray-600 cursor-not-allowed opacity-50`;
     }
-    return `${baseStyles} ${isSelected ? variants[variant] + ' font-bold ring-2 ring-offset-2 ring-' + (variant === 'default' ? 'gray-300' : variant + '-300') : variants.default}`;
+
+    return `${baseStyles} ${isSelected ? activeStyle : inactiveStyle}`;
   };
   return (
     <button
@@ -31,71 +33,126 @@ const ToolButton = React.memo(({ tool, isSelected, onClick, variant = 'default',
       disabled={disabled}
       style={{ fontWeight: isSelected ? 700 : 500 }}
     >
-      <tool.icon size={16} />
-      {isSelected && (
-        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-current rounded-full opacity-70"></div>
-      )}
+      <tool.icon size={20} />
+
     </button>
   );
 });
 ToolButton.displayName = 'ToolButton';
 
 export default function QuickToolsVertical({
-  onToolSelect, selectedTool: activeTool, onZoom, onReset, onUndo, canUndo = false, onHelperToolToggle, showGrid, showLayers, isLocked, onDownload, onReanalyze, zoomValue = 100
+  onToolSelect, selectedTool: activeTool, onZoom, onReset, onToggleFullScreen, onUndo, canUndo = false, onHelperToolToggle, showGrid, showLayers, isLocked, onDownload, onReanalyze, zoomValue = 100,
+  selectedColor, onColorChange
 }) {
   const { setLayout } = useLayout();
-  // Tool definitions (vertical order, with separators)
-  const tools = [
-    // Selection
-    { icon: MousePointer, label: 'Select Tool', id: 'pointer', type: 'tool', variant: 'blue' },
-    { icon: Hand, label: 'Pan Tool', id: 'pan', type: 'tool', variant: 'blue' },
-    { icon: Maximize, label: 'Full', id: 'full', type: 'action', variant: 'default' },
-    { type: 'separator' },
-    // Helper
-    { icon: Grid3X3, label: 'Toggle Grid', id: 'grid', type: 'helper', variant: 'purple', isSelected: showGrid },
-    { icon: showLayers ? Eye : EyeOff, label: 'Toggle Layers', id: 'layers', type: 'helper', variant: 'indigo', isSelected: !showLayers },
-    { icon: isLocked ? Lock : Unlock, label: isLocked ? 'Unlock' : 'Lock', id: 'lock', type: 'helper', variant: 'red', isSelected: isLocked },
-    { type: 'separator' },
-    // Actions
-    ...(onDownload ? [{ icon: Download, label: 'Download', id: 'download', type: 'action', variant: 'default' }] : []),
-    ...(onReanalyze ? [{ icon: RotateCcw, label: 'Reanalyze', id: 'reanalyze', type: 'action', variant: 'default' }] : []),
-  ];
+  const isDrawMode = activeTool === 'draw';
+
+  const tools = useMemo(() => {
+    if (isDrawMode) {
+      return [
+        { icon: Pencil, label: 'Draw Mode', id: 'draw', type: 'tool', variant: 'orange' },
+        { type: 'color-picker' },
+        { icon: Undo, label: 'Undo', id: 'undo', type: 'action', variant: 'blue', disabled: !canUndo },
+        { icon: Trash, label: 'Clear All', id: 'clear', type: 'action', variant: 'red' },
+        { type: 'separator' },
+        { icon: X, label: 'Exit Draw', id: 'exit', type: 'action', variant: 'default' }
+      ];
+    }
+
+    return [
+      { icon: Hand, label: 'Pan Tool', id: 'pan', type: 'tool', variant: 'blue' },
+      { icon: Pencil, label: 'Draw Tool', id: 'draw', type: 'tool', variant: 'orange' },
+      { type: 'separator' },
+      { icon: Grid3X3, label: 'Toggle Grid', id: 'grid', type: 'helper', variant: 'purple', isSelected: showGrid },
+      { icon: showLayers ? Eye : EyeOff, label: 'Toggle Layers', id: 'layers', type: 'helper', variant: 'indigo', isSelected: !showLayers },
+      { type: 'separator' },
+      { icon: Maximize, label: 'Full Screen', id: 'fullscreen', type: 'action', variant: 'default' },
+      { icon: RotateCcw, label: 'Reset Zoom', id: 'reset', type: 'action', variant: 'default' },
+      ...(onDownload ? [{ icon: Download, label: 'Download', id: 'download', type: 'action', variant: 'default' }] : []),
+    ];
+  }, [isDrawMode, canUndo, showGrid, showLayers, onDownload]);
 
   const handleToolClick = (tool) => {
     if (tool.disabled) return;
-    switch (tool.type) {
-      case 'tool':
-        if (onToolSelect) onToolSelect(tool.id === activeTool ? null : tool.id);
+    switch (tool.id) {
+      case 'exit':
+        if (onToolSelect) onToolSelect(null);
         break;
-      case 'action':
-        if (tool.id === 'full') setLayout('XRAY_SIDE');
-        if (tool.id === 'download' && onDownload) onDownload();
-        if (tool.id === 'reanalyze' && onReanalyze) onReanalyze();
+      case 'undo':
+        if (onUndo) onUndo();
         break;
-      case 'helper':
+      case 'clear':
+        if (onReset) onReset();
+        break;
+      case 'fullscreen':
+        if (onToggleFullScreen) onToggleFullScreen();
+        break;
+      case 'reset':
+        if (onReset) onReset();
+        break;
+      case 'download':
+        if (onDownload) onDownload();
+        break;
+      case 'grid':
+      case 'layers':
         if (onHelperToolToggle) onHelperToolToggle(tool.id);
         break;
       default:
+        if (tool.type === 'tool') {
+          if (onToolSelect) onToolSelect(tool.id === activeTool ? null : tool.id);
+        }
         break;
     }
   };
 
   // Selection logic for highlighting
   const isButtonSelected = (tool) => {
-    if (tool.type === 'tool' || tool.type === 'measurement' || tool.type === 'drawing') {
-      return activeTool === tool.id;
-    }
+    if (tool.id === 'draw' || tool.id === 'pan') return activeTool === tool.id;
     if (tool.id === 'grid') return !!showGrid;
     if (tool.id === 'layers') return !showLayers;
-    if (tool.id === 'lock') return !!isLocked;
     return false;
   };
 
   return (
-    <div className="flex flex-col items-center rounded-2xl py-4 px-2 shadow-lg border border-gray-200/50 hover:shadow-xl transition-shadow duration-300 w-14 min-h-[340px] gap-0 select-none">
+    <div className="flex flex-col items-center py-3 px-2 w-14 min-h-[100px] gap-0.5 select-none animate-in fade-in zoom-in-95">
       {tools.map((tool, idx) => {
         if (tool.type === 'separator') {
-          return <div key={idx} className="w-8 h-px bg-gray-200/80 my-2 rounded-full" />;
+          return null;
+        }
+        if (tool.id === 'draw') {
+          return (
+            <React.Fragment key={tool.id}>
+              <ToolButton
+                tool={tool}
+                isSelected={isButtonSelected(tool)}
+                onClick={() => handleToolClick(tool)}
+                variant={tool.variant}
+                disabled={tool.disabled}
+              />
+            </React.Fragment>
+          )
+        }
+        if (tool.type === 'color-picker') {
+          return (
+            <div key="colors" className="flex flex-col items-center gap-2 py-1 mb-2 animate-in slide-in-from-top-2 duration-300">
+              {COLORS.map((color) => (
+                <button
+                  key={color.id}
+                  onClick={() => onColorChange?.(color.value)}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group relative border border-white/5 ${selectedColor === color.value ? 'bg-[#6366f1] border-white/20 scale-105 shadow-xl' : 'bg-[#1e1e2e] hover:bg-[#252545]'}`}
+                  title={color.label}
+                >
+                  <div
+                    className={`w-4 h-4 rounded-full shadow-lg transition-transform duration-300 ${selectedColor === color.value ? 'scale-125' : 'group-hover:scale-110'}`}
+                    style={{ backgroundColor: color.value }}
+                  />
+                  {selectedColor === color.value && (
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                  )}
+                </button>
+              ))}
+            </div>
+          );
         }
         return (
           <ToolButton
@@ -105,10 +162,9 @@ export default function QuickToolsVertical({
             onClick={() => handleToolClick(tool)}
             variant={tool.variant}
             disabled={tool.disabled}
-            isCircular={tool.isCircular}
           />
         );
       })}
     </div>
   );
-} 
+}

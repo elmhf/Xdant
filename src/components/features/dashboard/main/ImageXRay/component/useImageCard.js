@@ -1,11 +1,12 @@
 "use client"
 import { useState, useCallback, useContext, useRef } from "react";
-import { toast } from "sonner";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 import useAnalyseImage from "@/components/features/dashboard/JsFiles/getAnalyseImage";
 import useImageStore from "@/stores/ImageStore";
 import { DataContext } from "@/components/features/dashboard/dashboard";
 
 export default function useImageCard() {
+  const { pushNotification } = useNotification();
   // Safe destructure with fallback and warning
   const context = useContext(DataContext);
   const stageRef = context?.stageRef;
@@ -111,7 +112,7 @@ export default function useImageCard() {
   const handleUrlUpload = useCallback(async (imageUrl) => {
     if (!imageUrl || typeof imageUrl !== 'string') {
       setState(prev => ({ ...prev, error: 'Invalid image URL' }));
-      toast.error("Please provide a valid image URL");
+      pushNotification('error', "Please provide a valid image URL");
       return;
     }
 
@@ -146,7 +147,7 @@ export default function useImageCard() {
         isLoading: false
       }));
 
-      toast.success("Your dental scan has been processed successfully");
+      pushNotification('success', "Your dental scan has been processed successfully");
 
     } catch (err) {
       console.error("Image URL upload failed:", err);
@@ -155,7 +156,7 @@ export default function useImageCard() {
         error: err.message || 'Failed to analyze image from URL. Please try again.',
         isLoading: false
       }));
-      toast.error(err.message || "Failed to analyze image from URL. Please try again.");
+      pushNotification('error', err.message || "Failed to analyze image from URL. Please try again.");
     }
   }, [fetchImageFromUrl, getAnalyseImage, setImage]);
 
@@ -163,7 +164,7 @@ export default function useImageCard() {
   const handleUpload = useCallback(async (imageList) => {
     if (!Array.isArray(imageList) || imageList.length === 0 || !imageList[0]?.file) {
       setState(prev => ({ ...prev, error: 'Invalid image file' }));
-      toast.error("Please select a valid image file (JPG, PNG)");
+      pushNotification('error', "Please select a valid image file (JPG, PNG)");
       return;
     }
 
@@ -180,7 +181,7 @@ export default function useImageCard() {
       const formData = new FormData();
       formData.append("file", imageList[0].file);
 
-      toast.success("Your dental scan has been processed successfully");
+      pushNotification('success', "Your dental scan has been processed successfully");
       setState(prev => ({ ...prev, error: null, isLoading: false }));
 
     } catch (err) {
@@ -190,7 +191,7 @@ export default function useImageCard() {
         error: err.message || 'Failed to analyze image. Please try again.',
         isLoading: false
       }));
-      toast.error(err.message || "Failed to analyze image. Please try again.");
+      pushNotification('error', err.message || "Failed to analyze image. Please try again.");
     }
   }, [getAnalyseImage, setImage]);
 
@@ -198,7 +199,7 @@ export default function useImageCard() {
   const downloadImageWithAnnotations = useCallback(() => {
     if (!stageRef?.current) {
       console.error('Stage reference is not available');
-      toast.error('Unable to download image. Stage not available.');
+      pushNotification('error', 'Unable to download image. Stage not available.');
       return;
     }
 
@@ -216,10 +217,10 @@ export default function useImageCard() {
       link.click();
       document.body.removeChild(link);
 
-      toast.success('Image downloaded successfully!');
+      pushNotification('success', 'Image downloaded successfully!');
     } catch (error) {
       console.error('Error downloading image:', error);
-      toast.error('Failed to download image. Please try again.');
+      pushNotification('error', 'Failed to download image. Please try again.');
     }
   }, [stageRef]);
 
@@ -228,7 +229,7 @@ export default function useImageCard() {
     if (imageListRef.current.length > 0) {
       handleUpload(imageListRef.current);
     } else {
-      toast.error('No image available to reanalyze');
+      pushNotification('error', 'No image available to reanalyze');
     }
   }, [handleUpload]);
 
@@ -251,7 +252,7 @@ export default function useImageCard() {
   // تحسين handleDownload
   const handleDownload = useCallback(() => {
     if (!state.images.length) {
-      toast.error('No image available to download');
+      pushNotification('error', 'No image available to download');
       return;
     }
 
@@ -263,10 +264,10 @@ export default function useImageCard() {
       link.click();
       document.body.removeChild(link);
 
-      toast.success('Original image downloaded successfully!');
+      pushNotification('success', 'Original image downloaded successfully!');
     } catch (error) {
       console.error('Error downloading original image:', error);
-      toast.error('Failed to download image. Please try again.');
+      pushNotification('error', 'Failed to download image. Please try again.');
     }
   }, [state.images]);
 
@@ -321,7 +322,7 @@ export default function useImageCard() {
       };
     });
 
-    toast.success('Image removed successfully');
+    pushNotification('success', 'Image removed successfully');
   }, [cleanupImageUrl]);
 
   // دالة للتحقق من نوع الصورة

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Trash2, UserMinus, Plus } from 'lucide-react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { adminService } from '@/services/adminService';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 
 export default function EditPatientModal({ patient, open, onOpenChange, onUpdate }) {
+    const { pushNotification } = useNotification();
     const [activeTab, setActiveTab] = useState('details');
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
@@ -104,12 +105,12 @@ export default function EditPatientModal({ patient, open, onOpenChange, onUpdate
         setLoading(true);
         try {
             await adminService.addDoctorToPatient(patient.id, selectedDoctorId, patient.clinic_id);
-            toast.success('Doctor added successfully');
+            pushNotification('success', 'Doctor added successfully');
             setSelectedDoctorId('');
             fetchDoctors();
         } catch (error) {
             console.error('Failed to add doctor:', error);
-            toast.error(error.message || 'Failed to add doctor');
+            pushNotification('error', error.message || 'Failed to add doctor');
         } finally {
             setLoading(false);
         }
@@ -119,11 +120,11 @@ export default function EditPatientModal({ patient, open, onOpenChange, onUpdate
         setLoading(true);
         try {
             await adminService.removeDoctorFromPatient(patient.id, doctorId);
-            toast.success('Doctor removed successfully');
+            pushNotification('success', 'Doctor removed successfully');
             fetchDoctors();
         } catch (error) {
             console.error('Failed to remove doctor:', error);
-            toast.error('Failed to remove doctor');
+            pushNotification('error', 'Failed to remove doctor');
         } finally {
             setLoading(false);
         }
@@ -140,12 +141,12 @@ export default function EditPatientModal({ patient, open, onOpenChange, onUpdate
         setLoading(true);
         try {
             await adminService.updatePatient(patient.id, formData);
-            toast.success('Patient updated successfully');
+            pushNotification('success', 'Patient updated successfully');
             onUpdate();
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to update patient:', error);
-            toast.error('Failed to update patient');
+            pushNotification('error', 'Failed to update patient');
         } finally {
             setLoading(false);
         }

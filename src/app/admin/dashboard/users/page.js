@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Filter, X } from 'lucide-react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { adminService } from '@/services/adminService';
 import AddUserModal from '@/components/admin/AddUserModal';
 import EditUserModal from '@/components/admin/EditUserModal';
@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import BanInfoDialog from '@/components/admin/BanInfoDialog';
 
 export default function UsersPage() {
+    const { pushNotification } = useNotification();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -65,7 +66,7 @@ export default function UsersPage() {
             setHasMore(page < totalPagesData);
         } catch (error) {
             console.error('Failed to fetch users:', error);
-            toast.error('Failed to load users');
+            pushNotification('error', 'Failed to load users');
         } finally {
             setLoading(false);
         }
@@ -102,10 +103,10 @@ export default function UsersPage() {
             setUsers(prev => prev.filter(u => (u.id || u.user_id) !== (userToDelete.id || userToDelete.user_id)));
             setIsDeleteUserDialogOpen(false);
             setUserToDelete(null);
-            toast.success('User deleted successfully');
+            pushNotification('success', 'User deleted successfully');
         } catch (error) {
             console.error('Failed to delete user:', error);
-            toast.error('Failed to delete user');
+            pushNotification('error', 'Failed to delete user');
         } finally {
             setDeleteLoading(false);
         }
@@ -127,12 +128,12 @@ export default function UsersPage() {
                     ? { ...u, is_banned: true, ban_type: banData.type || 'PERMANENT', ban_details: { type: banData.type, description: banData.reason, start_date: new Date(), end_date: banData.end_date } } // Optimistic update with details
                     : u
             ));
-            toast.success('User banned successfully');
+            pushNotification('success', 'User banned successfully');
             setIsBanDialogOpen(false);
             setUserToBan(null);
         } catch (error) {
             console.error('Failed to ban user:', error);
-            toast.error('Failed to ban user');
+            pushNotification('error', 'Failed to ban user');
         } finally {
             setBanLoading(false);
         }
@@ -146,10 +147,10 @@ export default function UsersPage() {
                     ? { ...u, is_banned: false, ban_type: null, ban_details: null }
                     : u
             ));
-            toast.success('User access restored successfully');
+            pushNotification('success', 'User access restored successfully');
         } catch (error) {
             console.error('Failed to unban user:', error);
-            toast.error('Failed to unban user');
+            pushNotification('error', 'Failed to unban user');
         }
     };
 

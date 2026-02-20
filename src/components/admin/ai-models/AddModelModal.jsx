@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload, FileCode, Check } from "lucide-react";
-import { toast } from "sonner";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 const AddModelModal = ({ isOpen, onOpenChange, onAdd }) => {
+    const { pushNotification } = useNotification();
     const [name, setName] = useState('');
     const [type, setType] = useState('pano_detection');
     const [threshold, setThreshold] = useState('0.6');
@@ -21,7 +22,7 @@ const AddModelModal = ({ isOpen, onOpenChange, onAdd }) => {
         e.preventDefault();
 
         if (!name) {
-            toast.error("Please enter a model name");
+            pushNotification('error', "Please enter a model name");
             return;
         }
 
@@ -35,7 +36,7 @@ const AddModelModal = ({ isOpen, onOpenChange, onAdd }) => {
 
             if (method === 'path') {
                 if (!path) {
-                    toast.error("Please enter a file path");
+                    pushNotification('error', "Please enter a file path");
                     setIsLoading(false);
                     return;
                 }
@@ -43,7 +44,7 @@ const AddModelModal = ({ isOpen, onOpenChange, onAdd }) => {
                 await onAdd(data, null);
             } else {
                 if (!file) {
-                    toast.error("Please select a file to upload");
+                    pushNotification('error', "Please select a file to upload");
                     setIsLoading(false);
                     return;
                 }

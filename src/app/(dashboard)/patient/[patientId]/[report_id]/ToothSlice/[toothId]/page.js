@@ -87,6 +87,14 @@ export default function ToothSlicePage() {
     reportType
   } = useReportData();
 
+  // FIXED: Fetch data on mount if needed (handling direct links)
+  useEffect(() => {
+    if (report_id && !hasData && !loading && !error) {
+      console.log('🔄 ToothSlicePage: Fetching report data for direct link...', report_id);
+      fetchData(report_id);
+    }
+  }, [report_id, hasData, loading, error, fetchData]);
+
   const {
     getViewImages,
     loadAllViews,
@@ -94,6 +102,26 @@ export default function ToothSlicePage() {
     voxelSizes,
     setupFromReport
   } = useImageStore();
+
+  // FIXED: Ensure image store is initialized. If data exists but slices don't, FORCE REFRESH to get the raw report with data_url.
+  const refreshAttemptedRef = useRef(false);
+
+  useEffect(() => {
+    // If we have report data, but no slices, and we haven't just tried to refresh...
+    if (reportData && !loading && !error) {
+      const hasSliceCounts = sliceCounts && (sliceCounts.axial > 0 || sliceCounts.coronal > 0 || sliceCounts.sagittal > 0);
+
+      if (!hasSliceCounts) {
+        if (!refreshAttemptedRef.current) {
+          console.log('🔄 ToothSlicePage: Data exists but slices missing. Forcing full refresh to retrieve image data...');
+          refreshAttemptedRef.current = true;
+          fetchData(report_id, { forceRefresh: true });
+        } else {
+          console.warn('⚠️ ToothSlicePage: Slices still missing after refresh. Data might be invalid or process failed.');
+        }
+      }
+    }
+  }, [reportData, loading, error, sliceCounts, fetchData, report_id]);
 
   const dentalData = useDentalStore(state => state.data);
   const { settings, SettingChange, setSettings } = useDentalSettings();
@@ -141,14 +169,14 @@ export default function ToothSlicePage() {
   const handleNavigateSlice = useCallback((direction) => {
     if (!viewingSlice) return;
     const { view, index } = viewingSlice;
-    const range = sliceRanges[view];
-    if (!range) return;
+    // FIXED: Use full volume limits instead of range limits to allow exploring the entire scan
+    const maxSlices = sliceCounts[view] || 1000;
 
     let newIndex = index;
     if (direction === 'prev') {
-      newIndex = Math.max(range.start, index - 1);
+      newIndex = Math.max(0, index - 1);
     } else if (direction === 'next') {
-      newIndex = Math.min(range.end, index + 1);
+      newIndex = Math.min(maxSlices - 1, index + 1);
     }
 
     if (newIndex !== index) {
@@ -156,7 +184,7 @@ export default function ToothSlicePage() {
       setModalZoom(1);
       setModalRegion(null);
     }
-  }, [viewingSlice, sliceRanges]);
+  }, [viewingSlice, sliceCounts]);
 
   const handleApprove = useCallback(() => {
     if (tooth) {
@@ -260,7 +288,7 @@ export default function ToothSlicePage() {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <ImageCard
-              showToolBar={false}
+              showToolBar={true}
               settings={settings}
               SettingChange={SettingChange}
               setSettings={setSettings}
@@ -287,7 +315,7 @@ export default function ToothSlicePage() {
             ) : (
               /* Range controls and SlicesSection for each view */
               ['axial', 'coronal', 'sagittal'].map(view => {
-                console.log("NoSliceDataMessage",sliceRanges);
+                console.log("NoSliceDataMessage", sliceRanges);
                 const start = sliceRanges[view].start || sliceRanges[view].min;
                 const end = sliceRanges[view].end || sliceRanges[view].max;
 
@@ -340,8 +368,9 @@ export default function ToothSlicePage() {
             toothNumber={toothNumber}
             onClose={handleCloseModal}
             onNavigate={handleNavigateSlice}
-            canNavPrev={viewingSlice?.index > sliceRanges[viewingSlice?.view]?.start}
-            canNavNext={viewingSlice?.index < sliceRanges[viewingSlice?.view]?.end}
+            // FIXED: Enable navigation across full volume (0 to total slices)
+            canNavPrev={viewingSlice?.index > 0}
+            canNavNext={viewingSlice?.index < (sliceCounts[viewingSlice?.view] || 1000) - 1}
             zoom={modalZoom}
             setZoom={setModalZoom}
             region={modalRegion}

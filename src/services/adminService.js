@@ -1,4 +1,4 @@
-import { apiClient, apiUploadClient } from '@/utils/apiClient';
+import { apiAdminClient as apiClient, apiAdminUploadClient as apiUploadClient } from '@/utils/adminUtils';
 
 export const adminService = {
     // Users

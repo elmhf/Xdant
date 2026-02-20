@@ -7,7 +7,7 @@ import { Mail, Lock, Loader2 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -64,12 +64,12 @@ export default function LoginPage() {
     } catch (err) {
       console.error("Login error:", err);
       if (err.data?.state === 'pending_verification') {
-        toast.error("Please verify your email to continue");
+        pushNotification('error', "Please verify your email to continue");
         router.push(`/signeup?step=1&email=${encodeURIComponent(email)}`);
         return;
       }
       setError(err.message || "Invalid email or password");
-      toast.error(err.message || "Invalid email or password");
+      pushNotification('error', err.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }

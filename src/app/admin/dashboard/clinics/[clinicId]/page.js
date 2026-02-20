@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { adminService } from '@/services/adminService';
 import { ArrowLeft, MapPin, Phone, Activity, ShieldCheck, Mail, Globe, Clock } from 'lucide-react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 
 export default function ClinicDetailPage() {
+    const { pushNotification } = useNotification();
     const params = useParams();
     const router = useRouter();
     const [clinic, setClinic] = useState(null);
@@ -30,7 +31,7 @@ export default function ClinicDetailPage() {
             setClinic(clinicData);
         } catch (error) {
             console.error('Failed to fetch clinic details:', error);
-            toast.error('Failed to load clinic details');
+            pushNotification('error', 'Failed to load clinic details');
         } finally {
             setLoading(false);
         }

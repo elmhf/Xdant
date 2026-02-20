@@ -1,37 +1,51 @@
-// middleware.js - نسخة مبسطة
+// middleware.js — Edge Runtime compatible
 import { NextResponse } from "next/server"
-import { getTokenFromRequest, isTokenExpired } from "@/utils/jwtUtils"
+import { getUserToken, getAdminToken, isTokenExpired } from "@/utils/middlewareTokenUtils"
 
 export function middleware(req) {
-
   const { pathname } = req.nextUrl
-
-  // نجيب التوكن من الكوكيز
   const cookieString = req.headers.get('cookie') || ''
 
-  const token = getTokenFromRequest(cookieString)
-  const isAuthenticated = token && !isTokenExpired(token)
+  // ===== Admin Routes =====
+  if (pathname.startsWith('/admin')) {
+    const adminToken = getAdminToken(cookieString)
+    const isAdminAuthenticated = adminToken && !isTokenExpired(adminToken)
 
+    // Admin login page: redirect to dashboard if already authenticated
+    if (pathname === '/admin/login') {
+      if (isAdminAuthenticated) {
+        return NextResponse.redirect(new URL('/admin/dashboard', req.url))
+      }
+      return NextResponse.next()
+    }
 
-  // قائمة المسارات التي لا تحتاج مصادقة
-  const publicRoutes = ['/login', '/signeup', '/forgot-password', '/about', '/contact', '/auth/redirect', '/admin/login','/admin/dashboard']
-  const isPublicRoute = publicRoutes.includes(pathname)
+    // All other /admin/* routes require admin token
+    if (!isAdminAuthenticated) {
+      return NextResponse.redirect(new URL('/admin/login', req.url))
+    }
 
-  // إذا كان المسار عام، خلّي المستخدم يدخل
+    return NextResponse.next()
+  }
+
+  // ===== Regular User Routes =====
+  const userToken = getUserToken(cookieString)
+  const isAuthenticated = userToken && !isTokenExpired(userToken)
+
+  // Public routes that don't require authentication
+  const publicRoutes = ['/login', '/signeup', '/forgot-password', '/about', '/contact', '/auth/redirect']
+  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'))
+
   if (isPublicRoute) {
-    // لكن إذا كان مسجل دخول وحاول يدخل login → وجهه للداشبورد
-    if ((pathname === '/login' || pathname === "signeup") && isAuthenticated) {
+    // Redirect authenticated users away from login/signup
+    if ((pathname === '/login' || pathname === '/signeup') && isAuthenticated) {
       return NextResponse.redirect(new URL('/', req.url))
     }
     return NextResponse.next()
   }
 
-
-
-  // باقي المسارات تحتاج مصادقة
+  // All other routes require user authentication
   if (!isAuthenticated) {
     const loginUrl = new URL('/login', req.url)
-    // حفظ المسار المطلوب للعودة إليه بعد تسجيل الدخول
     loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
   }
@@ -41,14 +55,6 @@ export function middleware(req) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)  
-     * - favicon.ico (favicon file)
-     * - public files (images, etc.)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'
+    '/((?!api|_next/static|_next/image|favicon.ico|sounds|.*\\..*).*)'
   ],
 }

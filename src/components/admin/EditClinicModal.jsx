@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Trash2, UserMinus } from 'lucide-react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { adminService } from '@/services/adminService';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function EditClinicModal({ clinic, open, onOpenChange, onUpdate }) {
+    const { pushNotification } = useNotification();
     const [activeTab, setActiveTab] = useState('details'); // details | members
     const [members, setMembers] = useState([]);
     const [membersLoading, setMembersLoading] = useState(false);
@@ -76,12 +77,12 @@ export default function EditClinicModal({ clinic, open, onOpenChange, onUpdate }
         setLoading(true);
         try {
             await adminService.addUserToClinic(clinic.id || clinic.clinic_id, newMember.email, newMember.role);
-            toast.success('Member added successfully');
+            pushNotification('success', 'Member added successfully');
             setNewMember(prev => ({ ...prev, email: '' }));
             fetchMembers();
         } catch (error) {
             console.error('Failed to add member:', error);
-            toast.error(error.message || 'Failed to add member');
+            pushNotification('error', error.message || 'Failed to add member');
         } finally {
             setLoading(false);
         }
@@ -90,11 +91,11 @@ export default function EditClinicModal({ clinic, open, onOpenChange, onUpdate }
     const handleUpdateMemberRole = async (userId, newRole) => {
         try {
             await adminService.updateUserClinicRole(userId, clinic.id || clinic.clinic_id, newRole);
-            toast.success('Role updated successfully');
+            pushNotification('success', 'Role updated successfully');
             fetchMembers();
         } catch (error) {
             console.error('Failed to update role:', error);
-            toast.error('Failed to update role');
+            pushNotification('error', 'Failed to update role');
         }
     };
 
@@ -103,11 +104,11 @@ export default function EditClinicModal({ clinic, open, onOpenChange, onUpdate }
         setLoading(true);
         try {
             await adminService.removeUserFromClinic(userId, clinic.id || clinic.clinic_id);
-            toast.success('Member removed successfully');
+            pushNotification('success', 'Member removed successfully');
             fetchMembers();
         } catch (error) {
             console.error('Failed to remove member:', error);
-            toast.error('Failed to remove member');
+            pushNotification('error', 'Failed to remove member');
         } finally {
             setLoading(false);
         }
@@ -126,12 +127,12 @@ export default function EditClinicModal({ clinic, open, onOpenChange, onUpdate }
         setLoading(true);
         try {
             await adminService.updateClinic(clinic.id || clinic.clinic_id, formData);
-            toast.success('Clinic updated successfully');
+            pushNotification('success', 'Clinic updated successfully');
             onUpdate();
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to update clinic:', error);
-            toast.error('Failed to update clinic');
+            pushNotification('error', 'Failed to update clinic');
         } finally {
             setLoading(false);
         }
@@ -142,12 +143,12 @@ export default function EditClinicModal({ clinic, open, onOpenChange, onUpdate }
         setLoading(true);
         try {
             await adminService.deleteClinic(clinic.id || clinic.clinic_id);
-            toast.success('Clinic deleted successfully');
+            pushNotification('success', 'Clinic deleted successfully');
             onUpdate();
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to delete clinic:', error);
-            toast.error('Failed to delete clinic');
+            pushNotification('error', 'Failed to delete clinic');
         } finally {
             setLoading(false);
         }

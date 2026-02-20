@@ -12,9 +12,10 @@ import {
 
 import BanUserDialog from './BanUserDialog';
 import { adminService } from '@/services/adminService';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 
 export default function RecentUsersTable({ users, loading, onRefresh }) {
+    const { pushNotification } = useNotification();
     const [selectedUser, setSelectedUser] = useState(null);
     const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
@@ -30,11 +31,11 @@ export default function RecentUsersTable({ users, loading, onRefresh }) {
         setActionLoading(true);
         try {
             await adminService.unbanUser(user.user_id || "");
-            toast.success("User access restored successfully");
+            pushNotification('success', "User access restored successfully");
             if (onRefresh) onRefresh();
         } catch (error) {
             console.error(error);
-            toast.error("Failed to unban user");
+            pushNotification('error', "Failed to unban user");
         } finally {
             setActionLoading(false);
         }
@@ -46,12 +47,12 @@ export default function RecentUsersTable({ users, loading, onRefresh }) {
         setActionLoading(true);
         try {
             await adminService.banUser(selectedUser.id || selectedUser.user_id, banData);
-            toast.success("User banned successfully");
+            pushNotification('success', "User banned successfully");
             setIsBanDialogOpen(false);
             if (onRefresh) onRefresh();
         } catch (error) {
             console.error(error);
-            toast.error("Failed to ban user");
+            pushNotification('error', "Failed to ban user");
         } finally {
             setActionLoading(false);
         }

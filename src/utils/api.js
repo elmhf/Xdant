@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { notification } from "@/components/shared/jsFiles/NotificationProvider";
 
 /**
  * A wrapper around the native fetch API that handles errors with toast notifications.

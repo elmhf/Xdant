@@ -2,56 +2,45 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import {
   Download, Ruler, ZoomIn, ZoomOut, Maximize, Eye, EyeOff, Grid3X3, MousePointer, Hand, Lock, Unlock, MoreHorizontal, RotateCcw, RotateCw, Square, Circle, Undo, MapPin,
-  Trash
+  Trash, Pencil
 } from 'lucide-react';
 
-const ToolButton = React.memo(({ tool, isSelected, onClick, variant = 'default', disabled = false, isCircular = false }) => {
+const COLORS = [
+  { id: 'red', value: '#FF5050', label: 'Red' },
+  { id: 'green', value: '#4ADE80', label: 'Green' },
+  { id: 'blue', value: '#60A5FA', label: 'Blue' }
+];
+
+const ToolButton = React.memo(({ icon: Icon, label, id, isSelected, onClick, disabled, variant = 'default', isCircular = false, isFullWidth = false, badge }) => {
   const getButtonStyles = () => {
-    const baseStyles = isCircular ? "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 group relative shadow-sm" : "w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 group relative shadow-sm";
-    const variants = {
-      blue: 'bg-blue-100 border-2 border-blue-300 text-blue-700 hover:bg-blue-200 hover:border-blue-400',
-      green: 'bg-green-100 border-2 border-green-300 text-green-700 hover:bg-green-200 hover:border-green-400',
-      purple: 'bg-purple-100 border-2 border-purple-300 text-purple-700 hover:bg-purple-200 hover:border-purple-400',
-      indigo: 'bg-indigo-100 border-2 border-indigo-300 text-indigo-700 hover:bg-indigo-200 hover:border-indigo-400',
-      red: 'bg-red-100 border-2 border-red-300 text-red-700 hover:bg-red-200 hover:border-red-400',
-      orange: 'bg-orange-100 border-2 border-orange-300 text-orange-700 hover:bg-orange-200 hover:border-orange-400',
-      default: 'bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-800 border-2 border-transparent hover:border-gray-200'
-    };
+    const baseStyles = isCircular ? `w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group relative mb-0` : `w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group relative mb-0`;
+
+    const inactiveStyle = 'bg-[#1e1e2e] text-gray-400 hover:text-white border border-white/5';
+    const activeStyle = 'bg-[#6366f1] text-white border border-white/10 scale-105 shadow-xl';
 
     if (disabled) {
-      return `${baseStyles} bg-gray-100 text-gray-400 border-2 border-gray-200 cursor-not-allowed`;
+      return `${baseStyles} bg-gray-800/50 text-gray-600 cursor-not-allowed opacity-50`;
     }
 
-    return `${baseStyles} ${isSelected ? variants[variant] + ' font-bold ring-2 ring-offset-2 ring-' + (variant === 'default' ? 'gray-300' : variant + '-300') : variants.default}`;
-  };
-
-  const getIconStyles = () => {
-    if (disabled) return 'text-gray-400';
-    if (tool.id === 'reset-drawing' && !disabled) return 'text-red-600';
-    const variants = {
-      blue: 'text-blue-700',
-      green: 'text-green-700',
-      purple: 'text-purple-700',
-      indigo: 'text-indigo-700',
-      red: 'text-red-700',
-      orange: 'text-orange-700',
-      default: 'group-hover:text-gray-800'
-    };
-    return isSelected ? variants[variant] + ' font-bold' : variants.default;
+    return `${baseStyles} ${isSelected ? activeStyle : inactiveStyle}`;
   };
 
   return (
     <button
       onClick={disabled ? undefined : onClick}
       className={getButtonStyles()}
-      title={tool.label}
-      aria-label={tool.label}
+      title={label}
+      aria-label={label}
       disabled={disabled}
-      style={{ fontWeight: isSelected ? 700 : 500 }}
     >
-      <tool.icon size={16} className={getIconStyles()} />
+      <Icon size={16} />
+      {badge && (
+        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#0a0a0f]">
+          {badge}
+        </span>
+      )}
       {isSelected && (
-        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-current rounded-full opacity-70"></div>
+        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
       )}
     </button>
   );
@@ -78,7 +67,8 @@ DropdownMenu.displayName = 'DropdownMenu';
 
 export default function Toolbar({
   onDownload, onReanalyze, onZoom, onToolSelect, selectedTool: activeTool,
-  onHelperToolToggle, showGrid, showLayers, isLocked, zoomValue = 100, onReset, onUndo, canUndo = false
+  onHelperToolToggle, showGrid, showLayers, isLocked, zoomValue = 100, onReset, onUndo, canUndo = false,
+  selectedColor, onColorChange
 }) {
   const [isMoreMenuOpen, setMoreMenuOpen] = useState(false);
   const [visibleTools, setVisibleTools] = useState([]);
@@ -266,7 +256,7 @@ export default function Toolbar({
     };
 
     const { variant, isSelected, isCircular } = getVariantAndSelection();
-    return <ToolButton key={tool.id} tool={tool} isSelected={isSelected} onClick={getClickHandler()} variant={variant} disabled={tool.disabled} isCircular={isCircular} />;
+    return <ToolButton key={tool.id} icon={tool.icon} label={tool.label} id={tool.id} isSelected={isSelected} onClick={getClickHandler()} variant={variant} disabled={tool.disabled} isCircular={isCircular} />;
   }, [activeTool, showGrid, showLayers, isLocked, handleToolClick, handleViewToolClick, handleHelperToolClick, onDownload, onReanalyze]);
 
   // تجميع الأدوات المرئية حسب النوع لإضافة الفواصل
@@ -285,14 +275,32 @@ export default function Toolbar({
     <div className="flex items-center justify-center p-3">
       <div
         ref={toolbarRef}
-        className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-2xl px-3 py-2 shadow-lg border border-gray-200/50 hover:shadow-xl transition-shadow duration-300 w-full  mx-auto"
-        style={{ minHeight: 45 }}
+        className="flex items-center gap-1 w-fit mx-auto"
+        style={{ minHeight: 48 }}
       >
-        {/* الأدوات مع فاصل بين المجموعات */}
         {Object.entries(groupVisibleTools).map(([type, tools], groupIndex) => (
           <React.Fragment key={type}>
-            {groupIndex > 0 && <div className="w-px h-6 bg-gray-200/80 mx-1.5 rounded-full" />}
             {tools.map(renderToolButton)}
+            {type === 'drawing' && (
+              <div className="flex items-center gap-1 px-1">
+                {COLORS.map((color) => (
+                  <button
+                    key={color.id}
+                    onClick={() => onColorChange?.(color.value)}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group relative border border-white/5 ${selectedColor === color.value ? 'bg-[#6366f1] border-white/20 scale-105 shadow-xl' : 'bg-[#1e1e2e] hover:bg-[#252545]'}`}
+                    title={color.label}
+                  >
+                    <div
+                      className={`w-4 h-4 rounded-full shadow-lg transition-transform duration-300 ${selectedColor === color.value ? 'scale-125' : 'group-hover:scale-110'}`}
+                      style={{ backgroundColor: color.value }}
+                    />
+                    {selectedColor === color.value && (
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </React.Fragment>
         ))}
         {/* زر المزيد إذا كان هناك أدوات مخفية */}

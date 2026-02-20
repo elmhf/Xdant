@@ -6,7 +6,6 @@
     "enabled": "مفعل",
     "disabled": "معطل"
   },
-  
   "addProblem": {
     "title": "إضافة مشكلة",
     "description": "حدد المشكلة وتهيئتها",
@@ -18,7 +17,6 @@
     "clearAll": "مسح الكل",
     "successMessage": "تمت إضافة المشكلة بنجاح"
   },
-
   "addCondition": {
     "title": "إضافة حالة",
     "description": "إضافة حالة أو مشكلة جديدة لهذا السن",
@@ -43,7 +41,6 @@
     "successMessage": "تمت إضافة الحالة بنجاح",
     "errorMessage": "فشل في إضافة الحالة"
   },
-
   "dentalForm": {
     "dentalVisualization": "عرض الأسنان",
     "drawingTools": "أدوات الرسم",
@@ -75,7 +72,6 @@
     "description": "الوصف",
     "descriptionPlaceholder": "اكتب وصفًا مختصرًا للمشكلة"
   },
-
   "cardButton": {
     "toggleView": "تبديل العرض",
     "resetTooth": "إعادة تعيين السن",
@@ -92,7 +88,6 @@
     "tooltipApprove": "انقر للموافقة (Ctrl+A)",
     "tooltipUnapprove": "انقر لإلغاء الموافقة (Ctrl+A)"
   },
-
   "navbar": {
     "home": "الرئيسية",
     "patients": "المرضى",
@@ -100,7 +95,6 @@
     "reportTitle": "تقرير CBCT بالذكاء الاصطناعي",
     "print": "طباعة التحاليل"
   },
-
   "addComment": {
     "note": "ملاحظة",
     "title": "إضافة ملاحظة جديدة",
@@ -108,7 +102,6 @@
     "confirm": "تأكيد",
     "cancel": "إلغاء"
   },
-
   "side": {
     "card": {
       "Tooth": "سن",
@@ -142,44 +135,32 @@
     "resetAllFilters": "إعادة تعيين جميع الفلاتر",
     "language": "اللغة"
   },
-
   "reportSettings": {
     "title": "إعدادات التقرير",
     "downloadPDF": "تنزيل PDF",
     "generating": "جاري الإنشاء...",
     "downloadSuccess": "تم تنزيل الملف بنجاح!",
     "selectPlaceholder": "اختر",
-    
     "colorPrint": "طباعة ملونة",
     "colorPrintDesc": "طباعة التقرير بالألوان بدلاً من الأبيض والأسود",
-    
     "signedByDoctor": "توقيع الطبيب",
     "signedByDoctorDesc": "إضافة توقيع الطبيب أسفل التقرير",
-    
     "includeXrayImages": "عرض صور الأشعة",
     "includeXrayImagesDesc": "إدراج صور الأشعة السينية لكل سن إن وجدت",
-    
     "includeDoctorNotes": "عرض ملاحظات الطبيب",
     "includeDoctorNotesDesc": "إظهار الملاحظات الطبية المدوّنة لكل سن",
-    
     "showToothNumbers": "إظهار أرقام الأسنان",
     "showToothNumbersDesc": "عرض رقم كل سن في التقرير",
-    
     "includeTreatmentPlan": "عرض خطة العلاج",
     "includeTreatmentPlanDesc": "إضافة ملخص لخطة العلاج في نهاية التقرير",
-    
     "onlyAffectedTeeth": "طباعة الأسنان المتأثرة فقط",
     "onlyAffectedTeethDesc": "تجاهل الأسنان السليمة من التقرير",
-    
     "clinicStamp": "إضافة ختم العيادة",
     "clinicStampDesc": "إدراج ختم رقمي في نهاية التقرير",
-    
     "showDateTime": "عرض التاريخ والوقت",
     "showDateTimeDesc": "إظهار تاريخ ووقت إصدار التقرير",
-    
     "includeCoverPage": "إضافة صفحة غلاف",
     "includeCoverPageDesc": "إضافة صفحة أولى تحتوي على اسم العيادة وبيانات المريض",
-    
     "reportLanguage": "لغة التقرير",
     "detailLevel": "مستوى التفاصيل",
     "showJawLine": "خط الفك",
@@ -189,18 +170,15 @@
     "showSameProblem": "نفس المشكلة",
     "showSameProblemDesc": "إظهار نفس المشكلة"
   },
-  
   "languages": {
     "arabic": "العربية",
     "english": "الإنجليزية",
     "french": "الفرنسية"
   },
-  
   "detailLevels": {
     "brief": "مختصر",
     "detailed": "تفصيلي"
   },
-
   "error": {
     "generic": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     "network": "خطأ في الشبكة. يرجى التحقق من اتصالك بالإنترنت.",
@@ -209,7 +187,6 @@
     "timeout": "انتهت مهلة الطلب",
     "serverError": "خطأ في الخادم الداخلي"
   },
-
   "validation": {
     "required": "هذا الحقل مطلوب",
     "invalidEmail": "بريد إلكتروني غير صالح",
@@ -217,14 +194,12 @@
     "maxLength": "يجب ألا يتجاوز {{count}} أحرف",
     "passwordMismatch": "كلمات المرور غير متطابقة"
   },
-
   "notifications": {
     "success": "تمت العملية بنجاح",
     "warning": "تحذير",
     "error": "خطأ",
     "info": "معلومة"
   },
-  
   "report": {
     "settings": {
       "title": "إعدادات PDF",

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 import { adminService } from '@/services/adminService';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import {
 import { Loader2 } from 'lucide-react';
 
 export default function CreatePatientDialog({ open, onOpenChange, onPatientCreated }) {
+    const { pushNotification } = useNotification();
     const [loading, setLoading] = useState(false);
     const [clinics, setClinics] = useState([]);
     const [loadingClinics, setLoadingClinics] = useState(false);
@@ -64,7 +65,7 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
 
         } catch (error) {
             console.error("Failed to fetch clinics", error);
-            toast.error("Failed to load clinics");
+            pushNotification('error', "Failed to load clinics");
         } finally {
             setLoadingClinics(false);
         }
@@ -90,19 +91,19 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
         setLoading(true);
 
         if (!formData.clinic_id) {
-            toast.error("Please select a clinic");
+            pushNotification('error', "Please select a clinic");
             setLoading(false);
             return;
         }
 
         try {
             await adminService.createPatient(formData);
-            toast.success('Patient created successfully');
+            pushNotification('success', 'Patient created successfully');
             onPatientCreated();
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to create patient:', error);
-            toast.error('Failed to create patient');
+            pushNotification('error', 'Failed to create patient');
         } finally {
             setLoading(false);
         }

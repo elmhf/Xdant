@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/shared/navbar/NavBar';
 import useUserStore from '@/components/features/profile/store/userStore';
+import UploadToast from '@/app/(dashboard)/patient/components/UploadToast';
+import useUploadStore from '@/stores/uploadStore';
 
 
 export default function DashboardLayout({ children }) {
@@ -9,6 +11,9 @@ export default function DashboardLayout({ children }) {
   const getUserInfo = useUserStore(state => state.getUserInfo);
   const fetchMyClinics = useUserStore(state => state.fetchMyClinics);
   const setCurrentClinicId = useUserStore(state => state.setCurrentClinicId);
+
+  // Upload Store
+  const { uploads, isToastVisible, closeToast, cancelUpload } = useUploadStore();
 
   useEffect(() => {
     const loadData = async () => {
@@ -66,6 +71,14 @@ export default function DashboardLayout({ children }) {
           }
         }
       `}</style>
+
+      {/* Persistent Upload Toast */}
+      <UploadToast
+        isVisible={isToastVisible}
+        uploads={uploads}
+        onClose={closeToast}
+        onCancelUpload={cancelUpload}
+      />
     </div>
   );
 }

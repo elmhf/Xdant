@@ -59,6 +59,34 @@ export function getTokenFromRequest(cookieString) {
   return cookies.access_token || null
 }
 
+export function getAdminTokenFromRequest(cookieString) {
+  if (!cookieString) return null
+
+  const cookies = cookieString.split(';').reduce((acc, cookie) => {
+    const [key, value] = cookie.trim().split('=')
+    if (key && value) {
+      acc[key] = value
+    }
+    return acc
+  }, {})
+
+  return cookies.access_token_admin || null
+}
+
+export function getAdminRefreshTokenFromRequest(cookieString) {
+  if (!cookieString) return null
+
+  const cookies = cookieString.split(';').reduce((acc, cookie) => {
+    const [key, value] = cookie.trim().split('=')
+    if (key && value) {
+      acc[key] = value
+    }
+    return acc
+  }, {})
+
+  return cookies.refresh_token_admin || null
+}
+
 export function getRefreshTokenFromRequest(cookieString) {
   if (!cookieString) return null
 

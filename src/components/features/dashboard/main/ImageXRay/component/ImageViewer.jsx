@@ -1,7 +1,6 @@
 "use client"
-import React, { useEffect, useState, useContext, useMemo } from "react";
+import React, { useEffect, useState, useContext, useMemo, useRef } from "react";
 import RanderProblemDrw from "@/components/features/dashboard/JsFiles/RanderProblemDrw";
-import Toolbar from '@/components/shared/comp/quickToolsIage';
 import { useDentalSettings } from "./CustomHook/useDentalSettings";
 import QuickToolsVertical from '@/components/shared/comp/quickToolsVertical';
 import { DataContext } from "../../../dashboard";
@@ -32,6 +31,7 @@ export default function ImageViewer({
   const useFilter = [{ brightness, setBrightness }, { contrast, setContrast }, { saturation, setSaturation }]
 
   const [activeTool, setActiveTool] = useState(null);
+  const [selectedColor, setSelectedColor] = useState("#FF5050"); // Default Red-ish
   const [resetMeasurements, setResetMeasurements] = useState(false);
   const [canUndo, setCanUndo] = useState(false);
   const [undoFunction, setUndoFunction] = useState(null);
@@ -84,24 +84,14 @@ export default function ImageViewer({
   };
 
   const handleReset = () => {
-    // Reset zoom to 100%
+    // Reset zoom only — keep brightness, grid, layers, lock as-is
     if (setSettings) {
       setSettings(s => ({ ...s, zoom: 100 }));
     }
-    // Reset active tool
+    // Reset active tool back to default
     setActiveTool(null);
-    // Reset helper tools to default state
-    if (setSettings) {
-      setSettings(s => ({
-        ...s,
-        showGrid: false,
-        showLayers: true,
-        isLocked: false
-      }));
-    }
-    // Trigger measurement reset
+    // Clear drawn annotations (measurements, rectangles, freehand paths)
     setResetMeasurements(true);
-    // Reset the flag after a short delay
     setTimeout(() => setResetMeasurements(false), 100);
   };
 
@@ -116,10 +106,18 @@ export default function ImageViewer({
     setUndoFunction(() => undoFunc);
   };
 
-  // Listen for undo state changes from drawing component
+  // Listen for ESC key to exit Draw Mode
   useEffect(() => {
-    // This effect will be used to sync undo state
+    const handleKeyUp = (e) => {
+      if (e.key === 'Escape') {
+        setActiveTool(null);
+      }
+    };
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
   }, []);
+
+  // Listen for undo state changes from drawing component
 
   useEffect(() => {
     if (data && data.problemDetective) {
@@ -143,6 +141,18 @@ export default function ImageViewer({
     }
   }, [image]);
 
+  const containerRef = useRef(null);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
   const imageStyle = {
     filter: `brightness(${settings.brightness}%) contrast(${settings.contrast}%)`,
     transform: `scale(${settings.zoom / 100})`
@@ -150,27 +160,31 @@ export default function ImageViewer({
 
 
   return (
-    <div className="relative overflow-hidden rounded-[0.7vw] w-full h-full group">
-
+    <div ref={containerRef} className="relative overflow-hidden rounded-[0.7vw] w-full h-full group bg-black">
       {hasTeethData ? (
         <div className="flex flex-col w-full h-full bg-black">
           {/* Main Canvas Area */}
           <div className="relative flex-1 w-full overflow-hidden">
-            {showToolBar ??
+            {showToolBar && (
               <div className="absolute left-2 top-1/2 -translate-y-1/2 z-30">
                 <QuickToolsVertical
                   onToolSelect={setActiveTool}
                   selectedTool={activeTool}
                   onZoom={settings && setSettings ? (z => setSettings(s => ({ ...s, zoom: z }))) : undefined}
                   onReset={handleReset}
+                  onToggleFullScreen={toggleFullScreen}
                   onHelperToolToggle={handleHelperToolToggle}
                   onDownload={onDownload}
                   onUndo={handleUndo}
                   showLayers={settings?.showLayers}
+                  showGrid={settings?.showGrid}
                   isLocked={settings?.isLocked}
                   canUndo={canUndo}
+                  selectedColor={selectedColor}
+                  onColorChange={setSelectedColor}
                 />
-              </div>}
+              </div>
+            )}
 
             <RanderProblemDrw
               useFilter={useFilter}
@@ -188,6 +202,7 @@ export default function ImageViewer({
               showLayers={settings?.showLayers}
               selectedTooth={toothNumberSelect}
               onToothClick={setToothNumberSelect}
+              selectedColor={selectedColor}
             />
           </div>
 
@@ -198,13 +213,10 @@ export default function ImageViewer({
               <div className={`flex items-center ${!toothNumberSelect ? 'opacity-50' : 'opacity-100'} gap-4`}>
                 <button
                   onClick={handleResetView}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-200 border border-white/5
-                   
-                    : 'hover:bg-white/10 text-white hover:text-white'
-                  }`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-200 border border-white/5 hover:bg-white/10 text-white"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  <span className={`text-lg font-semibold `}>
+                  <span className="text-lg font-semibold">
                     {t('Toate imaginile') || 'All Images'}
                   </span>
                 </button>
@@ -228,9 +240,11 @@ export default function ImageViewer({
                       : (t('Overview') || 'Overview')
                     }
                   </span>
-                  {toothNumberSelect && <span className=" opacity-50">
-                    {currentIndex + 1} of {sortedTeeth.length}
-                  </span>}
+                  {toothNumberSelect && (
+                    <span className=" opacity-50">
+                      {currentIndex + 1} of {sortedTeeth.length}
+                    </span>
+                  )}
                 </div>
 
                 <button
@@ -243,48 +257,33 @@ export default function ImageViewer({
                 </button>
               </div>
 
-              {/* Right: Spacer or Extra Actions (e.g. Zoom level?) */}
-              <div className="w-[100px] flex justify-end">
-                {/* Placeholder for symmetry or future controls */}
-              </div>
+              {/* Right: Spacer */}
+              <div className="w-[100px] flex justify-end"></div>
             </div>
           )}
         </div>
       ) : (
-
         <div className="relative flex w-full h-full">
-          {showToolBar ?? <>
+          {showToolBar && (
             <div className="absolute left-2 top-1/2 -translate-y-1/2 z-30">
               <QuickToolsVertical
                 onToolSelect={setActiveTool}
                 selectedTool={activeTool}
                 onZoom={settings && setSettings ? (z => setSettings(s => ({ ...s, zoom: z }))) : undefined}
                 onReset={handleReset}
+                onToggleFullScreen={toggleFullScreen}
                 onHelperToolToggle={handleHelperToolToggle}
                 onDownload={onDownload}
                 onUndo={handleUndo}
                 showLayers={settings?.showLayers}
+                showGrid={settings?.showGrid}
                 isLocked={settings?.isLocked}
                 canUndo={canUndo}
+                selectedColor={selectedColor}
+                onColorChange={setSelectedColor}
               />
             </div>
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20">
-              <Toolbar
-                onDownload={onDownload}
-                onReanalyze={onReanalyze}
-                onZoom={settings && setSettings ? (z => setSettings(s => ({ ...s, zoom: z }))) : undefined}
-                onToolSelect={setActiveTool}
-                selectedTool={activeTool}
-                onHelperToolToggle={handleHelperToolToggle}
-                showGrid={settings?.showGrid}
-                showLayers={settings?.showLayers}
-                isLocked={settings?.isLocked}
-                zoomValue={settings?.zoom || 100}
-                onReset={handleReset}
-                onUndo={handleUndo}
-                canUndo={canUndo}
-              />
-            </div></>}
+          )}
           <img
             src={image.data_url}
             alt="Uploaded dental scan"

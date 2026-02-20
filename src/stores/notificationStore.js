@@ -3,19 +3,19 @@ import { create } from "zustand";
 import { apiClient } from '@/utils/apiClient';
 
 const useNotificationStore = create((set, get) => ({
-  notifications: [],
+  notifications: { notifications: [] },
   loading: false,
 
   fetchNotifications: async (userId) => {
-    console.log('fea')
     set({ loading: true });
     try {
       const data = await apiClient('/api/notifications/getNotifications', {
         method: 'POST',
         body: JSON.stringify({ userId })
       });
-      console.log(data, 'notificationsnotifications')
-      set({ notifications: data, loading: false });
+      // Ensure data is in the expected object format
+      const formattedData = data?.notifications ? data : { notifications: data || [] };
+      set({ notifications: formattedData, loading: false });
     } catch (error) {
       console.error("Error fetching notifications:", error);
       set({ loading: false });
@@ -23,39 +23,33 @@ const useNotificationStore = create((set, get) => ({
   },
 
   addNotification: (notification) => {
-    set((state) => ({
-      notifications: [notification, ...state.notifications],
-    }));
+    set((state) => {
+      const notificationsList = state.notifications?.notifications || [];
+      return {
+        notifications: {
+          ...state.notifications,
+          notifications: [notification, ...notificationsList]
+        }
+      };
+    });
   },
 
   // إضافة إشعار من WebSocket مع التحقق من التكرار
   addNotificationFromSocket: (notification) => {
     set((state) => {
-      // التأكد من أن notifications هو array
-      const notificationsList = Array.isArray(state.notifications)
-        ? state.notifications
-        : (state.notifications?.notifications || []);
+      const notificationsList = state.notifications?.notifications || [];
 
       // التحقق من عدم وجود الإشعار مسبقاً
       const exists = notificationsList.some(n => n.id === notification.id);
       if (exists) {
-        console.log('⚠️ Notification already exists:', notification.id);
         return state;
       }
-      // إذا كان notifications object، نحافظ على البنية
-      if (!Array.isArray(state.notifications) && state.notifications?.notifications) {
-        const updatedNotifications = {
+
+      return {
+        notifications: {
           ...state.notifications,
           notifications: [notification, ...notificationsList]
-        };
-        console.log('📦 Updated notifications object:', updatedNotifications);
-        return {
-          notifications: updatedNotifications
-        };
-      }
-      // إذا كان array عادي
-      return {
-        notifications: [notification, ...notificationsList],
+        }
       };
     });
   },
@@ -63,27 +57,17 @@ const useNotificationStore = create((set, get) => ({
   // تحديث حالة إشعار محدد
   updateNotificationStatus: (notificationId, updates) => {
     set((state) => {
-      const notificationsList = Array.isArray(state.notifications)
-        ? state.notifications
-        : (state.notifications?.notifications || []);
+      const notificationsList = state.notifications?.notifications || [];
 
       const updatedList = notificationsList.map((n) =>
         n.id === notificationId ? { ...n, ...updates } : n
       );
 
-      // إذا كان notifications object
-      if (!Array.isArray(state.notifications) && state.notifications?.notifications) {
-        return {
-          notifications: {
-            ...state.notifications,
-            notifications: updatedList
-          }
-        };
-      }
-
-      // إذا كان array عادي
       return {
-        notifications: updatedList,
+        notifications: {
+          ...state.notifications,
+          notifications: updatedList
+        }
       };
     });
   },
@@ -91,35 +75,32 @@ const useNotificationStore = create((set, get) => ({
   // حذف إشعار محدد
   removeNotification: (notificationId) => {
     set((state) => {
-      const notificationsList = Array.isArray(state.notifications)
-        ? state.notifications
-        : (state.notifications?.notifications || []);
-
+      const notificationsList = state.notifications?.notifications || [];
       const filteredList = notificationsList.filter((n) => n.id !== notificationId);
 
-      // إذا كان notifications object
-      if (!Array.isArray(state.notifications) && state.notifications?.notifications) {
-        return {
-          notifications: {
-            ...state.notifications,
-            notifications: filteredList
-          }
-        };
-      }
-
-      // إذا كان array عادي
       return {
-        notifications: filteredList,
+        notifications: {
+          ...state.notifications,
+          notifications: filteredList
+        }
       };
     });
   },
 
   markAsRead: (id) => {
-    set((state) => ({
-      notifications: state.notifications.map((n) =>
+    set((state) => {
+      const notificationsList = state.notifications?.notifications || [];
+      const updatedList = notificationsList.map((n) =>
         n.id === id ? { ...n, is_read: true } : n
-      ),
-    }));
+      );
+
+      return {
+        notifications: {
+          ...state.notifications,
+          notifications: updatedList
+        }
+      };
+    });
   },
 
   clearNotifications: async () => {
@@ -127,7 +108,8 @@ const useNotificationStore = create((set, get) => ({
       await apiClient('/api/notifications/clearAll', {
         method: 'POST'
       });
-      set({ notifications: [] });
+      // Reset to correct object structure
+      set({ notifications: { notifications: [] } });
     } catch (error) {
       console.error("Error clearing notifications:", error);
     }

@@ -40,9 +40,10 @@ import {
 import { adminService } from '@/services/adminService';
 import ProjectStorageCard from '@/components/admin/storage/ProjectStorageCard';
 import StorageRegionCard from '@/components/admin/storage/StorageRegionCard';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 
 export default function StoragePage() {
+    const { pushNotification } = useNotification();
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -63,7 +64,7 @@ export default function StoragePage() {
             setStats(data);
         } catch (error) {
             console.error("Failed to fetch storage stats", error);
-            toast.error("Failed to load storage statistics");
+            pushNotification('error', "Failed to load storage statistics");
         } finally {
             setLoading(false);
         }
@@ -84,14 +85,14 @@ export default function StoragePage() {
         setCreating(true);
         try {
             await adminService.createBucket(newBucketName, isNewBucketPublic);
-            toast.success(`Bucket "${newBucketName}" created successfully`);
+            pushNotification('success', `Bucket "${newBucketName}" created successfully`);
             setIsCreateDialogOpen(false);
             setNewBucketName('');
             setIsNewBucketPublic(false);
             fetchStats(); // Refresh list
         } catch (error) {
             console.error("Failed to create bucket", error);
-            toast.error(error.message || "Failed to create bucket");
+            pushNotification('error', error.message || "Failed to create bucket");
         } finally {
             setCreating(false);
         }
@@ -103,12 +104,12 @@ export default function StoragePage() {
         setActionLoading(true);
         try {
             await adminService.deleteBucket(bucketToDelete);
-            toast.success(`Bucket "${bucketToDelete}" deleted successfully`);
+            pushNotification('success', `Bucket "${bucketToDelete}" deleted successfully`);
             setBucketToDelete(null);
             fetchStats();
         } catch (error) {
             console.error("Failed to delete bucket", error);
-            toast.error(error.message || "Failed to delete bucket");
+            pushNotification('error', error.message || "Failed to delete bucket");
         } finally {
             setActionLoading(false);
         }
@@ -120,12 +121,12 @@ export default function StoragePage() {
         setActionLoading(true);
         try {
             await adminService.emptyBucket(bucketToEmpty);
-            toast.success(`Bucket "${bucketToEmpty}" emptied successfully`);
+            pushNotification('success', `Bucket "${bucketToEmpty}" emptied successfully`);
             setBucketToEmpty(null);
             fetchStats();
         } catch (error) {
             console.error("Failed to empty bucket", error);
-            toast.error(error.message || "Failed to empty bucket");
+            pushNotification('error', error.message || "Failed to empty bucket");
         } finally {
             setActionLoading(false);
         }

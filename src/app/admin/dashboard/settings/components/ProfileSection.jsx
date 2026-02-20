@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User } from "lucide-react";
 import { adminService } from '@/services/adminService';
-import { toast } from 'sonner';
+import { useNotification } from '@/components/shared/jsFiles/NotificationProvider';
 
 export default function ProfileSection() {
+    const { pushNotification } = useNotification();
     const [loading, setLoading] = useState(false);
 
     // Profile State
@@ -41,7 +42,7 @@ export default function ProfileSection() {
             }
         } catch (error) {
             console.error("Failed to fetch profile", error);
-            toast.error("Failed to load profile data");
+            pushNotification('error', "Failed to load profile data");
         }
     };
 
@@ -72,14 +73,14 @@ export default function ProfileSection() {
         setLoading(true);
         try {
             await adminService.updateAdminProfile(profileData);
-            toast.success("Profile updated successfully");
+            pushNotification('success', "Profile updated successfully");
             // Notify layout to refresh sidebar info
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('admin-profile-updated'));
             }
         } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to update profile");
+            pushNotification('error', error.message || "Failed to update profile");
         } finally {
             setLoading(false);
         }
@@ -87,7 +88,7 @@ export default function ProfileSection() {
 
     const onUpdatePassword = async () => {
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            toast.error("New passwords do not match");
+            pushNotification('error', "New passwords do not match");
             return;
         }
 
@@ -96,11 +97,11 @@ export default function ProfileSection() {
             await adminService.updateAdminPassword({
                 newPassword: passwordData.newPassword
             });
-            toast.success("Password updated successfully");
+            pushNotification('success', "Password updated successfully");
             setPasswordData({ newPassword: '', confirmPassword: '' });
         } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to update password");
+            pushNotification('error', error.message || "Failed to update password");
         } finally {
             setLoading(false);
         }
