@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X } from "lucide-react";
 import useUserStore from "@/components/features/profile/store/userStore";
+import { useTranslation } from "react-i18next";
 import ClinicPasswordVerifyStep from "@/components/features/clinic-profile/ClinicPasswordVerifyStep";
 
 export const ChangeMemberRoleDialog = ({
@@ -23,16 +24,17 @@ export const ChangeMemberRoleDialog = ({
   loading,
   message
 }) => {
+  const { t } = useTranslation();
   const { userInfo, mapRoleToAPI } = useUserStore();
   const [step, setStep] = useState(1);
 
   if (!member) return null;
 
   const roleOptions = [
-    { value: 'limited_access', label: 'Limited Access' },
-    { value: 'clinic_access', label: 'Clinic Access' },
-    { value: 'assistant_access', label: 'Assistant' },
-    { value: 'full_access', label: 'Full Access' }
+    { value: 'limited_access', label: t('company.roles.limited_access') },
+    { value: 'clinic_access', label: t('company.roles.clinic_access') },
+    { value: 'assistant_access', label: t('company.roles.assistant_access') },
+    { value: 'full_access', label: t('company.roles.full_access') }
   ];
 
   // Extract first and last name from member
@@ -54,15 +56,15 @@ export const ChangeMemberRoleDialog = ({
             userEmail={userInfo?.email}
             onSuccess={() => setStep(2)}
             onBack={() => handleOpenChange(false)}
-            title="Security Check"
-            description="Please verify your password to edit team member role."
+            title={t('company.securityCheck')}
+            description={t('company.securityCheckEditRole')}
           />
         ) : (
           <>
             <DialogHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <DialogTitle className="text-gray-900 text-3xl font-bold">
-                  Edit Team Member
+                  {t('company.editMemberTitle')}
                 </DialogTitle>
                 <button
                   onClick={() => handleOpenChange(false)}
@@ -78,7 +80,7 @@ export const ChangeMemberRoleDialog = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    First name
+                    {t('profile.firstName')}
                   </label>
                   <Input
                     value={firstName}
@@ -88,7 +90,7 @@ export const ChangeMemberRoleDialog = ({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Last name
+                    {t('profile.lastName')}
                   </label>
                   <Input
                     value={lastName}
@@ -101,7 +103,7 @@ export const ChangeMemberRoleDialog = ({
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Email <span className="text-red-500">*</span>
+                  {t('company.inviteEmail')} <span className="text-red-500">*</span>
                 </label>
                 <Input
                   value={member.email}
@@ -113,11 +115,11 @@ export const ChangeMemberRoleDialog = ({
               {/* Clinical Access */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Clinical access
+                  {t('company.clinicalAccessLabel')}
                 </label>
                 <Select value={newRole} onValueChange={setNewRole}>
                   <SelectTrigger className="h-11 w-full text-base border-1 bg-white border-gray-300 focus:border-[#7564ed] ">
-                    <SelectValue placeholder="Select access level" />
+                    <SelectValue placeholder={t('company.selectRole')} />
                   </SelectTrigger>
                   <SelectContent>
                     {roleOptions.map((role) => (
@@ -148,14 +150,14 @@ export const ChangeMemberRoleDialog = ({
                 disabled={loading}
                 className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               >
-                Cancel
+                {t('company.cancel')}
               </Button>
               <Button
                 onClick={onConfirm}
                 disabled={loading || !newRole || newRole === mapRoleToAPI(member.role)}
                 className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               >
-                {loading ? "Updating..." : "Save Changes"}
+                {loading ? t('company.updating') : t('company.saveChanges')}
               </Button>
             </DialogFooter>
           </>

@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle2, ChevronRight, Edit2, Loader2, MapPin, Minus, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation, Trans } from 'react-i18next';
+import React from "react";
 
 const MapPicker = nextDynamic(() => import("../(auth)/signeup/SingUpSteps/MapPicker"), { ssr: false });
 import { reverseGeocode } from "@/utils/geocoding";
@@ -58,6 +60,7 @@ const inviteMember = async (clinicId, email, role) => {
 };
 
 export default function WelcomePage() {
+    const { t } = useTranslation();
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -115,7 +118,7 @@ export default function WelcomePage() {
             setStep(2);
         } catch (err) {
             console.error(err);
-            setError(err.message || "Failed to send code. Please try again.");
+            setError(err.message || t('createClinic.step2.errors.failedOtp'));
         } finally {
             setLoading(false);
         }
@@ -124,7 +127,7 @@ export default function WelcomePage() {
     const handleStep2Submit = async (e) => {
         e.preventDefault();
         if (otp.length !== 6) {
-            setError("Please enter a valid 6-digit code.");
+            setError(t('createClinic.step2.errors.invalidCode'));
             return;
         }
 
@@ -146,7 +149,7 @@ export default function WelcomePage() {
             setStep(3); // Move to Invite step
         } catch (err) {
             console.error(err);
-            setError(err.message || "Failed to create clinic. Invalid code or data.");
+            setError(err.message || t('createClinic.step2.errors.failedCreate'));
         } finally {
             setLoading(false);
         }
@@ -184,17 +187,17 @@ export default function WelcomePage() {
 
     const handleInviteJob = async () => {
         if (!inviteEmail || !inviteRole) {
-            setInviteMessage("Please enter both email and role.");
+            setInviteMessage(t('createClinic.step3.errors.fieldsRequired'));
             return;
         }
 
         if (invitedEmails.length >= 5) {
-            setInviteMessage("You have reached the maximum limit of 5 invitations.");
+            setInviteMessage(t('createClinic.step3.errors.limitReached'));
             return;
         }
 
         if (!clinicId) {
-            setInviteMessage("Error: Clinic ID missing. Please refresh and try again.");
+            setInviteMessage(t('createClinic.step3.errors.missingClinicId'));
             return;
         }
 
@@ -208,7 +211,7 @@ export default function WelcomePage() {
             setInvitedEmails(prev => [...prev, inviteEmail]);
 
             // Show success message and clear fields for next invite
-            setInviteMessage(`Invitation sent to ${inviteEmail}!`);
+            setInviteMessage(t('createClinic.step3.success', { email: inviteEmail }));
             setInviteEmail("");
             setInviteRole("");
             setInviteLoading(false);
@@ -217,7 +220,7 @@ export default function WelcomePage() {
             setTimeout(() => setInviteMessage(""), 4000);
         } catch (e) {
             console.error(e);
-            setInviteMessage(e.message || "Failed to send invitation.");
+            setInviteMessage(e.message || t('common.error'));
             setInviteLoading(false);
         }
     };
@@ -230,34 +233,34 @@ export default function WelcomePage() {
     const renderStep1 = () => (
         <div className="w-full max-w-2xl mx-auto p-6 overflow-scroll no-scrollbar bg-white ">
             <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900">Setup your clinic</h2>
-                <p className="text-gray-500 mt-2">Enter your clinic details to get started.</p>
+                <h2 className="text-3xl font-bold text-gray-900">{t('createClinic.step1.title')}</h2>
+                <p className="text-gray-500 mt-2">{t('createClinic.step1.desc')}</p>
             </div>
 
             <form onSubmit={handleStep1Submit} className="space-y-6">
                 <div className="space-y-4">
                     <div>
-                        <Label htmlFor="clinic_name" className="font-semibold text-gray-700">Company name <span className="text-red-500">*</span></Label>
-                        <Input id="clinic_name" required value={formData.clinic_name} onChange={handleChange} placeholder="Dental Clinic Name" className="mt-1 border-gray-400 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                        <Label htmlFor="clinic_name" className="font-semibold text-gray-700">{t('createClinic.step1.companyName')} <span className="text-red-500">*</span></Label>
+                        <Input id="clinic_name" required value={formData.clinic_name} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.companyName')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                     </div>
 
                     <div>
-                        <Label htmlFor="website" className="font-semibold text-gray-700">Website</Label>
-                        <Input id="website" value={formData.website} onChange={handleChange} placeholder="https://www.example.com" className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                        <Label htmlFor="website" className="font-semibold text-gray-700">{t('createClinic.step1.website')}</Label>
+                        <Input id="website" value={formData.website} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.website')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="country" className="font-semibold text-gray-700">Country</Label>
-                            <Input id="country" value={formData.country} onChange={handleChange} placeholder="Country" className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                            <Label htmlFor="country" className="font-semibold text-gray-700">{t('createClinic.step1.country')}</Label>
+                            <Input id="country" value={formData.country} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.country')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                         </div>
                         <div>
                             <div className="flex justify-between items-center mb-1">
-                                <Label htmlFor="street_address" className="font-semibold text-gray-700">Street Address</Label>
+                                <Label htmlFor="street_address" className="font-semibold text-gray-700">{t('createClinic.step1.streetAddress')}</Label>
                                 <Dialog open={isMapOpen} onOpenChange={setIsMapOpen}>
                                     <DialogTrigger asChild>
                                         <Button type="button" variant="outline" size="sm" className="h-7 text-xs flex items-center gap-1 text-[#5c4ce3] border-[#5c4ce3] hover:bg-[#5c4ce3]/10">
-                                            <MapPin className="w-3 h-3" /> Pick on Map
+                                            <MapPin className="w-3 h-3" /> {t('createClinic.step1.pickOnMap')}
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent className="sm:max-w-3xl h-[80vh] p-0 overflow-hidden rounded-2xl">
@@ -267,43 +270,43 @@ export default function WelcomePage() {
                                     </DialogContent>
                                 </Dialog>
                             </div>
-                            <Input id="street_address" value={formData.street_address} onChange={handleChange} placeholder="123 Main St" className="h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                            <Input id="street_address" value={formData.street_address} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.streetAddress')} className="h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="city" className="font-semibold text-gray-700">City</Label>
-                            <Input id="city" value={formData.city} onChange={handleChange} placeholder="City" className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                            <Label htmlFor="city" className="font-semibold text-gray-700">{t('createClinic.step1.city')}</Label>
+                            <Input id="city" value={formData.city} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.city')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                         </div>
                         <div>
-                            <Label htmlFor="postal_code" className="font-semibold text-gray-700">Zip code</Label>
-                            <Input id="postal_code" value={formData.postal_code} onChange={handleChange} placeholder="Zip Code" className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                            <Label htmlFor="postal_code" className="font-semibold text-gray-700">{t('createClinic.step1.zipCode')}</Label>
+                            <Input id="postal_code" value={formData.postal_code} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.zipCode')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                         </div>
                     </div>
 
                     <div>
-                        <Label htmlFor="neighbourhood" className="font-semibold text-gray-700">neighbourhood</Label>
-                        <Input id="neighbourhood" value={formData.neighbourhood} onChange={handleChange} placeholder="Full neighbourhood" className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                        <Label htmlFor="neighbourhood" className="font-semibold text-gray-700">{t('createClinic.step1.neighbourhood')}</Label>
+                        <Input id="neighbourhood" value={formData.neighbourhood} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.neighbourhood')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                     </div>
 
                     <div className="pt-4 border-t border-gray-100">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">Clinic Contact</h3>
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">{t('createClinic.step1.clinicContact')}</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="contactEmail" className="font-semibold text-gray-700">Email</Label>
-                                <Input id="contactEmail" type="email" value={formData.contactEmail} onChange={handleChange} placeholder="contact@clinic.com" className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                                <Label htmlFor="contactEmail" className="font-semibold text-gray-700">{t('createClinic.step1.email')}</Label>
+                                <Input id="contactEmail" type="email" value={formData.contactEmail} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.email')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                             </div>
                             <div>
-                                <Label htmlFor="contactPhone" className="font-semibold text-gray-700">Phone</Label>
-                                <Input id="contactPhone" type="tel" value={formData.contactPhone} onChange={handleChange} placeholder="+1234567890" className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                                <Label htmlFor="contactPhone" className="font-semibold text-gray-700">{t('createClinic.step1.phone')}</Label>
+                                <Input id="contactPhone" type="tel" value={formData.contactPhone} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.phone')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <Button type="submit" disabled={loading} className="w-full bg-[#5c4ce3] hover:bg-[#4b3ccb] text-white h-[50px] rounded-xl font-semibold text-lg">
-                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Next Step"}
+                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('createClinic.step1.nextStep')}
                 </Button>
             </form>
         </div>
@@ -316,17 +319,24 @@ export default function WelcomePage() {
                 <div className="w-16 h-16  rounded-full flex items-center justify-center mx-auto mb-4">
                     <Mail className="h-12 w-12 text-[#5c4ce3]" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">Verify your email</h2>
-                <p className="text-gray-500 mt-2">We sent a verification code to <span className="font-medium text-gray-900">{formData.contactEmail}</span></p>
+                <h2 className="text-2xl font-bold text-gray-900">{t('createClinic.step2.title')}</h2>
+                <div className="text-gray-500 mt-2">
+                    <Trans
+                        i18nKey="createClinic.step2.desc"
+                        t={t}
+                        values={{ email: formData.contactEmail }}
+                    >
+                        We sent a verification code to <span className="font-medium text-gray-900">{{ email: formData.contactEmail }}</span>
+                    </Trans>
+                </div>
             </div>
 
             <form onSubmit={handleStep2Submit} className="space-y-6">
                 <div>
                     <div className="flex justify-center items-center gap-2">
                         {Array.from({ length: 6 }).map((_, index) => (
-                            <>
+                            <React.Fragment key={index}>
                                 <Input
-                                    key={index}
                                     id={`otp-${index}`}
                                     value={otp[index] || ""}
                                     onChange={(e) => {
@@ -360,17 +370,17 @@ export default function WelcomePage() {
                                     maxLength={1}
                                 />
                                 {index === 2 && <span className="text-gray-400 font-bold text-xl "><Minus className="h-7 w-7" /></span>}
-                            </>
+                            </React.Fragment>
                         ))}
                         {error && <p className="text-red-500 text-sm mt-2 absolute -bottom-6 w-full">{error}</p>}
                     </div>
                 </div>
 
                 <Button type="submit" disabled={loading} className="w-full bg-[#5c4ce3] hover:bg-[#4b3ccb] text-white h-[50px] rounded-xl font-semibold">
-                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Verify & Create Clinic"}
+                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('createClinic.step2.verifyAndCreate')}
                 </Button>
                 <button type="button" onClick={() => setStep(1)} className="text-sm text-gray-500 hover:text-[#5c4ce3]">
-                    Back to Edit Info
+                    {t('createClinic.step2.back')}
                 </button>
             </form>
         </div>
@@ -381,10 +391,10 @@ export default function WelcomePage() {
     const renderStep3 = () => (
         <div className="w-full max-w-xl mx-auto p-8 overflow-y-scroll no-scrollbar max-h-[80vh] bg-white flex flex-col items-center">
             <div className="text-center mb-6">
-                <h2 className="text-3xl font-bold text-gray-900">Invite Team Member</h2>
-                <p className="text-gray-500 mt-2">Add a member to your clinic team.</p>
+                <h2 className="text-3xl font-bold text-gray-900">{t('createClinic.step3.title')}</h2>
+                <p className="text-gray-500 mt-2">{t('createClinic.step3.desc')}</p>
                 <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-medium text-sm">
-                    {invitedEmails.length} / 5 Invitations sent
+                    {t('createClinic.step3.invitationsSent', { count: invitedEmails.length })}
                 </div>
             </div>
 
@@ -404,7 +414,7 @@ export default function WelcomePage() {
                 {/* Email Input */}
                 <div className="space-y-2">
                     <Label htmlFor="inviteEmail" className="block text-base font-medium text-gray-500">
-                        Email <span className="text-red-500">*</span>
+                        {t('createClinic.step3.email')} <span className="text-red-500">*</span>
                     </Label>
                     <Input
                         id="inviteEmail"
@@ -419,24 +429,24 @@ export default function WelcomePage() {
                 {/* Role Select */}
                 <div className="space-y-2">
                     <Label htmlFor="role" className="block text-base font-medium text-gray-500">
-                        Access level <span className="text-red-500">*</span>
+                        {t('createClinic.step3.accessLevel')} <span className="text-red-500">*</span>
                     </Label>
                     <Select value={inviteRole} onValueChange={setInviteRole}>
                         <SelectTrigger className="h-12 text-base rounded-xl w-full border border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20">
-                            <SelectValue placeholder="Select a role" />
+                            <SelectValue placeholder={t('createClinic.step3.selectRole')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="full_access">Full access</SelectItem>
-                            <SelectItem value="clinic_access">Clinic access</SelectItem>
-                            <SelectItem value="limited_access">Limited access</SelectItem>
-                            <SelectItem value="assistant_access">Assistant</SelectItem>
+                            <SelectItem value="full_access">{t('createClinic.step3.roles.full_access')}</SelectItem>
+                            <SelectItem value="clinic_access">{t('createClinic.step3.roles.clinic_access')}</SelectItem>
+                            <SelectItem value="limited_access">{t('createClinic.step3.roles.limited_access')}</SelectItem>
+                            <SelectItem value="assistant_access">{t('createClinic.step3.roles.assistant_access')}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
 
                 {/* Feedback Message */}
                 {inviteMessage && (
-                    <div className={`p-4 rounded-xl text-base font-medium border-1 border-gray-400 ${inviteMessage.includes("Failed") ? "bg-red-50 border-red-100 text-red-600" : "bg-blue-50 border-blue-100 text-blue-600"}`}>
+                    <div className={`p-4 rounded-xl text-base font-medium border-1 border-gray-400 ${inviteMessage.includes("Failed") || inviteMessage.includes("Error") || inviteMessage.includes("maximum") ? "bg-red-50 border-red-100 text-red-600" : "bg-blue-50 border-blue-100 text-blue-600"}`}>
                         {inviteMessage}
                     </div>
                 )}
@@ -448,7 +458,7 @@ export default function WelcomePage() {
                         disabled={inviteLoading}
                         className="w-full h-12 text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:bg-[#dcd6fa] hover:outline-[#7564ed] hover:outline-2 transition-all duration-150 rounded-xl"
                     >
-                        {inviteLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Send Invitation"}
+                        {inviteLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('createClinic.step3.sendInvitation')}
                     </Button>
 
                     <Button
@@ -456,7 +466,7 @@ export default function WelcomePage() {
                         variant="outline"
                         className="w-full h-12 text-lg font-bold border-2 border-gray-100 text-gray-500 hover:border-gray-200 hover:bg-gray-50 rounded-xl"
                     >
-                        {invitedEmails.length > 0 ? "Finish & Go to Dashboard" : "Skip for now"}
+                        {invitedEmails.length > 0 ? t('createClinic.step3.finish') : t('createClinic.step3.skip')}
                     </Button>
                 </div>
             </div>
@@ -501,7 +511,7 @@ export default function WelcomePage() {
                     {/* Step Indicator (Centered Absolute) */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                         <span className="text-[#2563EB] font-bold text-sm tracking-wide">
-                            STEP {step}/3
+                            {t('common.step', { current: step, total: 3 }).toUpperCase()}
                         </span>
                     </div>
 

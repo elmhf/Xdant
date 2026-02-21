@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ import { LeaveClinicDialog } from './LeaveClinicDialog';
 import useUserStore from "@/components/features/profile/store/userStore";
 
 export const ClinicsManager = () => {
+  const { t } = useTranslation();
   const {
     leaving,
     leaveMessage,
@@ -71,12 +73,12 @@ export const ClinicsManager = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Mes cliniques</h2>
-          <p className="text-gray-600">Gérez vos cliniques et vos accès</p>
+          <h2 className="text-2xl font-bold text-gray-900">{t('company.myClinics')}</h2>
+          <p className="text-gray-600">{t('company.manageClinicsAccess')}</p>
         </div>
         <Button className="bg-purple-600 hover:bg-purple-700">
           <Plus className="h-4 w-4 mr-2" />
-          Rejoindre une clinique
+          {t('company.joinClinic')}
         </Button>
       </div>
 
@@ -85,14 +87,14 @@ export const ClinicsManager = () => {
           <CardContent>
             <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Aucune clinique
+              {t('company.noClinicsTitle')}
             </h3>
             <p className="text-gray-600 mb-4">
-              Vous n'êtes membre d'aucune clinique pour le moment.
+              {t('company.noClinicsDesc')}
             </p>
             <Button className="bg-purple-600 hover:bg-purple-700">
               <Plus className="h-4 w-4 mr-2" />
-              Rejoindre une clinique
+              {t('company.joinClinic')}
             </Button>
           </CardContent>
         </Card>
@@ -114,13 +116,13 @@ export const ClinicsManager = () => {
                       </CardTitle>
                       <CardDescription className="flex items-center gap-1 mt-1">
                         <MapPin className="h-3 w-3" />
-                        {clinic.address || clinic.location || "Adresse non disponible"}
+                        {clinic.address || clinic.location || t('company.addressNotAvailable')}
                       </CardDescription>
                     </div>
                   </div>
                   {currentClinicId === clinic.id && (
                     <Badge className="bg-green-100 text-green-800">
-                      Actuelle
+                      {t('company.currentBadge')}
                     </Badge>
                   )}
                 </div>
@@ -130,7 +132,7 @@ export const ClinicsManager = () => {
                 <div className="space-y-3">
                   {/* Role Info */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Votre rôle :</span>
+                    <span className="text-sm text-gray-600">{t('company.yourRoleLabel')}</span>
                     <Badge
                       variant={clinic.role === 'owner' || clinic.role === 'admin' ? 'default' : 'secondary'}
                       className={
@@ -139,13 +141,13 @@ export const ClinicsManager = () => {
                           : 'bg-blue-100 text-blue-800'
                       }
                     >
-                      {clinic.role === 'owner' || clinic.role === 'admin' ? 'Admin' : 'Membre'}
+                      {clinic.role === 'owner' || clinic.role === 'admin' ? t('company.adminRole') : t('company.memberRole')}
                     </Badge>
                   </div>
 
                   {/* Member Count */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Membres :</span>
+                    <span className="text-sm text-gray-600">{t('company.membersLabel')}</span>
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4 text-gray-400" />
                       <span className="text-sm font-medium">
@@ -163,7 +165,7 @@ export const ClinicsManager = () => {
                         className="flex-1"
                         onClick={() => setCurrentClinicId(clinic.id)}
                       >
-                        Activer
+                        {t('company.activateAction')}
                       </Button>
                     )}
 

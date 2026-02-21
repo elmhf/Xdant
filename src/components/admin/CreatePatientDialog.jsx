@@ -17,8 +17,10 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function CreatePatientDialog({ open, onOpenChange, onPatientCreated }) {
+    const { t } = useTranslation('patient');
     const { pushNotification } = useNotification();
     const [loading, setLoading] = useState(false);
     const [clinics, setClinics] = useState([]);
@@ -45,13 +47,7 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
     const fetchClinics = async () => {
         setLoadingClinics(true);
         try {
-            // We need a way to get all clinics for the dropdown. 
-            // Leveraging getAllClinics but we might need to handle pagination if there are many.
-            // For now, let's assume we can fetch enough or we might need a simple dropdown endpoint.
-            // Re-using getAllClinics with a large range or standardizing.
-            // Note: getAllClinics returns { data: [...], count: ... } or just [...] depending on implementation/usage.
-            // Checking adminService.getAllClinics definition: it fetches 'clinics'.
-            const data = await adminService.getAllClinics(0, 100); // Fetch top 100 for now
+            const data = await adminService.getAllClinics(0, 100);
 
             let clinicsArray = [];
             if (Array.isArray(data)) {
@@ -65,7 +61,7 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
 
         } catch (error) {
             console.error("Failed to fetch clinics", error);
-            pushNotification('error', "Failed to load clinics");
+            pushNotification('error', t('addPatient.fetchClinicsError'));
         } finally {
             setLoadingClinics(false);
         }
@@ -91,19 +87,19 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
         setLoading(true);
 
         if (!formData.clinic_id) {
-            pushNotification('error', "Please select a clinic");
+            pushNotification('error', t('addPatient.clinicRequired'));
             setLoading(false);
             return;
         }
 
         try {
             await adminService.createPatient(formData);
-            pushNotification('success', 'Patient created successfully');
+            pushNotification('success', t('addPatient.success'));
             onPatientCreated();
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to create patient:', error);
-            pushNotification('error', 'Failed to create patient');
+            pushNotification('error', t('addPatient.error'));
         } finally {
             setLoading(false);
         }
@@ -117,7 +113,7 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-gray-100 flex-shrink-0 flex justify-between items-center">
                     <DialogHeader>
-                        <DialogTitle className="text-3xl font-bold text-gray-900">Add New Patient</DialogTitle>
+                        <DialogTitle className="text-3xl font-bold text-gray-900">{t('addPatient.title')}</DialogTitle>
                     </DialogHeader>
                 </div>
 
@@ -126,14 +122,14 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Clinic Selection (Important) */}
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700">Assign Clinic <span className="text-red-500">*</span></label>
+                            <label className="text-sm font-semibold text-gray-700">{t('addPatient.assignClinic')} <span className="text-red-500">*</span></label>
                             <Select
                                 value={formData.clinic_id}
                                 onValueChange={(val) => handleSelectChange('clinic_id', val)}
                                 disabled={loadingClinics}
                             >
                                 <SelectTrigger className={inputClassName}>
-                                    <SelectValue placeholder={loadingClinics ? "Loading clinics..." : "Select a clinic"} />
+                                    <SelectValue placeholder={loadingClinics ? t('addPatient.loadingClinics') : t('addPatient.selectClinic')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {clinics.map(clinic => (
@@ -147,26 +143,26 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">First Name <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-semibold text-gray-700">{t('addPatient.firstName')} <span className="text-red-500">*</span></label>
                                 <Input
                                     type="text"
                                     name="first_name"
                                     value={formData.first_name}
                                     onChange={handleChange}
                                     className={inputClassName}
-                                    placeholder="Enter first name"
+                                    placeholder={t('addPatient.firstNamePlaceholder')}
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Last Name <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-semibold text-gray-700">{t('addPatient.lastName')} <span className="text-red-500">*</span></label>
                                 <Input
                                     type="text"
                                     name="last_name"
                                     value={formData.last_name}
                                     onChange={handleChange}
                                     className={inputClassName}
-                                    placeholder="Enter last name"
+                                    placeholder={t('addPatient.lastNamePlaceholder')}
                                     required
                                 />
                             </div>
@@ -174,33 +170,33 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Email Address <span className="text-red-500">*</span></label>
+                                <label className="text-sm font-semibold text-gray-700">{t('addPatient.email')} <span className="text-red-500">*</span></label>
                                 <Input
                                     type="email"
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
                                     className={inputClassName}
-                                    placeholder="Enter email address"
+                                    placeholder={t('addPatient.emailPlaceholder')}
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Phone Number</label>
+                                <label className="text-sm font-semibold text-gray-700">{t('addPatient.phone')}</label>
                                 <Input
                                     type="tel"
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleChange}
                                     className={inputClassName}
-                                    placeholder="Enter phone number"
+                                    placeholder={t('addPatient.phonePlaceholder')}
                                 />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Date of Birth</label>
+                                <label className="text-sm font-semibold text-gray-700">{t('addPatient.dateOfBirth')}</label>
                                 <Input
                                     type="date"
                                     name="date_of_birth"
@@ -210,17 +206,17 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Gender</label>
+                                <label className="text-sm font-semibold text-gray-700">{t('addPatient.gender')}</label>
                                 <Select
                                     value={formData.gender}
                                     onValueChange={(val) => handleSelectChange('gender', val)}
                                 >
                                     <SelectTrigger className={inputClassName}>
-                                        <SelectValue placeholder="Select gender" />
+                                        <SelectValue placeholder={t('addPatient.selectGender')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Male">Male</SelectItem>
-                                        <SelectItem value="Female">Female</SelectItem>
+                                        <SelectItem value="Male">{t('addPatient.male')}</SelectItem>
+                                        <SelectItem value="Female">{t('addPatient.female')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -233,7 +229,7 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
                                 onClick={() => onOpenChange(false)}
                                 className="px-6 py-2.5 rounded-xl text-gray-600 font-medium hover:bg-gray-50 transition-colors"
                             >
-                                Cancel
+                                {t('addPatient.cancel')}
                             </button>
                             <Button
                                 type="submit"
@@ -243,9 +239,9 @@ export default function CreatePatientDialog({ open, onOpenChange, onPatientCreat
                                 {loading ? (
                                     <>
                                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                        Creating...
+                                        {t('addPatient.creating')}
                                     </>
-                                ) : "Create Patient"}
+                                ) : t('addPatient.create')}
                             </Button>
                         </div>
                     </form>

@@ -1,10 +1,12 @@
 "use client";
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSliceImage, useSliceRegion } from "@/app/(dashboard)/patient/[patientId]/[report_id]/ToothSlice/[toothId]/useSliceImage";
 import { getRandomRegion } from './utils/sliceUtils';
 
 // ✅ slice واحد
 const CroppedSlice = React.memo(({ view, index, isSelected = false }) => {
+    const { t } = useTranslation();
     const [region, setRegion] = useState(null);
     const [isHovered, setIsHovered] = useState(false);
     const img = useSliceImage(view, index);
@@ -36,7 +38,7 @@ const CroppedSlice = React.memo(({ view, index, isSelected = false }) => {
                 className="border-3 rounded bg-gradient-to-r from-gray-100 to-gray-200 animate-pulse flex items-center justify-center"
             >
                 <div className="text-gray-400 text-xs">
-                    {!img ? "Loading image..." : "Setting region..."}
+                    {!img ? t('dashboard.toothSlice.loadingImage') : t('dashboard.toothSlice.settingRegion')}
                 </div>
             </div>
         );
@@ -96,10 +98,10 @@ const CroppedSlice = React.memo(({ view, index, isSelected = false }) => {
                 <div className="w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 animate-pulse flex items-center justify-center">
                     <div className="text-gray-400 text-xs">
                         {isLoading
-                            ? "Processing..."
+                            ? t('dashboard.toothSlice.processing')
                             : croppedUrl
-                                ? "Loading..."
-                                : "No image available"}
+                                ? t('dashboard.toothSlice.loading')
+                                : t('dashboard.toothSlice.noImage')}
                     </div>
                 </div>
             )}

@@ -58,17 +58,14 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Retrieve saved language
-    const savedLanguage = localStorage.getItem('preferredLanguage') || 'en';
-    setCurrentLanguage(savedLanguage);
-    i18n.changeLanguage(savedLanguage);
-    document.documentElement.lang = savedLanguage;
-    document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
-
-    // Data loading is now handled in dashboard layout
-    // loadData(); 
-
+    // Sync the displayed language code from i18n (LanguageProvider handles actual init)
+    setCurrentLanguage(i18n.language || 'en');
   }, [i18n]);
+
+  // Keep the displayed language code in sync whenever i18n.language changes
+  useEffect(() => {
+    setCurrentLanguage(i18n.language);
+  }, [i18n.language]);
 
   const reportData = useMemo(() => ({
     patientName: t('navbar.patientName') || "Felicia Hall",
@@ -191,11 +188,11 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           {/* Logo and Brand */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 cursor-pointer" onClick={() => router.push("/")} tabIndex={0} role="button" aria-label="Go to homepage">
+            <div className="flex items-center gap-1 cursor-pointer" onClick={() => router.push("/")} tabIndex={0} role="button" aria-label={t('navbar.goToHomepage')}>
               <div className="w-10 h-10 relative overflow-hidden rounded-full border border-gray-300  ">
                 <Image
                   src="/XDENTAL.png"
-                  alt="Xdental Logo"
+                  alt={t('navbar.logoAlt')}
                   width={52}
                   height={52}
                   className="object-contain"
@@ -213,32 +210,39 @@ export default function Navbar() {
           <div className="flex items-center gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Change language">
-                  <Globe className="h-9 w-9" />
+                <Button variant="ghost" className="h-10 px-3 flex items-center gap-2 hover:bg-gray-100 rounded-xl transition-colors" aria-label={t('common.changeLanguage')}>
+                  <Globe className="h-5 w-5 text-gray-600" />
+                  <span className="text-sm font-bold text-gray-700 uppercase">{currentLanguage}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-xl border-gray-100">
                 {['en', 'ar', 'fr', 'es', 'pt'].map((lng) => (
                   <DropdownMenuItem
                     key={lng}
                     onClick={() => changeLanguage(lng)}
-                    className={currentLanguage === lng ? 'bg-accent' : ''}
+                    className={`flex items-center justify-between px-4 py-2 cursor-pointer rounded-lg transition-colors ${currentLanguage === lng ? 'bg-[#7564ed] text-white hover:bg-[#6a4fd8]' : 'text-gray-700 hover:bg-gray-50'
+                      }`}
                   >
-                    {
+                    <span className="font-medium">
                       {
-                        'en': 'English',
-                        'ar': 'العربية',
-                        'fr': 'Français',
-                        'es': 'Español',
-                        'pt': 'Português'
-                      }[lng]
-                    }
+                        {
+                          'en': 'English',
+                          'ar': 'العربية',
+                          'fr': 'Français',
+                          'es': 'Español',
+                          'pt': 'Português'
+                        }[lng]
+                      }
+                    </span>
+                    {currentLanguage === lng && (
+                      <div className="w-2 h-2 rounded-full bg-white shadow-sm"></div>
+                    )}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Button variant="ghost" size="icon" aria-label="Toggle dark mode">
+            <Button variant="ghost" size="icon" aria-label={t('common.toggleDarkMode')}>
               <Moon className="h-9 w-9" />
             </Button>
 
@@ -247,7 +251,7 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label="Auto-save status"
+                aria-label={t('common.autoSaveStatus')}
                 onClick={performAutoSave}
                 className="relative"
               >

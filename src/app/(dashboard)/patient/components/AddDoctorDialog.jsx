@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useClinicMembers } from "@/app/(dashboard)/company/hooks";
 import { apiClient } from '@/utils/apiClient';
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import { useTranslation } from 'react-i18next';
 
 export const AddDoctorDialog = ({
     isOpen,
@@ -20,6 +21,7 @@ export const AddDoctorDialog = ({
     patient,
     currentTreatingDoctors = []
 }) => {
+    const { t } = useTranslation('patient');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { clinicMembers } = useClinicMembers();
     const { pushNotification } = useNotification();
@@ -60,12 +62,12 @@ export const AddDoctorDialog = ({
                 body: JSON.stringify(patientData)
             });
 
-            pushNotification("success", "Doctor added successfully");
+            pushNotification("success", t('addDoctor.doctorAdded'));
             if (onDoctorAdded) onDoctorAdded();
             onClose();
         } catch (error) {
             console.error('Error adding doctor:', error);
-            pushNotification("error", error.message || "Failed to add doctor");
+            pushNotification("error", error.message || t('addDoctor.addFailed'));
         } finally {
             setIsSubmitting(false);
         }
@@ -76,13 +78,13 @@ export const AddDoctorDialog = ({
             <DialogContent className="bg-white max-w-lg shadow-xl p-6 rounded-3xl">
                 <DialogHeader>
                     <DialogTitle className="text-3xl font-bold text-gray-900 mb-2">
-                        Add Treating Doctor
+                        {t('addDoctor.title')}
                     </DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4">
                     <p className="text-gray-500 text-sm">
-                        Select a doctor from the clinic members to add to <span className="font-semibold">{patient?.first_name} {patient?.last_name}</span>'s treatment team.
+                        {t('addDoctor.descWithPatient', { name: `${patient?.first_name} ${patient?.last_name || ''}`.trim() })}
                     </p>
 
                     <div className="relative">
@@ -94,7 +96,7 @@ export const AddDoctorDialog = ({
                                     ) : (
                                         <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
                                     )}
-                                    <span>Select a doctor</span>
+                                    <span>{t('addDoctor.selectDoctor')}</span>
                                 </div>
                             </SelectTrigger>
                             <SelectContent className="max-h-64 p-1 rounded-2xl border-gray-100 shadow-xl bg-white">
@@ -130,7 +132,7 @@ export const AddDoctorDialog = ({
                                 ) : (
                                     <div className="p-8 text-sm text-gray-500 text-center flex flex-col items-center gap-2">
                                         <UserPlus className="h-10 w-10 text-gray-200" />
-                                        <p className="font-medium">All available doctors added</p>
+                                        <p className="font-medium">{t('addDoctor.allAdded')}</p>
                                     </div>
                                 )}
                             </SelectContent>
@@ -143,7 +145,7 @@ export const AddDoctorDialog = ({
                             onClick={onClose}
                             className="h-11 px-6 text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-xl"
                         >
-                            Cancel
+                            {t('addDoctor.cancel')}
                         </Button>
                     </div>
                 </div>

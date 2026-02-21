@@ -19,8 +19,10 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import clsx from 'clsx';
 import useUserStore from '@/components/features/profile/store/userStore';
+import { useTranslation } from 'react-i18next';
 
 export default function ProfileDropdown() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = React.useState(false);
   const [showSwitch, setShowSwitch] = React.useState(false);
@@ -154,8 +156,8 @@ export default function ProfileDropdown() {
   const fullName = useMemo(() =>
     realUser?.firstName && realUser?.lastName
       ? `${realUser.firstName} ${realUser.lastName}`
-      : realUser?.email || "Utilisateur",
-    [realUser]
+      : realUser?.email || t('common.user'),
+    [realUser, t]
   );
 
   return (
@@ -208,14 +210,14 @@ export default function ProfileDropdown() {
                         {currentCompany.clinic_name || currentCompany.clinicName || currentCompany.name}
                       </span>
                       <span className="text-xs sm:text-sm text-gray-500">
-                        {currentCompany.address || currentCompany.location || currentCompany.email || "Adresse non disponible"}
+                        {currentCompany.address || currentCompany.location || currentCompany.email || t('common.addressUnavailable')}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                     </div>
                   </div>
-                  <div className="text-xs text-gray-400">Clinique actuelle</div>
+                  <div className="text-xs text-gray-400">{t('common.currentClinic')}</div>
                 </div>
               )}
 
@@ -231,7 +233,7 @@ export default function ProfileDropdown() {
                   className="flex items-center gap-3 px-4 py-3 mx-0 p-2 overflow-hidden rounded-md hover:bg-gray-100 cursor-pointer border-none group"
                 >
                   <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-                  <span className="text-xs sm:text-sm font-medium text-gray-700 flex-1 ">Changer de clinique</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700 flex-1 ">{t('common.switchClinic')}</span>
                   <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
                 </div>
 
@@ -244,7 +246,7 @@ export default function ProfileDropdown() {
                 >
                   <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                   <span className="text-xs sm:text-sm font-medium text-gray-700">
-                    {loggingOut ? 'Logging out…' : 'Log out'}
+                    {loggingOut ? t('common.loading') : t('common.logout')}
                   </span>
                 </DropdownMenuItem>
               </div>
@@ -263,7 +265,7 @@ export default function ProfileDropdown() {
                 >
                   <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
                 </button>
-                <span className="text-sm sm:text-base font-semibold text-[#0d0c22]">Changer de clinique</span>
+                <span className="text-sm sm:text-base font-semibold text-[#0d0c22]">{t('common.switchClinic')}</span>
               </div>
 
               {/* Clinics List */}
@@ -271,7 +273,7 @@ export default function ProfileDropdown() {
                 {isLoading ? (
                   <div className="px-4 py-6 text-center">
                     <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-b-2 border-purple-600 mx-auto mb-2"></div>
-                    <p className="text-xs sm:text-sm text-gray-500">Chargement des cliniques...</p>
+                    <p className="text-xs sm:text-sm text-gray-500">{t('common.loadingClinics')}</p>
                   </div>
                 ) : realClinics.length > 0 ? (
                   realClinics.map(clinic => (
@@ -297,7 +299,7 @@ export default function ProfileDropdown() {
                         </span>
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-xs text-gray-500 truncate flex-1">
-                            {clinic.address || clinic.location || clinic.email || "Adresse non disponible"}
+                            {clinic.address || clinic.location || clinic.email || t('common.addressUnavailable')}
                           </span>
                           <span className={clsx(
                             "text-xs px-2 py-0.5 rounded-full flex-shrink-0",
@@ -305,7 +307,7 @@ export default function ProfileDropdown() {
                               ? "bg-green-100 text-green-700"
                               : "bg-blue-100 text-blue-700"
                           )}>
-                            {clinic.role === 'owner' || clinic.role === 'admin' ? 'Admin' : 'Membre'}
+                            {clinic.role === 'owner' || clinic.role === 'admin' ? t('common.admin') : t('common.member')}
                           </span>
                         </div>
                       </div>
@@ -317,8 +319,8 @@ export default function ProfileDropdown() {
                 ) : (
                   <div className="px-4 py-6 text-center">
                     <Building2 className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-xs sm:text-sm text-gray-500 mb-2">Aucune clinique trouvée</p>
-                    <p className="text-xs text-gray-400">Vous n'êtes membre d'aucune clinique</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mb-2">{t('common.noClinicsFound')}</p>
+                    <p className="text-xs text-gray-400">{t('common.noClinicsFoundDesc')}</p>
                   </div>
                 )}
               </div>

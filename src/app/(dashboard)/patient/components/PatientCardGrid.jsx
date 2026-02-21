@@ -9,6 +9,7 @@ import {
     formatDateOfBirth,
     getPatientAvatarInitials
 } from '../utils/patientUtils';
+import { useTranslation } from 'react-i18next';
 
 const PatientCardGrid = ({
     patients,
@@ -18,6 +19,7 @@ const PatientCardGrid = ({
     onViewInfo,
     favoriteLoadingStates = {}
 }) => {
+    const { t } = useTranslation('patient');
     const router = useRouter();
 
     // Get user info and current clinic from store
@@ -61,7 +63,7 @@ const PatientCardGrid = ({
     if (patients.length === 0) {
         return (
             <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No patients found</p>
+                <p className="text-gray-500 text-lg">{t('card.noPatients')}</p>
             </div>
         );
     }
@@ -98,14 +100,14 @@ const PatientCardGrid = ({
                             {formatPatientName(patient)}
                         </h3>
                         <p className="text-sm text-[#979eb0] mb-2">
-                            Email: {patient.email && patient.email.length > 15
+                            {t('card.email')} {patient.email && patient.email.length > 15
                                 ? patient.email.substring(0, 15) + '...'
                                 : patient.email}
                         </p>
 
                         {/* Date of Birth */}
                         <p className="text-sm text-gray-600 mb-3">
-                            DOB: {formatDateOfBirth(patient.date_of_birth)}
+                            {t('card.dob')} {formatDateOfBirth(patient.date_of_birth)}
                         </p>
 
                         {/* Treating Doctor */}
@@ -134,7 +136,7 @@ const PatientCardGrid = ({
                                     ? 'text-[#ff254e] hover:bg-gray-100'
                                     : 'text-gray-400 hover:text-[#ff254e] hover:bg-gray-100'
                                     }`}
-                                title={patient.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                                title={patient.isFavorite ? t('table.removeFromFavorites') : t('table.addToFavorites')}
                                 disabled={favoriteLoadingStates[patient.id] || false}
                             >
                                 {favoriteLoadingStates[patient.id] ? (
@@ -149,7 +151,7 @@ const PatientCardGrid = ({
                                 size="sm"
                                 onClick={(e) => handleInfoClick(e, patient)}
                                 className="h-9 w-9 p-0 text-gray-400 hover:text-[#7564ed] hover:bg-gray-100"
-                                title="View patient info"
+                                title={t('table.viewInfo')}
                             >
                                 <Info className="h-6 w-6" />
                             </Button>
@@ -161,7 +163,7 @@ const PatientCardGrid = ({
                                         size="sm"
                                         onClick={(e) => handleEditClick(e, patient)}
                                         className="h-9 w-9 p-0 text-gray-400 hover:text-[#7564ed] hover:bg-gray-100"
-                                        title="Edit patient"
+                                        title={t('table.editPatient')}
                                     >
                                         <Edit className="h-6 w-6" />
                                     </Button>
@@ -171,7 +173,7 @@ const PatientCardGrid = ({
                                         size="sm"
                                         onClick={(e) => handleDeleteClick(e, patient)}
                                         className="h-9 w-9 p-0 text-gray-400 hover:text-[#ff254e] hover:bg-gray-100"
-                                        title="Delete patient"
+                                        title={t('table.deletePatient')}
                                     >
                                         <Trash2 className="h-6 w-6" />
                                     </Button>

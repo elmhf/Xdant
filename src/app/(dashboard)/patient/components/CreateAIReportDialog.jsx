@@ -3,13 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Play, X, Upload, FileText, AlertCircle, Trash2, Folder, File } from "lucide-react";
+import { X, File, Trash2 } from "lucide-react";
 import UploadToast, { useUploadToast } from './UploadToast';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { apiUploadClient } from '@/utils/apiClient';
+import { useTranslation } from 'react-i18next';
 
 const CreateAIReportDialog = ({
   isOpen,
@@ -18,6 +17,7 @@ const CreateAIReportDialog = ({
   selectedReport,
   onReportCreated
 }) => {
+  const { t } = useTranslation('patient');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isOrdering, setIsOrdering] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -74,10 +74,11 @@ const CreateAIReportDialog = ({
       const reportType = selectedReport?.id || 'cbct';
       const validExtensions = getAcceptedExtensions(reportType).split(',');
 
-      // Basic folder check (size 0 or empty type often indicates folder in some browsers, but extension check is primary)
-      // Strict extension validation
       if (!validExtensions.includes(extension)) {
-        setError(`Invalid file type for ${selectedReport?.name}. allowed: ${getAcceptedFileTypes(reportType)}`);
+        setError(t('createReport.invalidType', {
+          name: selectedReport?.name,
+          types: getAcceptedFileTypes(reportType)
+        }));
         return;
       }
 
@@ -96,7 +97,6 @@ const CreateAIReportDialog = ({
     handleFileUpload(e);
   };
 
-  // Remove file from upload list
   const removeFile = (index) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
@@ -110,16 +110,13 @@ const CreateAIReportDialog = ({
     onClose();
   };
 
-  // Enhanced order report function that uses shared toast
   const router = useRouter();
 
   const handleOrderReportWithState = async () => {
     if (!selectedReport || uploadedFiles.length === 0) return;
 
-    // Create AbortController for this upload
     const abortController = new AbortController();
 
-    // Add upload to shared toast
     const uploadId = addUpload({
       fileName: uploadedFiles[0].name,
       reportType: selectedReport?.name,
@@ -129,13 +126,10 @@ const CreateAIReportDialog = ({
       }
     });
 
-    // Store controller reference
     abortControllersRef.current.set(uploadId, abortController);
 
-    // Close dialog immediately when upload starts
     handleClose();
 
-    // Track upload start time for speed calculation
     const startTime = Date.now();
     let lastLoaded = 0;
     let lastTime = startTime;
@@ -145,33 +139,29 @@ const CreateAIReportDialog = ({
       formData.append('patient_id', patient.id);
       formData.append('report_type', selectedReport.id);
       formData.append('file', uploadedFiles[0]);
-      console.log('file+++++', uploadedFiles[0])
+      console.log('file+++++', uploadedFiles[0]);
       const response = await apiUploadClient(
         '/api/reports/create',
         formData,
         (e) => {
           const percent = Math.round((e.loaded * 100) / e.total);
           const currentTime = Date.now();
-          const timeDiff = (currentTime - lastTime) / 1000; // seconds
+          const timeDiff = (currentTime - lastTime) / 1000;
           const bytesDiff = e.loaded - lastLoaded;
 
-          // Calculate instantaneous speed (MB/s)
           let speed = 0;
           if (timeDiff > 0) {
             speed = (bytesDiff / 1024 / 1024) / timeDiff;
           }
 
-          // Update for next calculation
           lastLoaded = e.loaded;
           lastTime = currentTime;
 
-          // Update progress in shared toast
           updateProgress(uploadId, percent, Math.max(speed, 0));
         },
-        { signal: abortController.signal } // Pass abort signal
+        { signal: abortController.signal }
       );
 
-      // Notify parent component that a new report was created
       if (onReportCreated) {
         onReportCreated();
       }
@@ -179,40 +169,33 @@ const CreateAIReportDialog = ({
     } catch (error) {
       console.error('Error creating AI report:', error);
 
-      // Handle cancellation specifically - don't treat as error
       if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
         console.log('Upload cancelled by user');
-        return; // Exit silently
+        return;
       }
 
-      // Handle different types of errors
-      let errorMessage = 'An error occurred while creating the AI report.';
+      let errorMessage = t('createReport.reportError');
 
       if (error.response) {
-        // Server responded with error status
         if (error.response.data && error.response.data.error) {
           errorMessage = error.response.data.error;
         } else if (error.response.status === 413) {
-          errorMessage = 'File is too large. Please choose a smaller file.';
+          errorMessage = t('createReport.fileTooLarge');
         } else if (error.response.status === 400) {
-          errorMessage = 'Invalid file type. Please check the accepted file formats.';
+          errorMessage = t('createReport.invalidFileType');
         } else if (error.response.status === 500) {
-          errorMessage = 'Server error. Please try again later.';
+          errorMessage = t('createReport.serverError');
         } else {
-          errorMessage = `Server error (${error.response.status}). Please try again.`;
+          errorMessage = t('createReport.serverErrorWithStatus', { status: error.response.status });
         }
       } else if (error.request) {
-        // Network error
-        errorMessage = 'Network error. Please check your connection and try again.';
+        errorMessage = t('createReport.networkError');
       } else {
-        // Other errors
-        errorMessage = error.message || 'An unexpected error occurred.';
+        errorMessage = error.message || t('createReport.reportError');
       }
 
-      // Set error in shared toast
       setUploadError(uploadId);
     } finally {
-      // Clean up controller reference
       abortControllersRef.current.delete(uploadId);
     }
   };
@@ -222,13 +205,13 @@ const CreateAIReportDialog = ({
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className="max-w-md bg-white rounded-2xl border-0 shadow-xl p-0 overflow-hidden">
           <DialogTitle className="sr-only">
-            Order {selectedReport?.name || 'CBCT'} AI Report
+            {t('createReport.title', { name: selectedReport?.name || 'CBCT' })}
           </DialogTitle>
           {/* Header */}
           <div className="bg-white px-6 py-5 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <h2 className="text-3xl font-extrabold text-gray-900">
-                Order {selectedReport?.name || 'CBCT'} AI Report
+                {t('createReport.title', { name: selectedReport?.name || 'CBCT' })}
               </h2>
             </div>
           </div>
@@ -237,16 +220,15 @@ const CreateAIReportDialog = ({
           <div className="px-6 py-5 space-y-5 text-[1.25rem]">
             {/* Error Message */}
             {error && (
-              <Alert variant="destructive" className="border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-700">{error}</AlertDescription>
-              </Alert>
+              <div className="border border-red-200 bg-red-50 rounded-xl p-3 flex items-center gap-2">
+                <span className="text-red-700 text-sm">{error}</span>
+              </div>
             )}
 
             {/* Upload Section */}
             <div>
               <Label className="text-lg font-bold text-gray-700 mb-3 block">
-                Upload {selectedReport?.name || 'CBCT'}
+                {t('createReport.upload', { name: selectedReport?.name || 'CBCT' })}
               </Label>
 
               {/* File Upload Area */}
@@ -267,16 +249,16 @@ const CreateAIReportDialog = ({
                       />
                       <Label
                         htmlFor="file-upload"
-                        className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-white text-[#7564ed]  hover:bg-gray-50 hover:border-[#7564ed] transition-colors "
+                        className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-white text-[#7564ed] hover:bg-gray-50 hover:border-[#7564ed] transition-colors"
                       >
                         <File className="w-7 h-7" />
-                        Upload files
+                        {t('createReport.uploadFiles')}
                       </Label>
                     </div>
                   </div>
 
                   <p className="text-sm text-gray-400">
-                    Or drag and drop file or folder here
+                    {t('createReport.dragAndDrop')}
                   </p>
                 </div>
               ) : (
@@ -284,7 +266,7 @@ const CreateAIReportDialog = ({
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 text-[#7564ed]  rounded-2xl flex items-center justify-center">
+                      <div className="w-10 h-10 text-[#7564ed] rounded-2xl flex items-center justify-center">
                         <File className="w-10 h-10" />
                       </div>
                       <div>
@@ -318,7 +300,7 @@ const CreateAIReportDialog = ({
               disabled={isOrdering}
               className="text-gray-600 hover:text-gray-800 hover:bg-gray-200 px-6"
             >
-              Cancel
+              {t('createReport.cancel')}
             </Button>
             <Button
               onClick={handleOrderReportWithState}
@@ -328,16 +310,15 @@ const CreateAIReportDialog = ({
               {isOrdering ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Uploading...
+                  {t('createReport.uploading')}
                 </div>
               ) : (
-                'Order'
+                t('createReport.order')
               )}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-
     </>
   );
 };

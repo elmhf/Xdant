@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import useUserStore from '@/components/features/profile/store/userStore';
+import { useTranslation } from "react-i18next";
 
 export const LeaveClinicDialog = ({
   open,
@@ -23,6 +24,7 @@ export const LeaveClinicDialog = ({
   loading,
   message
 }) => {
+  const { t } = useTranslation();
   console.log("leave clinic", clinic);
   const [action, setAction] = useState('delete'); // 'delete' or 'transfer'
   const [newOwnerId, setNewOwnerId] = useState('');
@@ -91,24 +93,16 @@ export const LeaveClinicDialog = ({
       <DialogContent className="bg-white border-2 border-gray-200 rounded-2xl max-w-2xl">
         <DialogHeader className="pb-4 border-b border-gray-100">
           <DialogTitle className="flex items-center gap-3 text-gray-900 text-3xl font-bold">
-            Quitter la clinique
+            {t('company.leaveClinic')}
           </DialogTitle>
           <DialogDescription className="text-base text-gray-600 mt-2">
             {isOwner ? (
               <>
-                En tant que propriétaire, vous devez définir le futur de la clinique{" "}
-                <span className="font-semibold text-blue-600">
-                  ({clinic.clinic_name || clinic.clinicName || clinic.name})
-                </span>{" "}
-                avant de partir.
+                {t('company.leaveClinicDescriptionOwner', { name: clinic.clinic_name || clinic.clinicName || clinic.name })}
               </>
             ) : (
               <>
-                Êtes-vous sûr de vouloir quitter cette clinique{" "}
-                <span className="font-semibold text-blue-600">
-                  ({clinic.clinic_name || clinic.clinicName || clinic.name})
-                </span>
-                {" "}? Cette action ne peut pas être annulée.
+                {t('company.leaveClinicDescriptionMember', { name: clinic.clinic_name || clinic.clinicName || clinic.name })}
               </>
             )}
           </DialogDescription>
@@ -119,7 +113,7 @@ export const LeaveClinicDialog = ({
 
           {isOwner && (
             <div className="space-y-4">
-              <Label className="text-base text-gray-900 font-semibold">Que souhaitez-vous faire ?</Label>
+              <Label className="text-base text-gray-900 font-semibold">{t('company.whatDoYouWantToDo')}</Label>
               <RadioGroup value={action} onValueChange={setAction} className="grid grid-cols-2 gap-4">
                 <div>
                   <RadioGroupItem value="delete" id="delete" className="peer sr-only" />
@@ -128,8 +122,8 @@ export const LeaveClinicDialog = ({
                     className="flex flex-col items-center justify-between rounded-xl border-2 border-gray-200 bg-white p-4 hover:bg-gray-50 peer-data-[state=checked]:border-red-500 peer-data-[state=checked]:bg-red-50 cursor-pointer transition-all"
                   >
                     <Trash2 className="mb-3 h-6 w-6 text-red-500" />
-                    <span className="font-semibold text-gray-900">Supprimer</span>
-                    <span className="text-xs text-center text-gray-500 mt-1">Supprimer définitivement la clinique {clinic.clinic_name || clinic.clinicName || clinic.name} pour tous</span>
+                    <span className="font-semibold text-gray-900">{t('company.deleteClinic')}</span>
+                    <span className="text-xs text-center text-gray-500 mt-1">{t('company.deleteClinicDesc', { name: clinic.clinic_name || clinic.clinicName || clinic.name })}</span>
                   </Label>
                 </div>
                 <div>
@@ -139,18 +133,18 @@ export const LeaveClinicDialog = ({
                     className="flex flex-col items-center justify-between rounded-xl border-2 border-gray-200 bg-white p-4 hover:bg-gray-50 peer-data-[state=checked]:border-blue-500 peer-data-[state=checked]:bg-blue-50 cursor-pointer transition-all"
                   >
                     <UserCog className="mb-3 h-6 w-6 text-blue-500" />
-                    <span className="font-semibold text-gray-900">Transférer</span>
-                    <span className="text-xs text-center text-gray-500 mt-1">Transférer la propriété à un autre membre</span>
+                    <span className="font-semibold text-gray-900">{t('company.transferClinic')}</span>
+                    <span className="text-xs text-center text-gray-500 mt-1">{t('company.transferClinicDesc')}</span>
                   </Label>
                 </div>
               </RadioGroup>
 
               {action === 'transfer' && (
                 <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                  <Label className="text-base font-semibold text-gray-700">Nouveau propriétaire</Label>
+                  <Label className="text-base font-semibold text-gray-700">{t('company.newOwner')}</Label>
                   <Select value={newOwnerId} onValueChange={setNewOwnerId}>
                     <SelectTrigger className="h-12 rounded-xl text-base border-2 border-gray-200 focus:border-blue-500">
-                      <SelectValue placeholder="Sélectionner un membre" />
+                      <SelectValue placeholder={t('company.selectMember')} />
                     </SelectTrigger>
                     <SelectContent>
                       {loadingMembers ? (
@@ -162,17 +156,17 @@ export const LeaveClinicDialog = ({
                           </SelectItem>
                         ))
                       ) : (
-                        <div className="p-2 text-sm text-gray-500 text-center">Aucun membre éligible trouvé</div>
+                        <div className="p-2 text-sm text-gray-500 text-center">{t('company.noEligibleMembers')}</div>
                       )}
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-muted-foreground">Le nouveau propriétaire aura un accès complet ADMIN.</p>
+                  <p className="text-xs text-muted-foreground">{t('company.newOwnerAdminAccess')}</p>
                 </div>
               )}
 
               {action === 'delete' && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-800">
-                  <strong>Attention :</strong> Cette action est irréversible. Toutes les données de la clinique seront perdues.
+                  {t('company.irreversibleAction')}
                 </div>
               )}
             </div>
@@ -183,11 +177,11 @@ export const LeaveClinicDialog = ({
               <div className="flex items-start gap-3">
                 <AlertTriangle className="h-6 w-6 text-yellow-600 mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-gray-600">
-                  <p className="font-medium text-gray-900 mb-2">Vous êtes sur le point de quitter cette clinique. En quittant, vous :</p>
+                  <p className="font-medium text-gray-900 mb-2">{t('company.aboutToLeaveClinic')}</p>
                   <ul className="space-y-1.5 text-sm">
-                    <li>• Perdrez l'accès à tous les patients de cette clinique</li>
-                    <li>• Ne pourrez plus voir les rendez-vous et les dossiers</li>
-                    <li>• Devrez être réinvité pour rejoindre la clinique</li>
+                    <li>• {t('company.loseAccessPatients')}</li>
+                    <li>• {t('company.cannotSeeAppointments')}</li>
+                    <li>• {t('company.mustBeReinvited')}</li>
                   </ul>
                 </div>
               </div>
@@ -201,7 +195,7 @@ export const LeaveClinicDialog = ({
                     className="mt-0.5"
                   />
                   <label htmlFor="confirm-understand" className="text-sm text-gray-700 cursor-pointer">
-                    Je confirme que je comprends les conséquences de quitter cette clinique
+                    {t('company.confirmUnderstandConsequences')}
                   </label>
                 </div>
 
@@ -213,7 +207,7 @@ export const LeaveClinicDialog = ({
                     className="mt-0.5"
                   />
                   <label htmlFor="confirm-lose-access" className="text-sm text-gray-700 cursor-pointer">
-                    Je confirme que je perdrai l'accès aux données de la clinique
+                    {t('company.confirmLoseDataAccess')}
                   </label>
                 </div>
               </div>
@@ -238,7 +232,7 @@ export const LeaveClinicDialog = ({
             disabled={loading}
             className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           >
-            Annuler
+            {t('company.cancel')}
           </Button>
           <Button
             onClick={handleConfirm}
@@ -246,10 +240,10 @@ export const LeaveClinicDialog = ({
             className="text-lg font-bold bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           >
             {loading
-              ? "Traitement..."
+              ? t('company.processing')
               : isOwner
-                ? (action === 'delete' ? "Supprimer la clinique" : "Transférer et quitter")
-                : "Quitter la clinique"
+                ? (action === 'delete' ? t('company.deleteClinicAction') : t('company.transferAndLeave'))
+                : t('company.leaveClinic')
             }
           </Button>
         </DialogFooter>

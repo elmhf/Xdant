@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Dialog,
     DialogContent,
@@ -7,7 +8,6 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
 export const DeleteFileDialog = ({
     open,
     onOpenChange,
@@ -15,6 +15,7 @@ export const DeleteFileDialog = ({
     onConfirm,
     loading
 }) => {
+    const { t } = useTranslation('patient');
     if (!file) return null;
 
     return (
@@ -23,7 +24,7 @@ export const DeleteFileDialog = ({
                 <DialogHeader className="p-0">
                     <div className="flex items-center justify-between">
                         <DialogTitle className="text-4xl font-bold text-gray-900">
-                            Delete File
+                            {t('dentalData.deleteDialog.title')}
                         </DialogTitle>
                     </div>
                 </DialogHeader>
@@ -31,10 +32,10 @@ export const DeleteFileDialog = ({
                 {/* Confirmation Text */}
                 <div className="flex flex-col gap-1 py-2">
                     <p className="text-gray-600 text-lg">
-                        Are you sure you want to delete <span className="font-bold text-gray-900">{file.name}</span>?
+                        {t('dentalData.deleteDialog.confirm', { name: file.name })}
                     </p>
                     <p className="text-gray-500 text-base">
-                        This action cannot be undone.
+                        {t('dentalData.deleteDialog.undone')}
                     </p>
                 </div>
 
@@ -45,14 +46,14 @@ export const DeleteFileDialog = ({
                         disabled={loading}
                         className="h-10 px-6 text-base font-semibold  text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-2xl"
                     >
-                        Cancel
+                        {t('dentalData.deleteDialog.cancel')}
                     </Button>
                     <Button
                         onClick={onConfirm}
                         disabled={loading}
                         className="h-10 px-6 text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  rounded-2xl shadow-none"
                     >
-                        {loading ? "Deleting..." : "Delete File"}
+                        {loading ? t('dentalData.deleteDialog.deleting') : t('dentalData.deleteDialog.delete')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

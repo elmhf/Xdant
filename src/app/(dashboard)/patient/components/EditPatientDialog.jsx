@@ -11,8 +11,10 @@ import { X, Trash2, Loader2, Plus, UserPlus } from "lucide-react";
 import { useClinicMembers } from "@/app/(dashboard)/company/hooks";
 import useUserStore from "@/components/features/profile/store/userStore";
 import { validatePatientForm, getInitialFormData, resetFormData } from '../utils/formUtils';
+import { useTranslation } from 'react-i18next';
 
 const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patient, hideTreatingDoctors = false }) => {
+    const { t } = useTranslation('patient');
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -51,7 +53,6 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
         first_name: member.first_name || "",
         last_name: member.last_name || "",
         name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
-        name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
         email: member.email || '',
         profilePhotoUrl: member.profilePhotoUrl || null
     }));
@@ -59,7 +60,6 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
     // Load patient data when dialog opens
     useEffect(() => {
         if (patient && isOpen) {
-
             setFormData({
                 first_name: String(patient.first_name || ""),
                 last_name: String(patient.last_name || ""),
@@ -83,8 +83,6 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
         if (formError) setFormError("");
         if (formSuccess) setFormSuccess("");
     };
-
-
 
     const addTreatingDoctor = (doctorId) => {
         const doctor = availableDoctors.find(d => d.id === doctorId);
@@ -129,7 +127,6 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
         setFormSuccess("");
 
         try {
-            // Convert treating_doctors array to treating_doctor_id array (always include)
             const treating_doctor_ids = (formData.treating_doctors || []).map(doctor => doctor.id);
 
             const patientData = {
@@ -150,9 +147,8 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                 body: JSON.stringify(patientData)
             });
 
-            setFormSuccess("Patient updated successfully!");
+            setFormSuccess(t('editPatient.updateSuccess'));
 
-            // Close dialog after success
             onClose();
             if (onPatientUpdated) {
                 onPatientUpdated();
@@ -160,7 +156,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
 
         } catch (error) {
             console.error('Error updating patient:', error);
-            setFormError(error.message || 'Failed to update patient');
+            setFormError(error.message || t('editPatient.updateFailed'));
         } finally {
             setIsSubmitting(false);
         }
@@ -190,7 +186,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
             <DialogContent className="bg-white max-w-3xl sm:max-w-3xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-4xl font-bold text-gray-900">
-                        Edit patient information
+                        {t('editPatient.title')}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -211,7 +207,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="first_name" className="text-sm text-gray-600">
-                                First Name <span className="text-red-500">*</span>
+                                {t('editPatient.firstName')} <span className="text-red-500">*</span>
                             </Label>
                             <Input
                                 id="first_name"
@@ -222,13 +218,13 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                                     } focus:border-[#7564ed] rounded-2xl`}
                             />
                             {!formData.first_name && formError && (
-                                <p className="text-red-500 text-sm">Field is required</p>
+                                <p className="text-red-500 text-sm">{t('editPatient.fieldRequired')}</p>
                             )}
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="last_name" className="text-sm text-gray-600">
-                                Last Name <span className="text-red-500">*</span>
+                                {t('editPatient.lastName')} <span className="text-red-500">*</span>
                             </Label>
                             <Input
                                 id="last_name"
@@ -239,7 +235,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                                     } focus:border-[#7564ed] rounded-2xl`}
                             />
                             {!formData.last_name && formError && (
-                                <p className="text-red-500 text-sm">Field is required</p>
+                                <p className="text-red-500 text-sm">{t('editPatient.fieldRequired')}</p>
                             )}
                         </div>
                     </div>
@@ -247,14 +243,14 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                     {/* Email */}
                     <div className="space-y-2">
                         <Label htmlFor="email" className="text-sm text-gray-600">
-                            Email
+                            {t('editPatient.email')}
                         </Label>
                         <Input
                             id="email"
                             type="email"
                             value={formData.email || ''}
                             onChange={(e) => handleInputChange('email', e.target.value)}
-                            className="h-12 w-full text-base border-1 border-gray-300  rounded-2xl"
+                            className="h-12 w-full text-base border-1 border-gray-300 rounded-2xl"
                         />
                     </div>
 
@@ -262,7 +258,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="phone" className="text-sm text-gray-600">
-                                Phone Number
+                                {t('editPatient.phone')}
                             </Label>
                             <Input
                                 id="phone"
@@ -275,7 +271,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
 
                         <div className="space-y-2">
                             <Label htmlFor="address" className="text-sm text-gray-600">
-                                Address
+                                {t('editPatient.address')}
                             </Label>
                             <Input
                                 id="address"
@@ -292,30 +288,34 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                         {/* Gender */}
                         <div className="space-y-2">
                             <Label className="text-sm text-gray-600">
-                                Gender <span className="text-red-500">*</span>
+                                {t('editPatient.gender')} <span className="text-red-500">*</span>
                             </Label>
                             <div className="flex gap-2">
-                                {['Male', 'Female', 'Other'].map((gender) => (
+                                {[
+                                    { key: 'male', label: t('editPatient.male') },
+                                    { key: 'female', label: t('editPatient.female') },
+                                    { key: 'other', label: t('editPatient.other') }
+                                ].map(({ key, label }) => (
                                     <Button
-                                        key={gender}
+                                        key={key}
                                         type="button"
-                                        onClick={() => handleInputChange('gender', gender.toLowerCase())}
-                                        className={`px-6 py-2 rounded-2xl text-sm font-[500] transition-colors ${formData.gender === gender.toLowerCase()
+                                        onClick={() => handleInputChange('gender', key)}
+                                        className={`px-6 py-2 rounded-2xl text-sm font-[500] transition-colors ${formData.gender === key
                                             ? 'bg-[#7564ed] text-white border-[#7564ed]'
                                             : 'bg-gray-100 text-gray-700 hover:border-[#7564ed]'
                                             }`}
                                     >
-                                        {gender}
+                                        {label}
                                     </Button>
                                 ))}
                             </div>
                             {!formData.gender && formError && (
-                                <p className="text-red-500 text-sm">Field is required</p>
+                                <p className="text-red-500 text-sm">{t('editPatient.fieldRequired')}</p>
                             )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="date_of_birth" className="text-sm text-gray-600">
-                                Date of birth <span className="text-red-500">*</span>
+                                {t('editPatient.dateOfBirth')} <span className="text-red-500">*</span>
                             </Label>
                             <div className="relative">
                                 <Input
@@ -329,27 +329,23 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                                 />
                             </div>
                             {!formData.date_of_birth && formError && (
-                                <p className="text-red-500 text-sm">Field is required</p>
+                                <p className="text-red-500 text-sm">{t('editPatient.fieldRequired')}</p>
                             )}
                         </div>
-
                     </div>
 
                     {/* Treating Doctors */}
                     {!hideTreatingDoctors && (
-                        <div className="space-y-3 ">
+                        <div className="space-y-3">
                             <Label className="text-sm text-gray-600 font-medium">
-                                Treating doctor <span className="text-red-500">*</span>
+                                {t('editPatient.treatingDoctor')} <span className="text-red-500">*</span>
                             </Label>
 
                             {/* Selected Doctors List */}
                             {formData.treating_doctors.length > 0 && (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 border-1 border-gray-300 rounded-xl p-2 max-h-[180px] overflow-y-auto pr-1">
                                     {formData.treating_doctors.map((doctor, index) => {
-                                        const colors = [
-                                            'bg-[#a855f7]',
-
-                                        ];
+                                        const colors = ['bg-[#a855f7]'];
                                         const avatarColor = colors[index % colors.length];
 
                                         return (
@@ -380,7 +376,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                                                         variant="ghost"
                                                         size="sm"
                                                         onClick={() => removeTreatingDoctor(doctor.id)}
-                                                        className="h-8 w-8 p-0 text-gray-400 hover:text-red-600  rounded-full opacity-0 group-hover:opacity-100 transition-all"
+                                                        className="h-8 w-8 p-0 text-gray-400 hover:text-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-all"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
@@ -399,7 +395,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                                             } rounded-xl px-4 transition-all group text-gray-500 hover:text-[#7564ed]`}>
                                             <div className="flex items-center gap-2 justify-center w-full font-medium">
                                                 <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                                <span>Add treating doctor</span>
+                                                <span>{t('editPatient.addTreatingDoctor')}</span>
                                             </div>
                                         </SelectTrigger>
                                         <SelectContent className="max-h-60 p-1">
@@ -446,7 +442,7 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                                             ) : (
                                                 <div className="p-4 text-sm text-gray-500 text-center flex flex-col items-center gap-2">
                                                     <UserPlus className="h-8 w-8 text-gray-300" />
-                                                    <p>All available doctors added</p>
+                                                    <p>{t('editPatient.allDoctorsAdded')}</p>
                                                 </div>
                                             )}
                                         </SelectContent>
@@ -456,18 +452,14 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
 
                             {formData.treating_doctors.length === 0 && formError && (
                                 <p className="text-red-500 text-sm flex items-center gap-1 mt-1">
-                                    At least one doctor is required
+                                    {t('editPatient.doctorRequired')}
                                 </p>
                             )}
                         </div>
                     )}
 
                     {/* Action Buttons */}
-
-                    {/* Action Buttons */}
                     <div className="flex justify-between items-center pt-4 mt-6">
-                        {/* Remove Button */}
-                        {/* Remove Button */}
                         {canManageDoctors ? (
                             <Button
                                 type="button"
@@ -477,10 +469,10 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                                 className="bg-red-50 hover:bg-red-100 text-red-600 hover:outline-red-600 hover:outline-2 h-12 px-6 rounded-2xl flex items-center gap-2 transition-colors"
                             >
                                 <Trash2 className="w-5 h-5" />
-                                <span className="font-semibold">Remove</span>
+                                <span className="font-semibold">{t('editPatient.remove')}</span>
                             </Button>
                         ) : (
-                            <div></div> // Empty div to maintain flex layout spacing if button is hidden
+                            <div></div>
                         )}
 
                         <div className="flex gap-3">
@@ -490,21 +482,21 @@ const EditPatientDialog = ({ isOpen, onClose, onPatientUpdated, onDelete, patien
                                 variant="ghost"
                                 className="h-12 px-6 text-base font-semibold text-gray-500 hover:text-gray-700 hover:bg-transparent"
                             >
-                                Cancel
+                                {t('editPatient.cancel')}
                             </Button>
                             <Button
                                 type="button"
                                 onClick={handleSubmit}
                                 disabled={isSubmitting}
-                                className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  h-12 px-8 text-base font-semibold rounded-2xl transition-all shadow-sm hover:shadow-md"
+                                className="text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed] h-12 px-8 text-base font-semibold rounded-2xl transition-all shadow-sm hover:shadow-md"
                             >
                                 {isSubmitting ? (
                                     <div className="flex items-center gap-2">
                                         <Loader2 className="w-4 h-4 animate-spin" />
-                                        Saving...
+                                        {t('editPatient.saving')}
                                     </div>
                                 ) : (
-                                    "Save"
+                                    t('editPatient.save')
                                 )}
                             </Button>
                         </div>

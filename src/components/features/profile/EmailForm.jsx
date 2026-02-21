@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import { useTranslation } from "react-i18next";
 
 export default function EmailForm({ onBack, userInfo, setUserInfo }) {
   const [step, setStep] = useState(1); // 1: password, 2: email, 3: code
@@ -13,11 +14,12 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
   const inputsRef = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
   const [password, setPassword] = useState("");
   const { pushNotification } = useNotification();
+  const { t } = useTranslation();
 
   // Step 1: Verify password
   const handleVerifyPassword = async () => {
     if (!password.trim()) {
-      pushNotification('error', "Le mot de passe est obligatoire.");
+      pushNotification('error', t('profile.passwordRequired'));
       return;
     }
     setLoading(true);
@@ -30,10 +32,10 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
       if (data.valid === true) {
         setStep(2);
       } else {
-        pushNotification('error', "Mot de passe incorrect.");
+        pushNotification('error', t('profile.incorrectPassword'));
       }
     } catch (e) {
-      pushNotification('error', "Erreur réseau");
+      pushNotification('error', t('profile.networkError'));
     }
     setLoading(false);
   };
@@ -41,7 +43,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
   // Step 2: Send email
   const handleSendEmail = async () => {
     if (!email.trim()) {
-      pushNotification('error', "L'adresse email est obligatoire.");
+      pushNotification('error', t('profile.emailRequired'));
       return;
     }
     setLoading(true);
@@ -51,10 +53,10 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
         body: JSON.stringify({ newEmail: email }),
       });
 
-      pushNotification('success', "Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
+      pushNotification('success', t('profile.emailCodeSent'));
       setStep(3);
     } catch (e) {
-      pushNotification('error', e.message || "Erreur lors de l'envoi du code de vérification.");
+      pushNotification('error', e.message || t('profile.emailUpdateError'));
     }
     setLoading(false);
   };
@@ -62,7 +64,7 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
   // Step 3: Verify code
   const handleVerifyCode = async () => {
     if (code.join("").length < 6) {
-      pushNotification('error', "Veuillez saisir le code à 6 chiffres.");
+      pushNotification('error', t('profile.otpInstructions'));
       return;
     }
     setLoading(true);
@@ -72,13 +74,13 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
         body: JSON.stringify({ code: code.join("") }),
       });
 
-      pushNotification('success', "Adresse e-mail modifiée avec succès.");
+      pushNotification('success', t('profile.emailUpdateSuccess'));
       setUserInfo({ email });
       setTimeout(() => {
         onBack();
       }, 1200);
     } catch (e) {
-      pushNotification('error', e.message || "Code incorrect ou expiré.");
+      pushNotification('error', e.message || t('profile.invalidEmailCode'));
     }
     setLoading(false);
   };
@@ -116,19 +118,19 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
       {step === 1 && (
         <form onSubmit={(e) => { e.preventDefault(); handleVerifyPassword(); }}>
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
-            <span className="font-semibold text-gray-800">Sécurité :</span> Pour modifier votre adresse email, nous devons vérifier votre identité en saisissant votre mot de passe actuel.
+            <span className="font-semibold text-gray-800">{t('profile.securityTitle')} :</span> {t('profile.verifyIdentityMsg')}
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="password" className="text-base font-semibold text-gray-700">
-                Mot de passe
+                {t('profile.password')}
               </Label>
               <Input
                 id="password"
                 className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
                 type="password"
-                placeholder="Entrez votre mot de passe"
+                placeholder={t('profile.currentPasswordPlaceholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -146,14 +148,14 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
               onClick={onBack}
               disabled={loading}
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
               className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               disabled={!password || loading}
             >
-              {loading ? "Vérification..." : "Vérifier"}
+              {loading ? t('profile.verifying') : t('profile.verifyPassword')}
             </Button>
           </div>
         </form>
@@ -162,19 +164,19 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
       {step === 2 && (
         <form onSubmit={(e) => { e.preventDefault(); handleSendEmail(); }}>
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
-            <span className="font-semibold text-gray-800">Info :</span> Veuillez saisir votre nouvelle adresse email. Un code de vérification sera envoyé à cette adresse.
+            <span className="font-semibold text-gray-800">{t('profile.securityTitle')} :</span> {t('profile.newEmailPlaceholder')}
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-base font-semibold text-gray-700">
-                Nouvelle adresse email
+                {t('profile.newEmail')}
               </Label>
               <Input
                 id="email"
                 className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
                 type="email"
-                placeholder="Entrez votre nouvelle adresse email"
+                placeholder={t('profile.newEmailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -192,14 +194,14 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
               onClick={onBack}
               disabled={loading}
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
               className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               disabled={!email || loading}
             >
-              {loading ? "Envoi..." : "Envoyer le code"}
+              {loading ? t('profile.uploading') : t('profile.sendCode')}
             </Button>
           </div>
         </form>
@@ -208,13 +210,13 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
       {step === 3 && (
         <form onSubmit={(e) => { e.preventDefault(); handleVerifyCode(); }}>
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
-            <span className="font-semibold text-gray-800">Vérification :</span> Saisissez le code à 6 chiffres envoyé à votre nouvelle adresse email.
+            <span className="font-semibold text-gray-800">{t('profile.securityTitle')} :</span> {t('profile.otpInstructions')}
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-base font-semibold text-gray-700">
-                Code de vérification
+                {t('profile.validateCode')}
               </Label>
               <div className="flex gap-3 justify-center mb-4" dir="ltr">
                 {code.map((digit, i) => (
@@ -247,14 +249,14 @@ export default function EmailForm({ onBack, userInfo, setUserInfo }) {
               onClick={onBack}
               disabled={loading}
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
               className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
               disabled={code.join("").length < 6 || loading}
             >
-              {loading ? "Vérification..." : "Valider le code"}
+              {loading ? t('profile.verifying') : t('profile.validateCode')}
             </Button>
           </div>
         </form>

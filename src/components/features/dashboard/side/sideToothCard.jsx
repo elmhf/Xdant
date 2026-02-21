@@ -27,7 +27,7 @@ const translationKeys = {
 };
 
 const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { selectedTeeth } = useContext(DataContext);
   const dataaaaaaa = useDentalStore((state) => state.data);
@@ -174,7 +174,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
 
             {/* Conclusion Card - Scrolls with content */}
             <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm mt-4 mb-4">
-              <h3 className="text-3xl font-bold text-gray-900 mb-3">Conclusion</h3>
+              <h3 className="text-3xl font-bold text-gray-900 mb-3">{t('common.conclusion')}</h3>
 
               {!isConclusionSaved ? (
                 <>
@@ -194,7 +194,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
                         setIsConclusionSaved(true);
                       }}
                     >
-                      Sauvegarder
+                      {t('common.save')}
                     </Button>
                   </div>
                 </>
@@ -206,7 +206,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
                   />
                   {dentalData?.conclusionUpdatedAt && (
                     <div className="text-xs text-gray-500 mb-3">
-                      Dernière modification: {new Date(dentalData.conclusionUpdatedAt).toLocaleString('fr-FR', {
+                      {t('common.lastModified')}: {new Date(dentalData.conclusionUpdatedAt).toLocaleString(i18n.language === 'ar' ? 'ar-EG' : (i18n.language === 'fr' ? 'fr-FR' : 'en-US'), {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
@@ -222,7 +222,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
                       className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl  flex items-center min-w-[6vw] "
                       onClick={() => setIsConclusionSaved(false)}
                     >
-                      Modifier
+                      {t('common.edit')}
                     </Button>
                   </div>
                 </>
@@ -252,7 +252,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
           // All teeth approved - show Diagnosis details and Print button
           <>
             <div className="flex items-center justify-end gap-2">
-              <span className="text-sm text-gray-700">Diagnosis details</span>
+              <span className="text-sm text-gray-700">{t('side.diagnosisDetails')}</span>
               <Switch
                 checked={showDiagnosisDetails}
                 onCheckedChange={setShowDiagnosisDetails}
@@ -265,7 +265,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
               className="w-full bg-[#7564ed] text-white py-6 text-lg font-semibold rounded-xl gap-2 shadow-lg shadow-purple-200"
               onClick={handlePDFReportViewsClick}
             >
-              Print report
+              {t('side.printReport')}
             </Button>
           </>
         ) : (
@@ -276,11 +276,11 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
                 onClick={handlePDFReportViewsClick}
                 className="text-[#7564ed] text-md font-medium hover:underline text-left"
               >
-                Print report without signature
+                {t('side.printWithoutSignature')}
               </button>
 
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-sm text-gray-700">Diagnosis details</span>
+                <span className="text-sm text-gray-700">{t('side.diagnosisDetails')}</span>
                 <Switch
                   checked={showDiagnosisDetails}
                   onCheckedChange={setShowDiagnosisDetails}
@@ -295,7 +295,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
               onClick={handleValidateClick}
             >
               <Check className="w-6 h-6" />
-              Valider tout et signer
+              {t('side.validateAndSign')}
             </Button>
           </>
         )}
@@ -312,10 +312,10 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
 
             <DialogHeader className="text-center space-y-2 mb-6">
               <DialogTitle className="text-2xl font-bold text-gray-900 tracking-tight">
-                Confirmer l'approbation
+                {t('side.confirmApproval')}
               </DialogTitle>
               <DialogDescription className="text-base text-gray-500 max-w-[90%] mx-auto leading-relaxed">
-                Vous êtes sur le point d'approuver <span className="font-semibold text-gray-900">{unapprovedTeeth.length} dents</span> détectées. Cette action validera le diagnostic pour les dents suivantes :
+                {t('side.approvalConfirmDesc', { count: unapprovedTeeth.length })}
               </DialogDescription>
             </DialogHeader>
 
@@ -342,14 +342,14 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
               onClick={() => setShowApproveDialog(false)}
               className="flex-1 border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 py-6 text-base rounded-xl font-medium shadow-sm"
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleApproveAll}
               className="flex-1 bg-[#7564ed] hover:bg-[#6454d7] text-white py-6 text-base rounded-xl font-bold shadow-md shadow-indigo-200 transition-all active:scale-[0.98]"
             >
               <Check className="w-5 h-5 mr-2" strokeWidth={2.5} />
-              Tout Approuver
+              {t('side.approveAll')}
             </Button>
           </DialogFooter>
         </DialogContent>

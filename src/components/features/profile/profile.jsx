@@ -16,6 +16,7 @@ import { Loader2 } from "lucide-react";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 import { apiClient } from "@/utils/apiClient";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 // --------------------------- Component ---------------------------
 export default function AccountInfoCard({ firstName, lastName, email }) {
@@ -28,6 +29,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
   const changePhoto = useUserStore(state => state.changePhoto);
   const deletePhoto = useUserStore(state => state.deletePhoto);
   const { pushNotification } = useNotification();
+  const { t } = useTranslation();
 
   // Form dialog states
   const [showNameForm, setShowNameForm] = useState(false);
@@ -63,7 +65,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
         setUserInfo({ personalSignature: result.signatureUrl });
       } else {
         setUserInfo({ personalSignature: svgUrl });
-        pushNotification('error', result.message || "خطأ في حفظ التوقيع");
+        pushNotification('error', result.message || t('notifications.sigSaveError'));
       }
     } else {
       setUserInfo({ personalSignature: svgUrl });
@@ -76,11 +78,11 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       // Vérification du type et de la taille
       const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
       if (!allowedTypes.includes(file.type)) {
-        pushNotification('error', 'Veuillez choisir une image au format PNG ou JPG uniquement');
+        pushNotification('error', t('notifications.imgFormatError'));
         return;
       }
       if (file.size > 10 * 1024 * 1024) {
-        pushNotification('error', 'La taille de l\'image ne doit pas dépasser 10 mégaoctets');
+        pushNotification('error', t('notifications.imgSizeError'));
         return;
       }
       setIsUploadingPhoto(true);
@@ -89,9 +91,9 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       setIsUploadingPhoto(false);
       if (result.success && result.profilePhotoUrl) {
         setUserInfo({ profilePhotoUrl: result.profilePhotoUrl });
-        pushNotification('success', 'Photo de profil mise à jour avec succès');
+        pushNotification('success', t('notifications.photoUpdateSuccess'));
       } else {
-        pushNotification('error', result.message || "Erreur lors du téléchargement de la photo");
+        pushNotification('error', result.message || t('notifications.photoUpdateError'));
       }
     }
   };
@@ -99,7 +101,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
   const handlePhotoDelete = async () => {
     if (!userInfo.profilePhotoUrl) return;
 
-    const confirmed = window.confirm("Êtes-vous sûr de vouloir supprimer votre photo de profil ?");
+    const confirmed = window.confirm(t('notifications.confirmPhotoDelete'));
     if (!confirmed) return;
 
     setIsDeletingPhoto(true);
@@ -108,9 +110,9 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
     if (result.success) {
       setUserInfo({ profilePhotoUrl: null });
-      pushNotification('success', 'Photo de profil supprimée avec succès');
+      pushNotification('success', t('notifications.photoDeleteSuccess'));
     } else {
-      pushNotification('error', result.message || "Erreur lors de la suppression de la photo");
+      pushNotification('error', result.message || t('notifications.photoDeleteError'));
     }
   };
 
@@ -122,7 +124,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
       });
       router.push('/login');
     } catch (error) {
-      pushNotification('error', 'Erreur lors de la déconnexion');
+      pushNotification('error', t('notifications.logoutError'));
       console.error('Logout error:', error);
     } finally {
       setIsLoggingOut(false);
@@ -144,10 +146,10 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
             {/* My Profile Section */}
             <div className="mb-10">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-bold text-gray-900">Account info</h2>
+                <h2 className="text-3xl font-bold text-gray-900">{t('profile.accountInfo')}</h2>
                 <SupportAccessSection userInfo={userInfo} setUserInfo={setUserInfo}>
                   <button className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap">
-                    Accès au support
+                    {t('profile.supportAccess')}
                   </button>
                 </SupportAccessSection>
               </div>
@@ -156,7 +158,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
               <div className="flex items-start gap-4 mb-6">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#7564ed] to-[#6a4fd8] flex items-center justify-center text-white text-xl font-bold overflow-hidden">
                   {photoSrc ? (
-                    <img src={photoSrc} alt="Profile" className="w-full h-full object-cover" />
+                    <img src={photoSrc} alt={t('profile.title')} className="w-full h-full object-cover" />
                   ) : (
                     <span>{userInfo?.firstName?.[0]}{userInfo?.lastName?.[0]}</span>
                   )}
@@ -171,11 +173,11 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                       {isUploadingPhoto ? (
                         <>
                           <div className="animate-spin rounded-full w-4 h-4 border-2 border-white border-t-transparent"></div>
-                          Téléchargement...
+                          {t('profile.uploading')}
                         </>
                       ) : (
                         <>
-                          <span>+</span> Changer l'image
+                          <span>+</span> {t('profile.changePhoto')}
                         </>
                       )}
                     </button>
@@ -187,14 +189,14 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                       {isDeletingPhoto ? (
                         <>
                           <div className="animate-spin rounded-full w-4 h-4 border-2 border-gray-700 border-t-transparent"></div>
-                          Suppression...
+                          {t('profile.deleting')}
                         </>
                       ) : (
-                        "Supprimer l'image"
+                        t('profile.deletePhoto')
                       )}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500">Nous supportons les PNG, JPEG et GIF de moins de 10MB</p>
+                  <p className="text-xs text-gray-500">{t('profile.photoSupportFormat')}</p>
                   <input
                     type="file"
                     accept="image/png, image/jpeg, image/jpg"
@@ -208,7 +210,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
               {/* Name Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Prénom</label>
+                  <label className="text-sm font-semibold text-gray-700">{t('profile.firstName')}</label>
 
                   <Input
                     value={userInfo?.firstName || ""}
@@ -218,7 +220,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Nom</label>
+                  <label className="text-sm font-semibold text-gray-700">{t('profile.lastName')}</label>
                   <div className="flex gap-3">
                     <Input
                       value={userInfo?.lastName || ""}
@@ -229,7 +231,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                       onClick={() => setShowNameForm(true)}
                       className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap"
                     >
-                      Edit
+                      {t('common.edit')}
                     </button>
                   </div>
                 </div>
@@ -238,11 +240,11 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
             {/* Account Security Section */}
             <div className="mb-10">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Sécurité du compte</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('profile.accountSecurity')}</h2>
 
               {/* Email */}
               <div className="space-y-2 mb-6">
-                <label className="text-sm font-semibold text-gray-700">Email</label>
+                <label className="text-sm font-semibold text-gray-700">{t('profile.email')}</label>
                 <div className="flex gap-3">
                   <Input
                     value={userInfo?.email || ""}
@@ -253,14 +255,14 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                     onClick={() => setShowEmailForm(true)}
                     className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap"
                   >
-                    Edit
+                    {t('common.edit')}
                   </button>
                 </div>
               </div>
 
               {/* Password */}
               <div className="space-y-2 mb-6">
-                <label className="text-sm font-semibold text-gray-700">Mot de passe</label>
+                <label className="text-sm font-semibold text-gray-700">{t('profile.password')}</label>
                 <div className="flex gap-3">
                   <Input
                     type="password"
@@ -272,7 +274,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                     onClick={() => setShowPasswordForm(true)}
                     className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap"
                   >
-                    Edit
+                    {t('common.edit')}
                   </button>
                 </div>
               </div>
@@ -287,12 +289,12 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
                   {isLoggingOut ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Déconnexion en cours...
+                      {t('profile.logoutLoading')}
                     </>
                   ) : (
                     <>
                       <LogOut className="w-5 h-5" />
-                      Se déconnecter
+                      {t('common.logout')}
                     </>
                   )}
                 </button>
@@ -312,7 +314,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
       <Dialog open={showNameForm} onOpenChange={setShowNameForm}>
         <DialogContent className=" bg-white">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Modifier le nom</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">{t('profile.editNameTitle')}</h2>
           <NameForm
             onBack={() => setShowNameForm(false)}
             userInfo={userInfo}
@@ -324,7 +326,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
       <Dialog open={showEmailForm} onOpenChange={setShowEmailForm}>
         <DialogContent className=" bg-white">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Changer l'email</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">{t('profile.changeEmailTitle')}</h2>
           <EmailForm
             onBack={() => setShowEmailForm(false)}
             userInfo={userInfo}
@@ -335,7 +337,7 @@ export default function AccountInfoCard({ firstName, lastName, email }) {
 
       <Dialog open={showPasswordForm} onOpenChange={setShowPasswordForm}>
         <DialogContent className=" bg-white">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">Changer le mot de passe</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 ">{t('profile.changePasswordTitle')}</h2>
           <PasswordForm
             onBack={() => setShowPasswordForm(false)}
             changePassword={changePassword}

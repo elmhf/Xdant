@@ -19,29 +19,31 @@ import {
 } from "@/utils/invitations.js";
 import useUserStore from "@/components/features/profile/store/userStore";
 import { renderNotificationContent, renderNotificationIcon } from "./NotificationTemplates";
+import { useTranslation } from "react-i18next";
 
-function timeAgo(date) {
+function timeAgo(date, t) {
   const now = new Date();
   const past = new Date(date);
   const diff = Math.floor((now - past) / 1000);
 
-  if (diff < 60) return `${diff} sec ago`;
+  if (diff < 60) return `${diff} ${t('common.sec')} ${t('common.ago')}`;
   const minutes = Math.floor(diff / 60);
-  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 60) return `${minutes} ${t('common.min')} ${t('common.ago')}`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${hours}${t('common.hour')} ${t('common.ago')}`;
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return `${days}${t('common.day')} ${t('common.ago')}`;
 }
 
-function formatAbsoluteDate(date) {
+function formatAbsoluteDate(date, lng) {
   const d = new Date(date);
-  const weekday = d.toLocaleDateString('en-US', { weekday: 'long' });
-  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).toLowerCase();
+  const weekday = d.toLocaleDateString(lng || 'en-US', { weekday: 'long' });
+  const time = d.toLocaleTimeString(lng || 'en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).toLowerCase();
   return `${weekday} ${time}`;
 }
 
 export default function NotificationDropdown({ userId }) {
+  const { t, i18n } = useTranslation();
   const { notifications, loadingNotification, fetchNotifications, clearNotifications } =
     useNotificationStore();
   const getUserInfo = useUserStore(state => state.getUserInfo);
@@ -67,18 +69,18 @@ export default function NotificationDropdown({ userId }) {
 
     const validation = await validateInvitation(notif.token);
     if (!validation.ok) {
-      setStatusFor(notif.id, validation.data?.error || "Invalid token");
+      setStatusFor(notif.id, validation.data?.error || t('common.invalidToken'));
       setProcessingFor(notif.id, false);
       return;
     }
 
     const result = await acceptInvitation(notif.token, notif.id);
     if (!result.ok) {
-      setStatusFor(notif.id, result.data?.error || "Error accepting");
+      setStatusFor(notif.id, result.data?.error || t('common.errorAccepting'));
     } else {
       await getUserInfo()
       await fetchMyClinics()
-      setStatusFor(notif.id, "Accepted! Redirecting…");
+      setStatusFor(notif.id, t('common.acceptedRedirecting'));
     }
 
     setProcessingFor(notif.id, false);
@@ -90,16 +92,16 @@ export default function NotificationDropdown({ userId }) {
 
     const validation = await validateInvitation(notif.token);
     if (!validation.ok) {
-      setStatusFor(notif.id, validation.data?.error || "Invalid token");
+      setStatusFor(notif.id, validation.data?.error || t('common.invalidToken'));
       setProcessingFor(notif.id, false);
       return;
     }
 
     const result = await rejectInvitation(notif.token, notif.id);
     if (!result.ok) {
-      setStatusFor(notif.id, result.data?.error || "Error rejecting");
+      setStatusFor(notif.id, result.data?.error || t('common.errorRejecting'));
     } else {
-      setStatusFor(notif.id, "Rejected. Redirecting…");
+      setStatusFor(notif.id, t('common.rejectedRedirecting'));
 
       await getUserInfo()
       await fetchMyClinics()
@@ -155,7 +157,7 @@ export default function NotificationDropdown({ userId }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <DropdownMenuLabel className="text-gray-900 font-bold text-xl p-0">
-                Notifications
+                {t('common.notificationsLabel')}
               </DropdownMenuLabel>
               {notifications?.notifications?.length > 0 && (
                 <span className="text-xs font-medium text-[#7564ED] bg-[#7564ED]/10 px-2 py-1 rounded-full">
@@ -171,7 +173,7 @@ export default function NotificationDropdown({ userId }) {
                 className="h-8 px-2 text-xs text-gray-500 hover:text-red-500 hover:bg-red-50"
               >
                 <Trash2 className="h-4 w-4 mr-1" />
-                Clear all
+                {t('common.clearAll')}
               </Button>
             )}
           </div>
@@ -183,7 +185,7 @@ export default function NotificationDropdown({ userId }) {
               <div className="h-12 w-12 rounded-full bg-gray-50 flex items-center justify-center">
                 <Bell className="h-6 w-6 text-gray-300" />
               </div>
-              <p>No notifications yet</p>
+              <p>{t('common.noNotifications')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
@@ -206,9 +208,9 @@ export default function NotificationDropdown({ userId }) {
 
                       {/* Time Row */}
                       <div className="flex items-center gap-2 text-xs text-gray-400 ">
-                        <span>{formatAbsoluteDate(notif.created_at || notif.createdAt)}</span>
+                        <span>{formatAbsoluteDate(notif.created_at || notif.createdAt, i18n.language)}</span>
                         <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                        <span>{timeAgo(notif.created_at || notif.createdAt)}</span>
+                        <span>{timeAgo(notif.created_at || notif.createdAt, t)}</span>
                       </div>
 
                       {/* Status message */}
@@ -231,7 +233,7 @@ export default function NotificationDropdown({ userId }) {
                               handleReject(notif);
                             }}
                           >
-                            Decline
+                            {t('common.decline')}
                           </Button>
 
                           <Button
@@ -243,7 +245,7 @@ export default function NotificationDropdown({ userId }) {
                               handleAccept(notif);
                             }}
                           >
-                            Accept
+                            {t('common.accept')}
                           </Button>
                         </div>
                       )}

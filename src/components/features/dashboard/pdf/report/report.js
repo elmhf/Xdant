@@ -1,5 +1,6 @@
 'use client';
 import React, { useRef, useState, useEffect, useMemo, useCallback, createContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useDentalStore } from "@/stores/dataStore";
 import useImageStore from '@/stores/ImageStore';
@@ -42,6 +43,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 }
 
 export default function ReportPage() {
+  const { t } = useTranslation('patient');
   const { pushNotification } = useNotification();
   const { getCurrentClinic } = useUserStore();
   const pdfContentRef = useRef(null);
@@ -71,13 +73,13 @@ export default function ReportPage() {
       try {
         await useDentalStore.getState().fetchPatientData();
       } catch (error) {
-        pushNotification('error', 'Failed to load patient data', { description: error.message });
+        pushNotification('error', t('pdfReport.notifications.loadError'), { description: error.message });
       } finally {
         setIsLoading(false);
       }
     };
     fetchPatientData();
-  }, []);
+  }, [t]);
 
   const toggleSetting = useCallback((key) => {
     setSettings(prev => ({ ...prev, [key]: !prev[key] }));
@@ -111,22 +113,22 @@ export default function ReportPage() {
         settings,
         patientId: memoizedPatientData?.patientInfo?.patientId,
         onSuccess: (fileSize, totalPages) => {
-          pushNotification('success', 'PDF Generated Successfully', {
-            description: `Size: ${fileSize} KB | Pages: ${totalPages}`,
+          pushNotification('success', t('pdfReport.notifications.genSuccess'), {
+            description: t('pdfReport.notifications.genSuccessDesc', { size: fileSize, pages: totalPages }),
           });
         },
         onError: (error) => {
-          pushNotification('error', 'PDF Generation Failed', { description: error.message });
+          pushNotification('error', t('pdfReport.notifications.genError'), { description: error.message });
         },
       });
     } catch (error) {
-      pushNotification('error', 'Unexpected Error', { description: error.message });
+      pushNotification('error', t('pdfReport.notifications.unexpectedError'), { description: error.message });
     } finally {
       // 3. Cleanup
       setStaticCanvasImage(null);
       setIsGenerating(false);
     }
-  }, [memoizedPatientData, settings]);
+  }, [memoizedPatientData, settings, t]);
 
   if (isLoading) return <PatientDataSkeleton />;
 

@@ -98,7 +98,6 @@ const AddConditionDialog = ({ toothNumber, children }) => {
       description: formData.description,
       notes: formData.notes,
       date: new Date().toISOString().split('T')[0],
-      date: new Date().toISOString().split('T')[0],
       images: [],
       targetProblem: formData.targetProblem
     };

@@ -1,19 +1,21 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 function UsageBar({ used, total }) {
   const percent = total > 0 ? Math.min(100, (used / total) * 100) : 0;
   const remaining = Math.max(0, total - used);
-  
+
   return (
     <div className="flex items-center gap-2 min-w-[120px]">
       <span className="text-xs text-gray-500 whitespace-nowrap">
-        {remaining} remaining
+        {remaining} {useTranslation().t('company.remaining')}
       </span>
     </div>
   );
 }
 
 function SubscriptionHistory() {
+  const { t } = useTranslation();
   // Example static data for history
   const history = [
     {
@@ -31,49 +33,49 @@ function SubscriptionHistory() {
       period: "per month",
       startDate: "7/24/24",
       endDate: "10/23/24",
-    },    {
+    }, {
       name: "Basic AI Plan",
       status: "Expired",
       price: 49,
       period: "per month",
       startDate: "7/24/24",
       endDate: "10/23/24",
-    },    {
+    }, {
       name: "Basic AI Plan",
       status: "Expired",
       price: 49,
       period: "per month",
       startDate: "7/24/24",
       endDate: "10/23/24",
-    },    {
+    }, {
       name: "Basic AI Plan",
       status: "Expired",
       price: 49,
       period: "per month",
       startDate: "7/24/24",
       endDate: "10/23/24",
-    },    {
+    }, {
       name: "Basic AI Plan",
       status: "Expired",
       price: 49,
       period: "per month",
       startDate: "7/24/24",
       endDate: "10/23/24",
-    },    {
+    }, {
       name: "Basic AI Plan",
       status: "Expired",
       price: 49,
       period: "per month",
       startDate: "7/24/24",
       endDate: "10/23/24",
-    },    {
+    }, {
       name: "Basic AI Plan",
       status: "Expired",
       price: 49,
       period: "per month",
       startDate: "7/24/24",
       endDate: "10/23/24",
-    },    {
+    }, {
       name: "Basic AI Plan",
       status: "Expired",
       price: 49,
@@ -84,53 +86,54 @@ function SubscriptionHistory() {
   ];
   return (
 
-      
-      <div className="bg-white rounded-xl shadow border p-6 border-gray-100 overflow-x-auto">
-        <h4 className="text-lg font-bold mb-2">Subscription History</h4>
-        <table className="w-full text-sm">
-          <thead className="bg-white border-b border-gray-200 sticky top-0 z-10">
-            <tr>
-              <th className="min-w-56 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Plan</th>
-              <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Status</th>
-              <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Price</th>
-              <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Start</th>
-              <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">End</th>
-            </tr>
-          </thead>
-          <tbody>
-            {history.length > 0 ? (
-              history.map((plan, idx) => (
-                <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
-                  <td className="min-w-56 py-4 px-4 text-base text-gray-900 font-medium">{plan.name}</td>
-                  <td className="min-w-32 py-4 px-4">
-                    <span className={
-                      plan.status === "Expired"
-                        ? "bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full text-xs font-bold"
-                        : "bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-bold"
-                    }>
-                      {plan.status}
-                    </span>
-                  </td>
-                  <td className="min-w-32 py-4 px-4">${plan.price} <span className="text-xs text-gray-400">{plan.period}</span></td>
-                  <td className="min-w-32 py-4 px-4">{plan.startDate}</td>
-                  <td className="min-w-32 py-4 px-4">{plan.endDate}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="text-center py-8 text-gray-500 text-lg">
-                  No subscription history found.
+
+    <div className="bg-white rounded-xl shadow border p-6 border-gray-100 overflow-x-auto">
+      <h4 className="text-lg font-bold mb-2">{t('company.subscriptionHistory')}</h4>
+      <table className="w-full text-sm">
+        <thead className="bg-white border-b border-gray-200 sticky top-0 z-10">
+          <tr>
+            <th className="min-w-56 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.plan')}</th>
+            <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.status')}</th>
+            <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.price')}</th>
+            <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.start')}</th>
+            <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.end')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {history.length > 0 ? (
+            history.map((plan, idx) => (
+              <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
+                <td className="min-w-56 py-4 px-4 text-base text-gray-900 font-medium">{plan.name}</td>
+                <td className="min-w-32 py-4 px-4">
+                  <span className={
+                    plan.status === "Expired"
+                      ? "bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full text-xs font-bold"
+                      : "bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-bold"
+                  }>
+                    {plan.status === "Expired" ? t('company.expired') : t('company.active')}
+                  </span>
                 </td>
+                <td className="min-w-32 py-4 px-4">${plan.price} <span className="text-xs text-gray-400">{t('company.perMonth')}</span></td>
+                <td className="min-w-32 py-4 px-4">{plan.startDate}</td>
+                <td className="min-w-32 py-4 px-4">{plan.endDate}</td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" className="text-center py-8 text-gray-500 text-lg">
+                {t('company.noHistoryFound')}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
 
   );
 }
 
 function BillingSubscription() {
+  const { t } = useTranslation();
   // Example static data, replace with real data as needed
   const subscription = {
     name: "Wekly AI Subscription",
@@ -148,11 +151,11 @@ function BillingSubscription() {
 
   return (
     <div className="bg-white rounded-xl shadow p-6 border border-gray-100 max-w-xl ">
-      <h3 className="text-xl font-bold mb-2">Current Subscription</h3>
+      <h3 className="text-xl font-bold mb-2">{t('company.currentSubscription')}</h3>
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
           <span className="font-semibold text-lg">{subscription.name}</span>
-          <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full ml-2">{subscription.status}</span>
+          <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full ml-2">{t('company.active')}</span>
         </div>
       </div>
       <div className="divide-y divide-gray-100 mt-4">
@@ -164,8 +167,8 @@ function BillingSubscription() {
         ))}
       </div>
       <div className="flex items-center gap-4 mt-4 text-sm text-gray-400">
-        <span>Start date: {subscription.startDate}</span>
-        <span>End date: {subscription.endDate}</span>
+        <span>{t('company.startDateLabel')} {subscription.startDate}</span>
+        <span>{t('company.endDateLabel')} {subscription.endDate}</span>
       </div>
     </div>
   );

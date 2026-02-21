@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { File, AlertCircle, Trash2, Upload } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const GenericUploadDialog = ({
     isOpen,
     onClose,
     onUpload
 }) => {
+    const { t } = useTranslation('patient');
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [error, setError] = useState(null);
 
@@ -54,13 +56,13 @@ const GenericUploadDialog = ({
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent className="max-w-md bg-white rounded-2xl border-0 shadow-xl p-0 overflow-hidden">
-                <DialogTitle className="sr-only">Upload Files</DialogTitle>
+                <DialogTitle className="sr-only">{t('genericUpload.title')}</DialogTitle>
 
                 {/* Header */}
                 <div className="bg-white px-6 py-5 border-b border-gray-100">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-bold text-gray-900">
-                            Upload Files
+                            {t('genericUpload.title')}
                         </h2>
                     </div>
                 </div>
@@ -87,10 +89,10 @@ const GenericUploadDialog = ({
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-lg font-semibold text-gray-900">
-                                        Click to upload or drag and drop
+                                        {t('genericUpload.clickOrDrag')}
                                     </p>
                                     <p className="text-sm text-gray-500">
-                                        Images, Videos, CBCT, Pano, STL, DCM, PLY (Max size: 5GB)
+                                        {t('genericUpload.supportedFormats')}
                                     </p>
                                 </div>
                                 <div className="relative">
@@ -104,7 +106,7 @@ const GenericUploadDialog = ({
                                         htmlFor="generic-upload"
                                         className="cursor-pointer inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#7564ed] hover:bg-[#6354c9] transition-colors"
                                     >
-                                        Select File
+                                        {t('genericUpload.selectFile')}
                                     </Label>
                                 </div>
                             </div>
@@ -145,14 +147,14 @@ const GenericUploadDialog = ({
                         onClick={handleClose}
                         className="text-gray-600 hover:text-gray-800"
                     >
-                        Cancel
+                        {t('genericUpload.cancel')}
                     </Button>
                     <Button
                         onClick={handleConfirm}
                         disabled={uploadedFiles.length === 0}
                         className="bg-[#7564ed] hover:bg-[#6354c9] text-white font-medium"
                     >
-                        Upload
+                        {t('genericUpload.upload')}
                     </Button>
                 </div>
             </DialogContent>

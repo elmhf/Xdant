@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronDown, Clock, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { useTranslation } from 'react-i18next';
 
 // Enhanced Upload Toast Component with Multiple Files Support
 const UploadToast = ({
@@ -9,6 +10,7 @@ const UploadToast = ({
   uploads,
   onCancelUpload
 }) => {
+  const { t } = useTranslation('patient');
   const [isExpanded, setIsExpanded] = useState(true);
 
   const completedUploads = uploads.filter(upload => upload.status === 'success' || upload.status === 'error').length;
@@ -45,10 +47,10 @@ const UploadToast = ({
   };
 
   const getStatusText = () => {
-    if (allFinished) return 'Uploads Completed';
+    if (allFinished) return t('upload.allDone');
     const uploading = uploads.filter(upload => upload.status === 'uploading').length;
-    if (uploading > 0) return `Uploading ${uploading} file${uploading > 1 ? 's' : ''}...`;
-    return `${completedUploads}/${totalUploads} completed`;
+    if (uploading > 0) return t('upload.uploadingFiles', { count: uploading });
+    return `${completedUploads}/${totalUploads} ${t('upload.completed').toLowerCase()}`;
   };
 
   return (
@@ -59,7 +61,7 @@ const UploadToast = ({
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">
-          <h3 className="font-bold text-xl text-gray-900">Uploads</h3>
+          <h3 className="font-bold text-xl text-gray-900">{t('upload.title')}</h3>
           <div className="bg-[#5241cc] text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
             {totalUploads}
           </div>
@@ -78,7 +80,7 @@ const UploadToast = ({
               <div className="relative h-10 w-full bg-gray-200 rounded-full overflow-hidden">
                 {/* Background Layer (Text visible on Gray) */}
                 <div className="absolute inset-0 flex items-center justify-end px-4 text-xs font-medium text-gray-500 gap-2">
-                  <span>{upload.status === 'uploading' ? 'Uploading study...' : upload.status === 'success' ? 'Completed' : 'Failed'}</span>
+                  <span>{upload.status === 'uploading' ? t('upload.uploading') : upload.status === 'success' ? t('upload.completed') : t('upload.failed')}</span>
                   {upload.status === 'uploading' && <Clock className="w-3.5 h-3.5" />}
                   {upload.status === 'success' && <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />}
                 </div>
@@ -91,7 +93,7 @@ const UploadToast = ({
                   {/* Inner Container to keep text fixed relative to parent, not moving with bar width */}
                   <div className="w-[352px] h-full flex items-center justify-between px-4">
                     <span className="text-xs font-bold text-white whitespace-nowrap">
-                      {Math.round(upload.progress)}% <span className="mx-1 opacity-80 font-normal">{upload.speed} MB/s</span>
+                      {Math.round(upload.progress)}% <span className="mx-1 opacity-80 font-normal">{upload.speed} {t('upload.mbPerSecond', 'MB/s')}</span>
                     </span>
                   </div>
                 </div>
@@ -107,7 +109,7 @@ const UploadToast = ({
                     onClick={() => onCancelUpload(upload.id)}
                     className="text-sm font-medium text-[#7564ed] hover:text-[#6354c9] transition-colors"
                   >
-                    Cancel
+                    {t('upload.cancel')}
                   </button>
                 )}
               </div>

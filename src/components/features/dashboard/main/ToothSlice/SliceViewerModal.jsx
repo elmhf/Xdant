@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useDentalStore } from "@/stores/dataStore";
 import { useSliceImage, useSliceRegion } from "@/app/(dashboard)/patient/[patientId]/[report_id]/ToothSlice/[toothId]/useSliceImage";
 import { getRandomRegion } from './utils/sliceUtils';
@@ -9,6 +10,7 @@ import { getRandomRegion } from './utils/sliceUtils';
 // ✅ Modal for viewing larger slice
 // ✅ Modal for viewing larger slice with Zoom & Pan
 const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavigate, canNavPrev, canNavNext, zoom, setZoom, region, setRegion }) => {
+    const { t } = useTranslation();
     const img = useSliceImage(view, index);
     // Removed local zoom/region states to persist them from parent
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -95,9 +97,9 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                 <div className="flex justify-between items-start p-6 pb-2">
                     <div>
                         <h3 className="text-2xl font-bold capitalize text-gray-900 mb-1">
-                            {view === 'axial' ? 'Vue axiale' :
-                                view === 'sagittal' ? 'Vue sagittale' :
-                                    view === 'coronal' ? 'Vue coronale' : `${view} View`}
+                            {view === 'axial' ? t('dashboard.toothSlice.axialView') :
+                                view === 'sagittal' ? t('dashboard.toothSlice.sagittalView') :
+                                    view === 'coronal' ? t('dashboard.toothSlice.coronalView') : `${view} View`}
                         </h3>
 
                     </div>
@@ -141,7 +143,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                         ) : (
                             <div className="flex flex-col items-center gap-2 text-gray-400">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
-                                <span>Loading...</span>
+                                <span>{t('dashboard.toothSlice.loading')}</span>
                             </div>
                         )}
 
@@ -153,7 +155,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                         {/* Zoom Hint (visible on hover if zoom is 1) */}
                         {zoom === 1 && (
                             <div className="absolute bottom-4 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
-                                Scroll to zoom
+                                {t('dashboard.toothSlice.scrollToZoom')}
                             </div>
                         )}
 
@@ -190,7 +192,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                                 onChange={(e) => setZoom(parseFloat(e.target.value))}
                                 className="h-full w-2 appearance-none bg-gray-200 rounded-2xl outline-none cursor-pointer slider-vertical"
                                 style={{ writingMode: 'bt-lr', WebkitAppearance: 'slider-vertical', height: '100%' }}
-                                title="Zoom Level"
+                                title={t('dashboard.toothSlice.zoomLevel')}
                             />
                         </div>
                     </div>
@@ -208,7 +210,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                             checked={isSelected}
                             onChange={handleSelectionChange}
                         />
-                        <span className="text-gray-700 font-medium">Choisi</span>
+                        <span className="text-gray-700 font-medium">{t('dashboard.toothSlice.chosen')}</span>
                     </label>
                 </div>
 

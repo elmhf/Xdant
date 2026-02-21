@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,7 @@ export const LeaveClinicDialogWithVerification = ({
   onLeaveClinic,
   onBack
 }) => {
+  const { t } = useTranslation();
   if (!clinic) return null;
 
   const handleSubmit = (e) => {
@@ -42,12 +44,12 @@ export const LeaveClinicDialogWithVerification = ({
         <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center gap-3 text-gray-900 text-3xl font-bold">
             <AlertTriangle className="h-8 w-8 text-gray-600" />
-            {step === 1 ? "Vérification requise" : "Quitter la clinique"}
+            {step === 1 ? t('company.verificationRequired') : t('company.leaveClinic')}
           </DialogTitle>
           <DialogDescription className="text-base text-gray-600 mt-2">
             {step === 1
-              ? "Pour des raisons de sécurité, veuillez confirmer votre mot de passe avant de quitter la clinique."
-              : "Êtes-vous sûr de vouloir quitter cette clinique ? Cette action ne peut pas être annulée."
+              ? t('company.securityConfirmPasswordLeave')
+              : t('company.leaveClinicDescriptionMember', { name: clinic.clinic_name || clinic.clinicName || clinic.name })
             }
           </DialogDescription>
         </DialogHeader>
@@ -74,11 +76,11 @@ export const LeaveClinicDialogWithVerification = ({
 
               <div className="space-y-3">
                 <label className="block text-base font-semibold text-gray-700">
-                  Mot de passe
+                  {t('profile.password')}
                 </label>
                 <Input
                   type="password"
-                  placeholder="Entrez votre mot de passe"
+                  placeholder={t('company.passwordPlaceholder')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full h-12 text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
@@ -114,19 +116,19 @@ export const LeaveClinicDialogWithVerification = ({
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
                   <div className="text-base text-gray-700">
-                    <p className="font-bold mb-2">Attention :</p>
+                    <p className="font-bold mb-2">{t('company.irreversibleAction')}</p>
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-start gap-2">
                         <span className="text-gray-600 font-bold">•</span>
-                        <span>Vous perdrez l'accès à tous les patients de cette clinique</span>
+                        <span>{t('company.loseAccessPatients')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-gray-600 font-bold">•</span>
-                        <span>Vous ne pourrez plus voir les rendez-vous et les dossiers</span>
+                        <span>{t('company.cannotSeeAppointments')}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-gray-600 font-bold">•</span>
-                        <span>Vous devrez être réinvité pour rejoindre la clinique</span>
+                        <span>{t('company.mustBeReinvited')}</span>
                       </li>
                     </ul>
                   </div>
@@ -153,7 +155,7 @@ export const LeaveClinicDialogWithVerification = ({
             disabled={leaving}
             className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           >
-            {step === 1 ? "Annuler" : "Retour"}
+            {step === 1 ? t('company.cancel') : t('company.back')}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -164,8 +166,8 @@ export const LeaveClinicDialogWithVerification = ({
               }`}
           >
             {leaving
-              ? (step === 1 ? "Vérification..." : "Sortie en cours...")
-              : (step === 1 ? "Vérifier" : "Quitter la clinique")
+              ? (step === 1 ? t('company.verifying') : t('company.leavingInProgress'))
+              : (step === 1 ? t('company.verify') : t('company.leaveClinic'))
             }
           </Button>
         </DialogFooter>

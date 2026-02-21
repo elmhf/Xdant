@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ function validateEmail(email) {
 }
 
 export default function ClinicEmailForm({ value, onSave, onBack }) {
+  const { t } = useTranslation();
   const currentClinicId = useUserStore(state => state.currentClinicId);
   const [step, setStep] = useState(1); // 1: email, 2: otp
   const [email, setEmail] = useState(value);
@@ -23,7 +25,7 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!validateEmail(email)) {
-      pushNotification('error', "Adresse e-mail invalide.");
+      pushNotification('error', t('company.profile.invalidEmail'));
       return;
     }
     setLoading(true);
@@ -33,7 +35,7 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
         body: JSON.stringify({ newEmail: email, otpKey: "clinicUpdateEmail" }),
       });
 
-      pushNotification('success', "Un code de vérification a été envoyé à votre nouvelle adresse e-mail.");
+      pushNotification('success', t('company.profile.emailOtpSent'));
       setStep(2);
     } catch (e) {
       // apiClient handles toast errors, but if we want custom message in pushNotification:
@@ -41,7 +43,7 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
       // We can rely on apiClient's toast or keep using pushNotification if we extract message.
       // Assuming apiClient errors are handled, we might just log or set generic error if needed.
       // But preserving existing UX:
-      pushNotification('error', e.message || "Erreur réseau");
+      pushNotification('error', e.message || t('company.profile.networkError'));
     }
 
     setLoading(false);
@@ -51,7 +53,7 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     if (otp.join("").length < 6) {
-      pushNotification('error', "Veuillez saisir le code à 6 chiffres.");
+      pushNotification('error', t('company.profile.enterOtp'));
       return;
     }
     setLoading(true);
@@ -61,13 +63,13 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
         body: JSON.stringify({ code: otp.join(""), otpKey: "clinicUpdateEmail", clinicData: { email, clinicId: currentClinicId } }),
       });
 
-      pushNotification('success', "Adresse e-mail modifiée avec succès.");
+      pushNotification('success', t('company.profile.emailVerified'));
       setTimeout(() => {
         onSave(email);
       }, 1200);
 
     } catch (e) {
-      const message = e.data?.message || e.message || "Code incorrect ou expiré.";
+      const message = e.data?.message || e.message || t('company.profile.otpIncorrect');
       pushNotification('error', message);
     }
     setLoading(false);
@@ -106,11 +108,11 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
       {step === 1 && (
         <>
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
-            Pour garantir le sérieux et la sécurité de votre clinique, veuillez utiliser une <span className="font-semibold">adresse e-mail professionnelle</span> (par exemple, contact@votreclinique.com) et évitez d'utiliser une adresse personnelle ou celle que vous utilisez pour votre compte utilisateur. Cela permet de séparer votre activité professionnelle de vos accès personnels.
+            {t('company.profile.emailHelper')}
           </div>
           <div className="space-y-2">
             <Label htmlFor="email" className="text-base font-medium text-gray-700">
-              Adresse e-mail
+              {t('company.emailHeader')}
             </Label>
             <Input
               id="email"
@@ -128,7 +130,7 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
         <>
           <div className="space-y-4">
             <Label className="block text-base font-medium text-gray-700 mb-4">
-              Code de vérification
+              {t('company.profile.verificationCode')}
             </Label>
             <div className="flex gap-3 justify-center mb-4" dir="ltr">
               {otp.map((digit, i) => (
@@ -160,14 +162,17 @@ export default function ClinicEmailForm({ value, onSave, onBack }) {
           onClick={onBack}
           disabled={loading}
         >
-          Annuler
+          {t('common.cancel')}
         </Button>
         <Button
           type="submit"
           className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           disabled={loading}
         >
-          {loading ? (step === 1 ? "Envoi..." : "Vérification...") : (step === 1 ? "Envoyer le code" : "Valider le code")}
+          {loading
+            ? (step === 1 ? t('company.profile.sending') : t('company.profile.verifying'))
+            : (step === 1 ? t('company.profile.sendCode') : t('company.profile.validateCode'))
+          }
         </Button>
       </div>
     </form>

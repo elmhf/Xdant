@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from 'react-i18next';
 
 export const DeleteDoctorDialog = ({
   open,
@@ -18,6 +19,7 @@ export const DeleteDoctorDialog = ({
   loading,
   message
 }) => {
+  const { t } = useTranslation('patient');
   if (!doctor || !patient) return null;
 
   return (
@@ -26,7 +28,7 @@ export const DeleteDoctorDialog = ({
         <DialogHeader className="p-0">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-4xl font-bold text-gray-900">
-              Remove Doctor
+              {t('deleteDoctor.title')}
             </DialogTitle>
           </div>
         </DialogHeader>
@@ -34,7 +36,7 @@ export const DeleteDoctorDialog = ({
         {/* Confirmation Text */}
         <div className="flex flex-col gap-1 py-2">
           <p className="text-gray-600 text-lg">
-            Are you sure you want to remove <span className="font-bold text-gray-900">Dr. {doctor.first_name} {doctor.last_name}</span> from <span className="font-bold text-gray-900">{patient.first_name} {patient.last_name}</span>?
+            {t('deleteDoctor.confirm')} <span className="font-bold text-gray-900">Dr. {doctor.first_name} {doctor.last_name}</span> {t('deleteDoctor.from')} <span className="font-bold text-gray-900">{patient.first_name} {patient.last_name}</span>?
           </p>
         </div>
 
@@ -54,14 +56,14 @@ export const DeleteDoctorDialog = ({
             disabled={loading}
             className="h-10 px-6 text-base font-semibold  text-gray-700 hover:bg-gray-200 hover:text-gray-900 rounded-2xl"
           >
-            Cancel
+            {t('deleteDoctor.cancel')}
           </Button>
           <Button
             onClick={onConfirm}
             disabled={loading}
             className="h-10 px-6 text-lg font-bold bg-[#EBE8FC] border-3 border-transparent hover:border-[#7564ed] cursor-pointer text-[#7564ed]  rounded-2xl shadow-none"
           >
-            {loading ? "Removing..." : "Remove Doctor"}
+            {loading ? t('deleteDoctor.removing') : t('deleteDoctor.remove')}
           </Button>
         </DialogFooter>
       </DialogContent>

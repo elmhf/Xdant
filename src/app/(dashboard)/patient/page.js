@@ -25,12 +25,14 @@ import {
   getTabCounts
 } from './utils/patientUtils';
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import { useTranslation } from "react-i18next";
 
 export default function PatientPage() {
   const router = useRouter();
   // Get current clinic from the same hook used in company page
   const { currentClinic } = useClinicMembers();
   const { pushNotification } = useNotification();
+  const { t } = useTranslation('patient');
   const resetDentalStore = useDentalStore(state => state.resetData);
   const { userRole } = usePermissions(currentClinic?.id);
   const user = useUserStore(state => state.userInfo);
@@ -92,7 +94,7 @@ export default function PatientPage() {
         }
       } catch (error) {
         console.error('Error fetching patients:', error);
-        setPatientsError('Erreur lors du chargement des patients');
+        setPatientsError(t('list.notifications.fetchError'));
         setPatients([]);
       } finally {
         setPatientsLoading(false);
@@ -105,9 +107,9 @@ export default function PatientPage() {
   // Get tab counts using utility function
   const tabCounts = getTabCounts(patients);
   const tabs = [
-    { id: "my", label: "Mine", count: tabCounts.my },
-    { id: "all", label: "All", count: tabCounts.all },
-    { id: "favorites", label: "Favorites", count: tabCounts.favorites }
+    { id: "my", label: t('list.tabs.my'), count: tabCounts.my },
+    { id: "all", label: t('list.tabs.all'), count: tabCounts.all },
+    { id: "favorites", label: t('list.tabs.favorites'), count: tabCounts.favorites }
   ];
 
   // Filter and sort patients using utility functions
@@ -159,7 +161,7 @@ export default function PatientPage() {
       const result = await useUserStore.getState().deletePatient(patientToDelete.id);
 
       if (result.success) {
-        pushNotification("success", "Patient deleted successfully");
+        pushNotification("success", t('list.notifications.deleteSuccess'));
 
         // Refresh patients list
         if (currentClinic?.id) {
@@ -174,11 +176,11 @@ export default function PatientPage() {
         setPatientToDelete(null);
 
       } else {
-        pushNotification("error", result.message || "Error deleting patient");
+        pushNotification("error", result.message || t('list.notifications.deleteError'));
       }
     } catch (error) {
       console.error('Error deleting patient:', error);
-      pushNotification("error", "Network error while deleting patient");
+      pushNotification("error", t('list.notifications.deleteError'));
     } finally {
       setDeleteLoading(false);
     }
@@ -248,9 +250,9 @@ export default function PatientPage() {
         <div className="px-0 sm:px-0 lg:px-0 py-2">
           <div className="flex items-center flex-wrap justify-between">
             <h1 className="text-3xl md:text-4xl font-[500] text-gray-900">
-              <span className="text-7xl md:text-7xl font-[700]">Patients</span>
+              <span className="text-7xl md:text-7xl font-[700]">{t('list.title')}</span>
               <span className="text-lg md:text-xl font-bold text-gray-600 ml-2">
-                {currentClinic?.clinic_name || 'Clinic'}
+                {currentClinic?.clinic_name || t('side.clinic', 'Clinic')}
               </span>
             </h1>
 
@@ -261,7 +263,7 @@ export default function PatientPage() {
                 className="bg-[#7564ed] hover:bg-[#6a4fd8] text-xl text-white border-2 border-[#7564ed] h-12 font-semibold px-6"
               >
                 <Plus className="mr-2 text-xl h-5 w-5" />
-                Add new patient
+                {t('list.addNew')}
               </Button>
             )}
           </div>
@@ -294,7 +296,7 @@ export default function PatientPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
-                placeholder="Buscar por nombre o email del paciente"
+                placeholder={t('list.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 text-gray-950 pr-10 h-12 w-full"
@@ -321,7 +323,7 @@ export default function PatientPage() {
                   ? "bg-[#7564ed] text-white "
                   : "text-gray-600 hover:text-gray-900 hover:bg-white/20"
                   }`}
-                title="Card view"
+                title={t('list.view.cards')}
               >
                 <LayoutGrid className="h-8 w-8" />
               </Button>
@@ -333,7 +335,7 @@ export default function PatientPage() {
                   ? "bg-[#7564ed] text-white "
                   : "text-gray-600 hover:text-gray-900 hover:bg-white/20"
                   }`}
-                title="Table view"
+                title={t('list.view.table')}
               >
                 <List className="h-8 w-8" />
 

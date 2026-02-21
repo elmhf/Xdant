@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +12,12 @@ export default function ClinicPasswordVerifyStep({
   userEmail,
   onSuccess,
   onBack,
-  title = "Vérification du mot de passe",
-  description = "Entrez votre mot de passe pour continuer"
+  title,
+  description
 }) {
+  const { t } = useTranslation();
+  const displayTitle = title || t('company.profile.verifyPassword');
+  const displayDescription = description || t('company.profile.verifyPasswordDesc');
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { pushNotification } = useNotification();
@@ -21,7 +25,7 @@ export default function ClinicPasswordVerifyStep({
   const handleVerify = async (e) => {
     e.preventDefault();
     if (!password.trim()) {
-      pushNotification('error', "Le mot de passe est obligatoire.");
+      pushNotification('error', t('company.profile.passwordRequired'));
       return;
     }
     setLoading(true);
@@ -34,10 +38,10 @@ export default function ClinicPasswordVerifyStep({
       if (data.valid === true) {
         onSuccess();
       } else {
-        pushNotification('error', "Mot de passe incorrect.");
+        pushNotification('error', t('company.profile.passwordIncorrect'));
       }
     } catch (e) {
-      pushNotification('error', e.message || "Erreur réseau");
+      pushNotification('error', e.message || t('company.profile.networkError'));
     }
 
     setLoading(false);
@@ -50,8 +54,8 @@ export default function ClinicPasswordVerifyStep({
           <Fingerprint className="text-white h-10 w-10" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
-          <p className="text-gray-500 text-lg">{description}</p>
+          <h2 className="text-3xl font-bold text-gray-900">{displayTitle}</h2>
+          <p className="text-gray-500 text-lg">{displayDescription}</p>
         </div>
       </div>
 
@@ -60,7 +64,7 @@ export default function ClinicPasswordVerifyStep({
         <Input
           id="password"
           className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
-          placeholder="Entrez votre mot de passe"
+          placeholder={t('company.profile.passwordRequired')}
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -79,14 +83,14 @@ export default function ClinicPasswordVerifyStep({
           onClick={onBack}
           disabled={loading}
         >
-          Annuler
+          {t('common.cancel')}
         </Button>
         <Button
           type="submit"
           className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:outline-[#7564ed] hover:outline-4 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           disabled={!password || loading}
         >
-          {loading ? "Vérification..." : "Vérifier"}
+          {loading ? t('company.profile.verifying') : t('company.profile.verifyAction')}
         </Button>
       </div>
     </form>

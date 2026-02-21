@@ -1,8 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { File, Image as ImageIcon, Download, Play, Trash2 } from 'lucide-react';
 
 export const DentalFileCard = ({ file, helpers, onSelect, onDelete }) => {
+    const { t } = useTranslation('patient');
     const { isImage, isVideo, shouldPreview, getFileDetails, handleDownload } = helpers;
 
     return (
@@ -53,7 +55,7 @@ export const DentalFileCard = ({ file, helpers, onSelect, onDelete }) => {
                 <div
                     className="w-full h-full backdrop-blur-[2px] flex flex-col items-center justify-center bg-gray-50 p-6 text-center cursor-pointer hover:bg-gray-100 transition-colors group/download"
                     onClick={() => handleDownload(file)}
-                    title="Click to download"
+                    title={t('dentalData.card.downloadHint')}
                 >
                     <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center mb-3 group-hover/download:scale-110 transition-transform">
                         {isImage(file) ? <ImageIcon className="w-6 h-6 text-gray-400" /> : (isVideo(file) ? <Play className="w-6 h-6 text-gray-400" /> : <File className="w-6 h-6 text-[#7564ed]" />)}
@@ -66,11 +68,11 @@ export const DentalFileCard = ({ file, helpers, onSelect, onDelete }) => {
                     </p>
                     <div className="flex items-center gap-1 mt-2 text-[#7564ed] opacity-0 group-hover/download:opacity-100 transition-opacity">
                         <Download className="w-3 h-3" />
-                        <span className="text-xs font-medium">Download</span>
+                        <span className="text-xs font-medium">{t('dentalData.card.download')}</span>
                     </div>
                     {file.size > (50 * 1024 * 1024) && (isImage(file) || isVideo(file)) && (
                         <span className="text-[10px] text-orange-500 font-medium mt-2 bg-orange-50 px-2 py-0.5 rounded-full">
-                            Large Image
+                            {t('dentalData.card.largeImage')}
                         </span>
                     )}
                 </div>

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { UserPlus } from "lucide-react";
 import ClinicPasswordVerifyStep from "@/components/features/clinic-profile/ClinicPasswordVerifyStep";
 import useUserStore from "@/components/features/profile/store/userStore";
+import { useTranslation } from "react-i18next";
 
 export const AddTeamMemberDialog = ({
     open,
@@ -20,6 +21,7 @@ export const AddTeamMemberDialog = ({
     inviteMessage,
     handleInviteMember
 }) => {
+    const { t } = useTranslation();
     const { userInfo } = useUserStore();
     const [step, setStep] = useState(1);
 
@@ -35,7 +37,7 @@ export const AddTeamMemberDialog = ({
             <DialogTrigger asChild>
                 <Button className="px-4 h-12 flex items-center justify-center rounded-xl text-xl font-medium bg-[#6a4fd8] text-white transition-all duration-200">
                     <UserPlus className="mr-2 h-5 w-5" />
-                    Add Team Member
+                    {t('company.addTeamMember')}
                 </Button>
             </DialogTrigger>
             <DialogContent className=" bg-white border-2 border-gray-200 rounded-2xl max-w-2xl">
@@ -44,20 +46,20 @@ export const AddTeamMemberDialog = ({
                         userEmail={userInfo?.email}
                         onSuccess={() => setStep(2)}
                         onBack={() => handleOpenChange(false)}
-                        title="Security Check"
-                        description="Please verify your password to add a new team member."
+                        title={t('company.securityCheck')}
+                        description={t('company.securityCheckDesc')}
                     />
                 ) : (
                     <>
                         <DialogHeader className="pb-4 border-b border-gray-100">
                             <DialogTitle className="text-3xl font-bold text-gray-900">
-                                Add Team Member
+                                {t('company.addTeamMember')}
                             </DialogTitle>
                         </DialogHeader>
                         <div className="space-y-6 pt-4">
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="block text-base font-medium text-gray-500">
-                                    Email <span className="text-red-500">*</span>
+                                    {t('company.inviteEmail')} <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     id="email"
@@ -70,17 +72,17 @@ export const AddTeamMemberDialog = ({
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="Access level" className="block text-base font-medium text-gray-500">
-                                    Access level <span className="text-red-500">*</span>
+                                    {t('company.inviteRole')} <span className="text-red-500">*</span>
                                 </Label>
                                 <Select value={inviteRole} onValueChange={setInviteRole}>
                                     <SelectTrigger className="h-12 text-base rounded-xl w-full border-1 border-gray-300  focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20">
-                                        <SelectValue placeholder="Select a role" />
+                                        <SelectValue placeholder={t('company.selectRole')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="full_access">Full access</SelectItem>
-                                        <SelectItem value="clinic_access">Clinic access</SelectItem>
-                                        <SelectItem value="limited_access">Limited access</SelectItem>
-                                        <SelectItem value="assistant_access">Assistant</SelectItem>
+                                        <SelectItem value="full_access">{t('company.roles.full_access')}</SelectItem>
+                                        <SelectItem value="clinic_access">{t('company.roles.clinic_access')}</SelectItem>
+                                        <SelectItem value="limited_access">{t('company.roles.limited_access')}</SelectItem>
+                                        <SelectItem value="assistant_access">{t('company.roles.assistant_access')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -97,7 +99,7 @@ export const AddTeamMemberDialog = ({
                                 onClick={() => handleOpenChange(false)}
                                 className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                             >
-                                Cancel
+                                {t('company.cancel')}
                             </Button>
                             <Button
                                 type="submit"
@@ -105,7 +107,7 @@ export const AddTeamMemberDialog = ({
                                 disabled={inviteLoading}
                                 className="text-lg font-bold bg-[#EBE8FC]  text-[#7564ed] hover:outline-[#7564ed] hover:outline-4   transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                             >
-                                {inviteLoading ? "Sending..." : "Send"}
+                                {inviteLoading ? t('company.sending') : t('company.send')}
                             </Button>
                         </DialogFooter>
                     </>

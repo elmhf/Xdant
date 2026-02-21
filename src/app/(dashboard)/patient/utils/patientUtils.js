@@ -1,3 +1,5 @@
+import i18next from 'i18next';
+
 // Patient utility functions
 export const formatPatientName = (patient) => {
   return `${patient.first_name || ''} ${patient.last_name || ''}`.trim();
@@ -13,7 +15,7 @@ export const formatPatientEmail = (patient) => {
 
 export const formatDateOfBirth = (dateString) => {
   if (!dateString) return "-";
-  return new Date(dateString).toLocaleDateString('es-ES', {
+  return new Date(dateString).toLocaleDateString(i18next.language || 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -32,13 +34,13 @@ export const getGenderAvatarInitials = (gender) => {
 
 export const filterPatientsBySearch = (patients, searchQuery) => {
   if (!searchQuery.trim()) return patients;
-  
+
   return patients.filter(patient => {
     const fullName = formatPatientName(patient);
     const patientEmail = formatPatientEmail(patient);
     const searchLower = searchQuery.toLowerCase();
     return fullName.toLowerCase().includes(searchLower) ||
-           patientEmail.toLowerCase().includes(searchLower);
+      patientEmail.toLowerCase().includes(searchLower);
   });
 };
 

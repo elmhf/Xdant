@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,7 @@ export const DeleteInvitationDialog = ({
   loading,
   message
 }) => {
+  const { t } = useTranslation();
   if (!invitation) return null;
 
   // Get initials from email
@@ -29,7 +31,7 @@ export const DeleteInvitationDialog = ({
         <DialogHeader className="pb-2">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-gray-900 text-xl font-bold opacity-0">
-              Remove Invitation
+              {t('company.deleteInvitationTitle')}
             </DialogTitle>
             <button
               onClick={() => onOpenChange(false)}
@@ -53,12 +55,10 @@ export const DeleteInvitationDialog = ({
         {/* Description */}
         <div className="text-center pb-6">
           <h2 className="text-2xl font-bold text-gray-900 ">
-            Remove Invitation?
+            {t('company.deleteInvitationConfirmTitle')}
           </h2>
           <p className="text-gray-500 text-base">
-            Are you sure you want to remove{' '}
-            <span className="text-[#5b9bff] font-medium">{invitation.email}</span>
-            {' '}from your workspace
+            {t('company.deleteInvitationConfirmDesc', { email: invitation.email })}
           </p>
         </div>
 
@@ -78,14 +78,14 @@ export const DeleteInvitationDialog = ({
             disabled={loading}
             className="flex-1 h-12 text-base font-medium border-gray-300 text-gray-700 hover:bg-gray-50"
           >
-            Cancel
+            {t('company.cancel')}
           </Button>
           <Button
             onClick={onConfirm}
             disabled={loading}
             className="flex-1 h-12 text-base font-medium bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0"
           >
-            {loading ? "Removing..." : "Yes, remove"}
+            {loading ? t('company.removingMember') : t('company.removeMemberAction')}
           </Button>
         </DialogFooter>
       </DialogContent>

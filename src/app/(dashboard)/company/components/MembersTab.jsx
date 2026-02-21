@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 import { ChevronDown, Search, UserPlus, Trash2, UserCheck, SquarePen } from "lucide-react";
 import {
@@ -14,6 +15,7 @@ import { DeleteMemberDialog } from "./DeleteMemberDialog";
 import { ChangeMemberRoleDialog } from "./ChangeMemberRoleDialog";
 
 export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => {
+  const { t } = useTranslation();
   // Use custom hooks with passed data
   const {
     searchQuery,
@@ -81,7 +83,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
               <tr>
                 <th className="min-w-56 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white cursor-pointer" onClick={() => handleSort('name')}>
                   <div className="flex items-center space-x-1">
-                    <span>Membre</span>
+                    <span>{t('company.memberHeader')}</span>
                     {sorting.column === 'name' && (
                       <ChevronDown className={`h-4 w-4 transition-transform ${sorting.direction === 'desc' ? 'rotate-180' : ''}`} />
                     )}
@@ -89,7 +91,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                 </th>
                 <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white cursor-pointer" onClick={() => handleSort('email')}>
                   <div className="flex items-center space-x-1">
-                    <span>Email</span>
+                    <span>{t('company.emailHeader')}</span>
                     {sorting.column === 'email' && (
                       <ChevronDown className={`h-4 w-4 transition-transform ${sorting.direction === 'desc' ? 'rotate-180' : ''}`} />
                     )}
@@ -97,7 +99,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                 </th>
                 <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white cursor-pointer" onClick={() => handleSort('role')}>
                   <div className="flex items-center space-x-1">
-                    <span>access level</span>
+                    <span>{t('company.accessLevelHeader')}</span>
                     {sorting.column === 'role' && (
                       <ChevronDown className={`h-4 w-4 transition-transform ${sorting.direction === 'desc' ? 'rotate-180' : ''}`} />
                     )}
@@ -105,7 +107,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                 </th>
                 <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white cursor-pointer" onClick={() => handleSort('joinDate')}>
                   <div className="flex items-center space-x-1">
-                    <span>Date d'adhésion</span>
+                    <span>{t('company.joinDateHeader')}</span>
                     {sorting.column === 'joinDate' && (
                       <ChevronDown className={`h-4 w-4 transition-transform ${sorting.direction === 'desc' ? 'rotate-180' : ''}`} />
                     )}
@@ -130,7 +132,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                           variant="ghost"
                           className="h-8 w-8 p-0 text-gray-600 hover:text-[#7564ed]"
                           onClick={() => openChangeDialog(member)}
-                          title="Modifier le rôle"
+                          title={t('company.editRoleTooltip')}
                         >
                           <SquarePen className="h-5 w-5" />
                         </Button>
@@ -140,7 +142,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                           onClick={() => {
                             openDeleteDialog(member);
                           }}
-                          title="Supprimer le compte"
+                          title={t('company.removeMemberTooltip')}
                         >
                           <Trash2 className="h-5 w-5" />
                         </Button>
@@ -150,13 +152,13 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                 ))
               ) : (
                 <tr>
-                  
+
                   <td colSpan={6} className="text-center py-8 text-gray-500 text-lg">
                     <div className="flex flex-col items-center">
-                      <UserPlus  className="h-12 w-12 text-gray-400 mb-2" />
-                      <p className="text-gray-500 text-lg font-medium">Aucun membre trouvé</p>
+                      <UserPlus className="h-12 w-12 text-gray-400 mb-2" />
+                      <p className="text-gray-500 text-lg font-medium">{t('company.noMembersFound')}</p>
                       <p className="text-gray-400 text-sm">
-                        {hasActiveFilters ? "Aucun membre ne correspond à vos filtres" : "Commencez par inviter des membres à votre clinique"}
+                        {hasActiveFilters ? t('company.noMembersMatchingFilters') : t('company.inviteMembersPrompt')}
                       </p>
                       {hasActiveFilters && (
                         <Button
@@ -164,7 +166,7 @@ export const MembersTab = ({ currentClinic, clinicMembers, loading, error }) => 
                           variant="outline"
                           className="mt-2"
                         >
-                          Effacer les filtres
+                          {t('company.clearFilters')}
                         </Button>
                       )}
                     </div>

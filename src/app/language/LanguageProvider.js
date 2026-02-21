@@ -7,28 +7,22 @@ import { useTranslation } from 'react-i18next';
 export function LanguageProvider({ children, defaultLanguage = 'en' }) {
   const { i18n } = useTranslation();
 
-  // Set initial language from prop (SSR-safe)
   useEffect(() => {
-    if (i18n.language !== defaultLanguage) {
-      i18n.changeLanguage(defaultLanguage);
-      document.documentElement.lang = defaultLanguage;
-      document.documentElement.dir = defaultLanguage === 'ar' ? 'rtl' : 'ltr';
-    }
-  }, [defaultLanguage, i18n]);
+    if (typeof window === 'undefined') return;
 
-  // Allow user to change language after hydration (client-only)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedLanguage = localStorage.getItem('preferredLanguage');
-      const browserLanguage = navigator.language?.split('-')[0];
-      const newLang = savedLanguage || browserLanguage || defaultLanguage;
-      if (newLang && newLang !== i18n.language) {
-        i18n.changeLanguage(newLang);
-        document.documentElement.lang = newLang;
-        document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
-      }
+    // 1. Prefer the user's saved language from localStorage
+    // 2. Fall back to the browser's language
+    // 3. Finally fall back to the defaultLanguage prop
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    const browserLanguage = navigator.language?.split('-')[0];
+    const targetLang = savedLanguage || browserLanguage || defaultLanguage;
+
+    if (targetLang && targetLang !== i18n.language) {
+      i18n.changeLanguage(targetLang);
     }
-  }, [i18n, defaultLanguage]);
+    document.documentElement.lang = targetLang;
+    document.documentElement.dir = targetLang === 'ar' ? 'rtl' : 'ltr';
+  }, []); // Only run once on mount — user controls language after that
 
   return children;
 }

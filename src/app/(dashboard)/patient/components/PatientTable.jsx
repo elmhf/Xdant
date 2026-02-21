@@ -19,6 +19,8 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { useTranslation } from 'react-i18next';
+
 const PatientTable = ({
   patients,
   sorting,
@@ -32,6 +34,7 @@ const PatientTable = ({
   onViewInfo,
   favoriteLoadingStates = {}
 }) => {
+  const { t } = useTranslation('patient');
   const router = useRouter();
   console.log(patients, "patients")
   // Get user info and current clinic from store
@@ -84,7 +87,7 @@ const PatientTable = ({
                 onClick={() => onSort('name')}
               >
                 <div className="flex items-center space-x-1">
-                  <span>Nombre del paciente</span>
+                  <span>{t('table.patientName')}</span>
                   <div className="flex flex-col">
                     <ChevronUp className="w-3 h-3 text-gray-400" />
                     <ChevronDown className="w-3 h-3 text-gray-400" />
@@ -97,7 +100,7 @@ const PatientTable = ({
                 onClick={() => onSort('dateOfBirth')}
               >
                 <div className="flex items-center space-x-1">
-                  <span>Fecha de nacimiento</span>
+                  <span>{t('table.dateOfBirth')}</span>
                   <div className="flex flex-col">
                     <ChevronUp className="w-3 h-3 text-gray-400" />
                     <ChevronDown className="w-3 h-3 text-gray-400" />
@@ -107,17 +110,17 @@ const PatientTable = ({
 
               <th className="min-w-80 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg hidden md:table-cell bg-white">
                 <div className="flex items-center space-x-1">
-                  <span>Doctors treating</span>
+                  <span>{t('table.doctorsTreating')}</span>
                 </div>
               </th>
               <th className="min-w-70 text-right py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg hidden lg:table-cell bg-white">
                 <div className="flex items-center space-x-1 justify-start">
-                  <span className="truncate max-w-60">Email</span>
+                  <span className="truncate max-w-60">{t('table.email')}</span>
 
                 </div>
               </th>
               <th className="min-w-32 text-center py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">
-                Actions
+                {t('table.actions')}
               </th>
             </tr>
           </thead>
@@ -179,7 +182,7 @@ const PatientTable = ({
                           </div>
                         )
                       ) : (
-                        <span className="text-base text-gray-500">Aucun médecin assigné</span>
+                        <span className="text-base text-gray-500">{t('table.noDoctorAssigned')}</span>
                       )}
                     </div>
                   </td>
@@ -200,7 +203,7 @@ const PatientTable = ({
                           ? 'text-[#ff254e] hover:bg-gray-100'
                           : 'text-gray-400 hover:text-[#ff254e] hover:bg-gray-100'
                           }`}
-                        title={patient.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                        title={patient.isFavorite ? t('table.removeFromFavorites') : t('table.addToFavorites')}
                         disabled={favoriteLoadingStates[patient.id] || false}
                       >
                         {favoriteLoadingStates[patient.id] ? (
@@ -214,7 +217,7 @@ const PatientTable = ({
                         size="sm"
                         onClick={(e) => handleInfoClick(e, patient)}
                         className="h-8 w-8 p-0 text-gray-400 hover:text-[#7564ed] hover:bg-gray-100"
-                        title="View patient info"
+                        title={t('table.viewInfo')}
                       >
                         <Info className="h-5 w-5" />
                       </Button>
@@ -252,11 +255,11 @@ const PatientTable = ({
                       </EmptyMedia>
 
                       <EmptyTitle className="text-xl font-semibold">
-                        Aucun patient trouvé
+                        {t('table.noPatientsFound')}
                       </EmptyTitle>
 
                       <EmptyDescription className="text-gray-600 text-base">
-                        Aucun patient ne correspond à votre recherche ou vos filtres.
+                        {t('table.noPatientsDesc')}
                       </EmptyDescription>
                     </EmptyHeader>
 

@@ -138,10 +138,10 @@ const ToothDiagnosis = memo(({
             {t('side.card.Tooth')} {idCard}
           </h2>
           <span className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent">
-            {roots} roots
+            {t('side.card.rootsCount', { count: roots })}
           </span>
           <span className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent">
-            {canals} canals
+            {t('side.card.canalsCount', { count: canals })}
           </span>
         </div>
       </div>
@@ -194,7 +194,7 @@ const ToothDiagnosis = memo(({
                 router.push(`${pathname}/ToothSlice/${idCard}`);
               }}
             >
-              Slice
+              {t('side.slice')}
             </Button>
           )}
 
@@ -208,7 +208,7 @@ const ToothDiagnosis = memo(({
               updateToothApproval(idCard, !isApproved);
             }}
           >
-            {isApproved ? "Approved" : "Approve"}
+            {isApproved ? t('common.approved') : t('common.approve')}
           </Button>
         </div>
       </div>
@@ -275,10 +275,10 @@ const ToothDiagnosis = memo(({
                       }}
                       className="bg-[#0d0c22] text-white"
                     >
-                      Save
+                      {t('common.save')}
                     </Button>
                     <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setEditIdx(null); }}>
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                     <Button
                       size="sm"
@@ -291,7 +291,7 @@ const ToothDiagnosis = memo(({
                       }}
                       className="text-white"
                     >
-                      Remove
+                      {t('common.remove')}
                     </Button>
                   </div>
                 </>
@@ -317,7 +317,7 @@ const ToothDiagnosis = memo(({
                 setShowAllNotes(!showAllNotes);
               }}
             >
-              {showAllNotes ? `Show less` : `Show ${notes.length - 3} more note${notes.length - 3 > 1 ? 's' : ''}`}
+              {showAllNotes ? t('common.showLess') : t('side.card.showMoreNotes', { count: notes.length - 3 })}
             </Button>
           )}
         </div>

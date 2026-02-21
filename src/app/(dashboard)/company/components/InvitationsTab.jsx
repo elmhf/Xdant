@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Search, Mail, Trash2, ChevronDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   useMemberBadges,
   useTableUtils,
@@ -13,6 +14,7 @@ import {
 import { DeleteInvitationDialog } from "./DeleteInvitationDialog";
 
 export const InvitationsTab = ({ currentClinic, invitations, loading, error }) => {
+  const { t } = useTranslation();
   // Get store functions and state
   const { getStatusBadge, getRoleBadge } = useMemberBadges();
   const { formatDate } = useTableUtils();
@@ -58,11 +60,11 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
       <table className="w-fit min-w-full text-sm">
         <thead className="bg-white border-b border-gray-200 sticky top-0 z-10">
           <tr>
-            <th className="min-w-56 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Email</th>
-            <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Access level</th>
-            <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Statut</th>
-            <th className="min-w-56 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Date d'envoi - Expire le</th>
-            <th className="min-w-32 text-right py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">Actions</th>
+            <th className="min-w-56 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.emailHeader')}</th>
+            <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.accessLevelHeader')}</th>
+            <th className="min-w-32 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.status')}</th>
+            <th className="min-w-56 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.sentDateExpires')}</th>
+            <th className="min-w-32 text-right py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">{t('company.actions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -83,7 +85,7 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
                         className="h-10 px-4 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 font-medium rounded-2xl"
                         onClick={() => openDeleteInvitationDialog(invitation)}
                       >
-                        Remove
+                        {t('company.remove')}
                       </Button>
                     ) : (
                       <Button
@@ -91,7 +93,7 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
                         className="h-10 px-4 text-gray-600 border-gray-200 hover:bg-gray-100 font-medium rounded-2xl"
                         onClick={() => openDeleteInvitationDialog(invitation)}
                       >
-                        Cancel
+                        {t('company.cancel')}
                       </Button>
                     )}
                   </div>
@@ -121,14 +123,14 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
             {loading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-                <span className="ml-2 text-gray-600">Chargement des invitations...</span>
+                <span className="ml-2 text-gray-600">{t('company.loadingInvitations')}</span>
               </div>
             ) : error ? (
               <div className="flex items-center justify-center py-8">
                 <div className="text-center">
                   <p className="text-red-600 mb-4">{error}</p>
                   <Button onClick={() => window.location.reload()} className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed]">
-                    Réessayer
+                    {t('company.retry')}
                   </Button>
                 </div>
               </div>
@@ -138,12 +140,12 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
                 <div className="w-full">
                   <Card className="rounded-xl shadow border border-gray-100 bg-white overflow-hidden gap-0">
                     <div className="p-6 pb-2 border-b border-gray-100">
-                      <h3 className="text-3xl font-bold text-gray-900">Invitations en attente</h3>
+                      <h3 className="text-3xl font-bold text-gray-900">{t('company.pendingInvitations')}</h3>
                     </div>
                     <CardContent className="p-2">
                       <InvitationsTable
                         data={pendingInvitations}
-                        emptyMessage="Aucune invitation en attente"
+                        emptyMessage={t('company.noPendingInvitations')}
                       />
                     </CardContent>
                   </Card>
@@ -153,12 +155,12 @@ export const InvitationsTab = ({ currentClinic, invitations, loading, error }) =
                 <div className="w-full">
                   <Card className="rounded-xl shadow border border-gray-100 bg-white overflow-hidden gap-0">
                     <div className="p-6 pb-2 border-b border-gray-100">
-                      <h3 className="text-3xl font-bold text-gray-900">Historique des invitations</h3>
+                      <h3 className="text-3xl font-bold text-gray-900">{t('company.invitationHistory')}</h3>
                     </div>
                     <CardContent className="p-2">
                       <InvitationsTable
                         data={historyInvitations}
-                        emptyMessage="Aucun historique d'invitation"
+                        emptyMessage={t('company.noHistoryInvitations')}
                       />
                     </CardContent>
                   </Card>

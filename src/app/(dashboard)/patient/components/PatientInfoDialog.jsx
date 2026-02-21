@@ -8,12 +8,14 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MapPin, Mail, Calendar, Phone, Users } from "lucide-react";
 import { formatPatientName, formatDateOfBirth, getPatientAvatarInitials } from '../utils/patientUtils';
+import { useTranslation } from 'react-i18next';
 
 const PatientInfoDialog = ({ isOpen, onClose, patient }) => {
+    const { t } = useTranslation('patient');
     if (!patient) return null;
 
     const calculateAge = (dateOfBirth) => {
-        if (!dateOfBirth) return 'Unknown';
+        if (!dateOfBirth) return t('patientInfo.unknown');
         const today = new Date();
         const birthDate = new Date(dateOfBirth);
         let age = today.getFullYear() - birthDate.getFullYear();
@@ -36,7 +38,7 @@ const PatientInfoDialog = ({ isOpen, onClose, patient }) => {
                             {formatPatientName(patient)}
                         </h2>
                         <p className="text-base text-gray-600 mt-1">
-                            {patient.gender ? `${patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)}` : 'Patient'} | Age {calculateAge(patient.date_of_birth)}
+                            {patient.gender ? `${patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)}` : t('patientInfo.patient')} | {t('patientInfo.age')} {calculateAge(patient.date_of_birth)}
                         </p>
                     </div>
 
@@ -86,7 +88,7 @@ const PatientInfoDialog = ({ isOpen, onClose, patient }) => {
                             <div className="flex items-start gap-3">
                                 <Users className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
                                 <div>
-                                    <p className="text-sm font-semibold text-gray-900 mb-1">Treating Doctors</p>
+                                    <p className="text-sm font-semibold text-gray-900 mb-1">{t('patientInfo.treatingDoctors')}</p>
                                     {patient.treating_doctors.map((doctor, index) => (
                                         <p key={doctor.id || index} className="text-base text-gray-700">
                                             {doctor.first_name} {doctor.last_name}

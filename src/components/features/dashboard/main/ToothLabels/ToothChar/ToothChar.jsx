@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useDentalStore } from "@/stores/dataStore";
 import { DataContext } from "../../../dashboard";
 import { useRouter, useParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 const TOOTH_CATEGORIES = {
   Healthy: {
@@ -174,6 +175,7 @@ const useDentalChart = () => {
   const [dentalChart, setDentalChart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
   const abortControllerRef = useRef(null);
 
   const fetchDentalChart = useCallback(async () => {
@@ -202,7 +204,7 @@ const useDentalChart = () => {
     } catch (err) {
       if (err.name !== 'AbortError') {
         console.error("Fetch error:", err);
-        setError("Failed to load dental chart. Please try again later.");
+        setError(t('dashboard.failedLoadChart'));
         dentalChartCache.clear();
       }
     } finally {
@@ -238,6 +240,7 @@ const ToothChar = ({
   const { toothNumberSelect, setToothNumberSelect } = useContext(DataContext) || useState(0);
   const { dentalChart, loading: chartLoading, error: chartError, retry } = useDentalChart();
   const { toothSVGs, loading: svgLoading, error: svgError } = useToothSVGs();
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
 
@@ -339,11 +342,11 @@ const ToothChar = ({
               </motion.div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Tooth {number} - {category}</p>
+              <p>{t('dashboard.toothLabel', { number, category: t(`dashboard.${category.toLowerCase()}`) })}</p>
               {toothExists ? (
-                <p>Click to view slices</p>
+                <p>{t('dashboard.clickViewSlices')}</p>
               ) : (
-                <p className="text-red-500">Tooth does not exist</p>
+                <p className="text-red-500">{t('dashboard.toothNotExist')}</p>
               )}
             </TooltipContent>
           </Tooltip>
@@ -353,7 +356,7 @@ const ToothChar = ({
   }, [data.teeth, toothNumberSelect, handleToothClick, settings, isSelectionMode, selectedTeeth]);
 
   const renderNormalMode = useCallback(() => {
-    if (!Array.isArray(dentalChart)) return <div className="text-red-500 text-center">Invalid dental chart format</div>;
+    if (!Array.isArray(dentalChart)) return <div className="text-red-500 text-center">{t('dashboard.invalidChartFormat')}</div>;
 
     return dentalChart.flatMap((quad, i) => {
       if (!quad?.teeth || !Array.isArray(quad.teeth)) return [];
@@ -446,7 +449,7 @@ const ToothChar = ({
           className="px-4 py-2 rounded bg-indigo-500 text-white hover:bg-indigo-600 transition"
           onClick={retry}
         >
-          Retry
+          {t('common.retry')}
         </button>
       </div>
     );
@@ -456,12 +459,12 @@ const ToothChar = ({
     return (
       <div className="flex flex-col items-center justify-center gap-3 p-6 text-center">
         <div className="text-[1vw]">📋</div>
-        <div className="text-gray-500 font-semibold">No dental chart data available</div>
+        <div className="text-gray-500 font-semibold">{t('dashboard.noChartData')}</div>
         <button
           className="px-4 py-2 rounded bg-indigo-500 text-white hover:bg-indigo-600 transition"
           onClick={retry}
         >
-          Reload
+          {t('common.reload')}
         </button>
       </div>
     );

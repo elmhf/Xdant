@@ -18,10 +18,12 @@ import { ClinicProfileTab } from "./components/ClinicProfileTab";
 import { MembersTab } from "./components/MembersTab";
 import { InvitationsTab } from "./components/InvitationsTab";
 import { AccessDenied } from "./components/AccessDenied";
+import { useTranslation } from "react-i18next";
 
 import useUserStore from "@/components/features/profile/store/userStore";
 
 export default function page() {
+  const { t } = useTranslation();
   // Use custom hooks
   const { clinicMembers, loading, error, refetch, currentClinic } = useClinicMembers();
   const {
@@ -75,7 +77,7 @@ export default function page() {
         }
       } catch (error) {
         console.error('Error fetching invitations:', error);
-        setInvitationsError('Erreur lors du chargement des invitations');
+        setInvitationsError(t('company.loadingInvitationsError'));
         setInvitations([]);
       } finally {
         setInvitationsLoading(false);
@@ -136,10 +138,10 @@ export default function page() {
           <div className="mb-6">
             <div className="animate-spin rounded-xl h-16 w-16 border-b-2 border-[#7564ed] mx-auto mb-4"></div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Chargement des données
+              {t('company.loadingTitle')}
             </h2>
             <p className="text-gray-600 text-lg">
-              Veuillez patienter pendant le chargement des informations de la clinique...
+              {t('company.loadingDesc')}
             </p>
           </div>
         </div>
@@ -157,17 +159,17 @@ export default function page() {
               <Building className="h-8 w-8 text-gray-400" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Aucune clinique trouvée
+              {t('company.noClinicTitle')}
             </h2>
             <p className="text-gray-600 text-lg mb-6">
-              Vous n'êtes actuellement membre d'aucune clinique. Veuillez contacter votre administrateur pour être ajouté à une clinique.
+              {t('company.noClinicDesc')}
             </p>
           </div>
           <Button
             onClick={() => window.location.href = "/"}
             className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white border-2 border-[#7564ed] h-12 text-base font-semibold px-8"
           >
-            Aller au Dashboard
+            {t('company.backToDashboard')}
           </Button>
         </div>
       </div>
@@ -181,8 +183,8 @@ export default function page() {
     return (
       <AccessDenied
         userRole={userRole}
-        requiredRole="Membre de la clinique"
-        message="Vous n'êtes pas membre de cette clinique ou n'avez pas les permissions nécessaires pour accéder aux informations de la clinique."
+        requiredRole={t('company.requiredRoleMember')}
+        message={t('company.accessDeniedDesc')}
       />
     );
   }
@@ -206,11 +208,11 @@ export default function page() {
         <div className="">
           <div className="text-start">
             <h2 className="text-3xl md:text-4xl font-[650] text-gray-900 mb-2">
-              {currentClinic?.clinic_name || 'Paramètres de la clinique'}
+              {currentClinic?.clinic_name || t('company.clinicSettings')}
             </h2>
             {userRole && (
               <p className="text-sm text-gray-500">
-                Connecté en tant que : <span className="font-semibold">{userRole}</span>
+                {t('company.connectedAs')} <span className="font-semibold">{userRole}</span>
               </p>
             )}
           </div>
@@ -226,7 +228,7 @@ export default function page() {
                 value="profile"
                 className="px-4 h-12 flex items-center justify-center rounded-xl bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7564ed] data-[state=active]:!bg-[#7564ed] data-[state=active]:!text-white"
               >
-                Clinic info
+                {t('company.clinicInfoTab')}
               </TabsTrigger>
               {canViewRestrictedTabs && (
                 <>
@@ -234,13 +236,13 @@ export default function page() {
                     value="members"
                     className="px-4 h-12 flex items-center justify-center rounded-xl bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7564ed] data-[state=active]:!bg-[#7564ed] data-[state=active]:!text-white"
                   >
-                    Team
+                    {t('company.teamTab')}
                   </TabsTrigger>
                   <TabsTrigger
                     value="invitations"
                     className="px-4 h-12 flex items-center justify-center rounded-xl bg-gray-100 text-gray-500 text-xl font-medium transition-all duration-200 hover:bg-[#bcb3f8] hover:text-[#7564ed] data-[state=active]:!bg-[#7564ed] data-[state=active]:!text-white"
                   >
-                    Invitations
+                    {t('company.invitationsTab')}
                   </TabsTrigger>
 
                 </>

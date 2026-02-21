@@ -4,8 +4,10 @@ import SettingButton from './buttons/SettingButton';
 import { useState, useRef, useEffect, useContext, useMemo } from 'react';
 import { DataContext } from "../../dashboard";
 import { useDentalStore } from "@/stores/dataStore";
+import { useTranslation } from "react-i18next";
 
 const Toothlabels = ({ NumberOnlyMode = false }) => {
+  const { t } = useTranslation();
   const { toothNumberSelect, setToothNumberSelect, selectedTeeth, setSelectedTeeth } = useContext(DataContext);
   const [selectedTooth, setSelectedTooth] = useState(null);
   const chartContainerRef = useRef(null);
@@ -114,11 +116,11 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
         {!NumberOnlyMode && <div className="flex justify-between items-center w-full">
           <div className="flex items-center gap-3">
             <h2 className="text-2xl font-bold text-gray-800">
-              {isSelectionMode ? 'Select teeth' : 'Teeth in the Report'}
+              {isSelectionMode ? t('dashboard.selectTeeth') : t('dashboard.teethInReport')}
             </h2>
             {isSelectionMode && selectedTeeth?.length > 0 && (
               <span className="px-3 py-1 bg-[#7564ed] text-white text-sm font-semibold rounded-full ">
-                {selectedTeeth.length} selected
+                {t('dashboard.selectedCount', { count: selectedTeeth.length })}
               </span>
             )}
           </div>
@@ -128,7 +130,7 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
              bg-[#EBE8FC] text-[#7564ed] hover:bg-[#ddd6fc] 
               `}
           >
-            {isSelectionMode ? 'Save' : 'Select teeth'}
+            {isSelectionMode ? t('common.save') : t('dashboard.selectTeeth')}
           </button>
         </div>}
 
@@ -145,7 +147,7 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                 >
-                  All {categoryCounts.Total}
+                  {t('dashboard.all', { count: categoryCounts.Total })}
                 </button>
                 <button
                   onClick={() => toggleCategory('Healthy')}
@@ -154,7 +156,7 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                 >
-                  Healthy {categoryCounts.Healthy}
+                  {t('dashboard.healthyCount', { count: categoryCounts.Healthy })}
                 </button>
                 <button
                   onClick={() => toggleCategory('Treated')}
@@ -163,7 +165,7 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                 >
-                  Treated {categoryCounts.Treated}
+                  {t('dashboard.treatedCount', { count: categoryCounts.Treated })}
                 </button>
                 <button
                   onClick={() => toggleCategory('Missing')}
@@ -172,7 +174,7 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                 >
-                  Missing {categoryCounts.Missing}
+                  {t('dashboard.missingCount', { count: categoryCounts.Missing })}
                 </button>
                 <button
                   onClick={() => toggleCategory('Unhealthy')}
@@ -181,7 +183,7 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                 >
-                  Unhealthy {categoryCounts.Unhealthy}
+                  {t('dashboard.unhealthyCount', { count: categoryCounts.Unhealthy })}
                 </button>
               </>
             ) : (
@@ -189,19 +191,19 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
               <div className="flex items-center gap-1">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full border-2 border-[#0d0c22]"></div>
-                  <span className="text-gray-500 font-medium">Healthy</span>
+                  <span className="text-gray-500 font-medium">{t('dashboard.healthy')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-[#8b5cf6]"></div>
-                  <span className="text-gray-500 font-medium">Treated</span>
+                  <span className="text-gray-500 font-medium">{t('dashboard.treated')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 text-xl text-[#f43f5e] flex items-center justify-center font-bold">×</div>
-                  <span className="text-gray-500 font-medium">Missing</span>
+                  <span className="text-gray-500 font-medium">{t('dashboard.missing')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-[#f43f5e]"></div>
-                  <span className="text-gray-500 font-medium">Unhealthy</span>
+                  <span className="text-gray-500 font-medium">{t('dashboard.unhealthy')}</span>
                 </div>
               </div>
             )}

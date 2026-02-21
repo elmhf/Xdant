@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { X } from "lucide-react";
 import useUserStore from "@/components/features/profile/store/userStore";
+import { useTranslation } from "react-i18next";
 import ClinicPasswordVerifyStep from "@/components/features/clinic-profile/ClinicPasswordVerifyStep";
 
 export const DeleteMemberDialog = ({
@@ -20,6 +21,7 @@ export const DeleteMemberDialog = ({
   loading,
   message
 }) => {
+  const { t } = useTranslation();
   const { userInfo } = useUserStore();
   const [step, setStep] = useState(1);
 
@@ -50,15 +52,15 @@ export const DeleteMemberDialog = ({
             userEmail={userInfo?.email}
             onSuccess={() => setStep(2)}
             onBack={() => handleOpenChange(false)}
-            title="Security Check"
-            description="Please verify your password to delete this member."
+            title={t('company.securityCheck')}
+            description={t('company.securityCheckDeleteMember')}
           />
         ) : (
           <>
             <DialogHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <DialogTitle className="text-gray-900 text-xl font-bold opacity-0">
-                  Remove Member
+                  {t('company.deleteMemberTitle')}
                 </DialogTitle>
                 <button
                   onClick={() => handleOpenChange(false)}
@@ -82,12 +84,10 @@ export const DeleteMemberDialog = ({
             {/* Description */}
             <div className="text-center pb-6">
               <h2 className="text-2xl font-bold text-gray-900 ">
-                Remove Member?
+                {t('company.deleteMemberConfirmTitle')}
               </h2>
               <p className="text-gray-500 text-base">
-                Are you sure you want to remove{' '}
-                <span className="text-[#5b9bff] font-medium">{firstName} {lastName}</span>
-                {' '}from your workspace
+                {t('company.deleteMemberConfirmDesc', { name: `${firstName} ${lastName}` })}
               </p>
             </div>
 
@@ -107,14 +107,14 @@ export const DeleteMemberDialog = ({
                 disabled={loading}
                 className="flex-1 h-12 text-base font-medium border-gray-300 text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                {t('company.cancel')}
               </Button>
               <Button
                 onClick={onConfirm}
                 disabled={loading}
                 className="flex-1 h-12 text-base font-medium bg-[#FF254E] hover:bg-[#ff4a5f] text-white border-0"
               >
-                {loading ? "Removing..." : "Yes, remove"}
+                {loading ? t('company.removingMember') : t('company.removeMemberAction')}
               </Button>
             </DialogFooter>
           </>

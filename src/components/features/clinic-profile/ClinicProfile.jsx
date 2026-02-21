@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ import useUserStore from "@/components/features/profile/store/userStore";
 import { X } from "lucide-react";
 
 export default function ClinicProfile({ canEditClinic, userRole }) {
+  const { t } = useTranslation();
   const { userInfo, getCurrentClinic } = useUserStore();
   const currentClinic = getCurrentClinic();
   const [clinicInfo, setClinicInfo] = useState(currentClinic || {});
@@ -73,8 +75,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
       content = <ClinicPasswordVerifyStep userEmail={userInfo.email} onSuccess={() => setStep(2)} onBack={handleClose} />;
       title = "";
     } else {
-      content = <ClinicInfoForm values={clinicInfo} onSave={handleInfoSave} onBack={handleClose} />;
-      title = "General info";
+      title = t('company.generalInfo');
     }
   } else if (selectedOption === "email") {
     if (step === 1) {
@@ -82,7 +83,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
       title = "";
     } else {
       content = <ClinicEmailForm value={clinicInfo.email} onSave={handleEmailSave} onBack={handleClose} />;
-      title = "E-mail";
+      title = t('company.emailHeader');
     }
   } else if (selectedOption === "phone") {
     if (step === 1) {
@@ -90,7 +91,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
       title = "";
     } else {
       content = <ClinicPhoneForm value={clinicInfo.phone} onSave={handlePhoneSave} onBack={handleClose} />;
-      title = "Téléphone";
+      title = t('company.phoneLabel');
     }
   }
 
@@ -105,7 +106,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
   // Helper to display '-' if value is null, undefined, or empty string
   function displayField(value) {
     if (value === null || value === undefined || value === '') {
-      return <span className="text-gray-400 ">Non spécifié</span>;
+      return <span className="text-gray-400 ">{t('company.notSpecified')}</span>;
     }
     return <span className=" text-gray-900">{value}</span>;
   }
@@ -115,13 +116,13 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
       <Card className="w-full rounded-xl py-0  border-2 border-gray-200 bg-white">
         <CardContent className="p-7">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">General info</h2>
+            <h2 className="text-3xl font-bold text-gray-900">{t('company.generalInfo')}</h2>
           </div>
 
           {/* Company name */}
           <div className="space-y-2 mb-4">
             <label className="text-sm font-semibold text-gray-700">
-              Company name <span className="text-red-500">*</span>
+              {t('company.companyName')} <span className="text-red-500">*</span>
             </label>
             <Input
               type="text"
@@ -133,7 +134,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
 
           {/* Website */}
           <div className="space-y-2 mb-4">
-            <label className="text-sm font-semibold text-gray-700">Website</label>
+            <label className="text-sm font-semibold text-gray-700">{t('company.website')}</label>
             <Input
               type="url"
               value={clinicInfo.website || ""}
@@ -145,7 +146,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
           {/* Country & State/Region Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Country</label>
+              <label className="text-sm font-semibold text-gray-700">{t('company.country')}</label>
               <Input
                 type="text"
                 value={clinicInfo.country || ""}
@@ -154,7 +155,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">State/Region</label>
+              <label className="text-sm font-semibold text-gray-700">{t('company.stateRegion')}</label>
               <Input
                 type="text"
                 value={clinicInfo.neighbourhood || ""}
@@ -167,7 +168,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
           {/* City & Zip code Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">City</label>
+              <label className="text-sm font-semibold text-gray-700">{t('company.city')}</label>
               <Input
                 type="text"
                 value={clinicInfo.city || ""}
@@ -176,7 +177,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Zip code</label>
+              <label className="text-sm font-semibold text-gray-700">{t('company.zipCode')}</label>
               <Input
                 type="text"
                 value={clinicInfo.postal_code || ""}
@@ -188,7 +189,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
 
           {/* Address */}
           <div className="space-y-2 mb-6">
-            <label className="text-sm font-semibold text-gray-700">Address</label>
+            <label className="text-sm font-semibold text-gray-700">{t('company.addressLabel')}</label>
             <Input
               type="text"
               value={clinicInfo.street_address || ""}
@@ -204,16 +205,16 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
               disabled={!canEdit}
               className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors font-medium whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
             >
-              Edit clinic info
+              {t('company.editClinicInfo')}
             </button>
           </div>
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Clinic contact</h2>
+            <h2 className="text-3xl font-bold text-gray-900">{t('company.clinicContact')}</h2>
           </div>
           {/* Email & Phone Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Email</label>
+              <label className="text-sm font-semibold text-gray-700">{t('company.emailHeader')}</label>
               <div className="flex gap-3">
                 <Input
                   type="email"
@@ -226,12 +227,12 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
                   disabled={!canEdit}
                   className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent font-medium whitespace-nowrap"
                 >
-                  Edit
+                  {t('common.edit')}
                 </button>
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Phone</label>
+              <label className="text-sm font-medium text-gray-700">{t('company.phoneLabel')}</label>
               <div className="flex gap-3">
                 <Input
                   type="tel"
@@ -244,7 +245,7 @@ export default function ClinicProfile({ canEditClinic, userRole }) {
                   disabled={!canEdit}
                   className="px-4 py-2 cursor-pointer text-lg text-[#7564ed] hover:bg-gray-100 rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent font-medium whitespace-nowrap"
                 >
-                  Edit
+                  {t('common.edit')}
                 </button>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ZoomIn, ZoomOut, RotateCcw, Download, Play } from 'lucide-react';
@@ -6,6 +7,7 @@ import { useDentalData } from '../hooks/useDentalData'; // Import needed helper 
 // Or just replicate helpers here if they are simple pure functions.
 
 export const FilePreviewDialog = ({ selectedFile, isOpen, onOpenChange, helpers }) => {
+    const { t } = useTranslation('patient');
     const [zoom, setZoom] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
@@ -25,10 +27,10 @@ export const FilePreviewDialog = ({ selectedFile, isOpen, onOpenChange, helpers 
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-[95vw] w-[95vw] sm:max-w-[90vw] sm:w-[90vw] h-[95vh] p-0 overflow-hidden bg-black/95 border-none flex flex-col items-center justify-center">
                 <DialogTitle className="sr-only">
-                    {selectedFile?.name || 'File Preview'}
+                    {selectedFile?.name || t('dentalData.preview.title')}
                 </DialogTitle>
                 <DialogDescription className="sr-only">
-                    Preview of the selected file
+                    {t('dentalData.preview.description')}
                 </DialogDescription>
 
                 {/* Header Overlay */}
@@ -51,7 +53,7 @@ export const FilePreviewDialog = ({ selectedFile, isOpen, onOpenChange, helpers 
                                     size="icon"
                                     className="h-8 w-8 rounded-full hover:bg-white/20 text-white"
                                     onClick={() => setZoom(prev => Math.max(0.5, prev - 0.25))}
-                                    title="Zoom Out"
+                                    title={t('dentalData.preview.zoomOut')}
                                 >
                                     <ZoomOut className="w-4 h-4" />
                                 </Button>
@@ -63,7 +65,7 @@ export const FilePreviewDialog = ({ selectedFile, isOpen, onOpenChange, helpers 
                                     size="icon"
                                     className="h-8 w-8 rounded-full hover:bg-white/20 text-white"
                                     onClick={() => setZoom(prev => Math.min(3, prev + 0.25))}
-                                    title="Zoom In"
+                                    title={t('dentalData.preview.zoomIn')}
                                 >
                                     <ZoomIn className="w-4 h-4" />
                                 </Button>
@@ -77,7 +79,7 @@ export const FilePreviewDialog = ({ selectedFile, isOpen, onOpenChange, helpers 
                                         setZoom(1);
                                         setPosition({ x: 0, y: 0 });
                                     }}
-                                    title="Reset Zoom"
+                                    title={t('dentalData.preview.resetZoom')}
                                 >
                                     <RotateCcw className="w-4 h-4" />
                                 </Button>
@@ -87,7 +89,7 @@ export const FilePreviewDialog = ({ selectedFile, isOpen, onOpenChange, helpers 
                                     size="icon"
                                     className="h-8 w-8 rounded-full hover:bg-white/20 text-white"
                                     onClick={() => handleDownload(selectedFile)}
-                                    title="Download"
+                                    title={t('dentalData.preview.download')}
                                 >
                                     <Download className="w-4 h-4" />
                                 </Button>

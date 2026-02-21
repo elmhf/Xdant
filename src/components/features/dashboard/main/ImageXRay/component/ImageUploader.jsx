@@ -1,19 +1,21 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import ImageUploading from "react-images-uploading";
 import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 
 export default function ImageUploader({ onUpload }) {
+  const { t } = useTranslation();
   const [showInfo, setShowInfo] = React.useState(false);
 
   const renderInfoTooltip = () => (
     <div className="absolute bottom-4 left-4 z-10 bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-sm max-w-xs">
-      <h4 className="font-medium mb-2">Image Guidelines</h4>
+      <h4 className="font-medium mb-2">{t('dashboard.imageGuidelines')}</h4>
       <ul className="text-xs space-y-1 list-disc pl-4">
-        <li>Upload clear, well-lit dental scans</li>
-        <li>Supported formats: JPG, PNG (max 5MB)</li>
-        <li>For best results, use high-resolution images</li>
-        <li>Avoid blurry or distorted images</li>
+        <li>{t('dashboard.guideline1')}</li>
+        <li>{t('dashboard.guideline2')}</li>
+        <li>{t('dashboard.guideline3')}</li>
+        <li>{t('dashboard.guideline4')}</li>
       </ul>
     </div>
   );
@@ -32,8 +34,8 @@ export default function ImageUploader({ onUpload }) {
           onClick={onImageUpload}
         >
           <div className="text-center p-4">
-            <p className="mt-2 text-sm text-gray-500">Click or drag image to upload</p>
-            <p className="mt-1 text-xs text-gray-400">Supports JPG, PNG (max 5MB)</p>
+            <p className="mt-2 text-sm text-gray-500">{t('dashboard.clickOrDrag')}</p>
+            <p className="mt-1 text-xs text-gray-400">{t('dashboard.supportsFormats')}</p>
 
             <Button
               variant="outline"
@@ -45,7 +47,7 @@ export default function ImageUploader({ onUpload }) {
               }}
             >
               <Info className="h-4 w-4" />
-              {showInfo ? 'Hide Guidelines' : 'Upload Guidelines'}
+              {showInfo ? t('dashboard.hideGuidelines') : t('dashboard.uploadGuidelines')}
             </Button>
           </div>
 

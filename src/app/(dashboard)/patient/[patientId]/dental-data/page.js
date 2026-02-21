@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { MoreVertical, Image as ImageIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { useDentalData } from './hooks/useDentalData';
 import { FilePreviewDialog } from './components/FilePreviewDialog';
@@ -9,6 +10,7 @@ import { DeleteFileDialog } from './components/DeleteFileDialog';
 import { DentalFileCard } from './components/DentalFileCard';
 
 const DentalDataPage = () => {
+    const { t } = useTranslation('patient');
     const {
         loading,
         sortedDates,
@@ -45,7 +47,7 @@ const DentalDataPage = () => {
         <div className="min-h-screen ">
 
             <div className="flex items-center justify-between pb-8 pt-8">
-                <div className="text-4xl font-bold text-gray-900">Dental Data</div>
+                <div className="text-4xl font-bold text-gray-900">{t('dentalData.title')}</div>
             </div>
             {/* Gallery Content */}
             <div className=" space-y-12">
@@ -54,8 +56,8 @@ const DentalDataPage = () => {
                         <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                             <ImageIcon className="w-8 h-8 text-gray-400" />
                         </div>
-                        <h3 className="text-lg font-medium text-gray-900">No dental data found</h3>
-                        <p className="text-gray-500 mt-1">Uploaded files will appear here.</p>
+                        <h3 className="text-lg font-medium text-gray-900">{t('dentalData.noData')}</h3>
+                        <p className="text-gray-500 mt-1">{t('dentalData.noDataDesc')}</p>
                     </div>
                 ) : (
                     sortedDates.map((date) => (

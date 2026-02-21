@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import { useTranslation } from "react-i18next";
 
 export default function PasswordForm({ onBack, changePassword }) {
   const [oldPassword, setOldPassword] = useState("");
@@ -10,6 +11,7 @@ export default function PasswordForm({ onBack, changePassword }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { pushNotification } = useNotification();
+  const { t } = useTranslation();
 
   const handleSave = async () => {
     setLoading(true);
@@ -45,19 +47,19 @@ export default function PasswordForm({ onBack, changePassword }) {
   return (
     <form className=" space-y-6" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-sm text-gray-700 mb-4">
-        <span className="font-semibold text-gray-800">Sécurité :</span> Votre mot de passe doit contenir au moins 6 caractères et inclure une combinaison de chiffres, lettres et caractères spéciaux (!$@%).
+        <span className="font-semibold text-gray-800">{t('profile.securityTitle')} :</span> {t('profile.passwordRequirementsInfo')}
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="oldPassword" className="text-base font-semibold text-gray-700">
-            Mot de passe actuel
+            {t('profile.currentPassword')}
           </Label>
           <Input
             id="oldPassword"
             className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed]"
             type="password"
-            placeholder="Entrez votre mot de passe actuel"
+            placeholder={t('profile.currentPasswordPlaceholder')}
             value={oldPassword}
             onChange={(e) => setOldPassword(e.target.value)}
             required
@@ -66,13 +68,13 @@ export default function PasswordForm({ onBack, changePassword }) {
 
         <div className="space-y-2">
           <Label htmlFor="newPassword" className="text-base font-semibold text-gray-700">
-            Nouveau mot de passe
+            {t('profile.newPassword')}
           </Label>
           <Input
             id="newPassword"
             className="h-12 w-full text-base border-2 border-gray-300 focus:border-[#7564ed]"
             type="password"
-            placeholder="Entrez votre nouveau mot de passe"
+            placeholder={t('profile.newPasswordPlaceholder')}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
@@ -81,13 +83,13 @@ export default function PasswordForm({ onBack, changePassword }) {
 
         <div className="space-y-2">
           <Label htmlFor="confirmPassword" className="text-base font-semibold text-gray-700">
-            Confirmer le nouveau mot de passe
+            {t('profile.confirmPassword')}
           </Label>
           <Input
             id="confirmPassword"
             className="h-12  w-full text-base border-2 border-gray-300 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20"
             type="password"
-            placeholder="Confirmez votre nouveau mot de passe"
+            placeholder={t('profile.confirmPasswordPlaceholder')}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -97,13 +99,13 @@ export default function PasswordForm({ onBack, changePassword }) {
 
       {newPassword && !passwordMeetsRequirements(newPassword) && (
         <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
-          Le mot de passe doit contenir au moins 6 caractères et inclure une lettre, un chiffre et un caractère spécial (!$@%).
+          {t('profile.passwordRequirementsInfo')}
         </div>
       )}
 
       {newPassword && confirmPassword && newPassword !== confirmPassword && (
         <div className="p-4 rounded-xl text-base font-medium bg-red-50 text-red-800 border-2 border-red-200">
-          Les mots de passe ne correspondent pas
+          {t('profile.passwordMismatch')}
         </div>
       )}
 
@@ -117,14 +119,14 @@ export default function PasswordForm({ onBack, changePassword }) {
           onClick={onBack}
           disabled={loading}
         >
-          Annuler
+          {t('common.cancel')}
         </Button>
         <Button
           type="submit"
           className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
           disabled={!isValid || loading}
         >
-          {loading ? "Enregistrement..." : "Enregistrer"}
+          {loading ? t('profile.saving') : t('common.save')}
         </Button>
       </div>
     </form>

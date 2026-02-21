@@ -1,5 +1,6 @@
 'use client';
 import { useRef, useState, useEffect, useCallback, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { PDFContext } from "./report";
 import RenderAllSlices from '../../side/card/randerSlice';
 // ======================== SIGNATURE PAD COMPONENT ========================
 const SignaturePad = ({ onSave, disabled = false }) => {
+  const { t } = useTranslation('patient');
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSignature, setHasSignature] = useState(false);
@@ -114,9 +116,9 @@ const SignaturePad = ({ onSave, disabled = false }) => {
     <div className="w-full  mx-auto space-y-4">
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-slate-900 mb-1">
-          منطقة التوقيع الإلكتروني
+          {t('pdfReport.signature.title')}
         </h3>
-        <p className="text-sm text-slate-600">ارسم توقيعك في المنطقة أدناه</p>
+        <p className="text-sm text-slate-600">{t('pdfReport.signature.drawHint')}</p>
       </div>
 
       <div className="relative bg-white border-2 border-slate-300 rounded-2xl p-2">
@@ -138,7 +140,7 @@ const SignaturePad = ({ onSave, disabled = false }) => {
 
         {!hasSignature && !isDrawing && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="text-slate-400 text-sm">ابدأ بالرسم هنا</span>
+            <span className="text-slate-400 text-sm">{t('pdfReport.signature.startHint')}</span>
           </div>
         )}
       </div>
@@ -150,14 +152,14 @@ const SignaturePad = ({ onSave, disabled = false }) => {
           disabled={!hasSignature || isClearing || disabled}
           className="text-red-600 border-red-200 hover:bg-red-50"
         >
-          مسح
+          {t('pdfReport.signature.clear')}
         </Button>
         <Button
           onClick={saveSignature}
           disabled={!hasSignature || disabled}
           className="bg-slate-900 hover:bg-slate-800"
         >
-          حفظ التوقيع
+          {t('pdfReport.signature.save')}
         </Button>
       </div>
     </div>
@@ -166,6 +168,7 @@ const SignaturePad = ({ onSave, disabled = false }) => {
 
 // ======================== DOCTOR SIGNATURE COMPONENT ========================
 const DoctorSignature = () => {
+  const { t, i18n } = useTranslation('patient');
   const [signature, setSignature] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -182,7 +185,7 @@ const DoctorSignature = () => {
           {/* Doctor Info */}
           <div className="space-y-2">
             <div className="text-sm text-slate-600">
-              <p>تاريخ التقرير: {new Date().toLocaleDateString('ar-SA')}</p>
+              <p>{t('pdfReport.signature.date')} {new Date().toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : (i18n.language === 'fr' ? 'fr-FR' : 'en-US'))}</p>
             </div>
           </div>
 
@@ -196,7 +199,7 @@ const DoctorSignature = () => {
                   className="max-h-16 max-w-60 object-contain"
                 />
               ) : (
-                <span className="text-slate-400 text-sm print:hidden">منطقة التوقيع</span>
+                <span className="text-slate-400 text-sm print:hidden">{t('pdfReport.signature.area')}</span>
               )}
             </div>
 
@@ -213,12 +216,12 @@ const DoctorSignature = () => {
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button variant="outline" size="sm">
-                        تعديل التوقيع
+                        {t('pdfReport.signature.edit')}
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-3xl">
                       <DialogHeader>
-                        <DialogTitle>التوقيع الإلكتروني</DialogTitle>
+                        <DialogTitle>{t('pdfReport.signature.modalTitle')}</DialogTitle>
                       </DialogHeader>
                       <SignaturePad onSave={handleSaveSignature} />
                     </DialogContent>
@@ -230,19 +233,19 @@ const DoctorSignature = () => {
                     onClick={() => setSignature(null)}
                     className="text-red-600 border-red-200 hover:bg-red-50"
                   >
-                    حذف
+                    {t('pdfReport.signature.remove')}
                   </Button>
                 </div>
               ) : (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <Button size="sm" className="bg-slate-900 hover:bg-slate-800">
-                      أضف توقيعك
+                      {t('pdfReport.signature.add')}
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-3xl">
                     <DialogHeader>
-                      <DialogTitle>التوقيع الإلكتروني</DialogTitle>
+                      <DialogTitle>{t('pdfReport.signature.modalTitle')}</DialogTitle>
                     </DialogHeader>
                     <SignaturePad onSave={handleSaveSignature} />
                   </DialogContent>
@@ -278,6 +281,7 @@ export default function ReportView({
   getCurrentClinic,
   staticCanvasImage
 }) {
+  const { t } = useTranslation('patient');
   console.log(patientData, "patientDatapatientDatapatientDatapatientDatapatientDatapatientDatapatientData")
   const { contextPDFRef } = useContext(PDFContext);
   const currentClinic = getCurrentClinic();
@@ -365,36 +369,36 @@ export default function ReportView({
         </div>
 
         <div className="">
-          <h2 className="text-2xl font-bold text-gray-800">CBCT AI Report</h2>
+          <h2 className="text-2xl font-bold text-gray-800">{t('pdfReport.content.reportTitle')}</h2>
         </div>
         {settings.CBCTAnalysis.showPatientInfo && (<div className="grid grid-cols-1 md:grid-cols-2 gap-4 border rounded-2xl bg-gray-50">
           <div>
-            <label className="block text-sm font-medium text-gray-700">First Name</label>
-            <p className="mt-1 text-gray-600">{pateinInfo?.first_name || 'not specified'}</p>
+            <label className="block text-sm font-medium text-gray-700">{t('editPatient.firstName')}</label>
+            <p className="mt-1 text-gray-600">{pateinInfo?.first_name || t('pdfReport.content.notSpecified')}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Last Name</label>
-            <p className="mt-1 text-gray-600">{pateinInfo?.last_name || 'not specified'}</p>
+            <label className="block text-sm font-medium text-gray-700">{t('editPatient.lastName')}</label>
+            <p className="mt-1 text-gray-600">{pateinInfo?.last_name || t('pdfReport.content.notSpecified')}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <p className="mt-1 text-gray-600">{pateinInfo?.email || 'not specified'}</p>
+            <label className="block text-sm font-medium text-gray-700">{t('editPatient.email')}</label>
+            <p className="mt-1 text-gray-600">{pateinInfo?.email || t('pdfReport.content.notSpecified')}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-            <p className="mt-1 text-gray-600">{pateinInfo?.phone || 'not specified'}</p>
+            <label className="block text-sm font-medium text-gray-700">{t('editPatient.phone')}</label>
+            <p className="mt-1 text-gray-600">{pateinInfo?.phone || t('pdfReport.content.notSpecified')}</p>
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Address</label>
-            <p className="mt-1 text-gray-600">{pateinInfo?.address || 'not specified'}</p>
+            <label className="block text-sm font-medium text-gray-700">{t('editPatient.address')}</label>
+            <p className="mt-1 text-gray-600">{pateinInfo?.address || t('pdfReport.content.notSpecified')}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+            <label className="block text-sm font-medium text-gray-700">{t('editPatient.dateOfBirth')}</label>
             <p className="mt-1 text-gray-600">
               {pateinInfo?.date_of_birth
                 ? new Date(pateinInfo.date_of_birth).toLocaleDateString('es-ES', {
@@ -402,14 +406,14 @@ export default function ReportView({
                   month: 'long',
                   year: 'numeric',
                 })
-                : 'not specified'}
+                : t('pdfReport.content.notSpecified')}
             </p>
           </div>
 
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Gender</label>
-            <p className="mt-1 text-gray-600">{pateinInfo?.gender || 'not specified'}</p>
+            <label className="block text-sm font-medium text-gray-700">{t('editPatient.gender')}</label>
+            <p className="mt-1 text-gray-600">{pateinInfo?.gender ? t(`editPatient.${pateinInfo.gender.toLowerCase()}`) : t('pdfReport.content.notSpecified')}</p>
           </div>
         </div>)}
 
@@ -456,8 +460,7 @@ export default function ReportView({
           <ReportSection>
             <div className="bg-gray-50 pt-6  min-h-24 flex flex-row">
               <p className="text-sm text-gray-600 italic leading-relaxed">
-                This report is generated using AI analysis of CBCT imaging.
-                Clinical correlation and professional judgment are recommended for final diagnosis and treatment planning.
+                {t('pdfReport.content.disclaimer')}
               </p>
               <div className=" flex flex-row min-w-fit">
                 <img src="/XDENTAL.png" alt="Logo" className="h-9 rounded-2xl overflow-hidden w-auto " />

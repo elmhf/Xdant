@@ -20,10 +20,12 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import { useTranslation } from "react-i18next";
 
 export default function SupportAccessSection({ children, userInfo, setUserInfo }) {
     const { pushNotification } = useNotification();
     const router = useRouter();
+    const { t } = useTranslation();
     const { setCurrentClinicId } = useUserStore();
     const [open, setOpen] = useState(false);
 
@@ -64,11 +66,11 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 method: "POST",
                 body: JSON.stringify({ password: logoutAllPassword }),
             });
-            pushNotification("success", "Déconnexion de tous les appareils réussie.");
+            pushNotification("success", t('profile.logoutAllSuccess'));
             setShowLogoutAllView(false);
             setLogoutAllPassword("");
         } catch (error) {
-            pushNotification("error", error.message || "Erreur lors de la déconnexion.");
+            pushNotification("error", error.message || t('profile.logoutAllError'));
         } finally {
             setLogoutAllLoading(false);
         }
@@ -118,7 +120,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
             setShow2FAEnableDialog(false);
             setTwoFactorCode("");
             setQrCodeData(null);
-            pushNotification("success", "2FA Enabled Successfully!");
+            pushNotification("success", t('profile.2faEnabled'));
         } catch (error) {
             pushNotification("error", error.message);
         } finally {
@@ -143,7 +145,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 setDisablePassword("");
                 setDisableCode("");
                 setDisableStep(1);
-                pushNotification("success", "2FA Disabled Successfully");
+                pushNotification("success", t('profile.2faDisabled'));
             }
         } catch (error) {
             pushNotification("error", error.message);
@@ -165,7 +167,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
         try {
             await updateAutoSave(checked);
             setAutoSaveEnabled(checked);
-            pushNotification("success", `Autosave ${checked ? 'enabled' : 'disabled'} successfully`);
+            pushNotification("success", checked ? t('profile.autosaveEnabled') : t('profile.autosaveDisabled'));
         } catch (error) {
             pushNotification("error", error.message);
         } finally {
@@ -183,15 +185,15 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
         try {
             await initiateAccountDeletion(deletePassword);
             setDeleteStep(2);
-            pushNotification("info", "Un code de vérification a été envoyé à votre adresse email.");
+            pushNotification("info", t('profile.otpSent'));
         } catch (err) {
             console.error(err);
             if (err.data && err.data.ownedClinics) {
                 setDeleteOwnedClinics(err.data.ownedClinics);
                 console.log(err.data.ownedClinics);
-                setDeleteError(err.message || "Impossible de supprimer le compte car vous êtes propriétaire de cliniques.");
+                setDeleteError(err.message || t('profile.deleteAccountError'));
             } else {
-                setDeleteError(err.message || "Une erreur est survenue.");
+                setDeleteError(err.message || t('common.genericError'));
             }
         } finally {
             setDeleteLoading(false);
@@ -205,13 +207,13 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
 
         try {
             await confirmAccountDeletion(deleteOtp);
-            pushNotification("success", "Compte supprimé avec succès.");
+            pushNotification("success", t('profile.deleteAccountSuccess'));
             // Redirect to login or home after a short delay
             setTimeout(() => {
                 window.location.href = '/login';
             }, 1000);
         } catch (err) {
-            setDeleteError(err.message || "Code incorrect.");
+            setDeleteError(err.message || t('profile.invalidCode'));
         } finally {
             setDeleteLoading(false);
         }
@@ -233,7 +235,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 <div className="bg-white rounded-xl overflow-hidden">
                     <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                         <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-                            Déconnexion de tous les appareils
+                            {t('profile.confirmLogoutAllTitle')}
                         </DialogTitle>
                         <button
                             onClick={() => {
@@ -253,8 +255,8 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                     <Fingerprint className="text-white h-10 w-10" />
                                 </div>
                                 <div className="space-y-2">
-                                    <h2 className="text-2xl font-bold text-gray-900">Vérification du mot de passe</h2>
-                                    <p className="text-gray-500 text-base">Entrez votre mot de passe pour <span className="font-semibold text-[#7564ed]">confirmer la déconnexion</span></p>
+                                    <h2 className="text-2xl font-bold text-gray-900">{t('profile.passwordVerification')}</h2>
+                                    <p className="text-gray-500 text-base">{t('profile.confirmLogoutAllMsg')}</p>
                                 </div>
                             </div>
 
@@ -263,7 +265,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                     type="password"
                                     value={logoutAllPassword}
                                     onChange={(e) => setLogoutAllPassword(e.target.value)}
-                                    placeholder="Entrez votre mot de passe"
+                                    placeholder={t('profile.currentPasswordPlaceholder')}
                                     className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20 transition-all"
                                 />
                             </div>
@@ -278,7 +280,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                     disabled={logoutAllLoading}
                                     className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                 >
-                                    Annuler
+                                    {t('common.cancel')}
                                 </Button>
                                 <Button
                                     onClick={handleLogoutAll}
@@ -286,7 +288,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                     className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:bg-[#dcd6fa] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                 >
                                     {logoutAllLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    Se déconnecter
+                                    {t('common.logout')}
                                 </Button>
                             </div>
                         </div>
@@ -301,7 +303,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 <div className="bg-white rounded-xl overflow-hidden">
                     <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                         <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-                            Supprimer mon compte
+                            {t('profile.deleteAccount')}
                         </DialogTitle>
                         <button
                             onClick={() => {
@@ -318,8 +320,8 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                         {deleteOwnedClinics.length > 0 ? (
                             <div className="space-y-4">
                                 <div className="mb-4">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-1">Action requise</h3>
-                                    <p className="text-sm text-gray-600">Vous devez <span className="font-bold text-[#7564ed]">transférer </span> la propriété  ou <span className="font-bold text-[#7564ed]">supprimer </span> ces cliniques avant de pouvoir supprimer votre compte.</p>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('profile.actionRequired')}</h3>
+                                    <p className="text-sm text-gray-600">{t('profile.transferOwnershipMsg')}</p>
                                 </div>
                                 <div className="space-y-3 max-h-[300px] gap-2 overflow-y-auto pr-2">
                                     {deleteOwnedClinics.map(clinic => (
@@ -341,7 +343,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                                 <div className="flex items-center gap-2 mb-0.5">
                                                     <h4 className="text-base font-semibold text-[#0d0c22] truncate">{clinic.name}</h4>
                                                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEE7EB] text-[#f43f5e] uppercase tracking-wide">
-                                                        Owner
+                                                        {t('profile.owner')}
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-500 truncate font-medium">{clinic.email || clinic.contactEmail || "email@clinic.com"}</p>
@@ -358,7 +360,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                             resetDeleteState();
                                         }}
                                     >
-                                        Fermer
+                                        {t('common.close')}
                                     </Button>
                                 </div>
                             </div>
@@ -369,8 +371,8 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                         <Fingerprint className="text-white h-10 w-10" />
                                     </div>
                                     <div className="space-y-2">
-                                        <h2 className="text-2xl font-bold text-gray-900">Vérification du mot de passe</h2>
-                                        <p className="text-gray-500 text-base">Entrez votre mot de passe pour <span className="font-semibold text-[#7564ed]">confirmer la suppression</span></p>
+                                        <h2 className="text-2xl font-bold text-gray-900">{t('profile.passwordVerification')}</h2>
+                                        <p className="text-gray-500 text-base">{t('profile.confirmDeletionMsg')}</p>
                                     </div>
                                 </div>
 
@@ -379,7 +381,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                         type="password"
                                         value={deletePassword}
                                         onChange={(e) => setDeletePassword(e.target.value)}
-                                        placeholder="Entrez votre mot de passe"
+                                        placeholder={t('profile.currentPasswordPlaceholder')}
                                         className="h-12 w-full text-base rounded-xl border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20 transition-all"
                                     />
                                 </div>
@@ -394,7 +396,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                         disabled={deleteLoading}
                                         className="text-lg font-semibold border text-gray-600 transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                     >
-                                        Annuler
+                                        {t('common.cancel')}
                                     </Button>
                                     <Button
                                         onClick={handleDeleteInitiate}
@@ -402,7 +404,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                         className="text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:bg-[#dcd6fa] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                     >
                                         {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        Vérifier
+                                        {t('profile.verify')}
                                     </Button>
                                 </div>
                             </div>
@@ -410,10 +412,10 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                             <div className="space-y-6">
                                 <div className="text-center space-y-2">
                                     <p className="text-sm text-gray-600">
-                                        Un code de vérification à 6 chiffres a été envoyé à votre email.
+                                        {t('profile.otpSentMsg')}
                                     </p>
                                     <p className="text-xs text-gray-500">
-                                        Le code expire dans 10 minutes.
+                                        {t('profile.otpExpireMsg')}
                                     </p>
                                 </div>
 
@@ -434,7 +436,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                         }}
                                         disabled={deleteLoading}
                                     >
-                                        Annuler
+                                        {t('common.cancel')}
                                     </Button>
                                     <Button
                                         variant="destructive"
@@ -443,7 +445,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                         className="bg-[#FEE7EB] text-[#f43f5e] hover:bg-[#fdd3db] border border-[#f43f5e]/20"
                                     >
                                         {deleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        Supprimer définitivement
+                                        {t('profile.deletePermanently')}
                                     </Button>
                                 </div>
                             </div>
@@ -459,23 +461,23 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 <div className="bg-white rounded-xl overflow-hidden">
                     <div className="p-6 pb-0">
                         <div className="flex items-center justify-between mb-2">
-                            <DialogTitle className="text-xl font-bold text-gray-900">Setup Authenticator App</DialogTitle>
+                            <DialogTitle className="text-xl font-bold text-gray-900">{t('profile.setupAuthenticator')}</DialogTitle>
                             <button onClick={() => setShow2FAEnableDialog(false)} className="text-gray-400 hover:text-gray-500">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <p className="text-sm text-gray-500 mb-6">
-                            Each time you log in, in addition to your password, you'll use an authenticator app to generate a one-time code.
+                            {t('profile.authenticatorInstructions')}
                         </p>
 
                         {/* Step 1 */}
                         <div className="mb-6">
                             <div className="flex items-center gap-2 mb-2">
-                                <div className="bg-blue-100 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full">Step 1</div>
-                                <h3 className="font-semibold text-gray-900 text-sm">Scan QR code</h3>
+                                <div className="bg-blue-100 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full">{t('profile.step1')}</div>
+                                <h3 className="font-semibold text-gray-900 text-sm">{t('profile.scanQR')}</h3>
                             </div>
                             <p className="text-sm text-gray-500 mb-4">
-                                Scan the QR code below or manually enter the secret key into your authenticator app.
+                                {t('profile.scanQRInstructions')}
                             </p>
 
                             <div className="flex gap-4 items-start p-4 bg-gray-50 rounded-xl border border-gray-100">
@@ -486,8 +488,8 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                 )}
                                 <div className="flex-1 space-y-3">
                                     <div>
-                                        <h4 className="font-semibold text-gray-900 text-sm">Can't scan QR code?</h4>
-                                        <p className="text-sm text-gray-500">Enter this secret instead:</p>
+                                        <h4 className="font-semibold text-gray-900 text-sm">{t('profile.cantScanQR')}</h4>
+                                        <p className="text-sm text-gray-500">{t('profile.enterSecret')}</p>
                                     </div>
                                     <div className="bg-gray-200 rounded px-2 py-1 text-xs font-mono text-gray-700 break-all">
                                         {qrCodeData?.secret?.base32 || qrCodeData?.secret || "Generating..."}
@@ -500,12 +502,12 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                             const secret = qrCodeData?.secret?.base32 || qrCodeData?.secret;
                                             if (secret) {
                                                 navigator.clipboard.writeText(secret);
-                                                pushNotification("success", "Secret copied to clipboard!");
+                                                pushNotification("success", t('profile.secretCopied'));
                                             }
                                         }}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                                        Copy code
+                                        {t('profile.copyCode')}
                                     </Button>
                                 </div>
                             </div>
@@ -514,15 +516,15 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                         {/* Step 2 */}
                         <div className="mb-6">
                             <div className="flex items-center gap-2 mb-2">
-                                <div className="bg-blue-100 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full">Step 2</div>
-                                <h3 className="font-semibold text-gray-900 text-sm">Get verification Code</h3>
+                                <div className="bg-blue-100 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full">{t('profile.step2')}</div>
+                                <h3 className="font-semibold text-gray-900 text-sm">{t('profile.getVerificationCode')}</h3>
                             </div>
                             <p className="text-sm text-gray-500 mb-4">
-                                Enter the 6-digit code you see in your authenticator app.
+                                {t('profile.enterOTPInstructions')}
                             </p>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-900">Enter verification code</label>
+                                <label className="text-sm font-semibold text-gray-900">{t('profile.enterVerificationCodeLabel')}</label>
                                 <div className="flex gap-2">
                                     {Array.from({ length: 6 }).map((_, index) => (
                                         <input
@@ -573,14 +575,14 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                     </div>
 
                     <div className="flex items-center justify-end gap-3 p-6 pt-2 bg-white">
-                        <Button variant="outline" onClick={() => setShow2FAEnableDialog(false)}>Cancel</Button>
+                        <Button variant="outline" onClick={() => setShow2FAEnableDialog(false)}>{t('common.cancel')}</Button>
                         <Button
                             onClick={handleVerify2FA}
                             disabled={twoFactorCode.length !== 6 || is2FALoading}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
                             {is2FALoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Confirm
+                            {t('common.confirm')}
                         </Button>
                     </div>
                 </div>
@@ -593,7 +595,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 <div className="bg-white rounded-xl overflow-hidden">
                     <div className="flex items-center justify-between px-8 pt-8 pb-6 border-b border-gray-200">
                         <DialogTitle className="text-2xl font-bold text-gray-900">
-                            Désactiver l'authentification à deux facteurs
+                            {t('profile.disable2FATitle')}
                         </DialogTitle>
                         <button onClick={() => { setShow2FADisableDialog(false); setDisableStep(1); setDisablePassword(""); setDisableCode(""); }} className="rounded-2xl p-2 hover:bg-gray-100 transition">
                             <X className="w-5 h-5 text-gray-500" />
@@ -602,14 +604,14 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                     <div className="px-8 py-6">
                         <DialogDescription className="mb-4">
                             {disableStep === 1
-                                ? "Veuillez entrer votre mot de passe pour continuer."
-                                : "Veuillez entrer le code de vérification envoyé à votre email."}
+                                ? t('profile.disable2FAPasswordMsg')
+                                : t('profile.disable2FAOTPMsg')}
                         </DialogDescription>
 
                         <div className="py-4 space-y-4">
                             {disableStep === 1 ? (
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Mot de passe actuel</label>
+                                    <label className="text-sm font-medium text-gray-700">{t('profile.currentPassword')}</label>
                                     <Input
                                         type="password"
                                         value={disablePassword}
@@ -619,7 +621,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                 </div>
                             ) : (
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Code de vérification</label>
+                                    <label className="text-sm font-medium text-gray-700">{t('profile.validateCode')}</label>
                                     <div className="flex justify-center gap-2">
                                         {Array.from({ length: 6 }).map((_, index) => (
                                             <input
@@ -669,7 +671,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                             )}
                         </div>
                         <div className="flex justify-end gap-3 mt-4">
-                            <Button variant="outline" onClick={() => { setShow2FADisableDialog(false); setDisableStep(1); setDisablePassword(""); setDisableCode(""); }}>Annuler</Button>
+                            <Button variant="outline" onClick={() => { setShow2FADisableDialog(false); setDisableStep(1); setDisablePassword(""); setDisableCode(""); }}>{t('common.cancel')}</Button>
                             <Button
                                 className="text-md font-bold hover:outline-3 hover:outline-[#7564ed]  bg-[#EBE8FC]  border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center justify-center min-w-[6vw]"
                                 variant="destructive"
@@ -677,7 +679,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                 disabled={is2FALoading || (disableStep === 1 ? !disablePassword : disableCode.length !== 6)}
                             >
                                 {is2FALoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {disableStep === 1 ? "Continuer" : "Confirmer la désactivation"}
+                                {disableStep === 1 ? t('profile.continue') : t('profile.confirmDeactivation')}
                             </Button>
                         </div>
                     </div>
@@ -691,7 +693,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                 {/* Header */}
                 <div className="flex items-center justify-between px-8 pt-8 pb-6 border-b border-gray-200">
                     <DialogTitle className="text-2xl font-bold text-gray-900">
-                        Accès au support
+                        {t('profile.supportAccess')}
                     </DialogTitle>
                     <DialogClose asChild>
                         <button className="rounded-2xl p-2 hover:bg-gray-100 transition">
@@ -705,20 +707,20 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                     {/* Support Access toggle */}
                     <div className="flex items-start justify-between py-4 mb-6 border-b border-gray-100">
                         <div className="flex-1">
-                            <h4 className="text-base font-semibold text-gray-900 mb-1">Autoriser l'accès au support</h4>
-                            <p className="text-sm text-gray-600">Permettez à l'équipe technique d'accéder temporairement à votre compte pour vous aider.</p>
+                            <h4 className="text-base font-semibold text-gray-900 mb-1">{t('profile.allowSupportAccess')}</h4>
+                            <p className="text-sm text-gray-600">{t('profile.supportAccessDesc')}</p>
                         </div>
                         <Switch
                             checked={false} // Placeholder for now
-                            onCheckedChange={() => pushNotification("info", "Fonctionnalité d'accès au support bientôt disponible.")}
+                            onCheckedChange={() => pushNotification("info", t('profile.supportAccessSoon'))}
                         />
                     </div>
 
                     {/* 2-Step Verification */}
                     <div className="flex items-start justify-between py-4 mb-6">
                         <div className="flex-1">
-                            <h4 className="text-base font-semibold text-gray-900 mb-1">Vérification en 2 étapes</h4>
-                            <p className="text-sm text-gray-600">Ajoutez une couche de sécurité supplémentaire à votre compte lors de la connexion.</p>
+                            <h4 className="text-base font-semibold text-gray-900 mb-1">{t('profile.status2FA')}</h4>
+                            <p className="text-sm text-gray-600">{t('profile.status2FADesc')}</p>
                         </div>
                         {userInfo?.isTwoFactorEnabled ? (
                             <button
@@ -727,7 +729,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                 className="text-md hover:outline-3 hover:outline-[#f43f5e] font-bold bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center justify-center min-w-[6vw]"
                             >
                                 {is2FALoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Désactiver
+                                {t('profile.deactivate')}
                             </button>
                         ) : (
                             <Button
@@ -737,7 +739,7 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                                 disabled={is2FALoading}
                             >
                                 {is2FALoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Activer
+                                {t('profile.activate')}
                             </Button>
                         )}
                     </div>
@@ -747,8 +749,8 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                     {/* Autosave Toggle */}
                     <div className="flex items-start justify-between py-4 mb-6 border-t border-gray-200">
                         <div className="flex-1">
-                            <h4 className="text-base font-semibold text-gray-900 mb-1">Sauvegarde automatique</h4>
-                            <p className="text-sm text-gray-600">Activez la sauvegarde automatique pour ne jamais perdre vos données.</p>
+                            <h4 className="text-base font-semibold text-gray-900 mb-1">{t('profile.autosave')}</h4>
+                            <p className="text-sm text-gray-600">{t('profile.autosaveDesc')}</p>
                         </div>
                         <Switch
                             checked={autoSaveEnabled}
@@ -760,28 +762,28 @@ export default function SupportAccessSection({ children, userInfo, setUserInfo }
                     {/* Log out of all devices */}
                     <div className="flex items-start justify-between py-4 border-t border-gray-200 mb-4">
                         <div className="flex-1">
-                            <h4 className="text-base font-semibold text-gray-900 mb-1">Déconnexion de tous les appareils</h4>
-                            <p className="text-sm text-gray-600">Déconnectez-vous de toutes les autres sessions actives sur d'autres appareils que celui-ci.</p>
+                            <h4 className="text-base font-semibold text-gray-900 mb-1">{t('profile.logoutAll')}</h4>
+                            <p className="text-sm text-gray-600">{t('profile.logoutAllDesc')}</p>
                         </div>
                         <button
                             className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap"
                             onClick={() => setShowLogoutAllView(true)}
                         >
-                            Se déconnecter
+                            {t('common.logout')}
                         </button>
                     </div>
 
                     {/* Delete Account */}
                     <div className="flex items-start justify-between py-4 border-t border-gray-200">
                         <div className="flex-1">
-                            <h4 className="text-base font-semibold text-[#f43f5e] mb-1">Supprimer mon compte</h4>
-                            <p className="text-sm text-gray-600">Supprimez définitivement le compte et supprimez l'accès à tous les espaces de travail.</p>
+                            <h4 className="text-base font-semibold text-[#f43f5e] mb-1">{t('profile.deleteAccount')}</h4>
+                            <p className="text-sm text-gray-600">{t('profile.deleteAccountDesc')}</p>
                         </div>
                         <button
                             className="text-md font-bold hover:outline-3 hover:outline-[#f43f5e] bg-[#FEE7EB] border text-[#f43f5e] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center justify-center min-w-[6vw]"
                             onClick={() => setShowDeleteAccountView(true)}
                         >
-                            Supprimer le compte
+                            {t('profile.deleteAccount')}
                         </button>
                     </div>
                 </div>

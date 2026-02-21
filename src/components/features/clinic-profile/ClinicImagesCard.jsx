@@ -1,9 +1,11 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import useUserStore from "@/components/features/profile/store/userStore";
 
 export default function ClinicImagesCard({ canEditClinic = true }) {
+  const { t } = useTranslation();
   const [logoFile, setLogoFile] = useState(null);
   const [stampFile, setStampFile] = useState(null);
   const [logoLoading, setLogoLoading] = useState(false);
@@ -115,20 +117,20 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
     // Validate file type
     const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!validImageTypes.includes(file.type)) {
-      setLogoError("Veuillez sélectionner un fichier image valide (JPG, PNG, GIF, WEBP)");
+      setLogoError(t('company.profile.invalidImage'));
       return;
     }
 
     // Validate file size (5MB limit)
     const maxSize = 5 * 1024 * 1024; // 5MB in bytes
     if (file.size > maxSize) {
-      setLogoError("La taille du fichier doit être inférieure à 5MB");
+      setLogoError(t('company.profile.fileTooLarge'));
       return;
     }
 
     // Validate file name
     if (!file.name || file.name.trim() === '') {
-      setLogoError("Nom de fichier invalide");
+      setLogoError(t('company.profile.invalidFileName'));
       return;
     }
 
@@ -141,13 +143,13 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
 
       // Check minimum dimensions
       if (img.width < 50 || img.height < 50) {
-        setLogoError("L'image doit avoir une taille minimale de 50x50 pixels");
+        setLogoError(t('company.profile.minDimensions'));
         return;
       }
 
       // Check maximum dimensions
       if (img.width > 2000 || img.height > 2000) {
-        setLogoError("L'image ne doit pas dépasser 2000x2000 pixels");
+        setLogoError(t('company.profile.maxDimensions'));
         return;
       }
 
@@ -194,11 +196,11 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
 
           console.log("Logo changed successfully");
         } else {
-          setLogoError(result.message || "Échec du changement de logo");
+          setLogoError(result.message || t('company.profile.logoChangeFail'));
           console.error("Error changing logo:", result.message);
         }
       } catch (error) {
-        setLogoError("Erreur réseau lors du téléchargement");
+        setLogoError(t('company.profile.networkError'));
         console.error("Network error for logo:", error);
       } finally {
         setLogoLoading(false);
@@ -207,7 +209,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
 
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      setLogoError("Le fichier sélectionné n'est pas une image valide");
+      setLogoError(t('company.profile.invalidImage'));
     };
 
     img.src = objectUrl;
@@ -223,20 +225,20 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
     // Validate file type
     const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!validImageTypes.includes(file.type)) {
-      setStampError("Veuillez sélectionner un fichier image valide (JPG, PNG, GIF, WEBP)");
+      setStampError(t('company.profile.invalidImage'));
       return;
     }
 
     // Validate file size (5MB limit)
     const maxSize = 5 * 1024 * 1024; // 5MB in bytes
     if (file.size > maxSize) {
-      setStampError("La taille du fichier doit être inférieure à 5MB");
+      setStampError(t('company.profile.fileTooLarge'));
       return;
     }
 
     // Validate file name
     if (!file.name || file.name.trim() === '') {
-      setStampError("Nom de fichier invalide");
+      setStampError(t('company.profile.invalidFileName'));
       return;
     }
 
@@ -249,13 +251,13 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
 
       // Check minimum dimensions
       if (img.width < 50 || img.height < 50) {
-        setStampError("L'image doit avoir une taille minimale de 50x50 pixels");
+        setStampError(t('company.profile.minDimensions'));
         return;
       }
 
       // Check maximum dimensions
       if (img.width > 2000 || img.height > 2000) {
-        setStampError("L'image ne doit pas dépasser 2000x2000 pixels");
+        setStampError(t('company.profile.maxDimensions'));
         return;
       }
 
@@ -302,11 +304,11 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
 
           console.log("Stamp changed successfully");
         } else {
-          setStampError(result.message || "Échec du changement de cachet");
+          setStampError(result.message || t('company.profile.stampChangeFail'));
           console.error("Error changing stamp:", result.message);
         }
       } catch (error) {
-        setStampError("Erreur réseau lors du téléchargement");
+        setStampError(t('company.profile.networkError'));
         console.error("Network error for stamp:", error);
       } finally {
         setStampLoading(false);
@@ -315,7 +317,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
 
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      setStampError("Le fichier sélectionné n'est pas une image valide");
+      setStampError(t('company.profile.invalidImage'));
     };
 
     img.src = objectUrl;
@@ -325,14 +327,14 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
     <Card className="w-full rounded-xl border-2 border-gray-200 p-0 bg-white">
       <CardContent className="p-7">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-[700] text-gray-900">Images de la clinique</h2>
+          <h2 className="text-3xl font-[700] text-gray-900">{t('company.profile.clinicImages')}</h2>
         </div>
 
         {/* Logo and Stamp in flex row */}
         <div className="flex gap-8">
           {/* Logo Section */}
           <div className="flex-1">
-            <h3 className="text-xl font-[500] text-gray-900 mb-1">Logo</h3>
+            <h3 className="text-xl font-[500] text-gray-900 mb-1">{t('company.logo')}</h3>
             <div className="flex gap-4">
 
               {/* Hidden file input for logo */}
@@ -362,7 +364,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                   {logoLoading ? (
                     <div className="text-[#7564ed] text-center">
                       <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#7564ed] mx-auto mb-3"></div>
-                      <div className="text-base font-semibold">Téléchargement...</div>
+                      <div className="text-base font-semibold">{t('company.profile.uploading')}</div>
                     </div>
                   ) : logoSrc ? (
                     <div className="relative w-full h-full flex items-center justify-center group">
@@ -383,7 +385,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                       {/* Hover overlay */}
                       {canEditClinic && (
                         <div className="absolute inset-0 bg-white bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-l">
-                          <span className="text-white bg-[#ff254e] px-4 py-2 rounded-2xl  font-[500] text-lg">Changer le logo</span>
+                          <span className="text-white bg-[#ff254e] px-4 py-2 rounded-2xl  font-[500] text-lg">{t('company.profile.changeLogo')}</span>
                         </div>
                       )}
                       {logoError && (
@@ -395,7 +397,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                   ) : (
                     <div className="text-gray-500 text-center">
                       <div className="text-4xl mb-3 font-bold">+</div>
-                      <div className="text-lg font-semibold">selectionner le logo</div>
+                      <div className="text-lg font-semibold">{t('company.profile.selectLogo')}</div>
                       {logoError && (
                         <div className="text-red-600 text-sm mt-3 p-2 bg-red-50 rounded-2xl border border-red-200">
                           {logoError}
@@ -410,7 +412,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
 
           {/* Stamp Section */}
           <div className="flex-1">
-            <h3 className="text-xl font-[500] text-gray-900 mb-1">Cachet</h3>
+            <h3 className="text-xl font-[500] text-gray-900 mb-1">{t('company.profile.clinicStamp')}</h3>
             <div className="flex gap-4">
 
               {/* Hidden file input for stamp */}
@@ -440,7 +442,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                   {stampLoading ? (
                     <div className="text-[#7564ed] text-center">
                       <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#7564ed] mx-auto mb-3"></div>
-                      <div className="text-base font-semibold">Téléchargement...</div>
+                      <div className="text-base font-semibold">{t('company.profile.uploading')}</div>
                     </div>
                   ) : stampSrc ? (
                     <div className="relative w-full h-full flex items-center justify-center group">
@@ -461,7 +463,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                       {/* Hover overlay */}
                       {canEditClinic && (
                         <div className="absolute inset-0 bg-white bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-xl">
-                          <span className="text-[#7564ed] font-bold text-lg">Changer le cachet</span>
+                          <span className="text-[#7564ed] font-bold text-lg">{t('company.profile.changeStamp')}</span>
                         </div>
                       )}
                       {stampError && (
@@ -473,7 +475,7 @@ export default function ClinicImagesCard({ canEditClinic = true }) {
                   ) : (
                     <div className="text-gray-500 text-center">
                       <div className="text-4xl mb-3 font-[500]">+</div>
-                      <div className="text-lg font-[500]">selectionner le cachet</div>
+                      <div className="text-lg font-[500]">{t('company.profile.selectStamp')}</div>
                       {stampError && (
                         <div className="text-red-600 text-sm mt-3 p-2 bg-red-50 rounded-2xl border border-red-200">
                           {stampError}

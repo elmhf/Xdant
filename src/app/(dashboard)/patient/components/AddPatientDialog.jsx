@@ -10,8 +10,10 @@ import { Plus, X, ChevronDown, Trash2, UserPlus } from "lucide-react";
 import { useClinicMembers } from "@/app/(dashboard)/company/hooks";
 import useUserStore from "@/components/features/profile/store/userStore";
 import { validatePatientForm, getInitialFormData, resetFormData, preparePatientDataForAPI } from '../utils/formUtils';
+import { useTranslation } from 'react-i18next';
 
 const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
+    const { t } = useTranslation('patient');
     const [formData, setFormData] = useState(getInitialFormData());
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formError, setFormError] = useState("");
@@ -82,7 +84,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                 body: JSON.stringify(patientData)
             });
 
-            setFormSuccess("Patient added successfully!");
+            setFormSuccess(t('addPatient.success'));
 
             // Reset form
             resetFormData(setFormData, setFormError, setFormSuccess);
@@ -94,7 +96,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
 
         } catch (error) {
             console.error('Error adding patient:', error);
-            setFormError(error.message || 'Failed to add patient');
+            setFormError(error.message || t('addPatient.error'));
         } finally {
             setIsSubmitting(false);
         }
@@ -109,7 +111,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
             <DialogContent className="bg-white max-w-3xl sm:max-w-3xl max-h-[90vh]  overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-gray-900">
-                        New patient
+                        {t('addPatient.title')}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -130,7 +132,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="first_name" className="text-sm text-gray-600">
-                                First Name <span className="text-red-500">*</span>
+                                {t('editPatient.firstName')} <span className="text-red-500">*</span>
                             </Label>
                             <Input
                                 id="first_name"
@@ -141,13 +143,13 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                                     } focus:border-[#7564ed] rounded-2xl`}
                             />
                             {!formData.first_name && formError && (
-                                <p className="text-red-500 text-sm">Field is required</p>
+                                <p className="text-red-500 text-sm">{t('editPatient.fieldRequired')}</p>
                             )}
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="last_name" className="text-sm text-gray-600">
-                                Last Name <span className="text-red-500">*</span>
+                                {t('editPatient.lastName')} <span className="text-red-500">*</span>
                             </Label>
                             <Input
                                 id="last_name"
@@ -158,7 +160,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                                     } focus:border-[#7564ed] rounded-2xl`}
                             />
                             {!formData.last_name && formError && (
-                                <p className="text-red-500 text-sm">Field is required</p>
+                                <p className="text-red-500 text-sm">{t('editPatient.fieldRequired')}</p>
                             )}
                         </div>
                     </div>
@@ -166,7 +168,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                     {/* Email */}
                     <div className="space-y-2">
                         <Label htmlFor="email" className="text-sm text-gray-600">
-                            Email
+                            {t('editPatient.email')}
                         </Label>
                         <Input
                             id="email"
@@ -181,7 +183,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="phone" className="text-sm text-gray-600">
-                                Phone Number
+                                {t('editPatient.phone')}
                             </Label>
                             <Input
                                 id="phone"
@@ -194,7 +196,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
 
                         <div className="space-y-2">
                             <Label htmlFor="address" className="text-sm text-gray-600">
-                                Address
+                                {t('editPatient.address')}
                             </Label>
                             <Input
                                 id="address"
@@ -211,7 +213,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                         {/* Gender */}
                         <div className="space-y-2">
                             <Label className="text-sm text-gray-600">
-                                Gender <span className="text-red-500">*</span>
+                                {t('editPatient.gender')} <span className="text-red-500">*</span>
                             </Label>
                             <div className="flex gap-2">
                                 {['Male', 'Female', 'Other'].map((gender) => (
@@ -224,17 +226,17 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                                             : 'bg-gray-100 text-gray-700 hover:border-[#7564ed]'
                                             }`}
                                     >
-                                        {gender}
+                                        {t(`editPatient.${gender.toLowerCase()}`)}
                                     </Button>
                                 ))}
                             </div>
                             {!formData.gender && formError && (
-                                <p className="text-red-500 text-sm">Field is required</p>
+                                <p className="text-red-500 text-sm">{t('editPatient.fieldRequired')}</p>
                             )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="date_of_birth" className="text-sm text-gray-600">
-                                Date of birth <span className="text-red-500">*</span>
+                                {t('editPatient.dateOfBirth')} <span className="text-red-500">*</span>
                             </Label>
                             <div className="relative">
                                 <Input
@@ -248,7 +250,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                                 />
                             </div>
                             {!formData.date_of_birth && formError && (
-                                <p className="text-red-500 text-sm">Field is required</p>
+                                <p className="text-red-500 text-sm">{t('editPatient.fieldRequired')}</p>
                             )}
                         </div>
 
@@ -260,7 +262,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                     {/* Treating Doctors */}
                     <div className="space-y-3">
                         <Label className="text-sm text-gray-600 font-medium">
-                            Treating doctor <span className="text-red-500">*</span>
+                            {t('editPatient.treatingDoctor')} <span className="text-red-500">*</span>
                         </Label>
 
                         {/* Selected Doctors List */}
@@ -324,7 +326,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                                     } rounded-xl px-4 transition-all group text-gray-500 hover:text-[#7564ed]`}>
                                     <div className="flex items-center gap-2 justify-center w-full font-medium">
                                         <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                        <span>Add treating doctor</span>
+                                        <span>{t('addPatient.selectDoctor')}</span>
                                     </div>
                                 </SelectTrigger>
                                 <SelectContent className="max-h-60 p-1">
@@ -371,7 +373,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                                     ) : (
                                         <div className="p-4 text-sm text-gray-500 text-center flex flex-col items-center gap-2">
                                             <UserPlus className="h-8 w-8 text-gray-300" />
-                                            <p>All available doctors added</p>
+                                            <p>{t('patient.addDoctor.allAdded')}</p>
                                         </div>
                                     )}
                                 </SelectContent>
@@ -380,7 +382,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
 
                         {formData.treating_doctors.length === 0 && formError && (
                             <p className="text-red-500 text-sm flex items-center gap-1 mt-1">
-                                At least one doctor is required
+                                {t('editPatient.doctorRequired')}
                             </p>
                         )}
                     </div>
@@ -392,7 +394,7 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                             onClick={onClose}
                             className="flex-1 w-10 h-12 text-base   text-gray-600 hover:bg-gray-50 rounded-2xl"
                         >
-                            Cancel
+                            {t('editPatient.cancel')}
                         </Button>
                         <Button
                             type="button"
@@ -403,10 +405,10 @@ const AddPatientDialog = ({ isOpen, onClose, onPatientAdded }) => {
                             {isSubmitting ? (
                                 <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 border-1 border-white border-t-transparent rounded-full animate-spin"></div>
-                                    Adding...
+                                    {t('addPatient.adding')}
                                 </div>
                             ) : (
-                                "Add"
+                                t('addPatient.add')
                             )}
                         </Button>
                     </div>

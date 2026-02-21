@@ -34,6 +34,7 @@ import { DentalDateGroupCard } from './dental-data/components/DentalDateGroupCar
 import { useDentalData } from './dental-data/hooks/useDentalData';
 import { FilePreviewDialog } from './dental-data/components/FilePreviewDialog';
 import ErrorCard from "@/components/shared/ErrorCard";
+import { useTranslation } from 'react-i18next';
 
 const calculateAge = (dateOfBirth) => {
   if (!dateOfBirth) return 'Unknown';
@@ -50,6 +51,7 @@ const calculateAge = (dateOfBirth) => {
 };
 
 export default function PatientDetailPage() {
+  const { t } = useTranslation('patient');
   // Add useReportData hook instance
   const reportData = useReportData();
   const params = useParams();
@@ -210,10 +212,10 @@ export default function PatientDetailPage() {
       const result = await useUserStore.getState().deletePatient(currentPatient.id);
 
       if (result.success) {
-        pushNotification("success", "Patient deleted successfully");
+        pushNotification("success", t('editPatient.updateSuccess'));
         router.push('/patient'); // Redirect to patient list
       } else {
-        pushNotification("error", result.message || "Error deleting patient");
+        pushNotification("error", result.message || t('editPatient.updateFailed'));
       }
     } catch (error) {
       console.error('Error deleting patient:', error);
@@ -232,10 +234,10 @@ export default function PatientDetailPage() {
 
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7564ed] mx-auto mb-4"></div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Chargement du patient
+              {t('loading.title')}
             </h2>
             <p className="text-gray-600 text-lg">
-              Veuillez patienter pendant le chargement des informations...
+              {t('loading.desc')}
             </p>
           </div>
         </div>
@@ -255,13 +257,13 @@ export default function PatientDetailPage() {
         <div className="text-center max-w-md mx-auto p-6">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Patient non trouvé
+              {t('patientInfo.notFound')}
             </h2>
             <p className="text-gray-600 text-lg mb-4">
-              Le patient demandé n'existe pas.
+              {t('patientInfo.noFoundDesc', { defaultValue: 'The requested patient does not exist.' })}
             </p>
             <Button onClick={handleBack} className="bg-[#7564ed] hover:bg-[#6a4fd8] text-white">
-              Retour aux patients
+              {t('patientInfo.backToPatients')}
             </Button>
           </div>
         </div>
@@ -295,9 +297,9 @@ export default function PatientDetailPage() {
                 {formatPatientName(currentPatient)}
               </h3>
               <div className="flex items-center font-[500] space-x-3 text-gray-900">
-                <span>{calculateAge(currentPatient.date_of_birth)} years</span>
-                <span className="capitalize">{currentPatient.gender || 'Unknown'}</span>
-                <span className="capitalize">{currentPatient.email || 'Unknown'}</span>
+                <span>{calculateAge(currentPatient.date_of_birth)} {t('patientInfo.years')}</span>
+                <span className="capitalize">{currentPatient.gender ? t(`editPatient.${currentPatient.gender}`) : t('patientInfo.unknown')}</span>
+                <span className="capitalize">{currentPatient.email || t('patientInfo.unknown')}</span>
                 <Button
                   onClick={store.openEditPatientDialog}
                   variant="ghost"
@@ -321,7 +323,7 @@ export default function PatientDetailPage() {
               {/* Treating doctors card */}
               <div className="bg-white rounded-2xl p-[12px] shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-3xl font-bold text-gray-950">Treating doctors</h2>
+                  <h2 className="text-3xl font-bold text-gray-950">{t('patientInfo.treatingDoctors')}</h2>
                   {canManageDoctors && (
                     <Button
                       onClick={handleAddDoctor}
@@ -367,7 +369,7 @@ export default function PatientDetailPage() {
                     ))
                   ) : (
                     <div className="text-center py-6 text-gray-500 text-sm">
-                      No doctors assigned
+                      {t('patientInfo.noDoctorsAssigned')}
                     </div>
                   )}
                 </div>

@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import getStroke from "perfect-freehand";
 import useUserStore from "./store/userStore";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import { useTranslation } from "react-i18next";
 
 // Utility function to convert stroke to SVG path
 function getSvgPathFromStroke(stroke) {
@@ -86,6 +87,7 @@ export default function SignatureCard({ signature, onSave }) {
 
   const changeSignature = useUserStore(state => state.changeSignature);
   const { pushNotification } = useNotification();
+  const { t } = useTranslation();
 
 
   // Convert screen coordinates to SVG coordinates
@@ -257,17 +259,17 @@ export default function SignatureCard({ signature, onSave }) {
         onSave(result.signatureUrl || tempUrl);
         setEditing(false);
         clearSignature();
-        pushNotification('success', 'Signature enregistrée avec succès');
+        pushNotification('success', t('notifications.sigSaveSuccess'));
       } else {
         setOptimisticSignature(null);
-        pushNotification('error', result.message || "Erreur lors de l'enregistrement de la signature.");
+        pushNotification('error', result.message || t('notifications.sigSaveError'));
       }
     } catch (error) {
       setIsUploading(false);
       setIsSaving(false);
       setOptimisticSignature(null);
       console.error('Error saving signature:', error);
-      pushNotification('error', "Une erreur s'est produite lors de l'enregistrement de la signature.");
+      pushNotification('error', t('notifications.sigGenericError'));
     }
   }, [strokes, currentStroke, onSave, clearSignature, changeSignature]);
 
@@ -281,7 +283,7 @@ export default function SignatureCard({ signature, onSave }) {
 
     // التحقق من نوع الملف
     if (!file.type.startsWith('image/')) {
-      pushNotification('error', 'Veuillez choisir un fichier image valide.');
+      pushNotification('error', t('notifications.imgRequired'));
       return;
     }
 
@@ -296,15 +298,15 @@ export default function SignatureCard({ signature, onSave }) {
 
       if (result.success) {
         onSave(result.signatureUrl);
-        pushNotification('success', 'Signature téléchargée avec succès');
+        pushNotification('success', t('notifications.sigUploadSuccess'));
       } else {
-        pushNotification('error', result.message || "Erreur lors du téléchargement de la signature.");
+        pushNotification('error', result.message || t('notifications.sigUploadError'));
       }
     } catch (error) {
       setIsSaving(false);
       setIsUploading(false);
       console.error('Error uploading signature:', error);
-      pushNotification('error', "Une erreur s'est produite lors du téléchargement de la signature.");
+      pushNotification('error', t('notifications.sigGenericError'));
     }
 
     // Reset file input
@@ -360,8 +362,8 @@ export default function SignatureCard({ signature, onSave }) {
     <Card className="rounded-xl p-0 border-2 border-gray-200 bg-white w-full h-fit">
       <CardContent className="p-6">
         <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Signature</h3>
-          <p className="text-sm text-gray-600">Signature individuelle</p>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">{t('profile.signature')}</h3>
+          <p className="text-sm text-gray-600">{t('profile.personalSignature')}</p>
         </div>
         {/* Hidden file input */}
         <input
@@ -381,7 +383,7 @@ export default function SignatureCard({ signature, onSave }) {
                 {isSaving ? (
                   <div className="flex flex-col items-center justify-center w-full h-full">
                     <LoadingSpinner size="w-12 h-12" />
-                    <span className="text-[#7564ed] mt-3 font-medium">Enregistrement de la signature...</span>
+                    <span className="text-[#7564ed] mt-3 font-medium">{t('profile.savingSignature')}</span>
                     {optimisticSignature && (
                       <img src={optimisticSignature} className="max-h-32 max-w-full object-contain opacity-60 mt-2 rounded" />
                     )}
@@ -389,7 +391,7 @@ export default function SignatureCard({ signature, onSave }) {
                 ) : isUploading ? (
                   <div className="flex flex-col items-center justify-center w-full h-full">
                     <LoadingSpinner size="w-10 h-10" />
-                    <span className="text-[#7564ed] mt-2">Téléchargement de la signature...</span>
+                    <span className="text-[#7564ed] mt-2">{t('profile.uploadingSignature')}</span>
                     {optimisticSignature && (
                       <img src={optimisticSignature} className="max-h-32 max-w-full object-contain opacity-60 mt-2 rounded" />
                     )}
@@ -408,7 +410,7 @@ export default function SignatureCard({ signature, onSave }) {
                 ) : (
                   <div className="text-center text-gray-500 px-4">
                     <div className="text-4xl mb-2">✍️</div>
-                    <div className="text-sm">Aucune signature enregistrée</div>
+                    <div className="text-sm">{t('profile.noSignature')}</div>
                   </div>
                 )}
               </div>
@@ -420,7 +422,7 @@ export default function SignatureCard({ signature, onSave }) {
                   onClick={() => setEditing(true)}
                   disabled={isSaving}
                 >
-                  {isSaving ? "Enregistrement..." : "Modifier la signature"}
+                  {isSaving ? t('profile.saving') : t('profile.editSignature')}
                 </button>
               </div>
             </div>
@@ -495,13 +497,13 @@ export default function SignatureCard({ signature, onSave }) {
               {/* Pressure indicator */}
               {isDrawing && !isSaving && (
                 <div className="absolute top-2 left-2 bg-gray-900 bg-opacity-75 text-white px-2 py-1 rounded text-xs">
-                  Pression : {Math.round(pressure * 100)}%
+                  {t('profile.pressure')} {Math.round(pressure * 100)}%
                 </div>
               )}
             </div>
             <div className="mb-4">
               <div className="text-sm text-gray-600 mb-3 text-center">
-                Dessinez votre signature dans la zone ci-dessus
+                {t('profile.drawInstructions')}
               </div>
               <div className="flex justify-end items-center gap-2">
                 <div className="flex gap-2">
@@ -515,7 +517,7 @@ export default function SignatureCard({ signature, onSave }) {
                     }}
                     disabled={isSaving}
                   >
-                    Annuler
+                    {t('common.cancel')}
                   </Button> <Button
                     variant="outline"
                     size="sm"
@@ -526,10 +528,10 @@ export default function SignatureCard({ signature, onSave }) {
                     {isSaving ? (
                       <div className="flex items-center gap-2">
                         <LoadingSpinner size="w-4 h-4" />
-                        <span>Enregistrement...</span>
+                        <span>{t('profile.saving')}</span>
                       </div>
                     ) : (
-                      "Enregistrer"
+                      t('common.save')
                     )}
                   </Button>
 

@@ -12,6 +12,7 @@ import ToothDiagnosis from "@/components/features/dashboard/side/card/ToothCard"
 import { useDentalStore } from "@/stores/dataStore";
 import { DataContext } from "@/components/features/dashboard/dashboard";
 import { useDentalSettings } from "@/components/features/dashboard/main/ImageXRay/component/CustomHook/useDentalSettings";
+import { useTranslation } from 'react-i18next';
 import { useImageStore } from "@/app/(dashboard)/OrthogonalViews/stores/imageStore";
 import { useReportData } from "../../../hook/useReportData";
 import { motion } from "framer-motion";
@@ -23,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import SliceViewerModal from "@/components/features/dashboard/main/ToothSlice/SliceViewerModal";
 
 export default function ToothSlicePage() {
+  const { t } = useTranslation('patient');
   // FIXED: Always call all hooks at the top level first
   const { toothId, report_id } = useParams();
   const stageRef = useRef(null);
@@ -223,7 +225,7 @@ export default function ToothSlicePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7564ed]"></div>
-          <p className="text-gray-600">Loading report data...</p>
+          <p className="text-gray-600">{t('toothSlice.loading')}</p>
         </div>
       </div>
     );
@@ -233,20 +235,20 @@ export default function ToothSlicePage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="text-red-500 text-lg mb-4">Error: {error}</div>
+          <div className="text-red-500 text-lg mb-4">{t('toothSlice.error', { error })}</div>
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => retry(report_id)}
               className="bg-[#7564ed] text-white px-4 py-2 rounded hover:bg-[#7564ed]"
             >
-              🔄 Try Again
+              🔄 {t('toothSlice.tryAgain')}
             </button>
             {process.env.NODE_ENV === 'development' && (
               <button
                 onClick={clearCache}
                 className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
               >
-                Clear Cache
+                {t('toothSlice.clearCache')}
               </button>
             )}
           </div>
@@ -275,8 +277,8 @@ export default function ToothSlicePage() {
               <ToothDiagnosis isDragging={isDragging} sliceDrager={sliceDrager} idCard={toothNumber} showDiagnosisDetails={true} ToothSlicemode={true} />
             ) : (
               <div className="text-yellow-600 bg-yellow-50 p-4 rounded-2xl border border-yellow-200">
-                <strong>Tooth data not loaded</strong>
-                <p className="text-sm mt-1">Tooth number {toothNumber} data is being loaded from report...</p>
+                <strong>{t('toothSlice.dataNotLoaded')}</strong>
+                <p className="text-sm mt-1">{t('toothSlice.detailsLoading', { number: toothNumber })}</p>
               </div>
             )}
           </motion.div>
@@ -322,12 +324,12 @@ export default function ToothSlicePage() {
                 return (
                   <div key={view} className=" mb-5">
                     <div className="font-[800] text-3xl  capitalize text-gray-800 flex items-center gap-2">
-                      {view} View
+                      {t('toothSlice.view', { view: view })}
                     </div>
 
                     {start > 0 && end > 0 && (
                       <div className="text-sm font-[600] text-gray-500 mt-1 mb-3">
-                        Slice Range: <span className="text-black">{start}</span> to <span className="text-black">{end}</span> Slices: <span className="text-black">{end - start + 1}</span>
+                        {t('toothSlice.sliceRange')} <span className="text-black">{start}</span> {t('toothSlice.to')} <span className="text-black">{end}</span> {t('toothSlice.slicesCount')} <span className="text-black">{end - start + 1}</span>
                       </div>
                     )}
                     {start === 0 && end === 0 ? (
@@ -396,7 +398,7 @@ export default function ToothSlicePage() {
               style={{ color: tooth?.approved ? '#16a34a' : undefined, backgroundColor: tooth?.approved ? '#E9FCF0' : undefined }}
               onClick={() => updateToothApproval(toothNumber, !tooth?.approved)}
             >
-              {tooth?.approved ? "Approved" : "Approve"}
+              {tooth?.approved ? t('toothSlice.approved') : t('toothSlice.approve')}
             </Button>
           </div>
         </div>

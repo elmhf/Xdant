@@ -5,6 +5,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
 
 export default function EditInfo({
   open,
@@ -13,6 +14,7 @@ export default function EditInfo({
   userInfo,
   setUserInfo,
 }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("general");
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [username, setUsername] = useState(userInfo?.firstName || "sophie");
@@ -26,11 +28,11 @@ export default function EditInfo({
   });
 
   const tabs = [
-    { id: "general", label: "General", icon: Settings },
-    { id: "profile", label: "Profile", icon: User },
-    { id: "security", label: "Security", icon: Shield },
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "subscription", label: "Subscription", icon: CreditCard },
+    { id: "general", label: t('profile.generalTab'), icon: Settings },
+    { id: "profile", label: t('profile.profile'), icon: User },
+    { id: "security", label: t('profile.securityTitle'), icon: Shield },
+    { id: "notifications", label: t('profile.notificationsTab'), icon: Bell },
+    { id: "subscription", label: t('profile.subscriptionTab'), icon: CreditCard },
   ];
 
   const handleUsernameEdit = () => {
@@ -52,7 +54,7 @@ export default function EditInfo({
           <div className="space-y-8">
             {/* Username Field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Username</label>
+              <label className="text-sm font-medium text-gray-700">{t('profile.firstName')}</label>
               <div className="flex items-center gap-3">
                 <Input
                   value={username}
@@ -71,7 +73,7 @@ export default function EditInfo({
 
             {/* Email Field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Email</label>
+              <label className="text-sm font-medium text-gray-700">{t('profile.email')}</label>
               <Input
                 value={userInfo?.email || "sophie@ul.live"}
                 disabled
@@ -82,7 +84,7 @@ export default function EditInfo({
             {/* Toggle Settings */}
             <div className="space-y-6">
               <div className="flex items-center justify-between py-3">
-                <span className="text-base text-gray-700">Enable auto-prompt idea suggestion</span>
+                <span className="text-base text-gray-700">{t('profile.autoPrompt')}</span>
                 <Switch
                   checked={settings.autoPrompt}
                   onCheckedChange={() => handleToggle('autoPrompt')}
@@ -90,7 +92,7 @@ export default function EditInfo({
               </div>
 
               <div className="flex items-center justify-between py-3">
-                <span className="text-base text-gray-700">Auto-play video on Explore</span>
+                <span className="text-base text-gray-700">{t('profile.autoPlay')}</span>
                 <Switch
                   checked={settings.autoPlay}
                   onCheckedChange={() => handleToggle('autoPlay')}
@@ -98,7 +100,7 @@ export default function EditInfo({
               </div>
 
               <div className="flex items-center justify-between py-3">
-                <span className="text-base text-gray-700">Publish to Explore</span>
+                <span className="text-base text-gray-700">{t('profile.publishToExplore')}</span>
                 <Switch
                   checked={settings.publishToExplore}
                   onCheckedChange={() => handleToggle('publishToExplore')}
@@ -106,7 +108,7 @@ export default function EditInfo({
               </div>
 
               <div className="flex items-center justify-between py-3">
-                <span className="text-base text-gray-700">Dark mode</span>
+                <span className="text-base text-gray-700">{t('profile.darkMode')}</span>
                 <Switch
                   checked={settings.darkMode}
                   onCheckedChange={() => handleToggle('darkMode')}
@@ -114,7 +116,7 @@ export default function EditInfo({
               </div>
 
               <div className="flex items-center justify-between py-3">
-                <span className="text-base text-gray-700">Enable auto-save for reports</span>
+                <span className="text-base text-gray-700">{t('profile.autoSaveReports')}</span>
                 <Switch
                   checked={settings.autoSaveReports}
                   onCheckedChange={() => handleToggle('autoSaveReports')}
@@ -124,16 +126,16 @@ export default function EditInfo({
 
             {/* Language Dropdown */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Language</label>
+              <label className="text-sm font-medium text-gray-700">{t('profile.language')}</label>
               <Select value={settings.language} onValueChange={(val) => setSettings(prev => ({ ...prev, language: val }))}>
                 <SelectTrigger className="h-12 text-base">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="auto">Auto detect</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="fr">Français</SelectItem>
-                  <SelectItem value="ar">العربية</SelectItem>
+                  <SelectItem value="auto">{t('profile.autoDetect')}</SelectItem>
+                  <SelectItem value="en">{t('common.english')}</SelectItem>
+                  <SelectItem value="fr">{t('common.french')}</SelectItem>
+                  <SelectItem value="ar">{t('common.arabic')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -145,7 +147,7 @@ export default function EditInfo({
           <div className="space-y-8">
             {/* My Profile Section */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-">My Profile</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-">{t('profile.accountInfo')}</h3>
 
               {/* Profile Picture */}
               <div className="flex items-start gap-4 mb-6">
@@ -159,20 +161,20 @@ export default function EditInfo({
                 <div className="flex-1">
                   <div className="flex gap-3 mb-2">
                     <button className="px-4 py-2 bg-gray-900 text-white rounded-2xl hover:bg-gray-800 transition-colors text-sm font-medium flex items-center gap-2">
-                      <span>+</span> Change Image
+                      <span>+</span> {t('profile.changePhoto')}
                     </button>
                     <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-2xl hover:bg-gray-200 transition-colors text-sm font-medium">
-                      Remove Image
+                      {t('profile.deletePhoto')}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500">We support PNGs, JPEGs and GIFs under 2MB</p>
+                  <p className="text-xs text-gray-500">{t('profile.photoSupportFormat')}</p>
                 </div>
               </div>
 
               {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">First Name</label>
+                  <label className="text-sm font-medium text-gray-900">{t('profile.firstName')}</label>
                   <Input
                     value={userInfo?.firstName || ""}
                     onChange={(e) => setUserInfo({ ...userInfo, firstName: e.target.value })}
@@ -180,7 +182,7 @@ export default function EditInfo({
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">Last Name</label>
+                  <label className="text-sm font-medium text-gray-900">{t('profile.lastName')}</label>
                   <Input
                     value={userInfo?.lastName || ""}
                     onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
@@ -192,11 +194,11 @@ export default function EditInfo({
 
             {/* Account Security Section */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Account Security</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6">{t('profile.accountSecurity')}</h3>
 
               {/* Email */}
               <div className="space-y-2 mb-6">
-                <label className="text-sm font-medium text-gray-900">Email</label>
+                <label className="text-sm font-medium text-gray-900">{t('profile.email')}</label>
                 <div className="flex gap-3">
                   <Input
                     value={userInfo?.email || ""}
@@ -204,14 +206,14 @@ export default function EditInfo({
                     className="h-11 text-base bg-gray-50 flex-1"
                   />
                   <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
-                    Change email
+                    {t('profile.changeEmailTitle')}
                   </button>
                 </div>
               </div>
 
               {/* Password */}
               <div className="space-y-2 mb-6">
-                <label className="text-sm font-medium text-gray-900">Password</label>
+                <label className="text-sm font-medium text-gray-900">{t('profile.password')}</label>
                 <div className="flex gap-3">
                   <Input
                     type="password"
@@ -220,7 +222,7 @@ export default function EditInfo({
                     className="h-11 text-base bg-gray-50 flex-1"
                   />
                   <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
-                    Change password
+                    {t('profile.changePasswordTitle')}
                   </button>
                 </div>
               </div>
@@ -228,8 +230,8 @@ export default function EditInfo({
               {/* 2-Step Verification */}
               <div className="flex items-start justify-between py-4 border-t border-gray-200">
                 <div className="flex-1">
-                  <h4 className="text-base font-semibold text-gray-900 mb-1">2-Step Verifications</h4>
-                  <p className="text-sm text-gray-600">Add an additional layer of security to your account during login.</p>
+                  <h4 className="text-base font-semibold text-gray-900 mb-1">{t('profile.status2FA')}</h4>
+                  <p className="text-sm text-gray-600">{t('profile.status2FADesc')}</p>
                 </div>
                 <Switch checked={false} />
               </div>
@@ -237,13 +239,12 @@ export default function EditInfo({
 
             {/* Support Access Section */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Support Access</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6">{t('profile.supportAccess')}</h3>
 
               {/* Support Access Toggle */}
               <div className="flex items-start justify-between py-4 mb-6">
                 <div className="flex-1">
-                  <h4 className="text-base font-semibold text-gray-900 mb-1">Support access</h4>
-                  <p className="text-sm text-gray-600">You have granted us to access to your account for support purposes until Aug 31, 2023, 9:40 PM.</p>
+                  <p className="text-sm text-gray-600">{t('profile.supportAccessDesc')}</p>
                 </div>
                 <Switch checked={true} />
               </div>
@@ -251,22 +252,22 @@ export default function EditInfo({
               {/* Log out of all devices */}
               <div className="flex items-start justify-between py-4 border-t border-gray-200 mb-4">
                 <div className="flex-1">
-                  <h4 className="text-base font-semibold text-gray-900 mb-1">Log out of all devices</h4>
-                  <p className="text-sm text-gray-600">Log out of all other active sessions on other devices besides this one.</p>
+                  <h4 className="text-base font-semibold text-gray-900 mb-1">{t('profile.logoutAll')}</h4>
+                  <p className="text-sm text-gray-600">{t('profile.logoutAllDesc')}</p>
                 </div>
                 <button className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
-                  Log out
+                  {t('common.logout')}
                 </button>
               </div>
 
               {/* Delete Account */}
               <div className="flex items-start justify-between py-4 border-t border-gray-200">
                 <div className="flex-1">
-                  <h4 className="text-base font-semibold text-red-600 mb-1">Delete my account</h4>
-                  <p className="text-sm text-gray-600">Permanently delete the account and remove access from all workspaces.</p>
+                  <h4 className="text-base font-semibold text-red-600 mb-1">{t('profile.deleteAccount')}</h4>
+                  <p className="text-sm text-gray-600">{t('profile.deleteAccountDesc')}</p>
                 </div>
                 <button className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-2xl transition-colors text-sm font-medium whitespace-nowrap">
-                  Delete Account
+                  {t('profile.deleteAccount')}
                 </button>
               </div>
             </div>

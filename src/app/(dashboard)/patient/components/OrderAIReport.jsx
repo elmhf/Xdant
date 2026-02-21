@@ -8,13 +8,17 @@ import { toast } from 'sonner';
 import UploadToast, { useUploadToast } from './UploadToast';
 import GenericUploadDialog from './GenericUploadDialog';
 import axios from 'axios';
-const reportTypes = [
-  { id: 'cbct', name: 'CBCT', icon: Scan, description: 'Cone Beam Computed Tomography' },
-  { id: 'pano', name: 'Pano', icon: Circle, description: 'Panoramic X-ray' },
-  { id: 'upload_files', name: 'Upload Files', icon: Upload, description: 'Upload generic files' },
-];
+import { useTranslation } from 'react-i18next';
 
 const OrderAIReport = ({ patient, onReportCreated }) => {
+  const { t } = useTranslation('patient');
+
+  const reportTypes = [
+    { id: 'cbct', name: t('orderReport.cbctName'), icon: Scan, description: t('orderReport.cbctDesc') },
+    { id: 'pano', name: t('orderReport.panoName'), icon: Circle, description: t('orderReport.panoDesc') },
+    { id: 'upload_files', name: t('orderReport.uploadFiles'), icon: Upload, description: t('orderReport.uploadDesc') },
+  ];
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isGenericUploadOpen, setIsGenericUploadOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
@@ -47,7 +51,7 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
     if (!file) return;
 
     if (!patient?.id || !patient?.clinic?.id) {
-      toast.error("Missing patient or clinic information");
+      toast.error(t('orderReport.missingInfo'));
       return;
     }
 
@@ -56,7 +60,7 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
 
     const uploadId = addUpload({
       fileName: file.name,
-      reportType: 'Generic Upload',
+      reportType: t('orderReport.genericUpload', 'Generic Upload'),
       onCancel: () => {
         abortController.abort();
         abortControllersRef.current.delete(uploadId);
@@ -87,8 +91,6 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
       const { uploadUrl, file: fileInfo } = urlRes;
 
       // Step 2: Upload directly to Supabase
-      // Using axios directly for the PUT request to support progress tracking
-      // Note: We use a fresh headers object to avoid interference from any global axios defaults
       await axios.put(uploadUrl, file, {
         signal: abortController.signal,
         headers: {
@@ -118,7 +120,6 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
         body: JSON.stringify(fileInfo)
       });
 
-      // Clear input (if it was an input, but now it's passed from dialog)
     } catch (error) {
       console.error("Upload error:", error);
 
@@ -139,7 +140,7 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
     <>
       <div className="bg-white py-4 rounded-2xl shadow-sm border border-gray-100 p-4">
         {/* Header */}
-        <h3 className="text-2xl font-bold text-gray-950 mb-4 ">Order AI Report</h3>
+        <h3 className="text-2xl font-bold text-gray-950 mb-4 ">{t('orderReport.title')}</h3>
 
         {/* Content */}
         <div>
@@ -172,7 +173,6 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
                   </div>
                 </div>
               ))}
-              {/* Hidden input removed in favor of GenericUploadDialog */}
             </div>
           </div>
         </div>

@@ -21,9 +21,9 @@ export default function ImageViewer({
   setSettings,
   showToolBar
 }) {
+  const { t } = useTranslation();
   const { updateSettingProblem } = useDentalSettings();
   const { data, ToothEditData, toothNumberSelect, setToothNumberSelect, isPanoType } = useContext(DataContext);
-  const { t } = useTranslation(); // Added useTranslation
 
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(0);
@@ -217,7 +217,7 @@ export default function ImageViewer({
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span className="text-lg font-semibold">
-                    {t('Toate imaginile') || 'All Images'}
+                    {t('dashboard.allImages')}
                   </span>
                 </button>
               </div>
@@ -228,7 +228,7 @@ export default function ImageViewer({
                   onClick={handlePrev}
                   className="p-2 rounded-full hover:bg-white/10 text-white transition-colors disabled:opacity-30 active:scale-95"
                   disabled={!sortedTeeth.length}
-                  title="Previous Tooth"
+                  title={t('dashboard.prevTooth')}
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
@@ -236,13 +236,13 @@ export default function ImageViewer({
                 <div className="px-6 text-white font-semibold text-lg min-w-[140px] gap-1 text-center flex flex-row items-center justify-center">
                   <span className="text-white font-semibold text-lg leading-tight">
                     {toothNumberSelect
-                      ? `${t('Tooth') || 'Tooth'} ${toothNumberSelect}`
-                      : (t('Overview') || 'Overview')
+                      ? `${t('dashboard.toothNum', { num: toothNumberSelect })}`
+                      : t('dashboard.overview')
                     }
                   </span>
                   {toothNumberSelect && (
                     <span className=" opacity-50">
-                      {currentIndex + 1} of {sortedTeeth.length}
+                      {t('dashboard.pagination', { current: currentIndex + 1, total: sortedTeeth.length })}
                     </span>
                   )}
                 </div>
@@ -251,7 +251,7 @@ export default function ImageViewer({
                   onClick={handleNext}
                   className="p-2 rounded-full hover:bg-white/10 text-white transition-colors disabled:opacity-30 active:scale-95"
                   disabled={!sortedTeeth.length}
-                  title="Next Tooth"
+                  title={t('dashboard.nextTooth')}
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
@@ -286,14 +286,14 @@ export default function ImageViewer({
           )}
           <img
             src={image.data_url}
-            alt="Uploaded dental scan"
+            alt={t('dashboard.uploadedScan')}
             className="relative w-full"
             style={imageStyle}
           />
           <div className="absolute bottom-4 left-4 z-10 bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-sm max-w-xs">
-            <h4 className="font-medium mb-2">Status</h4>
+            <h4 className="font-medium mb-2">{t('dashboard.status')}</h4>
             <ul className="text-xs space-y-1 list-disc pl-4">
-              <li>No dental issues detected</li>
+              <li>{t('dashboard.noIssues')}</li>
             </ul>
           </div>
         </div>

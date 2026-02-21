@@ -1,11 +1,13 @@
 "use client"
 import { useState, useCallback, useContext, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
 import useAnalyseImage from "@/components/features/dashboard/JsFiles/getAnalyseImage";
 import useImageStore from "@/stores/ImageStore";
 import { DataContext } from "@/components/features/dashboard/dashboard";
 
 export default function useImageCard() {
+  const { t } = useTranslation();
   const { pushNotification } = useNotification();
   // Safe destructure with fallback and warning
   const context = useContext(DataContext);
@@ -111,8 +113,8 @@ export default function useImageCard() {
   // دالة لرفع الصور من URL
   const handleUrlUpload = useCallback(async (imageUrl) => {
     if (!imageUrl || typeof imageUrl !== 'string') {
-      setState(prev => ({ ...prev, error: 'Invalid image URL' }));
-      pushNotification('error', "Please provide a valid image URL");
+      setState(prev => ({ ...prev, error: t('dashboard.validImageUrlError') }));
+      pushNotification('error', t('dashboard.validImageUrlError'));
       return;
     }
 
@@ -147,24 +149,24 @@ export default function useImageCard() {
         isLoading: false
       }));
 
-      pushNotification('success', "Your dental scan has been processed successfully");
+      pushNotification('success', t('dashboard.scanProcessedSuccess'));
 
     } catch (err) {
       console.error("Image URL upload failed:", err);
       setState(prev => ({
         ...prev,
-        error: err.message || 'Failed to analyze image from URL. Please try again.',
+        error: err.message || t('dashboard.analyzeUrlError'),
         isLoading: false
       }));
-      pushNotification('error', err.message || "Failed to analyze image from URL. Please try again.");
+      pushNotification('error', err.message || t('dashboard.analyzeUrlError'));
     }
-  }, [fetchImageFromUrl, getAnalyseImage, setImage]);
+  }, [fetchImageFromUrl, getAnalyseImage, setImage, t]);
 
   // تحسين handleUpload - إزالة dependencies غير ضرورية
   const handleUpload = useCallback(async (imageList) => {
     if (!Array.isArray(imageList) || imageList.length === 0 || !imageList[0]?.file) {
-      setState(prev => ({ ...prev, error: 'Invalid image file' }));
-      pushNotification('error', "Please select a valid image file (JPG, PNG)");
+      setState(prev => ({ ...prev, error: t('dashboard.validImageFileError') }));
+      pushNotification('error', t('dashboard.validImageFileError'));
       return;
     }
 
@@ -181,25 +183,25 @@ export default function useImageCard() {
       const formData = new FormData();
       formData.append("file", imageList[0].file);
 
-      pushNotification('success', "Your dental scan has been processed successfully");
+      pushNotification('success', t('dashboard.scanProcessedSuccess'));
       setState(prev => ({ ...prev, error: null, isLoading: false }));
 
     } catch (err) {
       console.error("Image upload failed:", err);
       setState(prev => ({
         ...prev,
-        error: err.message || 'Failed to analyze image. Please try again.',
+        error: err.message || t('dashboard.analyzeError'),
         isLoading: false
       }));
-      pushNotification('error', err.message || "Failed to analyze image. Please try again.");
+      pushNotification('error', err.message || t('dashboard.analyzeError'));
     }
-  }, [getAnalyseImage, setImage]);
+  }, [getAnalyseImage, setImage, t]);
 
   // تحسين downloadImageWithAnnotations
   const downloadImageWithAnnotations = useCallback(() => {
     if (!stageRef?.current) {
       console.error('Stage reference is not available');
-      pushNotification('error', 'Unable to download image. Stage not available.');
+      pushNotification('error', t('dashboard.downloadStageError'));
       return;
     }
 
@@ -217,21 +219,21 @@ export default function useImageCard() {
       link.click();
       document.body.removeChild(link);
 
-      pushNotification('success', 'Image downloaded successfully!');
+      pushNotification('success', t('dashboard.downloadSuccess'));
     } catch (error) {
       console.error('Error downloading image:', error);
-      pushNotification('error', 'Failed to download image. Please try again.');
+      pushNotification('error', t('dashboard.downloadError'));
     }
-  }, [stageRef]);
+  }, [stageRef, t]);
 
   // تحسين handleReanalyze - استخدام useRef بدلاً من state
   const handleReanalyze = useCallback(() => {
     if (imageListRef.current.length > 0) {
       handleUpload(imageListRef.current);
     } else {
-      pushNotification('error', 'No image available to reanalyze');
+      pushNotification('error', t('dashboard.reanalyzeNoImageError'));
     }
-  }, [handleUpload]);
+  }, [handleUpload, t]);
 
   // تحسين الدوال البسيطة - إزالة useCallback غير الضروري
   const toggleFullScreen = useCallback(() => {
@@ -252,7 +254,7 @@ export default function useImageCard() {
   // تحسين handleDownload
   const handleDownload = useCallback(() => {
     if (!state.images.length) {
-      pushNotification('error', 'No image available to download');
+      pushNotification('error', t('dashboard.downloadNoImageError'));
       return;
     }
 
@@ -264,12 +266,12 @@ export default function useImageCard() {
       link.click();
       document.body.removeChild(link);
 
-      pushNotification('success', 'Original image downloaded successfully!');
+      pushNotification('success', t('dashboard.originalDownloadSuccess'));
     } catch (error) {
       console.error('Error downloading original image:', error);
-      pushNotification('error', 'Failed to download image. Please try again.');
+      pushNotification('error', t('dashboard.downloadError'));
     }
-  }, [state.images]);
+  }, [state.images, t]);
 
   // دالة مُحسنة لتحديث showParameters
   const setShowParameters = useCallback((show) => {
@@ -322,8 +324,8 @@ export default function useImageCard() {
       };
     });
 
-    pushNotification('success', 'Image removed successfully');
-  }, [cleanupImageUrl]);
+    pushNotification('success', t('dashboard.removeImageSuccess'));
+  }, [cleanupImageUrl, t]);
 
   // دالة للتحقق من نوع الصورة
   const validateImageType = useCallback((file) => {
