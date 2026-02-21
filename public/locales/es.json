@@ -69,7 +69,15 @@
     "patients": "Pacientes",
     "patientName": "Felicia Hall",
     "reportTitle": "Informe CBCT con IA",
-    "print": "Imprimir análisis"
+    "logoUrl": "/XDENTAL.png",
+    "logoText": "XDent",
+    "goToHomepage": "Ir a la página de inicio",
+    "logoAlt": "Logo de Xdental"
+  },
+  "dashboard": {
+    "navigator": "Navegador",
+    "thumbnailAlt": "miniatura",
+    "pixels": "px"
   },
   "addComment": {
     "note": "Nota",
@@ -227,5 +235,121 @@
     "warning": "Advertencia",
     "error": "Error",
     "info": "Información"
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Por favor, introduzca sus datos",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "Introduzca su correo",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Introduzca su contraseña",
+      "rememberMe": "Recordarme",
+      "forgotPassword": "¿Olvidó su contraseña?",
+      "signIn": "Iniciar sesión",
+      "signingIn": "Iniciando sesión...",
+      "continueWithGoogle": "Continuar con Google",
+      "noAccount": "¿No tiene una cuenta?",
+      "signUp": "Regístrese",
+      "errors": {
+        "invalidCredentials": "Correo o contraseña inválidos",
+        "network": "Error de red, por favor inténtelo de nuevo"
+      }
+    },
+    "signup": {
+      "title": "Regístrese",
+      "alreadyHaveAccount": "¿Ya tiene una cuenta?",
+      "login": "Inicie sesión",
+      "firstName": "Nombre",
+      "firstNamePlaceholder": "Introduzca su nombre",
+      "lastName": "Apellido",
+      "lastNamePlaceholder": "Introduzca su apellido",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "usted@empresa.com",
+      "phone": "Teléfono",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Cree una contraseña segura",
+      "confirmPassword": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Confirme su contraseña",
+      "continue": "Continuar",
+      "creatingAccount": "Creando cuenta...",
+      "orContinueWith": "O continuar con",
+      "signInWithGoogle": "Iniciar sesión con Google",
+      "validation": {
+        "firstNameRequired": "El nombre es obligatorio",
+        "firstNameInvalid": "El nombre debe tener entre 2 y 50 caracteres, solo letras",
+        "lastNameRequired": "El apellido es obligatorio",
+        "lastNameInvalid": "El apellido debe tener entre 2 y 50 caracteres, solo letras",
+        "emailRequired": "El correo es obligatorio",
+        "emailInvalid": "Por favor, introduzca un correo válido",
+        "phoneInvalid": "Por favor, introduzca un número de teléfono válido",
+        "passwordRequired": "La contraseña es obligatoria",
+        "confirmPasswordRequired": "Por favor, confirme su contraseña",
+        "passwordsDontMatch": "Las contraseñas no coinciden"
+      }
+    },
+    "forgotPassword": {
+      "title": "Restablecer contraseña",
+      "subtitle": "Introduzca su correo electrónico para recibir un enlace de restablecimiento",
+      "email": "Correo electrónico",
+      "resetButton": "Restablecer contraseña",
+      "checkEmail": {
+        "title": "Revise su correo",
+        "desc": "Hemos enviado un código de restablecimiento a",
+        "verifyButton": "Verificar código",
+        "verifying": "Verificando...",
+        "noEmail": "¿No recibió el correo? Revise su carpeta de spam o",
+        "resendIn": "reenviar en {{time}}",
+        "tryAgain": "reintentar"
+      },
+      "newPassword": {
+        "title": "Crear nueva contraseña",
+        "subtitle": "Introduzca su nueva contraseña a continuación para completar el proceso",
+        "passwordLabel": "Contraseña",
+        "passwordHint": "La contraseña debe contener al menos 12 caracteres",
+        "confirmLabel": "Confirmar contraseña",
+        "confirmHint": "Las contraseñas deben ser idénticas",
+        "successTitle": "¡Contraseña actualizada!",
+        "successDesc": "Redirigiendo al inicio de sesión...",
+        "resetting": "Restableciendo..."
+      },
+      "errors": {
+        "otpRequired": "Por favor, introduzca los 6 dígitos"
+      }
+    },
+    "pinVerification": {
+      "title": "Verifique su correo",
+      "subtitle": "Hemos enviado un código de verificación de 6 dígitos a",
+      "enterOtp": "Introduzca el código de 6 dígitos enviado a su correo",
+      "verifyButton": "Verificar",
+      "verifying": "Verificando...",
+      "noCode": "¿No recibió el código?",
+      "resend": "Haga clic para reenviar",
+      "resending": "Reenviando...",
+      "backToDetails": "Volver a los detalles"
+    },
+    "acceptInvitation": {
+      "title": "Invitación para unirse a la clínica",
+      "invalidTitle": "Invitación inválida",
+      "subtitle": "Has sido invitado a unirte a una clínica",
+      "invalidSubtitle": "Esta invitación ya no es válida o ha caducado",
+      "validating": "Validando invitación...",
+      "role": "Rol: {{role}}",
+      "importantInfo": "Información importante:",
+      "accessPatients": "Tendrá acceso a todos los pacientes de esta clínica",
+      "seeAppointments": "Podrá ver las citas y los registros",
+      "mustAccept": "Debe aceptar para unirse a la clínica",
+      "rejectButton": "Rechazar",
+      "acceptButton": "Aceptar invitación",
+      "backToHome": "Volver al inicio",
+      "messages": {
+        "missingToken": "Falta el token de invitación",
+        "invalidToken": "Token de invitación inválido",
+        "acceptSuccess": "¡Invitación aceptada con éxito! Ahora es miembro de la clínica.",
+        "acceptError": "Error al aceptar la invitación",
+        "rejectSuccess": "Invitación rechazada. Será redirigido a la página de inicio.",
+        "rejectError": "Error al rechazar la invitación"
+      }
+    }
   }
 }

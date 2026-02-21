@@ -7,8 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Loader2, Mail, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/shared/navbar/LanguageSwitcher";
 
 export default function ForgotPasswordPage() {
+    const { t } = useTranslation("auth");
     const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -87,7 +90,7 @@ export default function ForgotPasswordPage() {
         e.preventDefault();
         const otpString = otp.join('');
         if (otpString.length !== 6) {
-            setError('Please enter all 6 digits');
+            setError(t("forgotPassword.errors.otpRequired"));
             return;
         }
 
@@ -117,11 +120,11 @@ export default function ForgotPasswordPage() {
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
-            setError('Passwords must be identical');
+            setError(t("forgotPassword.newPassword.confirmHint"));
             return;
         }
-        if (newPassword.length < 6) {
-            setError('Password must be at least 6 characters long');
+        if (newPassword.length < 12) {
+            setError(t("forgotPassword.newPassword.passwordHint"));
             return;
         }
 
@@ -169,7 +172,10 @@ export default function ForgotPasswordPage() {
 
 
     return (
-        <div className="min-h-screen w-full bg-white flex items-center justify-center p-4">
+        <div className="min-h-screen w-full bg-white flex items-center justify-center p-4 relative">
+            <div className="absolute top-8 right-8 z-50">
+                <LanguageSwitcher />
+            </div>
             <AnimatePresence mode='wait'>
                 {step === 1 && (
                     <motion.div
@@ -180,17 +186,16 @@ export default function ForgotPasswordPage() {
                         className="bg-white rounded-[20px] p-10 w-full max-w-[500px] "
                     >
                         <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Reset password</h2>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">{t("forgotPassword.title")}</h2>
                             <p className="text-gray-500 text-[15px]">
-                                Enter your account email to receive a<br />
-                                password reset link
+                                {t("forgotPassword.subtitle")}
                             </p>
                         </div>
 
                         <form onSubmit={handleEmailSubmit} className="space-y-6">
                             <div className="space-y-2">
                                 <label htmlFor="email" className="text-[15px] font-medium text-gray-700 block">
-                                    Email address
+                                    {t("forgotPassword.email")}
                                 </label>
                                 <Input
                                     id="email"
@@ -213,7 +218,7 @@ export default function ForgotPasswordPage() {
                                 disabled={loading}
                                 className="w-full h-[50px] bg-[#5c4ce3] hover:bg-[#4b3ccb] text-white rounded-xl text-[16px] font-medium transition-colors"
                             >
-                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Reset password'}
+                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t("forgotPassword.resetButton")}
                             </Button>
 
                         </form>
@@ -232,9 +237,9 @@ export default function ForgotPasswordPage() {
                             <Mail className="w-6 h-6 text-[#5c4ce3]" />
                         </div>
 
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Check your email</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("forgotPassword.checkEmail.title")}</h2>
                         <p className="text-gray-500 mb-8">
-                            We've sent a password reset code to<br />
+                            {t("forgotPassword.checkEmail.desc")}<br />
                             <span className="font-semibold text-gray-900">{email}</span>
                         </p>
 
@@ -266,19 +271,18 @@ export default function ForgotPasswordPage() {
                                 disabled={loading || otp.join('').length !== 6}
                                 className="w-full h-[50px] bg-[#5c4ce3] hover:bg-[#4b3ccb] text-white rounded-xl text-[16px] font-medium transition-colors"
                             >
-                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify Code'}
+                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t("forgotPassword.checkEmail.verifyButton")}
                             </Button>
                         </form>
 
                         <div className="mt-8 text-sm text-gray-500">
-                            Did you receive the email? If not, check<br />
-                            your spam folder or{' '}
+                            {t("forgotPassword.checkEmail.noEmail")}{' '}
                             <button
                                 onClick={resendOtp}
                                 disabled={timeLeft > 0}
                                 className={`font-semibold ${timeLeft > 0 ? 'text-gray-400' : 'text-[#5c4ce3] hover:underline'}`}
                             >
-                                {timeLeft > 0 ? `resend in ${formatTime(timeLeft)}` : 'try again'}
+                                {timeLeft > 0 ? t("forgotPassword.checkEmail.resendIn", { time: formatTime(timeLeft) }) : t("forgotPassword.checkEmail.tryAgain")}
                             </button>
                         </div>
                     </motion.div>
@@ -292,10 +296,9 @@ export default function ForgotPasswordPage() {
                         className="bg-white rounded-[20px] p-10 w-full max-w-[500px] "
                     >
                         <div className="text-center mb-8">
-                            <p className="text-6xl font-bold text-gray-900 mb-2">Create new password</p>
+                            <p className="text-6xl font-bold text-gray-900 mb-2">{t("forgotPassword.newPassword.title")}</p>
                             <p className="text-gray-500 text-[15px]">
-                                Enter your new password below to<br />
-                                complete the reset process
+                                {t("forgotPassword.newPassword.subtitle")}
                             </p>
                         </div>
 
@@ -304,14 +307,14 @@ export default function ForgotPasswordPage() {
                                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <Check className="w-6 h-6 text-green-600" />
                                 </div>
-                                <p className="font-semibold text-lg">Password updated!</p>
-                                <p className="text-sm mt-1">Redirecting to login...</p>
+                                <p className="font-semibold text-lg">{t("forgotPassword.newPassword.successTitle")}</p>
+                                <p className="text-sm mt-1">{t("forgotPassword.newPassword.successDesc")}</p>
                             </div>
                         ) : (
                             <form onSubmit={handlePasswordSubmit} className="space-y-6">
                                 <div className="space-y-2">
                                     <label htmlFor="newPassword" className="text-[15px] font-medium text-gray-700 block">
-                                        Password
+                                        {t("forgotPassword.newPassword.passwordLabel")}
                                     </label>
                                     <Input
                                         id="newPassword"
@@ -321,12 +324,12 @@ export default function ForgotPasswordPage() {
                                         className="w-full h-[50px] rounded-xl border-gray-200 bg-white focus:ring-[#5c4ce3] focus:border-[#5c4ce3]"
                                         required
                                     />
-                                    <p className="text-xs text-gray-500">Password must contain at least 12 characters</p>
+                                    <p className="text-xs text-gray-500">{t("forgotPassword.newPassword.passwordHint")}</p>
                                 </div>
 
                                 <div className="space-y-2">
                                     <label htmlFor="confirmPassword" className="text-[15px] font-medium text-gray-700 block">
-                                        Confirm password
+                                        {t("forgotPassword.newPassword.confirmLabel")}
                                     </label>
                                     <Input
                                         id="confirmPassword"
@@ -336,7 +339,7 @@ export default function ForgotPasswordPage() {
                                         className="w-full h-[50px] rounded-xl border-gray-200 bg-white focus:ring-[#5c4ce3] focus:border-[#5c4ce3]"
                                         required
                                     />
-                                    <p className="text-xs text-gray-500">Passwords must be identical</p>
+                                    <p className="text-xs text-gray-500">{t("forgotPassword.newPassword.confirmHint")}</p>
                                 </div>
 
                                 {error && (
@@ -350,7 +353,7 @@ export default function ForgotPasswordPage() {
                                     disabled={loading}
                                     className="w-full h-[50px] bg-[#5c4ce3] hover:bg-[#4b3ccb] text-white rounded-xl text-[16px] font-medium transition-colors"
                                 >
-                                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Reset password'}
+                                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t("forgotPassword.newPassword.resetting")}
                                 </Button>
                             </form>
                         )}

@@ -178,7 +178,12 @@ export const useNotificationWebSocket = (userId, clinicId = null) => {
                 type: 'invitation',
                 title: 'New Invitation',
                 message: invitation.message,
-                meta_data: invitation.meta_data,
+                titleKey: 'common.newInvitation',
+                messageKey: 'common.newInvitationMessage',
+                meta_data: {
+                    ...invitation.meta_data,
+                    clinic_name: invitation.meta_data?.clinic_name || 'Clinic'
+                },
                 token: invitation.token,
                 created_at: invitation.created_at || new Date().toISOString(),
                 read_at: null
@@ -198,11 +203,11 @@ export const useNotificationWebSocket = (userId, clinicId = null) => {
                 type: 'report_update',
                 title: 'Report Status Updated',
                 message: `Report status changed to ${data.newStatus}`,
+                titleKey: 'notifications.reportStatusUpdatedTitle',
+                messageKey: 'notifications.reportStatusUpdatedMessage',
                 meta_data: {
-                    reportId: data.reportId,
-                    patientId: data.patientId,
-                    oldStatus: data.oldStatus,
-                    newStatus: data.newStatus
+                    ...data,
+                    status: data.newStatus
                 },
                 created_at: new Date().toISOString(),
                 read_at: null

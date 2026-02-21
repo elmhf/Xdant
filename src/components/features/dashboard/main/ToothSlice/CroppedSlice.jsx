@@ -38,7 +38,7 @@ const CroppedSlice = React.memo(({ view, index, isSelected = false }) => {
                 className="border-3 rounded bg-gradient-to-r from-gray-100 to-gray-200 animate-pulse flex items-center justify-center"
             >
                 <div className="text-gray-400 text-xs">
-                    {!img ? t('dashboard.toothSlice.loadingImage') : t('dashboard.toothSlice.settingRegion')}
+                    {!img ? t('toothSlice.loadingImage') : t('toothSlice.settingRegion')}
                 </div>
             </div>
         );
@@ -98,10 +98,10 @@ const CroppedSlice = React.memo(({ view, index, isSelected = false }) => {
                 <div className="w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 animate-pulse flex items-center justify-center">
                     <div className="text-gray-400 text-xs">
                         {isLoading
-                            ? t('dashboard.toothSlice.processing')
+                            ? t('toothSlice.processing')
                             : croppedUrl
-                                ? t('dashboard.toothSlice.loading')
-                                : t('dashboard.toothSlice.noImage')}
+                                ? t('toothSlice.loading')
+                                : t('toothSlice.noImage')}
                     </div>
                 </div>
             )}

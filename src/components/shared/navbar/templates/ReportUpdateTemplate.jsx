@@ -7,7 +7,20 @@ import { useTranslation } from 'react-i18next';
  */
 export const ReportUpdateTemplate = ({ notification }) => {
     const { t } = useTranslation();
-    const reportId = notification.meta_data?.reportId;
+
+    // Check if we have translation keys first
+    if (notification.meta_data?.messageKey) {
+        const title = notification.meta_data?.titleKey ? t(notification.meta_data.titleKey, notification.meta_data) : t('notifications.reportStatusUpdatedTitle');
+        const message = t(notification.meta_data.messageKey, notification.meta_data);
+
+        return (
+            <div className="text-[15px] text-gray-700 leading-relaxed">
+                <span className="text-gray-900 font-medium">{title}</span>
+                <p className="text-sm text-gray-500 mt-1">{message}</p>
+            </div>
+        );
+    }
+
     const newStatus = notification.meta_data?.newStatus;
     const patientName = notification.meta_data?.patient_name;
 

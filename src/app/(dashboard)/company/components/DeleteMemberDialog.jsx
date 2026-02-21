@@ -47,6 +47,7 @@ export const DeleteMemberDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="bg-white border-2 border-gray-200 shadow-2xl max-w-[500px]">
+        <DialogTitle className="sr-only">{t('company.deleteMemberTitle')}</DialogTitle>
         {step === 1 ? (
           <ClinicPasswordVerifyStep
             userEmail={userInfo?.email}

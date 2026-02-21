@@ -19,8 +19,8 @@ export const LayoutControls = () => {
   const layoutOptions = Object.entries(allLayouts).map(([key, val]) => ({
     value: key,
     label: t(`layouts.${key}.name`) || val.name,
-    icon: LayoutGrid, // يمكنك تخصيص أيقونة لكل layout إذا رغبت
-    iconClass: "h-4 w-4"
+    icon: LayoutGrid,
+    iconClass: "h-11 w-11"
   }));
 
   return (
@@ -30,9 +30,9 @@ export const LayoutControls = () => {
           <Button
             variant="outline"
             size="icon"
-            className="hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="h-12 w-12 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500"
           >
-            <LayoutGrid className="h-4 w-4 text-gray-600" />
+            <LayoutGrid className="h-11 w-11 text-gray-600" />
           </Button>
         </DropdownMenuTrigger>
 

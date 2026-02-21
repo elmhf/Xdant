@@ -4,8 +4,10 @@ import { useParams, usePathname } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 import { useDentalStore } from "@/stores/dataStore";
 import { useCurrentPatient, usePatientStore } from "@/stores/patientStore";
+import { useTranslation } from 'react-i18next';
 
 export default function Breadcrumb({ className = "" }) {
+  const { t } = useTranslation();
   const params = useParams();
   const pathname = usePathname();
   const { patientId, report_id, toothId } = params;
@@ -33,7 +35,7 @@ export default function Breadcrumb({ className = "" }) {
     return null;
   };
 
-  const patientDisplayName = getPatientName(currentPatient) || dentalPatientName || "Patient";
+  const patientDisplayName = getPatientName(currentPatient) || dentalPatientName || t('common.patient');
 
   const isActive = (path) => pathname === path;
   const isPrintPage = pathname?.includes('/PDFReport');
@@ -51,7 +53,7 @@ export default function Breadcrumb({ className = "" }) {
 
   if (report_id) {
     items.push({
-      label: reportType ? `Rapport ${reportType}` : `Rapport`,
+      label: reportType ? `${t('common.report')} ${reportType}` : t('common.report'),
       href: `/patient/${patientId}/${report_id}`,
       current: !toothId && !isPrintPage
     });
@@ -59,7 +61,7 @@ export default function Breadcrumb({ className = "" }) {
 
   if (toothId) {
     items.push({
-      label: `Dent ${toothId}`,
+      label: `${t('common.tooth')} ${toothId}`,
       href: `/patient/${patientId}/${report_id}/ToothSlice/${toothId}`,
       current: true
     });
@@ -67,7 +69,7 @@ export default function Breadcrumb({ className = "" }) {
 
   if (isPrintPage) {
     items.push({
-      label: "Imprimer le rapport",
+      label: t('common.printReport'),
       href: pathname, // Or construct it if needed, but pathname is already correct
       current: true
     });
@@ -79,7 +81,7 @@ export default function Breadcrumb({ className = "" }) {
   if (!report_id && !isPrintPage) return null;
 
   return (
-    <nav className={`flex items-center space-x-1 text-xl font-medium ${className}`} aria-label="Breadcrumb">
+    <nav className={`flex items-center space-x-1 text-xl font-medium ${className}`} aria-label={t('common.breadcrumb')}>
       {items.map((item, index) => (
         <React.Fragment key={item.href}>
           {index > 0 && <ChevronRight className="w-6 h-6 text-[#7564ed]" />}

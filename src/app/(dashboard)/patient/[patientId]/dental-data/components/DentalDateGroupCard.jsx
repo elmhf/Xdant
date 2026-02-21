@@ -1,7 +1,9 @@
 import React from 'react';
 import { Play } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const DentalDateGroupCard = ({ date, files, helpers, onSelect }) => {
+    const { t } = useTranslation('patient');
     const { isImage, isVideo, shouldPreview } = helpers;
 
     // Limit to 2 items for display
@@ -11,7 +13,7 @@ export const DentalDateGroupCard = ({ date, files, helpers, onSelect }) => {
     return (
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <div className="mb-4">
-                <h3 className="text-3xl font-bold text-gray-900">Dental Photos</h3>
+                <h3 className="text-3xl font-bold text-gray-900">{t('dentalData.groupTitle')}</h3>
                 <p className="text-sm font-semibold text-gray-500 mt-1">{date}</p>
             </div>
 

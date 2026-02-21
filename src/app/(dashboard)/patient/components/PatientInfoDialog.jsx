@@ -34,9 +34,9 @@ const PatientInfoDialog = ({ isOpen, onClose, patient }) => {
                 <div className="space-y-6">
                     {/* Patient Name and Title */}
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900">
+                        <DialogTitle className="text-2xl font-bold text-gray-900">
                             {formatPatientName(patient)}
-                        </h2>
+                        </DialogTitle>
                         <p className="text-base text-gray-600 mt-1">
                             {patient.gender ? `${patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)}` : t('patientInfo.patient')} | {t('patientInfo.age')} {calculateAge(patient.date_of_birth)}
                         </p>

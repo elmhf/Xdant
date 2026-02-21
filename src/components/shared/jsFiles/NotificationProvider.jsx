@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle, XCircle, Info, X, AlertTriangle, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const NotificationContext = createContext();
 
@@ -31,7 +32,28 @@ export const notification = {
   dismiss: (id) => notify('dismiss', null, { id }),
 };
 
-const Toast = ({ id, type, content, onClose }) => {
+const Toast = ({ id, type, content, onClose, titleKey, messageKey, metaData }) => {
+  const { t } = useTranslation();
+
+  const parseMessage = (msg) => {
+    if (typeof msg !== 'string' || !msg.includes('||')) return msg;
+    const [key, paramsStr] = msg.split('||');
+    const params = {};
+    paramsStr.split(',').forEach(p => {
+      const [k, v] = p.split(':');
+      if (k && v) params[k.trim()] = v.trim();
+    });
+    return t(key, params);
+  };
+
+  const title = titleKey
+    ? t(titleKey, metaData)
+    : (type === 'error' ? t('common.error') : type === 'success' ? t('common.success') : type === 'loading' ? t('common.loading') : t('common.notification'));
+
+  const message = messageKey ? t(messageKey, metaData) : parseMessage(content);
+
+  const displayType = metaData?.toastType || type;
+
   return (
     <motion.div
       layout
@@ -41,14 +63,14 @@ const Toast = ({ id, type, content, onClose }) => {
       className="flex items-start gap-4 p-4 w-[380px] bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl pointer-events-auto"
     >
       <div className="shrink-0 mt-0.5">
-        {icons[type] || icons.info}
+        {icons[displayType] || icons.info}
       </div>
       <div className="flex-1 pt-0.5">
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 leading-none mb-1 capitalize">
-          {type === 'error' ? 'Error' : type === 'success' ? 'Success' : type === 'loading' ? 'Loading' : 'Notification'}
+          {title}
         </h3>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-          {content}
+          {message}
         </p>
       </div>
       {type !== 'loading' && (

@@ -139,10 +139,10 @@ export default function NotificationDropdown({ userId }) {
         <Button
           variant="ghost"
           size="icon"
-          className="relative"
+          className="relative h-12 w-12"
           onClick={markAllAsRead}
         >
-          <Bell className="h-9 w-9" />
+          <Bell className="h-11 w-11" />
           {notifications?.notifications?.some(n => !n.read_at) && (
             <span className="absolute top-2 right-2 h-3 w-3 rounded-full bg-[#7564ED] border-2 border-white" />
           )}

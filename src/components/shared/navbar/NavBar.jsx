@@ -28,6 +28,7 @@ import { useNotificationWebSocket } from '@/hooks/useNotificationWebSocket';
 import { useUpdateReportData } from '@/app/(dashboard)/patient/hooks';
 import { useDentalStore } from '@/stores/dataStore';
 import Breadcrumb from '@/components/ui/breadcrumb';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const userData = {
   name: "Paul Fisher",
@@ -42,7 +43,6 @@ export default function Navbar() {
 
   // State to manage client-side rendering
   const [isMounted, setIsMounted] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('en');
   // const [loading, setLoading] = useState(true); // Handled in parent layout
   const [autoSaveStatus, setAutoSaveStatus] = useState('idle'); // 'idle', 'saving', 'saved', 'error'
   const [lastSaveTime, setLastSaveTime] = useState(null);
@@ -58,20 +58,14 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Sync the displayed language code from i18n (LanguageProvider handles actual init)
-    setCurrentLanguage(i18n.language || 'en');
-  }, [i18n]);
+  }, []);
 
-  // Keep the displayed language code in sync whenever i18n.language changes
-  useEffect(() => {
-    setCurrentLanguage(i18n.language);
-  }, [i18n.language]);
 
   const reportData = useMemo(() => ({
     patientName: t('navbar.patientName') || "Felicia Hall",
     title: t('navbar.reportTitle') || "CBCT AI Report",
-    date: "Jan 27, 2025"
-  }), [t]);
+    date: new Date().toLocaleDateString(i18n.language, { month: 'short', day: 'numeric', year: 'numeric' })
+  }), [t, i18n.language]);
 
   const breadcrumbItems = useMemo(() => [
     { label: t('navbar.home'), href: "/" },
@@ -88,13 +82,6 @@ export default function Navbar() {
     window.print();
   }, []);
 
-  const changeLanguage = useCallback((lng) => {
-    setCurrentLanguage(lng);
-    i18n.changeLanguage(lng);
-    document.documentElement.lang = lng;
-    document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
-    localStorage.setItem('preferredLanguage', lng);
-  }, [i18n]);
 
   useEffect(() => {
     if (!userInfo?.user_id) return;
@@ -191,14 +178,14 @@ export default function Navbar() {
             <div className="flex items-center gap-1 cursor-pointer" onClick={() => router.push("/")} tabIndex={0} role="button" aria-label={t('navbar.goToHomepage')}>
               <div className="w-10 h-10 relative overflow-hidden rounded-full border border-gray-300  ">
                 <Image
-                  src="/XDENTAL.png"
+                  src={t('navbar.logoUrl').startsWith('/') ? t('navbar.logoUrl') : "/XDENTAL.png"}
                   alt={t('navbar.logoAlt')}
                   width={52}
                   height={52}
                   className="object-contain"
                 />
               </div>
-              <span className="text-3xl space-x-[-5px] font-[800] text-gray-900">XDent</span>
+              <span className="text-3xl space-x-[-5px] font-[800] text-gray-900">{t('navbar.logoText') === 'navbar.logoText' ? 'XDent' : t('navbar.logoText')}</span>
             </div>
           </div>
 
@@ -208,42 +195,9 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
 
           <div className="flex items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-10 px-3 flex items-center gap-2 hover:bg-gray-100 rounded-xl transition-colors" aria-label={t('common.changeLanguage')}>
-                  <Globe className="h-5 w-5 text-gray-600" />
-                  <span className="text-sm font-bold text-gray-700 uppercase">{currentLanguage}</span>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-xl border-gray-100">
-                {['en', 'ar', 'fr', 'es', 'pt'].map((lng) => (
-                  <DropdownMenuItem
-                    key={lng}
-                    onClick={() => changeLanguage(lng)}
-                    className={`flex items-center justify-between px-4 py-2 cursor-pointer rounded-lg transition-colors ${currentLanguage === lng ? 'bg-[#7564ed] text-white hover:bg-[#6a4fd8]' : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                  >
-                    <span className="font-medium">
-                      {
-                        {
-                          'en': 'English',
-                          'ar': 'العربية',
-                          'fr': 'Français',
-                          'es': 'Español',
-                          'pt': 'Português'
-                        }[lng]
-                      }
-                    </span>
-                    {currentLanguage === lng && (
-                      <div className="w-2 h-2 rounded-full bg-white shadow-sm"></div>
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="ghost" size="icon" aria-label={t('common.toggleDarkMode')}>
-              <Moon className="h-9 w-9" />
+            <LanguageSwitcher />
+            <Button variant="ghost" size="icon" className="h-12 w-12" aria-label={t('common.toggleDarkMode')}>
+              <Moon className="h-11 w-11" />
             </Button>
 
             {/* Auto-save Clock Icon */}
@@ -253,10 +207,10 @@ export default function Navbar() {
                 size="icon"
                 aria-label={t('common.autoSaveStatus')}
                 onClick={performAutoSave}
-                className="relative"
+                className="relative h-12 w-12"
               >
                 <Clock
-                  className={`h-9 w-9 transition-colors ${autoSaveStatus === 'saving' ? 'text-blue-500 animate-pulse' :
+                  className={`h-11 w-11 transition-colors ${autoSaveStatus === 'saving' ? 'text-blue-500 animate-pulse' :
                     autoSaveStatus === 'saved' ? 'text-green-500' :
                       autoSaveStatus === 'error' ? 'text-red-500' :
                         'text-gray-600'

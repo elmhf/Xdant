@@ -22,24 +22,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from '@/components/ui/textarea';
 
 // Definitions
-const availableConditions = [
-    { value: "healthy", label: "Healthy" },
-    { value: "caries", label: "Caries" },
-    { value: "filling", label: "Filling" },
-    { value: "crown", label: "Crown" },
-    { value: "root_canal", label: "Root Canal" },
-    { value: "missing", label: "Missing" },
-    { value: "implant", label: "Implant" },
-    { value: "bridge", label: "Bridge" },
-    { value: "gingivitis", label: "Gingivitis" },
-    { value: "periodontitis", label: "Periodontitis" }
-];
-
-
 
 const EditConditionsDialog = ({ toothNumber, children }) => {
     const { pushNotification } = useNotification();
     const { t } = useTranslation();
+
+    const availableConditions = [
+        { value: "healthy", label: t('conditions.healthy') },
+        { value: "caries", label: t('conditions.caries') },
+        { value: "filling", label: t('conditions.filling') },
+        { value: "crown", label: t('conditions.crown') },
+        { value: "root_canal", label: t('conditions.root_canal') },
+        { value: "missing", label: t('conditions.missing') },
+        { value: "implant", label: t('conditions.implant') },
+        { value: "bridge", label: t('conditions.bridge') },
+        { value: "gingivitis", label: t('conditions.gingivitis') },
+        { value: "periodontitis", label: t('conditions.periodontitis') }
+    ];
+
     const getToothByNumber = useDentalStore(state => state.getToothByNumber);
     const updateToothProblems = useDentalStore(state => state.updateToothProblems);
     const updateTooth = useDentalStore(state => state.updateTooth);
@@ -106,7 +106,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
         const newProblems = problems.filter((_, i) => i !== index);
         setProblems(newProblems);
         updateToothProblems(toothNumber, newProblems);
-        pushNotification('success', "Condition removed");
+        pushNotification('success', t('diagnosis.notifications.removed'));
     };
 
     const handleUpdateDetails = (index, field, value) => {
@@ -141,7 +141,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
 
     const handleAddSubmit = () => {
         if (!formData.condition) {
-            pushNotification('error', "Please select a condition");
+            pushNotification('error', t('diagnosis.notifications.selectCondition'));
             return;
         }
 
@@ -163,7 +163,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                     description: formData.description,
                     notes: formData.notes
                 };
-                pushNotification('success', "Condition updated");
+                pushNotification('success', t('diagnosis.notifications.updated'));
             } else {
                 // Add new
                 const newCondition = {
@@ -181,7 +181,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                     notes: formData.notes
                 };
                 newProblemsList = [...problems, newCondition];
-                pushNotification('success', "Condition added successfully");
+                pushNotification('success', t('diagnosis.notifications.added'));
             }
 
             setProblems(newProblemsList);
@@ -208,7 +208,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
             setViewMode("LIST");
         } catch (error) {
             console.error(error);
-            pushNotification('error', "Failed to save condition");
+            pushNotification('error', t('diagnosis.notifications.saveFailed'));
         }
     };
 
@@ -237,8 +237,8 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                         )}
                         <DialogTitle className="text-xl font-bold text-gray-900">
                             {viewMode === "LIST"
-                                ? `Tooth ${toothNumber} Diagnosis`
-                                : (editingIndex !== null ? "Edit Condition" : "Add New Condition")}
+                                ? t('diagnosis.title', { number: toothNumber })
+                                : (editingIndex !== null ? t('diagnosis.editCondition') : t('diagnosis.addCondition'))}
                         </DialogTitle>
                     </div>
 
@@ -254,7 +254,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                 <Input
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Search existing conditions..."
+                                    placeholder={t('diagnosis.searchPlaceholder')}
                                     className="pl-9 h-10 rounded-xl bg-white "
                                 />
                             </div>
@@ -322,8 +322,8 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                         <div className="bg-gray-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                                             <Search className="w-6 h-6 text-gray-300" />
                                         </div>
-                                        <h3 className="text-gray-900 font-medium text-sm">No conditions found</h3>
-                                        <p className="text-gray-500 text-xs mt-1">Add a new condition to get started</p>
+                                        <h3 className="text-gray-900 font-medium text-sm">{t('diagnosis.noConditions')}</h3>
+                                        <p className="text-gray-500 text-xs mt-1">{t('diagnosis.addPrompt')}</p>
                                     </div>
                                 )}
                             </div>
@@ -346,7 +346,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                 }}
                             >
                                 <Plus className="w-4 h-4 mr-2" />
-                                Add New Condition
+                                {t('diagnosis.addNewButton')}
                             </Button>
                         </div>
                     </>
@@ -361,7 +361,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                     {/* Row 1: Condition (8 cols) + Percentage (4 cols) */}
                                     <div className="col-span-8 flex flex-col gap-2">
                                         <Label htmlFor="condition" className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                                            Condition <span className="text-red-500">*</span>
+                                            {t('diagnosis.conditionLabel')} <span className="text-red-500">*</span>
                                         </Label>
                                         <Input
                                             id="condition"
@@ -379,7 +379,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
 
                                     <div className="col-span-4 flex flex-col gap-2">
                                         <Label htmlFor="percentage" className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                                            Percentage <span className="text-red-500">*</span>
+                                            {t('diagnosis.percentageLabel')} <span className="text-red-500">*</span>
                                         </Label>
                                         <div className="relative">
                                             <Input
@@ -398,28 +398,28 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                 </div>
 
                                 <div className="flex flex-col gap-2">
-                                    <Label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Status Type</Label>
+                                    <Label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">{t('diagnosis.statusTypeLabel')}</Label>
                                     <Select
                                         value={formData.type}
                                         onValueChange={(value) => handleAddInputChange('type', value)}
                                     >
                                         <SelectTrigger className="h-11 rounded-2xl bg-white border-1 border-gray-400 focus:border-[#7564ed] focus:ring-4 focus:ring-[#7564ed]/10 transition-all">
-                                            <SelectValue placeholder="Select status" />
+                                            <SelectValue placeholder={t('diagnosis.selectStatusPlaceholder')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Unhealthy">Unhealthy</SelectItem>
-                                            <SelectItem value="Treated">Treated</SelectItem>
-                                            <SelectItem value="Healthy">Healthy</SelectItem>
+                                            <SelectItem value="Unhealthy">{t('diagnosis.statusUnhealthy')}</SelectItem>
+                                            <SelectItem value="Treated">{t('diagnosis.statusTreated')}</SelectItem>
+                                            <SelectItem value="Healthy">{t('diagnosis.statusHealthy')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
 
                                 <div className="flex flex-col gap-2">
-                                    <Label htmlFor="description" className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Description</Label>
+                                    <Label htmlFor="description" className="text-xs font-semibold text-gray-700 uppercase tracking-wide">{t('diagnosis.descriptionLabel')}</Label>
                                     <Textarea
                                         id="description"
                                         className="min-h-[100px] rounded-2xl border-2 border-gray-400 focus:border-[#7564ed] resize-none"
-                                        placeholder="Optional details..."
+                                        placeholder={t('diagnosis.descriptionPlaceholder')}
                                         value={formData.description}
                                         onChange={e => handleAddInputChange('description', e.target.value)}
                                         autoComplete="off"
@@ -446,7 +446,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                     }}
                                     className="text-gray-600 hover:bg-gray-100 text-lg font-bold transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                 >
-                                    Cancel
+                                    {t('diagnosis.cancel')}
                                 </Button>
                                 <Button
                                     type="button"
@@ -454,7 +454,7 @@ const EditConditionsDialog = ({ toothNumber, children }) => {
                                     className="text-lg font-bold bg-[#EBE8FC] border text-[#7564ed] transition-all duration-150 px-3 py-2 rounded-2xl flex items-center min-w-[6vw]"
                                     disabled={!formData.condition}
                                 >
-                                    {editingIndex !== null ? "Update" : "Save"}
+                                    {editingIndex !== null ? t('diagnosis.update') : t('diagnosis.save')}
                                 </Button>
                             </div>
                         </form>

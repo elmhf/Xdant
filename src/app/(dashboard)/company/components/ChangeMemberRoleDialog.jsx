@@ -51,6 +51,7 @@ export const ChangeMemberRoleDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="bg-white border-2 border-gray-200 shadow-2xl max-w-xl">
+        <DialogTitle className="sr-only">{t('company.editMemberTitle')}</DialogTitle>
         {step === 1 ? (
           <ClinicPasswordVerifyStep
             userEmail={userInfo?.email}

@@ -57,8 +57,13 @@
     "updated": "mises à jour",
     "newAppointmentWith": "Nouveau rendez-vous avec",
     "at": "à",
-    "statusChangedTo": "le statut a changé en",
-    "report": "rapport",
+    "clinic": "Clinique",
+    "statusChangedTo": "Le statut a changé en",
+    "report": "Rapport",
+    "tooth": "Dent",
+    "patient": "Patient",
+    "printReport": "Imprimer le rapport",
+    "breadcrumb": "Fil d'Ariane",
     "conclusion": "Conclusion",
     "lastModified": "Dernière modification",
     "na": "N/D",
@@ -184,8 +189,10 @@
     "home": "Accueil",
     "patients": "Patients",
     "patientName": "Félicia Hall",
-    "reportTitle": "Rapport CBCT IA",
+    "reportTitle": "Titre du rapport",
     "print": "Imprimer l'analyse",
+    "logoUrl": "/XDENTAL.png",
+    "logoText": "XDent",
     "goToHomepage": "Aller à l'accueil",
     "logoAlt": "Logo Xdental"
   },
@@ -638,6 +645,7 @@
     "card": {
       "Tooth": "Dent",
       "NoProblemsDetected": "Aucun problème détecté",
+      "rawMissing": "Absent",
       "Condition": "État",
       "Note": "Note",
       "Slices": "Coupes",
@@ -682,6 +690,39 @@
     "approvalConfirmDesc": "Vous êtes sur le point d'approuver {{count}} dents détectées. Cette action validera le diagnostic pour les dents suivantes :",
     "approveAll": "Tout approuver"
   },
+  "toothSlice": {
+    "axialView": "Vue axiale",
+    "sagittalView": "Vue sagittale",
+    "coronalView": "Vue coronale",
+    "loading": "Chargement...",
+    "scrollToZoom": "Faites défiler pour zoomer",
+    "zoomLevel": "Niveau de zoom",
+    "chosen": "Choisi",
+    "loadingImage": "Chargement de l'image...",
+    "settingRegion": "Définition de la région...",
+    "processing": "Traitement...",
+    "noImage": "Aucune image disponible",
+    "error": "Erreur : {{error}}",
+    "tryAgain": "Réessayer",
+    "clearCache": "Vider le cache",
+    "dataNotLoaded": "Données dentaires non chargées",
+    "detailsLoading": "Les données de la dent numéro {{number}} sont en cours de chargement...",
+    "view": "Vue {{view}}",
+    "sliceRange": "Plage de coupes :",
+    "to": "à",
+    "slicesCount": "Coupes :",
+    "approved": "Approuvé",
+    "approve": "Approuver",
+    "noToothData": "Aucune donnée dentaire disponible",
+    "noSliceData": "Aucune donnée de coupe disponible",
+    "addImage": "Ajouter une image",
+    "dragDropImages": "glissez-déposez des images ici",
+    "addSlice": "Ajouter une coupe",
+    "dragDropSlices": "glissez-déposez des coupes ici",
+    "noSlices": "Pas de coupes pour {{view}}",
+    "toothSlices": "Coupes de dents",
+    "noMprMissing": "Il n'y a pas de MPR pour la dent manquante {{toothNumber}}"
+  },
   "dashboard": {
     "teethInReport": "Dents dans le rapport",
     "selectTeeth": "Sélectionner les dents",
@@ -714,19 +755,6 @@
     "noSlices": "Pas de coupes pour {{view}}",
     "toothSlices": "Coupes de dents",
     "noMprMissing": "Il n'y a pas de MPR pour la dent manquante {{toothNumber}}",
-    "toothSlice": {
-      "axialView": "Vue axiale",
-      "sagittalView": "Vue sagittale",
-      "coronalView": "Vue coronale",
-      "loading": "Chargement...",
-      "scrollToZoom": "Faites défiler pour zoomer",
-      "zoomLevel": "Niveau de zoom",
-      "chosen": "Choisi",
-      "loadingImage": "Chargement de l'image...",
-      "settingRegion": "Définition de la région...",
-      "processing": "Traitement...",
-      "noImage": "Aucune image disponible"
-    },
     "conditions": {
       "healthy": "Sain",
       "caries": "Carie",
@@ -1001,20 +1029,6 @@
       "remove": "Retirer le médecin",
       "removing": "Retrait..."
     },
-    "toothSlice": {
-      "loading": "Chargement des données du rapport...",
-      "error": "Erreur : {{error}}",
-      "tryAgain": "Réessayer",
-      "clearCache": "Vider le cache",
-      "dataNotLoaded": "Données dentaires non chargées",
-      "detailsLoading": "Les données de la dent numéro {{number}} sont en cours de chargement...",
-      "view": "Vue {{view}}",
-      "sliceRange": "Plage de coupes :",
-      "to": "à",
-      "slicesCount": "Coupes :",
-      "approved": "Approuvé",
-      "approve": "Approuver"
-    },
     "pdfReport": {
       "settings": {
         "title": "Paramètres",
@@ -1047,6 +1061,46 @@
         "remove": "Supprimer",
         "add": "Ajouter votre signature"
       },
+      "diagnosis": {
+        "title": "Diagnostic dent {{number}}",
+        "editCondition": "Modifier la condition",
+        "addCondition": "Ajouter une nouvelle condition",
+        "searchPlaceholder": "Rechercher des conditions existantes...",
+        "noConditions": "Aucune condition trouvée",
+        "addPrompt": "Ajoutez une nouvelle condition pour commencer",
+        "addNewButton": "Ajouter une nouvelle condition",
+        "conditionLabel": "Condition",
+        "percentageLabel": "Pourcentage",
+        "statusTypeLabel": "Type de statut",
+        "descriptionLabel": "Description",
+        "selectStatusPlaceholder": "Sélectionner le statut",
+        "statusUnhealthy": "Malsain",
+        "statusTreated": "Traité",
+        "statusHealthy": "Sain",
+        "descriptionPlaceholder": "Détails optionnels...",
+        "cancel": "Annuler",
+        "update": "Mettre à jour",
+        "save": "Enregistrer",
+        "notifications": {
+          "removed": "Condition supprimée",
+          "updated": "Condition mise à jour",
+          "added": "Condition ajoutée avec succès",
+          "saveFailed": "Échec de l'enregistrement de la condition",
+          "selectCondition": "Veuillez sélectionner une condition"
+        }
+      },
+      "conditions": {
+        "healthy": "Sain",
+        "caries": "Carie",
+        "filling": "Obturation",
+        "crown": "Couronne",
+        "root_canal": "Traitement de canal",
+        "missing": "Manquant",
+        "implant": "Implant",
+        "bridge": "Pont",
+        "gingivitis": "Gingivite",
+        "periodontitis": "Parodontite"
+      },
       "content": {
         "reportTitle": "Rapport IA CBCT",
         "notSpecified": "non spécifié",
@@ -1062,6 +1116,7 @@
     },
     "dentalData": {
       "title": "Données Dentaires",
+      "groupTitle": "Photos dentaires",
       "noData": "Aucune donnée dentaire trouvée",
       "noDataDesc": "Les fichiers téléchargés apparaîtront ici.",
       "loading": "Chargement...",
@@ -1111,7 +1166,9 @@
       "clinicRequired": "Veuillez sélectionner une clinique",
       "cancel": "Annuler",
       "create": "Créer le patient",
-      "creating": "Création..."
+      "creating": "Création...",
+      "add": "Ajouter",
+      "selectDoctor": "Sélectionner un médecin"
     },
     "patientInfo": {
       "patient": "Patient",
@@ -1216,6 +1273,149 @@
           "missingClinicId": "Erreur : ID de la clinique manquant. Veuillez rafraîchir et réessayer.",
           "fieldsRequired": "Veuillez entrer l'e-mail et le rôle."
         }
+      }
+    },
+    "notifications": {
+      "reportReadyTitle": "Rapport prêt",
+      "reportReadyMessage": "Le rapport {{type}} pour le patient {{patient}} est maintenant prêt",
+      "reportFailedTitle": "Échec du rapport",
+      "reportFailedMessage": "Le traitement du rapport {{type}} pour le patient {{patient}} a échoué",
+      "newReportCreated": "Nouveau rapport {{type}} créé pour le patient {{patient}}",
+      "reportDeleted": "Le rapport {{type}} pour le patient {{patient}} a été supprimé",
+      "reportDeletedId": "Le rapport {{id}} a été supprimé",
+      "maintenanceModeTitle": "Maintenance du système",
+      "maintenanceModeActive": "Le système est actuellement en cours de maintenance.",
+      "maintenanceModeOffline": "La maintenance est terminée. Le système est en ligne.",
+      "patientAssignedTitle": "Nouveau patient assigné",
+      "patientAssignedMessage": "Vous avez été assigné comme médecin traitant pour {{patient}} à la clinique {{clinic}}",
+      "patientUpdatedTitle": "Informations du patient mises à jour",
+      "patientUpdatedMessage": "Le Dr {{doctor}} a mis à jour les informations du patient {{patient}} à la clinique {{clinic}}",
+      "reportStatusUpdatedTitle": "Statut du rapport mis à jour",
+      "reportStatusUpdatedMessage": "Le statut du rapport est passé à {{status}}"
+    },
+    "errors": {
+      "fileTypeNotSupported": "Type de fichier non supporté. Utilisez : {{types}}",
+      "fileDeletionError": "Erreur lors de la suppression du fichier",
+      "databaseError": "Une erreur est survenue avec notre base de données. Veuillez réessayer plus tard.",
+      "patientNotFound": "Patient non trouvé.",
+      "permissionDenied": "Vous n'avez pas la permission d'effectuer cette action."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Se connecter",
+      "subtitle": "Connectez-vous avec un compte ouvert",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "user@xdents.tn",
+      "orContinueWithEmail": "Ou continuer avec une adresse e-mail",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "••••••••••••",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "signIn": "Se connecter",
+      "signingIn": "Connexion en cours...",
+      "continueWithGoogle": "Continuer avec Google",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "signUp": "S'inscrire",
+      "errors": {
+        "invalidCredentials": "E-mail ou mot de passe invalide",
+        "pendingVerification": "Veuillez vérifier votre e-mail pour continuer",
+        "network": "Erreur réseau, veuillez réessayer"
+      }
+    },
+    "signup": {
+      "title": "S'inscrire",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "login": "Se connecter",
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Entrez votre prénom",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Entrez votre nom",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "vous@entreprise.com",
+      "phone": "Téléphone",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Créez un mot de passe fort",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "continue": "Continuer",
+      "creatingAccount": "Création du compte...",
+      "orContinueWith": "Ou continuer avec",
+      "signInWithGoogle": "Se connecter avec Google",
+      "validation": {
+        "firstNameRequired": "Le prénom est obligatoire",
+        "firstNameInvalid": "Le prénom doit comporter entre 2 et 50 caractères, lettres uniquement",
+        "lastNameRequired": "Le nom est obligatoire",
+        "lastNameInvalid": "Le nom doit comporter entre 2 et 50 caractères, lettres uniquement",
+        "emailRequired": "L'e-mail est obligatoire",
+        "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+        "phoneInvalid": "Veuillez entrer un numéro de téléphone valide",
+        "passwordRequired": "Le mot de passe est obligatoire",
+        "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+        "passwordsDontMatch": "Les mots de passe ne correspondent pas"
+      }
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "subtitle": "Entrez l'e-mail de votre compte pour recevoir un lien de réinitialisation",
+      "email": "Adresse e-mail",
+      "resetButton": "Réinitialiser le mot de passe",
+      "checkEmail": {
+        "title": "Vérifiez vos e-mails",
+        "desc": "Nous avons envoyé un code de réinitialisation à",
+        "verifyButton": "Vérifier le code",
+        "verifying": "Vérification...",
+        "noEmail": "Vous n'avez pas reçu l'e-mail ? Vérifiez vos spams ou",
+        "resendIn": "renvoyer dans {{time}}",
+        "tryAgain": "réessayer"
+      },
+      "newPassword": {
+        "title": "Créer un nouveau mot de passe",
+        "subtitle": "Entrez votre nouveau mot de passe ci-dessous pour terminer le processus",
+        "passwordLabel": "Mot de passe",
+        "passwordHint": "Le mot de passe doit contenir au moins 12 caractères",
+        "confirmLabel": "Confirmer le mot de passe",
+        "confirmHint": "Les mots de passe doivent être identiques",
+        "successTitle": "Mot de passe mis à jour !",
+        "successDesc": "Redirection vers la page de connexion...",
+        "resetting": "Réinitialisation..."
+      },
+      "errors": {
+        "otpRequired": "Veuillez entrer les 6 chiffres"
+      }
+    },
+    "pinVerification": {
+      "title": "Vérifiez votre e-mail",
+      "subtitle": "Nous avons envoyé un code de vérification à 6 chiffres à",
+      "enterOtp": "Entrez le code à 6 chiffres envoyé à votre e-mail",
+      "verifyButton": "Vérifier",
+      "verifying": "Vérification...",
+      "noCode": "Vous n'avez pas reçu le code ?",
+      "resend": "Cliquez pour renvoyer",
+      "resending": "Renvoi en cours...",
+      "backToDetails": "Retour aux détails"
+    },
+    "acceptInvitation": {
+      "title": "Invitation à rejoindre la clinique",
+      "invalidTitle": "Invitation invalide",
+      "subtitle": "Vous avez été invité à rejoindre une clinique",
+      "invalidSubtitle": "Cette invitation n'est plus valide ou a expiré",
+      "validating": "Validation de l'invitation...",
+      "role": "Rôle : {{role}}",
+      "importantInfo": "Informations importantes :",
+      "accessPatients": "Vous aurez accès à tous les patients de cette clinique",
+      "seeAppointments": "Vous pourrez voir les rendez-vous et les dossiers",
+      "mustAccept": "Vous devrez accepter pour rejoindre la clinique",
+      "rejectButton": "Rejeter",
+      "acceptButton": "Accepter l'invitation",
+      "backToHome": "Retour à l'accueil",
+      "messages": {
+        "missingToken": "Token d'invitation manquant",
+        "invalidToken": "Token d'invitation invalide",
+        "acceptSuccess": "Invitation acceptée avec succès ! Vous êtes maintenant membre de la clinique.",
+        "acceptError": "Erreur lors de l'acceptation de l'invitation",
+        "rejectSuccess": "Invitation rejetée. Vous serez redirigé vers la page d'accueil.",
+        "rejectError": "Erreur lors du rejet de l'invitation"
       }
     }
   }

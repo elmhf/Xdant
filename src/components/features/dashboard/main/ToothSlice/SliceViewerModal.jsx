@@ -97,9 +97,9 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                 <div className="flex justify-between items-start p-6 pb-2">
                     <div>
                         <h3 className="text-2xl font-bold capitalize text-gray-900 mb-1">
-                            {view === 'axial' ? t('dashboard.toothSlice.axialView') :
-                                view === 'sagittal' ? t('dashboard.toothSlice.sagittalView') :
-                                    view === 'coronal' ? t('dashboard.toothSlice.coronalView') : `${view} View`}
+                            {view === 'axial' ? t('toothSlice.axialView') :
+                                view === 'sagittal' ? t('toothSlice.sagittalView') :
+                                    view === 'coronal' ? t('toothSlice.coronalView') : `${view} View`}
                         </h3>
 
                     </div>
@@ -143,7 +143,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                         ) : (
                             <div className="flex flex-col items-center gap-2 text-gray-400">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
-                                <span>{t('dashboard.toothSlice.loading')}</span>
+                                <span>{t('toothSlice.loading')}</span>
                             </div>
                         )}
 
@@ -155,7 +155,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                         {/* Zoom Hint (visible on hover if zoom is 1) */}
                         {zoom === 1 && (
                             <div className="absolute bottom-4 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
-                                {t('dashboard.toothSlice.scrollToZoom')}
+                                {t('toothSlice.scrollToZoom')}
                             </div>
                         )}
 
@@ -192,7 +192,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                                 onChange={(e) => setZoom(parseFloat(e.target.value))}
                                 className="h-full w-2 appearance-none bg-gray-200 rounded-2xl outline-none cursor-pointer slider-vertical"
                                 style={{ writingMode: 'bt-lr', WebkitAppearance: 'slider-vertical', height: '100%' }}
-                                title={t('dashboard.toothSlice.zoomLevel')}
+                                title={t('toothSlice.zoomLevel')}
                             />
                         </div>
                     </div>
@@ -210,7 +210,7 @@ const SliceViewerModal = React.memo(({ view, index, onClose, toothNumber, onNavi
                             checked={isSelected}
                             onChange={handleSelectionChange}
                         />
-                        <span className="text-gray-700 font-medium">{t('dashboard.toothSlice.chosen')}</span>
+                        <span className="text-gray-700 font-medium">{t('toothSlice.chosen')}</span>
                     </label>
                 </div>
 

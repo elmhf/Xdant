@@ -158,16 +158,34 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
                   }}
                   layout
                 >
-                  <ToothDiagnosis
-                    toothNumberSelect={toothNumberSelect}
-                    setToothNumberSelect={setToothNumberSelect}
-                    item={tooth}
-                    idCard={tooth.toothNumber}
-                    isSelected={toothNumberSelect == tooth.toothNumber}
-                    showImage={!!visibleImages[tooth.toothNumber]}
-                    onToggleImage={() => handleToggleImage(tooth.toothNumber)}
-                    showDiagnosisDetails={showDiagnosisDetails}
-                  />
+                  {tooth.category === 'Missing' ? (
+                    <div
+                      id={`Tooth-Card-${tooth.toothNumber}`}
+                      className={`bg-gray-50 border-2 rounded-xl flex items-center justify-between px-4 py-3 w-full transition-all duration-200
+                        ${toothNumberSelect == tooth.toothNumber ? 'border-[#5241cc] shadow-md' : 'border-dashed border-gray-300'}
+                      `}
+                      onClick={() => setToothNumberSelect(tooth.toothNumber)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-[1.5rem] font-bold text-gray-400">{t('side.card.Tooth')} {tooth.toothNumber}</span>
+                        <span className="text-sm font-semibold px-3 py-1 rounded-full bg-gray-200 text-gray-500 tracking-wide uppercase">
+                          {t('side.card.rawMissing')}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <ToothDiagnosis
+                      toothNumberSelect={toothNumberSelect}
+                      setToothNumberSelect={setToothNumberSelect}
+                      item={tooth}
+                      idCard={tooth.toothNumber}
+                      isSelected={toothNumberSelect == tooth.toothNumber}
+                      showImage={!!visibleImages[tooth.toothNumber]}
+                      onToggleImage={() => handleToggleImage(tooth.toothNumber)}
+                      showDiagnosisDetails={showDiagnosisDetails}
+                    />
+                  )}
+
                 </motion.div>
               ))}
             </AnimatePresence>

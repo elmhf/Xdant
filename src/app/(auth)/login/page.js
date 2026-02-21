@@ -8,8 +8,12 @@ import { FcGoogle } from "react-icons/fc";
 import { apiClient } from "@/utils/apiClient";
 import { Button } from "@/components/ui/button";
 import { useNotification } from "@/components/shared/jsFiles/NotificationProvider";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/shared/navbar/LanguageSwitcher";
 
 export default function LoginPage() {
+  const { t } = useTranslation("auth");
+  const { pushNotification } = useNotification();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -64,12 +68,16 @@ export default function LoginPage() {
     } catch (err) {
       console.error("Login error:", err);
       if (err.data?.state === 'pending_verification') {
-        pushNotification('error', "Please verify your email to continue");
+        pushNotification('error', "auth:login.errors.pendingVerification||");
         router.push(`/signeup?step=1&email=${encodeURIComponent(email)}`);
         return;
       }
-      setError(err.message || "Invalid email or password");
-      pushNotification('error', err.message || "Invalid email or password");
+      const errorMessage = err.message === "Invalid email or password"
+        ? t("login.errors.invalidCredentials")
+        : (err.message || t("login.errors.network"));
+
+      setError(errorMessage);
+      pushNotification('error', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -86,7 +94,7 @@ export default function LoginPage() {
       <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p className="text-sm text-gray-500">{t("common:loading")}</p>
         </div>
       </div>
     );
@@ -104,18 +112,23 @@ export default function LoginPage() {
             <div className="absolute top-8 left-8 z-20">
               <Image
                 src="/XDENTAL.png"
-                alt="Xdent Logo"
+                alt={t("navbar:logoAlt")}
                 width={120}
                 height={40}
                 className="h-10 w-auto rounded-full overflow-hidden object-contain"
               />
             </div>
 
+            {/* Language Switcher in side panel */}
+            <div className="absolute top-8 right-8 z-20">
+              <LanguageSwitcher />
+            </div>
+
             {/* Image with Border Radius */}
             <div className="relative w-full h-full rounded-3xl overflow-hidden">
               <Image
                 src="/loginside.png"
-                alt="Dental Illustration"
+                alt={t("login.title")}
                 fill
                 className="object-cover"
                 priority
@@ -125,12 +138,16 @@ export default function LoginPage() {
 
           {/* Right Side - Form */}
           <div className="w-full md:w-2/3 p-6 md:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto relative">
+            {/* Mobile Language Switcher */}
+            <div className="absolute top-6 left-6 md:hidden z-50">
+              <LanguageSwitcher />
+            </div>
             {/* Top Right Signup Link */}
             <div className="absolute top-6 right-6 md:top-10 md:right-10">
               <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
+                {t("login.noAccount")}{' '}
                 <Link href="/signeup" className="font-bold text-black  transition-colors">
-                  Sign up
+                  {t("login.signUp")}
                 </Link>
               </p>
             </div>
@@ -139,7 +156,7 @@ export default function LoginPage() {
             <div className="md:hidden mb-8 text-center pt-10">
               <Image
                 src="/XDENTAL.png"
-                alt="Xdental Logo"
+                alt={t("navbar:logoAlt")}
                 width={120}
                 height={40}
                 className="h-12 w-auto mx-auto object-contain"
@@ -150,10 +167,10 @@ export default function LoginPage() {
             <div className="w-full max-w-md mx-auto">
               {/* Header */}
               <div className="mb-8">
-                <p className="text-6xl font-semibold text-gray-900 mb-4">Sign in</p>
+                <p className="text-6xl font-semibold text-gray-900 mb-4">{t("login.title")}</p>
               </div>
               <div className="mb-6">
-                <p className="text-sm font-semibold text-gray-900 mb-4">Sign in with Open account</p>
+                <p className="text-sm font-semibold text-gray-900 mb-4">{t("login.subtitle")}</p>
               </div>
 
               {/* Social Login Buttons */}
@@ -165,14 +182,14 @@ export default function LoginPage() {
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border-gray-300 bg-white border-1 rounded-xl hover:bg-gray-50 transition-all hover:border-gray-300 font-medium text-gray-700 "
                 >
                   <FcGoogle className="w-5 h-5" />
-                  <span className="text-sm">Continue with Google</span>
+                  <span className="text-sm">{t("login.continueWithGoogle")}</span>
                 </Button>
               </div>
 
               {/* Divider */}
               <div className="relative mb-6">
                 <div className="relative flex text-sm">
-                  <span className=" bg-white text-gray-900 font-semibold">Or continue with email address</span>
+                  <span className=" bg-white text-gray-900 font-semibold">{t("login.orContinueWithEmail")}</span>
                 </div>
               </div>
 
@@ -187,14 +204,14 @@ export default function LoginPage() {
               <form onSubmit={handleLogin} className="space-y-5">
                 {/* Email Input */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email address</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t("login.email")}</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Mail className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
                       type="email"
-                      placeholder="user@xdents.tn"
+                      placeholder={t("login.emailPlaceholder")}
                       className="w-full pl-12 pr-4 py-3.5 bg-gray-100 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all placeholder:text-gray-400"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -206,9 +223,9 @@ export default function LoginPage() {
                 {/* Password Input */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                    <label className="block text-sm font-medium text-gray-700">{t("login.password")}</label>
                     <Link href="/forgot-password" className="text-sm font-medium text-black font-bold transition-colors">
-                      Forgot password?
+                      {t("login.forgotPassword")}
                     </Link>
                   </div>
                   <div className="relative">
@@ -217,7 +234,7 @@ export default function LoginPage() {
                     </div>
                     <input
                       type="password"
-                      placeholder="••••••••••••"
+                      placeholder={t("login.passwordPlaceholder")}
                       className="w-full pl-12 pr-4 py-3.5 bg-gray-100 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all placeholder:text-gray-400"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -235,10 +252,10 @@ export default function LoginPage() {
                   {loading ? (
                     <span className="flex items-center justify-center gap-2">
                       <Loader2 className="animate-spin h-5 w-5" />
-                      Signing in...
+                      {t("login.signingIn")}
                     </span>
                   ) : (
-                    "Sign In"
+                    t("login.signIn")
                   )}
                 </Button>
               </form>

@@ -2,18 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import { CroppedSlice } from '@/utils/CroppedSliceUtils';
 import { useDentalStore } from '@/stores/dataStore';
+import { useTranslation } from 'react-i18next';
 
 function RenderAllSlices({ teeth, isDragging, sliceDrager, ToothSlicemode }) {
+  const { t } = useTranslation();
 
   if (!teeth) {
-    return <div className="p-6 text-red-500">No tooth data available</div>;
+    return <div className="p-6 text-red-500">{t('toothSlice.noToothData')}</div>;
   }
   const tooth = teeth;
   const removeToothSlice = useDentalStore(state => state.removeToothSlice);
   const addToothSlice = useDentalStore(state => state.addToothSlice);
   const [sliceselectlocal, setsliceselectlocal] = useState({ "view": null, "slice": null })
   if (!tooth.slice) {
-    return <div className="p-6 text-red-500">No slice data available</div>;
+    return <div className="p-6 text-red-500">{t('toothSlice.noSliceData')}</div>;
   }
 
   const [isHovering, setIsHovering] = useState(false);
@@ -57,8 +59,8 @@ function RenderAllSlices({ teeth, isDragging, sliceDrager, ToothSlicemode }) {
         <div
           className="h-[140px] w-[140px] flex flex-col items-center justify-center border-2 border-dashed border-[#7564ed] bg-white rounded-2xl cursor-pointer hover:bg-[#f8f7ff] transition-colors gap-1"
         >
-          <span className="text-[#7564ed] text-lg font-bold">Add image</span>
-          <span className="text-sm text-gray-400 text-center leading-tight px-1">drag&drop images here</span>
+          <span className="text-[#7564ed] text-lg font-bold">{t('toothSlice.addImage')}</span>
+          <span className="text-sm text-gray-400 text-center leading-tight px-1">{t('toothSlice.dragDropImages')}</span>
         </div>
       )}
 
@@ -79,8 +81,8 @@ function RenderAllSlices({ teeth, isDragging, sliceDrager, ToothSlicemode }) {
           }}
           onMouseLeave={() => { setIsHovering(false); setsliceselectlocal({ "view": null, "slice": null }) }}
         >
-          <p className="text-gray-600 font-medium">Add slice</p>
-          <p className="text-sm text-gray-400">drag & drop slices here</p>
+          <p className="text-gray-600 font-medium">{t('toothSlice.addSlice')}</p>
+          <p className="text-sm text-gray-400">{t('toothSlice.dragDropSlices')}</p>
         </div>
       )}
     </div>

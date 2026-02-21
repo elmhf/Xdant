@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import SliceViewerModal from "@/components/features/dashboard/main/ToothSlice/SliceViewerModal";
 
 export default function ToothSlicePage() {
-  const { t } = useTranslation('patient');
+  const { t } = useTranslation();
   // FIXED: Always call all hooks at the top level first
   const { toothId, report_id } = useParams();
   const stageRef = useRef(null);
@@ -324,7 +324,7 @@ export default function ToothSlicePage() {
                 return (
                   <div key={view} className=" mb-5">
                     <div className="font-[800] text-3xl  capitalize text-gray-800 flex items-center gap-2">
-                      {t('toothSlice.view', { view: view })}
+                      {t(`toothSlice.${view}View`)}
                     </div>
 
                     {start > 0 && end > 0 && (

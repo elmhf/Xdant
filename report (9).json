@@ -1,0 +1,1733 @@
+{
+  "patientInfo": {
+    "patientId": "PT-2024-X88",
+    "info": {
+      "fullName": "Ahmed Mansour",
+      "dateOfBirth": "1982-05-14",
+      "age": 42,
+      "lastScanDate": "2024-04-01",
+      "gender": "Male",
+      "bloodType": "O+",
+      "allergies": [
+        "Penicillin"
+      ],
+      "medicalHistory": [
+        "Hypertension (controlled)"
+      ]
+    }
+  },
+  "JAw": {
+    "upperJaw": {
+      "mask": []
+    },
+    "lowerJaw": {
+      "mask": []
+    }
+  },
+  "teeth": [
+    {
+      "note": "Wisdom tooth absent (extracted 2010)",
+      "toothNumber": 18,
+      "category": "Missing",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": null,
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [],
+      "gumHealth": "N/A",
+      "lastCheckup": "",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 0,
+      "canals": 0
+    },
+    {
+      "note": "Existing composite filling, distal surface",
+      "toothNumber": 17,
+      "category": "Treated",
+      "position": {
+        "x": 160,
+        "y": 210
+      },
+      "boundingBox": {
+        "xMin": 150,
+        "yMin": 200,
+        "xMax": 170,
+        "yMax": 220
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [
+          55,
+          56
+        ],
+        "sagittal": [
+          60
+        ],
+        "coronal": [
+          25
+        ]
+      },
+      "sliceRanges": {
+        "axial": {
+          "min": 20,
+          "max": 90
+        },
+        "sagittal": {
+          "min": 30,
+          "max": 90
+        },
+        "coronal": {
+          "min": 10,
+          "max": 50
+        }
+      },
+      "problems": [
+        {
+          "type": "Filling",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Root Resorption",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.62
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2023-12-01",
+      "Endo": null,
+      "Root": {
+        "mask": []
+      },
+      "Crown": null,
+      "approved": true,
+      "roots": 3,
+      "canals": 3
+    },
+    {
+      "note": "Deep distal caries, pulpitic symptoms. Needs RCT.",
+      "toothNumber": 16,
+      "category": "Unhealthy",
+      "position": {
+        "x": 150,
+        "y": 205
+      },
+      "boundingBox": {
+        "xMin": 140,
+        "yMin": 195,
+        "xMax": 160,
+        "yMax": 215
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [
+          48
+        ],
+        "sagittal": [
+          20
+        ],
+        "coronal": [
+          15,
+          16
+        ]
+      },
+      "sliceRanges": {
+        "axial": {
+          "min": 10,
+          "max": 90
+        },
+        "sagittal": {
+          "min": 5,
+          "max": 85
+        },
+        "coronal": {
+          "min": 5,
+          "max": 45
+        }
+      },
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.94
+        },
+        {
+          "type": "Abscess",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.91
+        },
+        {
+          "type": "Root Resorption",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.73
+        }
+      ],
+      "gumHealth": "Inflamed",
+      "lastCheckup": "2024-01-10",
+      "Endo": null,
+      "Root": {
+        "mask": []
+      },
+      "Crown": null,
+      "approved": true,
+      "roots": 3,
+      "canals": 4
+    },
+    {
+      "note": "Incipient enamel caries on mesial surface.",
+      "toothNumber": 15,
+      "category": "Unhealthy",
+      "position": {
+        "x": 140,
+        "y": 190
+      },
+      "boundingBox": {
+        "xMin": 135,
+        "yMin": 185,
+        "xMax": 145,
+        "yMax": 195
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [
+          40
+        ],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Enamel Hypoplasia",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.55
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2023-11-20",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": false,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Old root canal treatment, periapical radiolucency noted.",
+      "toothNumber": 14,
+      "category": "Treated",
+      "position": {
+        "x": 130,
+        "y": 180
+      },
+      "boundingBox": {
+        "xMin": 125,
+        "yMin": 175,
+        "xMax": 135,
+        "yMax": 185
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [
+          50
+        ],
+        "sagittal": [
+          25
+        ],
+        "coronal": []
+      },
+      "sliceRanges": {
+        "axial": {
+          "min": 20,
+          "max": 80
+        },
+        "sagittal": {
+          "min": 10,
+          "max": 60
+        },
+        "coronal": {
+          "min": 10,
+          "max": 60
+        }
+      },
+      "problems": [
+        {
+          "type": "Root Canal",
+          "severity": "Treated",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Periapical Lesion",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.88
+        }
+      ],
+      "gumHealth": "Receding",
+      "lastCheckup": "2022-05-15",
+      "Endo": {
+        "mask": []
+      },
+      "Root": {
+        "mask": []
+      },
+      "Crown": {
+        "mask": []
+      },
+      "approved": true,
+      "roots": 2,
+      "canals": 2
+    },
+    {
+      "note": "Mesial-occlusal filling, looks intact.",
+      "toothNumber": 13,
+      "category": "Treated",
+      "position": {
+        "x": 120,
+        "y": 170
+      },
+      "boundingBox": {
+        "xMin": 115,
+        "yMin": 165,
+        "xMax": 125,
+        "yMax": 175
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Filling",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Caries",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.61
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2023-10-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Healthy tooth",
+      "toothNumber": 12,
+      "category": "Unhealthy",
+      "position": {
+        "x": 110,
+        "y": 165
+      },
+      "boundingBox": {
+        "xMin": 105,
+        "yMin": 160,
+        "xMax": 115,
+        "yMax": 170
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-02-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Incisal edge fracture, monitoring.",
+      "toothNumber": 11,
+      "category": "Unhealthy",
+      "position": {
+        "x": 100,
+        "y": 160
+      },
+      "boundingBox": {
+        "xMin": 95,
+        "yMin": 155,
+        "xMax": 105,
+        "yMax": 165
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [
+          60
+        ],
+        "sagittal": [],
+        "coronal": [
+          30
+        ]
+      },
+      "sliceRanges": {
+        "axial": {
+          "min": 20,
+          "max": 80
+        },
+        "sagittal": {
+          "min": 20,
+          "max": 60
+        },
+        "coronal": {
+          "min": 20,
+          "max": 40
+        }
+      },
+      "problems": [
+        {
+          "type": "Fracture",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.88
+        },
+        {
+          "type": "Caries",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.47
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-02-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Healthy tooth",
+      "toothNumber": 21,
+      "category": "Unhealthy",
+      "position": {
+        "x": 90,
+        "y": 160
+      },
+      "boundingBox": {
+        "xMin": 85,
+        "yMin": 155,
+        "xMax": 95,
+        "yMax": 165
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.53
+        },
+        {
+          "type": "Calculus",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-02-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Healthy tooth",
+      "toothNumber": 22,
+      "category": "Healthy",
+      "position": {
+        "x": 80,
+        "y": 165
+      },
+      "boundingBox": {
+        "xMin": 75,
+        "yMin": 160,
+        "xMax": 85,
+        "yMax": 170
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Abscess",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.79
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-02-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Ectopic eruption, buccally displaced.",
+      "toothNumber": 23,
+      "category": "Unhealthy",
+      "position": {
+        "x": 70,
+        "y": 170
+      },
+      "boundingBox": {
+        "xMin": 65,
+        "yMin": 165,
+        "xMax": 75,
+        "yMax": 175
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [
+          55
+        ],
+        "sagittal": [
+          30,
+          31
+        ],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Impacted",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Caries",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.52
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-02-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Congenitally absent.",
+      "toothNumber": 24,
+      "category": "Missing",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": null,
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [],
+      "gumHealth": "N/A",
+      "lastCheckup": "",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 0,
+      "canals": 0
+    },
+    {
+      "note": "Ceramic crown, margin looks slightly shadowed.",
+      "toothNumber": 25,
+      "category": "Treated",
+      "position": {
+        "x": 60,
+        "y": 180
+      },
+      "boundingBox": {
+        "xMin": 55,
+        "yMin": 175,
+        "xMax": 65,
+        "yMax": 185
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Crown",
+          "severity": "Treated",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Secondary Caries",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.84
+        }
+      ],
+      "gumHealth": "Inflamed",
+      "lastCheckup": "2023-09-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": {
+        "mask": []
+      },
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Existing PFM crown.",
+      "toothNumber": 26,
+      "category": "Treated",
+      "position": {
+        "x": 40,
+        "y": 205
+      },
+      "boundingBox": {
+        "xMin": 35,
+        "yMin": 200,
+        "xMax": 45,
+        "yMax": 210
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Crown",
+          "severity": "Treated",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Root Resorption",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.66
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2023-08-10",
+      "Endo": {
+        "mask": []
+      },
+      "Root": {
+        "mask": []
+      },
+      "Crown": {
+        "mask": []
+      },
+      "approved": true,
+      "roots": 3,
+      "canals": 3
+    },
+    {
+      "note": "Secondary caries under distal margin.",
+      "toothNumber": 27,
+      "category": "Unhealthy",
+      "position": {
+        "x": 30,
+        "y": 195
+      },
+      "boundingBox": {
+        "xMin": 25,
+        "yMin": 190,
+        "xMax": 35,
+        "yMax": 200
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [
+          70
+        ],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "Medium",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Abscess",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.93
+        },
+        {
+          "type": "Root Resorption",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.71
+        }
+      ],
+      "gumHealth": "Inflamed",
+      "lastCheckup": "2024-01-05",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": false,
+      "roots": 3,
+      "canals": 3
+    },
+    {
+      "note": "Not present.",
+      "toothNumber": 28,
+      "category": "Missing",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": null,
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [],
+      "gumHealth": "N/A",
+      "lastCheckup": "",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 0,
+      "canals": 0
+    },
+    {
+      "note": "Impacted wisdom tooth, horizontal.",
+      "toothNumber": 38,
+      "category": "Unhealthy",
+      "position": {
+        "x": 10,
+        "y": 240
+      },
+      "boundingBox": {
+        "xMin": 0,
+        "yMin": 230,
+        "xMax": 20,
+        "yMax": 250
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [
+          120
+        ],
+        "sagittal": [
+          45
+        ],
+        "coronal": [
+          10
+        ]
+      },
+      "sliceRanges": {
+        "axial": {
+          "min": 100,
+          "max": 150
+        },
+        "sagittal": {
+          "min": 30,
+          "max": 60
+        },
+        "coronal": {
+          "min": 5,
+          "max": 20
+        }
+      },
+      "problems": [
+        {
+          "type": "Impacted",
+          "severity": "Medium",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Caries",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.68
+        }
+      ],
+      "gumHealth": "Inflamed",
+      "lastCheckup": "2024-04-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": false,
+      "roots": 2,
+      "canals": 2
+    },
+    {
+      "note": "Occlusal caries in pits and fissures.",
+      "toothNumber": 37,
+      "category": "Unhealthy",
+      "position": {
+        "x": 20,
+        "y": 245
+      },
+      "boundingBox": {
+        "xMin": 15,
+        "yMin": 240,
+        "xMax": 25,
+        "yMax": 250
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [
+          85
+        ],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Pulpitis",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.85
+        },
+        {
+          "type": "Calculus",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-03-20",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 3,
+      "canals": 3
+    },
+    {
+      "note": "Osseointegrated implant.",
+      "toothNumber": 36,
+      "category": "Treated",
+      "position": {
+        "x": 40,
+        "y": 250
+      },
+      "boundingBox": {
+        "xMin": 35,
+        "yMin": 245,
+        "xMax": 45,
+        "yMax": 255
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Implant",
+          "severity": "Treated",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Peri-implantitis",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.59
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-03-15",
+      "Endo": null,
+      "Root": {
+        "mask": []
+      },
+      "Crown": {
+        "mask": []
+      },
+      "approved": true,
+      "roots": 0,
+      "canals": 0
+    },
+    {
+      "note": "Healthy tooth",
+      "toothNumber": 35,
+      "category": "Healthy",
+      "position": {
+        "x": 50,
+        "y": 260
+      },
+      "boundingBox": {
+        "xMin": 45,
+        "yMin": 255,
+        "xMax": 55,
+        "yMax": 265
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.44
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-03-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Horizontal bone loss, mobility grade 1.",
+      "toothNumber": 34,
+      "category": "Unhealthy",
+      "position": {
+        "x": 60,
+        "y": 265
+      },
+      "boundingBox": {
+        "xMin": 55,
+        "yMin": 260,
+        "xMax": 65,
+        "yMax": 270
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [
+          70
+        ],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": {
+        "axial": {
+          "min": 30,
+          "max": 100
+        },
+        "sagittal": {
+          "min": 20,
+          "max": 60
+        },
+        "coronal": {
+          "min": 20,
+          "max": 60
+        }
+      },
+      "problems": [
+        {
+          "type": "Periodontitis",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.91
+        },
+        {
+          "type": "Furcation",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.77
+        },
+        {
+          "type": "Calculus",
+          "severity": "Medium",
+          "mask": [],
+          "images": []
+        }
+      ],
+      "gumHealth": "Receding",
+      "lastCheckup": "2024-03-01",
+      "Endo": null,
+      "Root": {
+        "mask": []
+      },
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Zirconia crown, excellent esthetics.",
+      "toothNumber": 33,
+      "category": "Treated",
+      "position": {
+        "x": 70,
+        "y": 270
+      },
+      "boundingBox": {
+        "xMin": 65,
+        "yMin": 265,
+        "xMax": 75,
+        "yMax": 275
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Crown",
+          "severity": "Treated",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Secondary Caries",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.58
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-03-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Deep decay, needs urgent attention.",
+      "toothNumber": 32,
+      "category": "Unhealthy",
+      "position": {
+        "x": 80,
+        "y": 270
+      },
+      "boundingBox": {
+        "xMin": 75,
+        "yMin": 265,
+        "xMax": 85,
+        "yMax": 275
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [
+          110
+        ],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "High",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Abscess",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.87
+        },
+        {
+          "type": "Pulpitis",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.9
+        }
+      ],
+      "gumHealth": "Inflamed",
+      "lastCheckup": "2024-03-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Lower incisor with calculus buildup and gingival recession.",
+      "toothNumber": 31,
+      "category": "Unhealthy",
+      "position": {
+        "x": 90,
+        "y": 270
+      },
+      "boundingBox": {
+        "xMin": 85,
+        "yMin": 265,
+        "xMax": 95,
+        "yMax": 275
+      },
+      "slice": {
+        "axial": [
+          105
+        ],
+        "sagittal": [],
+        "coronal": []
+      },
+      "problems": [
+        {
+          "type": "Periodontitis",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.55
+        },
+        {
+          "type": "Furcation",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.63
+        }
+      ],
+      "gumHealth": "Receding",
+      "approved": false,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Incisal wear and minor enamel fracture.",
+      "toothNumber": 41,
+      "category": "Unhealthy",
+      "position": {
+        "x": 100,
+        "y": 270
+      },
+      "boundingBox": {
+        "xMin": 95,
+        "yMin": 265,
+        "xMax": 105,
+        "yMax": 275
+      },
+      "slice": {
+        "axial": [],
+        "sagittal": [
+          40
+        ],
+        "coronal": []
+      },
+      "problems": [
+        {
+          "type": "Fracture",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.48
+        },
+        {
+          "type": "Caries",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.46
+        }
+      ],
+      "gumHealth": "Healthy",
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Distal-incisal chip.",
+      "toothNumber": 42,
+      "category": "Unhealthy",
+      "position": {
+        "x": 110,
+        "y": 270
+      },
+      "boundingBox": {
+        "xMin": 105,
+        "yMin": 265,
+        "xMax": 115,
+        "yMax": 275
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Fracture",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Pulpitis",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.72
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-03-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Titanium implant, waiting for final restoration.",
+      "toothNumber": 43,
+      "category": "Treated",
+      "position": {
+        "x": 120,
+        "y": 270
+      },
+      "boundingBox": {
+        "xMin": 115,
+        "yMin": 265,
+        "xMax": 125,
+        "yMax": 275
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Implant",
+          "severity": "Treated",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Peri-implantitis",
+          "severity": "Low",
+          "mask": [],
+          "images": [],
+          "confidence": 0.55
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-03-01",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Large occlusal filling.",
+      "toothNumber": 44,
+      "category": "Treated",
+      "position": {
+        "x": 130,
+        "y": 265
+      },
+      "boundingBox": {
+        "xMin": 125,
+        "yMin": 260,
+        "xMax": 135,
+        "yMax": 270
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Filling",
+          "severity": "Medium",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Secondary Caries",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.81
+        },
+        {
+          "type": "Calculus",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2023-11-10",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Small cervical restoration.",
+      "toothNumber": 45,
+      "category": "Treated",
+      "position": {
+        "x": 140,
+        "y": 260
+      },
+      "boundingBox": {
+        "xMin": 135,
+        "yMin": 255,
+        "xMax": 145,
+        "yMax": 265
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Filling",
+          "severity": "Low",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Caries",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.69
+        }
+      ],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2024-01-20",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 1,
+      "canals": 1
+    },
+    {
+      "note": "Occlusal caries.",
+      "toothNumber": 46,
+      "category": "Unhealthy",
+      "position": {
+        "x": 150,
+        "y": 250
+      },
+      "boundingBox": {
+        "xMin": 145,
+        "yMin": 245,
+        "xMax": 155,
+        "yMax": 255
+      },
+      "teeth_mask": "mask_base64...",
+      "slice": {
+        "axial": [
+          80,
+          81
+        ],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": {
+        "axial": {
+          "min": 50,
+          "max": 120
+        },
+        "sagittal": {
+          "min": 20,
+          "max": 80
+        },
+        "coronal": {
+          "min": 20,
+          "max": 80
+        }
+      },
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.96
+        },
+        {
+          "type": "Furcation",
+          "severity": "Medium",
+          "mask": [],
+          "images": [],
+          "confidence": 0.88
+        },
+        {
+          "type": "Abscess",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.95
+        }
+      ],
+      "gumHealth": "Inflamed",
+      "lastCheckup": "2024-03-10",
+      "Endo": null,
+      "Root": {
+        "mask": []
+      },
+      "Crown": null,
+      "approved": true,
+      "roots": 2,
+      "canals": 3
+    },
+    {
+      "note": "Deep caries with periapical abscess.",
+      "toothNumber": 47,
+      "category": "Unhealthy",
+      "position": {
+        "x": 160,
+        "y": 240
+      },
+      "boundingBox": {
+        "xMin": 155,
+        "yMin": 235,
+        "xMax": 165,
+        "yMax": 245
+      },
+      "teeth_mask": null,
+      "slice": {
+        "axial": [
+          95
+        ],
+        "sagittal": [
+          30
+        ],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [
+        {
+          "type": "Caries",
+          "severity": "High",
+          "mask": [],
+          "images": []
+        },
+        {
+          "type": "Abscess",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.96
+        },
+        {
+          "type": "Furcation",
+          "severity": "High",
+          "mask": [],
+          "images": [],
+          "confidence": 0.82
+        }
+      ],
+      "gumHealth": "Inflamed",
+      "lastCheckup": "2024-02-15",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": false,
+      "roots": 3,
+      "canals": 3
+    },
+    {
+      "note": "Absent.",
+      "toothNumber": 48,
+      "category": "Missing",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": null,
+      "teeth_mask": null,
+      "slice": {
+        "axial": [],
+        "sagittal": [],
+        "coronal": []
+      },
+      "sliceRanges": null,
+      "problems": [],
+      "gumHealth": "N/A",
+      "lastCheckup": "",
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "approved": true,
+      "roots": 0,
+      "canals": 0
+    }
+  ],
+  "statistics": {
+    "totalTeeth": 32,
+    "healthy": 0,
+    "treated": 10,
+    "pathology": 18,
+    "missing": 4,
+    "cariesDistribution": {
+      "active": 15,
+      "arrested": 2,
+      "recurrent": 5,
+      "enamel": 7,
+      "dentin": 7,
+      "pulp": 5
+    },
+    "periodontalStatus": "Generalized Severe Periodontitis (Stage IV, Grade C)",
+    "missingTeeth": 4,
+    "treatedTeeth": 10,
+    "lowConfidenceFindings": 14,
+    "abscesses": 6,
+    "furcations": 4,
+    "implants": 2
+  },
+  "scanInfo": {
+    "device": "Planmeca ProMax 3D Mid",
+    "dimensions": {
+      "width": 1024,
+      "height": 1024,
+      "resolution": "0.15mm voxel",
+      "dpi": 300
+    },
+    "scanDate": "2024-04-01",
+    "scanType": "Full Mandible/Maxilla CBCT",
+    "radiationDose": "145 mSv"
+  },
+  "treatmentPlan": [
+    {
+      "planId": "TP-2024-88-EXTENDED",
+      "status": "In Progress",
+      "procedures": [
+        {
+          "name": "Endodontic Therapy (Root Canal)",
+          "toothNumber": 16,
+          "prescriptions": [
+            "Amoxicillin 500mg BID",
+            "Ibuprofen 600mg PRN"
+          ],
+          "materials": [
+            "Gutta-percha",
+            "AH Plus Sealer"
+          ]
+        },
+        {
+          "name": "Core Build-up & Zirconia Crown",
+          "toothNumber": 16,
+          "prescriptions": [],
+          "materials": [
+            "Composite Core",
+            "Monolithic Zirconia"
+          ]
+        },
+        {
+          "name": "Composite Resin Restoration",
+          "toothNumber": 46,
+          "prescriptions": [],
+          "materials": [
+            "Filtek Supreme Ultra A2"
+          ]
+        },
+        {
+          "name": "Scaling and Root Planing (Full Mouth)",
+          "toothNumber": 34,
+          "prescriptions": [
+            "Chlorhexidine 0.12% Rinse"
+          ],
+          "materials": [
+            "Ultrasonic Scaling"
+          ]
+        },
+        {
+          "name": "Extraction of Impacted Wisdom Tooth",
+          "toothNumber": 38,
+          "prescriptions": [
+            "Augmentin 625mg",
+            "Dexketoprofen 25mg"
+          ],
+          "materials": [
+            "Surgical flap"
+          ]
+        },
+        {
+          "name": "Class III Composite Filling",
+          "toothNumber": 22,
+          "prescriptions": [],
+          "materials": [
+            "Composite A1"
+          ]
+        },
+        {
+          "name": "Emergency Pulpectomy",
+          "toothNumber": 32,
+          "prescriptions": [
+            "Clindamycin 300mg"
+          ],
+          "materials": [
+            "Formocresol"
+          ]
+        },
+        {
+          "name": "Implant Restoration (Abutment + Crown)",
+          "toothNumber": 43,
+          "prescriptions": [],
+          "materials": [
+            "Custom Abutment",
+            "E-max Crown"
+          ]
+        }
+      ],
+      "followUp": {
+        "date": "2024-06-20",
+        "requiredTests": [
+          "Post-op Periapical X-ray",
+          "Periodontal Probing"
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "generatedBy": "AI Diagnostic Suite v2.5 Enterprise",
+    "lastUpdated": "2024-04-02T16:00:00Z",
+    "clinicInfo": {
+      "name": "Tunis Dental Center - Specialist Unit",
+      "license": "LIC-2023-991-HQ",
+      "address": "Av. Habib Bourguiba, Building 45, Tunis",
+      "phone": "+216 71 000 000",
+      "email": "contact@tunisdental.tn"
+    },
+    "createdAt": "2024-04-01T10:00:00Z",
+    "technicianId": "TECH-04-SENIOR",
+    "slice_count": {
+      "axial": 450,
+      "coronal": 400,
+      "sagittal": 400
+    }
+  },
+  "conclusion": "Critical multi-quadrant dental breakdown. Patient presents with multiple periapical abscesses (teeth 16, 27, 32, 46, 47), severe furcation involvement (34, 46, 47), and active pulpitis in multiple posterior teeth. Peri-implantitis monitored at implant sites 36 and 43. Immediate extraction of 38 recommended. Full-mouth rehabilitation plan required including phased endodontic, periodontal, and prosthodontic treatments.",
+  "conclusionUpdatedAt": "2024-04-02T19:45:00Z",
+  "currentReportId": "fe8c3422-7bf4-48ab-968a-19433961efb0",
+  "reportType": "cbct"
+}

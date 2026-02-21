@@ -54,9 +54,11 @@
     "wasAddedToClinic": "تمت إضافته إلى عيادتك",
     "by": "بواسطة",
     "informationWas": "تم تحديث المعلومات",
-    "updated": "محدثة",
-    "newAppointmentWith": "موعد جديد مع",
-    "at": "في",
+    "clinic": "عيادة",
+    "tooth": "سن",
+    "patient": "مريض",
+    "printReport": "طباعة التقرير",
+    "breadcrumb": "مسار التنقل",
     "statusChangedTo": "تغيرت الحالة إلى",
     "report": "تقرير",
     "conclusion": "الخلاصة",
@@ -185,7 +187,8 @@
     "patients": "المرضى",
     "patientName": "فيليشيا هول",
     "reportTitle": "تقرير CBCT بالذكاء الاصطناعي",
-    "print": "طباعة التحاليل",
+    "logoUrl": "/XDENTAL.png",
+    "logoText": "إكس دنت",
     "goToHomepage": "الذهاب إلى الصفحة الرئيسية",
     "logoAlt": "شعار إكس دنتال"
   },
@@ -200,6 +203,7 @@
     "card": {
       "Tooth": "سن",
       "NoProblemsDetected": "لم يتم اكتشاف مشاكل",
+      "rawMissing": "مفقود",
       "Condition": "الحالة",
       "Note": "ملاحظة",
       "Slices": "القطاعات",
@@ -623,6 +627,39 @@
       "assistant_access": "مساعد"
     }
   },
+  "toothSlice": {
+    "axialView": "منظر محوري",
+    "sagittalView": "منظر سهمي",
+    "coronalView": "منظر إكليلي",
+    "loading": "جارٍ التحميل...",
+    "scrollToZoom": "قم بالتمرير للتكبير",
+    "zoomLevel": "مستوى التكبير",
+    "chosen": "مختار",
+    "loadingImage": "جارٍ تحميل الصورة...",
+    "settingRegion": "جارٍ ضبط المنطقة...",
+    "processing": "جارٍ المعالجة...",
+    "noImage": "لا توجد صورة متاحة",
+    "error": "خطأ: {{error}}",
+    "tryAgain": "إعادة المحاولة",
+    "clearCache": "مسح الذاكرة المؤقتة",
+    "dataNotLoaded": "لم يتم تحميل بيانات السن",
+    "detailsLoading": "جارٍ تحميل بيانات السن رقم {{number}} من التقرير...",
+    "view": "عرض {{view}}",
+    "sliceRange": "نطاق الشرائح:",
+    "to": "إلى",
+    "slicesCount": "الشرائح:",
+    "approved": "تمت الموافقة",
+    "approve": "موافقة",
+    "noToothData": "لا توجد بيانات للسن",
+    "noSliceData": "لا توجد بيانات للمقاطع",
+    "addImage": "إضافة صورة",
+    "dragDropImages": "اسحب وأفلت الصور هنا",
+    "addSlice": "إضافة مقطع",
+    "dragDropSlices": "اسحب وأفلت المقاطع هنا",
+    "noSlices": "لا توجد مقاطع لـ {{view}}",
+    "toothSlices": "مقاطع السن",
+    "noMprMissing": "لا توجد صور MPR للسن المفقود {{toothNumber}}"
+  },
   "dashboard": {
     "teethInReport": "الأسنان في التقرير",
     "selectTeeth": "اختر الأسنان",
@@ -655,19 +692,6 @@
     "noSlices": "لا توجد مقاطع لـ {{view}}",
     "toothSlices": "مقاطع السن",
     "noMprMissing": "لا توجد صور MPR للسن المفقود {{toothNumber}}",
-    "toothSlice": {
-      "axialView": "منظر محوري",
-      "sagittalView": "منظر سهمي",
-      "coronalView": "منظر إكليلي",
-      "loading": "جارٍ التحميل...",
-      "scrollToZoom": "قم بالتمرير للتكبير",
-      "zoomLevel": "مستوى التكبير",
-      "chosen": "مختار",
-      "loadingImage": "جارٍ تحميل الصورة...",
-      "settingRegion": "جارٍ ضبط المنطقة...",
-      "processing": "جارٍ المعالجة...",
-      "noImage": "لا توجد صورة متاحة"
-    },
     "conditions": {
       "healthy": "سليم",
       "caries": "تسوس",
@@ -994,20 +1018,6 @@
       "remove": "إزالة الطبيب",
       "removing": "جارٍ الإزالة..."
     },
-    "toothSlice": {
-      "loading": "جارٍ تحميل بيانات التقرير...",
-      "error": "خطأ: {{error}}",
-      "tryAgain": "إعادة المحاولة",
-      "clearCache": "مسح الذاكرة المؤقتة",
-      "dataNotLoaded": "لم يتم تحميل بيانات السن",
-      "detailsLoading": "جارٍ تحميل بيانات السن رقم {{number}} من التقرير...",
-      "view": "عرض {{view}}",
-      "sliceRange": "نطاق الشرائح:",
-      "to": "إلى",
-      "slicesCount": "الشرائح:",
-      "approved": "تمت الموافقة",
-      "approve": "موافقة"
-    },
     "pdfReport": {
       "settings": {
         "title": "الإعدادات",
@@ -1038,7 +1048,47 @@
         "edit": "تعديل التوقيع",
         "modalTitle": "التوقيع الإلكتروني",
         "remove": "حذف",
-        "add": "أضف توقيعك"
+        "add": "إضافة توقيعك"
+      },
+      "diagnosis": {
+        "title": "تشخيص السن {{number}}",
+        "editCondition": "تعديل الحالة",
+        "addCondition": "إضافة حالة جديدة",
+        "searchPlaceholder": "البحث في الحالات الموجودة...",
+        "noConditions": "لم يتم العثور على حالات",
+        "addPrompt": "أضف حالة جديدة للبدء",
+        "addNewButton": "إضافة حالة جديدة",
+        "conditionLabel": "الحالة",
+        "percentageLabel": "النسبة المئوية",
+        "statusTypeLabel": "نوع الحالة",
+        "descriptionLabel": "الوصف",
+        "selectStatusPlaceholder": "اختر الحالة",
+        "statusUnhealthy": "غير صحي",
+        "statusTreated": "معالج",
+        "statusHealthy": "صحي",
+        "descriptionPlaceholder": "تفاصيل اختيارية...",
+        "cancel": "إلغاء",
+        "update": "تحديث",
+        "save": "حفظ",
+        "notifications": {
+          "removed": "تمت إزالة الحالة",
+          "updated": "تم تحديث الحالة",
+          "added": "تمت إضافة الحالة بنجاح",
+          "saveFailed": "فشل حفظ الحالة",
+          "selectCondition": "يرجى اختيار حالة"
+        }
+      },
+      "conditions": {
+        "healthy": "سليم",
+        "caries": "تسوس",
+        "filling": "حشوة",
+        "crown": "تاج",
+        "root_canal": "علاج عصب",
+        "missing": "مفقود",
+        "implant": "زرعة",
+        "bridge": "جسر",
+        "gingivitis": "التهاب اللثة",
+        "periodontitis": "التهاب دواعم السن"
       },
       "content": {
         "reportTitle": "تقرير CBCT بالذكاء الاصطناعي",
@@ -1055,6 +1105,7 @@
     },
     "dentalData": {
       "title": "البيانات السنية",
+      "groupTitle": "الصور السنية",
       "noData": "لم يتم العثور على بيانات سنية",
       "noDataDesc": "الملفات المرفوعة ستظهر هنا.",
       "loading": "جارٍ التحميل...",
@@ -1104,7 +1155,9 @@
       "clinicRequired": "يرجى اختيار عيادة",
       "cancel": "إلغاء",
       "create": "إنشاء مريض",
-      "creating": "جاري الإنشاء..."
+      "creating": "جاري الإنشاء...",
+      "add": "إضافة",
+      "selectDoctor": "اختر طبيباً"
     },
     "patientInfo": {
       "patient": "مريض",
@@ -1209,6 +1262,149 @@
           "missingClinicId": "خطأ: معرف العيادة مفقود. يرجى التحديث والمحاولة مرة أخرى.",
           "fieldsRequired": "يرجى إدخال البريد الإلكتروني والدور."
         }
+      }
+    },
+    "notifications": {
+      "reportReadyTitle": "التقرير جاهز",
+      "reportReadyMessage": "تقرير {{type}} للمريض {{patient}} جاهز الآن",
+      "reportFailedTitle": "فشل التقرير",
+      "reportFailedMessage": "فشل معالجة تقرير {{type}} للمريض {{patient}}",
+      "newReportCreated": "تم إنشاء تقرير {{type}} جديد للمريض {{patient}}",
+      "reportDeleted": "تم حذف تقرير {{type}} للمريض {{patient}}",
+      "reportDeletedId": "تم حذف التقرير {{id}}",
+      "maintenanceModeTitle": "صيانة النظام",
+      "maintenanceModeActive": "النظام حالياً قيد الصيانة.",
+      "maintenanceModeOffline": "اكتملت أعمال الصيانة. النظام متصل الآن.",
+      "patientAssignedTitle": "تم تعيين مريض جديد",
+      "patientAssignedMessage": "تم تعيينك كطبيب معالج لـ {{patient}} في عيادة {{clinic}}",
+      "patientUpdatedTitle": "تحديث معلومات المريض",
+      "patientUpdatedMessage": "قام الدكتور {{doctor}} بتحديث معلومات المريض {{patient}} في عيادة {{clinic}}",
+      "reportStatusUpdatedTitle": "تحديث حالة التقرير",
+      "reportStatusUpdatedMessage": "تغيرت حالة التقرير إلى {{status}}"
+    },
+    "errors": {
+      "fileTypeNotSupported": "نوع الملف غير مدعوم. استخدم: {{types}}",
+      "fileDeletionError": "خطأ في حذف الملف",
+      "databaseError": "حدث خطأ في قاعدة البيانات. يرجى المحاولة لاحقاً.",
+      "patientNotFound": "المريض غير موجود.",
+      "permissionDenied": "ليس لديك صلاحية للقيام بهذا الإجراء."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "subtitle": "سجل الدخول باستخدام حساب مفتوح",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "user@xdents.tn",
+      "orContinueWithEmail": "أو المتابعة باستخدام البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "••••••••••••",
+      "rememberMe": "تذكرني",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "signIn": "تسجيل الدخول",
+      "signingIn": "جاري تسجيل الدخول...",
+      "continueWithGoogle": "المتابعة باستخدام Google",
+      "noAccount": "ليس لديك حساب؟",
+      "signUp": "إنشاء حساب",
+      "errors": {
+        "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صالحة",
+        "pendingVerification": "يرجى التحقق من بريدك الإلكتروني للمتابعة",
+        "network": "خطأ في الشبكة، يرجى المحاولة مرة أخرى"
+      }
+    },
+    "signup": {
+      "title": "إنشاء حساب",
+      "alreadyHaveAccount": "لديك حساب بالفعل؟",
+      "login": "تسجيل الدخول",
+      "firstName": "الاسم الأول",
+      "firstNamePlaceholder": "أدخل الاسم الأول",
+      "lastName": "الاسم الأخير",
+      "lastNamePlaceholder": "أدخل الاسم الأخير",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "you@company.com",
+      "phone": "الهاتف",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "أنشئ كلمة مرور قوية",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "أكد كلمة المرور",
+      "continue": "متابعة",
+      "creatingAccount": "جاري إنشاء الحساب...",
+      "orContinueWith": "أو المتابعة باستخدام",
+      "signInWithGoogle": "تسجيل الدخول باستخدام Google",
+      "validation": {
+        "firstNameRequired": "الاسم الأول مطلوب",
+        "firstNameInvalid": "يجب أن يتراوح الاسم الأول بين 2 و50 حرفاً، حروف فقط",
+        "lastNameRequired": "الاسم الأخير مطلوب",
+        "lastNameInvalid": "يجب أن يتراوح الاسم الأخير بين 2 و50 حرفاً، حروف فقط",
+        "emailRequired": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صالح",
+        "phoneInvalid": "يرجى إدخال رقم هاتف صالح",
+        "passwordRequired": "كلمة المرور مطلوبة",
+        "confirmPasswordRequired": "يرجى تأكيد كلمة المرور",
+        "passwordsDontMatch": "كلمات المرور غير متطابقة"
+      }
+    },
+    "forgotPassword": {
+      "title": "إعادة تعيين كلمة المرور",
+      "subtitle": "أدخل بريدك الإلكتروني لتلقي رمز إعادة تعيين كلمة المرور",
+      "email": "البريد الإلكتروني",
+      "resetButton": "إعادة تعيين كلمة المرور",
+      "checkEmail": {
+        "title": "تحقق من بريدك الإلكتروني",
+        "desc": "لقد أرسلنا رمز إعادة تعيين كلمة المرور إلى",
+        "verifyButton": "تحقق من الرمز",
+        "verifying": "جاري التحقق...",
+        "noEmail": "لم تستلم البريد الإلكتروني؟ تحقق من الرسائل غير المرغوب فيها أو",
+        "resendIn": "إعادة الإرسال خلال {{time}}",
+        "tryAgain": "حاول مرة أخرى"
+      },
+      "newPassword": {
+        "title": "إنشاء كلمة مرور جديدة",
+        "subtitle": "أدخل كلمة المرور الجديدة أدناه لإكمال عملية إعادة التعيين",
+        "passwordLabel": "كلمة المرور",
+        "passwordHint": "يجب أن تحتوي كلمة المرور على 12 حرفاً على الأقل",
+        "confirmLabel": "تأكيد كلمة المرور",
+        "confirmHint": "يجب أن تكون كلمات المرور متطابقة",
+        "successTitle": "تم تحديث كلمة المرور!",
+        "successDesc": "جاري التحويل إلى صفحة تسجيل الدخول...",
+        "resetting": "جاري إعادة التعيين..."
+      },
+      "errors": {
+        "otpRequired": "يرجى إدخال جميع الأرقام الستة"
+      }
+    },
+    "pinVerification": {
+      "title": "تحقق من بريدك الإلكتروني",
+      "subtitle": "لقد أرسلنا رمز تحقق مكوناً من 6 أرقام إلى",
+      "enterOtp": "أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك الإلكتروني",
+      "verifyButton": "تحقق",
+      "verifying": "جاري التحقق...",
+      "noCode": "لم تستلم الرمز؟",
+      "resend": "انقر لإعادة الإرسال",
+      "resending": "جاري إعادة الإرسال...",
+      "backToDetails": "العودة إلى البيانات"
+    },
+    "acceptInvitation": {
+      "title": "دعوة للانضمام إلى العيادة",
+      "invalidTitle": "دعوة غير صالحة",
+      "subtitle": "لقد تمت دعوتك للانضمام إلى عيادة",
+      "invalidSubtitle": "هذه الدعوة لم تعد صالحة أو انتهت صلاحيتها",
+      "validating": "جاري التحقق من الدعوة...",
+      "role": "الدور: {{role}}",
+      "importantInfo": "معلومات هامة:",
+      "accessPatients": "سيكون لديك حق الوصول إلى جميع المرضى في هذه العيادة",
+      "seeAppointments": "ستتمكن من رؤية المواعيد والسجلات",
+      "mustAccept": "يجب عليك القبول للانضمام إلى العيادة",
+      "rejectButton": "رفض",
+      "acceptButton": "قبول الدعوة",
+      "backToHome": "العودة إلى الصفحة الرئيسية",
+      "messages": {
+        "missingToken": "رمز الدعوة مفقود",
+        "invalidToken": "رمز دعوة غير صالح",
+        "acceptSuccess": "تم قبول الدعوة بنجاح! أنت الآن عضو في العيادة.",
+        "acceptError": "خطأ أثناء قبول الدعوة",
+        "rejectSuccess": "تم رفض الدعوة. سيتم توجيهك إلى الصفحة الرئيسية.",
+        "rejectError": "خطأ أثناء رفض الدعوة"
       }
     }
   }

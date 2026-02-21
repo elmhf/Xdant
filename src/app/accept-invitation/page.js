@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Mail, Building, User, Clock, AlertTriangle } from "lucide-react";
 import useUserStore from "@/components/features/profile/store/userStore";
 import { apiClient } from "@/utils/apiClient";
+import { useTranslation } from "react-i18next";
 
 export default function AcceptInvitation() {
+  const { t } = useTranslation("auth");
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const [invitation, setInvitation] = useState(null);
@@ -24,7 +26,7 @@ export default function AcceptInvitation() {
       validateInvitation();
     } else {
       setStatus("error");
-      setMessage("Token d'invitation manquant");
+      setMessage(t("acceptInvitation.messages.missingToken"));
       setLoading(false);
     }
   }, [token]);
@@ -40,7 +42,7 @@ export default function AcceptInvitation() {
       setStatus("success");
     } catch (error) {
       setStatus("error");
-      setMessage(error.message || "Token d'invitation invalide");
+      setMessage(error.message || t("acceptInvitation.messages.invalidToken"));
 
       setLoading(false);
     }
@@ -55,14 +57,14 @@ export default function AcceptInvitation() {
       });
 
       setStatus("success");
-      setMessage("Invitation acceptée avec succès! Vous êtes maintenant membre de la clinique.");
+      setMessage(t("acceptInvitation.messages.acceptSuccess"));
       // Redirect to dashboard after a delay
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 3000);
     } catch (error) {
       setStatus("error");
-      setMessage(error.message || "Erreur lors de l'acceptation de l'invitation");
+      setMessage(error.message || t("acceptInvitation.messages.acceptError"));
     } finally {
       setProcessing(false);
     }
@@ -77,14 +79,14 @@ export default function AcceptInvitation() {
       });
 
       setStatus("success");
-      setMessage("Invitation rejetée. Vous serez redirigé vers la page d'accueil.");
+      setMessage(t("acceptInvitation.messages.rejectSuccess"));
       // Redirect to home after a delay
       setTimeout(() => {
         window.location.href = "/";
       }, 3000);
     } catch (error) {
       setStatus("error");
-      setMessage(error.message || "Erreur lors du rejet de l'invitation");
+      setMessage(error.message || t("acceptInvitation.messages.rejectError"));
     } finally {
       setProcessing(false);
     }
@@ -95,7 +97,7 @@ export default function AcceptInvitation() {
       <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center max-w-sm">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-base">Validation de l'invitation...</p>
+          <p className="text-gray-600 text-base">{t("acceptInvitation.validating")}</p>
         </div>
       </div>
     );
@@ -109,13 +111,13 @@ export default function AcceptInvitation() {
             <CardTitle className="flex items-center gap-3 text-gray-900 text-xl font-bold">
               <Mail className="h-6 w-6 text-gray-600" />
               {status === "success" && invitation
-                ? "Invitation à rejoindre la clinique"
-                : "Invitation invalide"}
+                ? t("acceptInvitation.title")
+                : t("acceptInvitation.invalidTitle")}
             </CardTitle>
             <CardDescription className="text-base text-gray-600 mt-2">
               {status === "success" && invitation
-                ? "Vous avez été invité à rejoindre une clinique"
-                : "Cette invitation n'est plus valide ou a expiré"}
+                ? t("acceptInvitation.subtitle")
+                : t("acceptInvitation.invalidSubtitle")}
             </CardDescription>
           </CardHeader>
 
@@ -135,7 +137,7 @@ export default function AcceptInvitation() {
                       {invitation.email}
                     </p>
                     <p className="text-gray-500 text-sm mt-1">
-                      Rôle: {invitation.role}
+                      {t("acceptInvitation.role", { role: invitation.role })}
                     </p>
                   </div>
                 </div>
@@ -146,19 +148,19 @@ export default function AcceptInvitation() {
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
                   <div className="text-base text-gray-700">
-                    <p className="font-bold mb-2">Informations importantes :</p>
+                    <p className="font-bold mb-2">{t("acceptInvitation.importantInfo")}</p>
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-start gap-2">
                         <span className="text-gray-600 font-bold">•</span>
-                        <span>Vous aurez accès à tous les patients de cette clinique</span>
+                        <span>{t("acceptInvitation.accessPatients")}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-gray-600 font-bold">•</span>
-                        <span>Vous pourrez voir les rendez-vous et les dossiers</span>
+                        <span>{t("acceptInvitation.seeAppointments")}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-gray-600 font-bold">•</span>
-                        <span>Vous devrez accepter pour rejoindre la clinique</span>
+                        <span>{t("acceptInvitation.mustAccept")}</span>
                       </li>
                     </ul>
                   </div>
@@ -178,7 +180,7 @@ export default function AcceptInvitation() {
                   ) : (
                     <XCircle className="mr-2 h-5 w-5" />
                   )}
-                  Rejeter
+                  {t("acceptInvitation.rejectButton")}
                 </Button>
                 <Button
                   onClick={handleAccept}
@@ -190,7 +192,7 @@ export default function AcceptInvitation() {
                   ) : (
                     <CheckCircle className="mr-2 h-5 w-5" />
                   )}
-                  Accepter l'invitation
+                  {t("acceptInvitation.acceptButton")}
                 </Button>
               </div>
             </CardContent>
@@ -203,13 +205,13 @@ export default function AcceptInvitation() {
                 onClick={() => window.location.href = "/"}
                 className="h-12 text-base font-semibold bg-[#ff254e] hover:bg-[#e01e3e] text-white border-2 border-[#ff254e]"
               >
-                Retour à l'accueil
+                {t("acceptInvitation.backToHome")}
               </Button>
             </CardContent>
           )}
 
           {message && (
-            <div className={`p-4 mx-6 mb-6 rounded-xl text-base font-medium border-2 ${message.includes('succès') || message.includes('acceptée')
+            <div className={`p-4 mx-6 mb-6 rounded-xl text-base font-medium border-2 ${message === t("acceptInvitation.messages.acceptSuccess") || message === t("acceptInvitation.messages.rejectSuccess")
               ? 'bg-green-50 text-green-800 border-green-200'
               : 'bg-red-50 text-red-800 border-red-200'
               }`}>
@@ -220,4 +222,4 @@ export default function AcceptInvitation() {
       </div>
     </div>
   );
-} 
+}

@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import useUserStore from "@/components/features/profile/store/userStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ChevronUp, ChevronDown, Filter, Edit, Trash2, Heart, Loader2, Folder, Info } from "lucide-react";
+import { ChevronUp, ChevronDown, Filter, Edit, Trash2, Heart, Loader2, Folder, Info, Monitor, Camera } from "lucide-react";
 import {
   formatPatientName,
   formatPatientId,
@@ -77,13 +77,14 @@ const PatientTable = ({
   };
 
   return (
-    <div className="border border-gray-200 rounded-2xl overflow-x-auto">
-      <div className="max-h-[60vh] overflow-y-auto">
+    <div className="border border-gray-200 rounded-2xl overflow-hidden">
+      {/* Desktop/Tablet Table View */}
+      <div className="hidden md:block max-h-[60vh] overflow-y-auto">
         <table className="w-full">
           <thead className="bg-white border-b border-gray-200 sticky top-0 z-10">
             <tr>
               <th
-                className="min-w-56 text-left py-4 px-4 text-gray-700 font-semibold cursor-pointer hover:bg-gray-100 whitespace-nowrap text-lg bg-white"
+                className="min-w-[12rem] text-left py-4 px-4 text-gray-700 font-semibold cursor-pointer hover:bg-gray-100 whitespace-nowrap text-lg bg-white"
                 onClick={() => onSort('name')}
               >
                 <div className="flex items-center space-x-1">
@@ -96,7 +97,7 @@ const PatientTable = ({
               </th>
 
               <th
-                className="min-w-44 text-left py-4 px-4 text-gray-700 font-semibold cursor-pointer hover:bg-gray-100 whitespace-nowrap text-lg hidden lg:table-cell bg-white"
+                className="min-w-[9rem] text-left py-4 px-4 text-gray-700 font-semibold cursor-pointer hover:bg-gray-100 whitespace-nowrap text-lg hidden lg:table-cell bg-white"
                 onClick={() => onSort('dateOfBirth')}
               >
                 <div className="flex items-center space-x-1">
@@ -108,18 +109,17 @@ const PatientTable = ({
                 </div>
               </th>
 
-              <th className="min-w-80 text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg hidden md:table-cell bg-white">
+              <th className="min-w-[14rem] text-left py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg hidden md:table-cell bg-white">
                 <div className="flex items-center space-x-1">
                   <span>{t('table.doctorsTreating')}</span>
                 </div>
               </th>
-              <th className="min-w-70 text-right py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg hidden lg:table-cell bg-white">
+              <th className="min-w-[11rem] text-right py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg hidden xl:table-cell bg-white">
                 <div className="flex items-center space-x-1 justify-start">
-                  <span className="truncate max-w-60">{t('table.email')}</span>
-
+                  <span className="truncate max-w-[10rem]">{t('table.email')}</span>
                 </div>
               </th>
-              <th className="min-w-32 text-center py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">
+              <th className="min-w-[8rem] text-center py-4 px-4 text-gray-700 font-semibold whitespace-nowrap text-lg bg-white">
                 {t('table.actions')}
               </th>
             </tr>
@@ -132,7 +132,7 @@ const PatientTable = ({
                   className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                   onClick={() => handlePatientClick(patient)}
                 >
-                  <td className="min-w-56 py-4 px-4">
+                  <td className="min-w-[12rem] py-4 px-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-12 w-18 rounded-3xl">
                         <AvatarImage src={patient.lastReportImageUrl} />
@@ -140,19 +140,19 @@ const PatientTable = ({
                           {getPatientAvatarInitials(patient)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-base font-medium text-gray-900 truncate">
+                      <span className="text-base font-medium text-gray-900 truncate max-w-[8rem]" title={formatPatientName(patient)}>
                         {formatPatientName(patient)}
                       </span>
                     </div>
                   </td>
 
-                  <td className="min-w-44 py-4 px-4 hidden lg:table-cell">
+                  <td className="min-w-[9rem] py-4 px-4 hidden lg:table-cell">
                     <span className="text-base font-medium text-gray-400">
                       {formatDateOfBirth(patient.date_of_birth)}
                     </span>
                   </td>
 
-                  <td className="min-w-80 py-4 px-4 hidden md:table-cell">
+                  <td className="min-w-[14rem] py-4 px-4 hidden md:table-cell">
                     <div className="flex items-center gap-2">
                       {patient.treating_doctors && patient.treating_doctors.length > 0 ? (
                         patient.treating_doctors.length === 1 ? (
@@ -164,7 +164,7 @@ const PatientTable = ({
                                   (patient.treating_doctors[0].last_name || '').slice(0, 2)).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-base font-medium text-gray-700 whitespace-nowrap">
+                            <span className="text-base font-medium text-gray-700 truncate max-w-[8rem]" title={`${patient.treating_doctors[0].first_name || ""} ${patient.treating_doctors[0].last_name || ""}`}>
                               {patient.treating_doctors[0].first_name || ""} {patient.treating_doctors[0].last_name || ""}
                             </span>
                           </div>
@@ -186,14 +186,14 @@ const PatientTable = ({
                       )}
                     </div>
                   </td>
-                  <td className="min-w-70 py-4 px-4 hidden lg:table-cell">
+                  <td className="min-w-[11rem] py-4 px-4 hidden xl:table-cell">
                     <div className="flex items-center gap-2 justify-start">
-                      <span className="text-base font-light text-gray-400 truncate max-w-50" title={patient.email || "-"}>
+                      <span className="text-base font-light text-gray-400 truncate max-w-[9rem]" title={patient.email || "-"}>
                         {patient.email || "-"}
                       </span>
                     </div>
                   </td>
-                  <td className="min-w-32 py-4 px-4">
+                  <td className="min-w-[8rem] py-4 px-4">
                     <div className="flex items-center justify-center gap-2">
                       <Button
                         variant="ghost"
@@ -269,6 +269,95 @@ const PatientTable = ({
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Grid/List View */}
+      <div className="md:hidden">
+        <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between text-gray-400 font-medium text-sm">
+          <div className="flex items-center gap-1 cursor-pointer" onClick={() => onSort('name')}>
+            <span>{t('table.patientName')}</span>
+            <ChevronDown className="w-4 h-4" />
+          </div>
+          <div className="flex items-center gap-1">
+            <span>{t('table.doctorsTreating')}</span>
+            <Filter className="w-4 h-4" />
+          </div>
+        </div>
+        <div className="max-h-[70vh] overflow-y-auto divide-y divide-gray-100">
+          {patients.length > 0 ? (
+            patients.map((patient, index) => (
+              <div
+                key={patient.id || index}
+                className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                onClick={() => handlePatientClick(patient)}
+              >
+                <div className="flex items-start gap-4">
+                  {/* Large Avatar / X-ray image */}
+                  <Avatar className="h-16 w-24 rounded-2xl flex-shrink-0 bg-gray-900 border border-gray-200">
+                    <AvatarImage src={patient.lastReportImageUrl} className="object-cover" />
+                    <AvatarFallback className="bg-gradient-to-br from-[#A196F3] to-[#7564ED] text-white text-lg font-bold">
+                      {getPatientAvatarInitials(patient)}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  {/* Patient Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <h3 className="text-lg font-bold text-gray-900 truncate">
+                        {formatPatientName(patient)}
+                      </h3>
+                      {/* Action buttons (Favorites, etc.) - Compact */}
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => handleFavoriteClick(e, patient)}
+                          className={`h-7 w-7 p-0 ${patient.isFavorite ? 'text-[#ff254e]' : 'text-gray-300'}`}
+                          disabled={favoriteLoadingStates[patient.id] || false}
+                        >
+                          {favoriteLoadingStates[patient.id] ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Heart className={`h-4 w-4 ${patient.isFavorite ? 'fill-current' : ''}`} />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-gray-400 mb-2">
+                      {formatDateOfBirth(patient.date_of_birth)}
+                    </p>
+
+                    {/* Feature Icons Row - Matching User Design */}
+                    <div className="flex items-center gap-2.5 text-gray-400">
+                      <Monitor className="w-5 h-5 text-[#7564ed]" />
+                      <div className="w-5 h-5 flex items-center justify-center border-2 border-gray-300 rounded-[4px] p-0.5">
+                        <div className="w-full h-full border-1 border-gray-300"></div>
+                      </div>
+                      <Folder className="w-5 h-5 text-[#7564ed]" />
+                      <Edit className="w-5 h-5 text-gray-300" />
+                      <Camera className="w-5 h-5 text-gray-300" />
+                      <Loader2 className="w-5 h-5 text-gray-300" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="py-12 px-4 text-center">
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <Folder className="h-10 w-10 text-gray-400" />
+                  </EmptyMedia>
+                  <EmptyTitle className="text-lg font-semibold">
+                    {t('table.noPatientsFound')}
+                  </EmptyTitle>
+                </EmptyHeader>
+              </Empty>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

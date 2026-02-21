@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Eye, EyeOff, Check, X } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 // Mock function for demonstration
 const signUp = async (email, password, firstName, lastName, phone) => {
@@ -19,6 +20,7 @@ const signUp = async (email, password, firstName, lastName, phone) => {
 };
 
 export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, setEmail }) {
+  const { t } = useTranslation("auth");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -50,9 +52,9 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
     switch (field) {
       case 'firstName':
         if (!value.trim()) {
-          newErrors.firstName = "First name is required";
+          newErrors.firstName = t("signup.validation.firstNameRequired");
         } else if (!validateName(value)) {
-          newErrors.firstName = "First name must be 2-50 characters, letters only";
+          newErrors.firstName = t("signup.validation.firstNameInvalid");
         } else {
           delete newErrors.firstName;
         }
@@ -60,9 +62,9 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
       case 'lastName':
         if (!value.trim()) {
-          newErrors.lastName = "Last name is required";
+          newErrors.lastName = t("signup.validation.lastNameRequired");
         } else if (!validateName(value)) {
-          newErrors.lastName = "Last name must be 2-50 characters, letters only";
+          newErrors.lastName = t("signup.validation.lastNameInvalid");
         } else {
           delete newErrors.lastName;
         }
@@ -70,9 +72,9 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
       case 'email':
         if (!value.trim()) {
-          newErrors.email = "Email is required";
+          newErrors.email = t("signup.validation.emailRequired");
         } else if (!validateEmail(value)) {
-          newErrors.email = "Please enter a valid email address";
+          newErrors.email = t("signup.validation.emailInvalid");
         } else {
           delete newErrors.email;
         }
@@ -80,7 +82,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
       case 'phone':
         if (value && !validatePhone(value)) {
-          newErrors.phone = "Please enter a valid phone number";
+          newErrors.phone = t("signup.validation.phoneInvalid");
         } else {
           delete newErrors.phone;
         }
@@ -88,7 +90,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
       case 'password':
         if (!value) {
-          newErrors.password = "Password is required";
+          newErrors.password = t("signup.validation.passwordRequired");
         } else {
           delete newErrors.password;
         }
@@ -96,9 +98,9 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
       case 'confirmPassword':
         if (!value) {
-          newErrors.confirmPassword = "Please confirm your password";
+          newErrors.confirmPassword = t("signup.validation.confirmPasswordRequired");
         } else if (value !== password) {
-          newErrors.confirmPassword = "Passwords do not match";
+          newErrors.confirmPassword = t("signup.validation.passwordsDontMatch");
         } else {
           delete newErrors.confirmPassword;
         }
@@ -110,7 +112,16 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
   const handleBlur = (field) => {
     setTouched(prev => ({ ...prev, [field]: true }));
-    validateField(field, eval(field));
+    let value;
+    switch (field) {
+      case 'firstName': value = firstName; break;
+      case 'lastName': value = lastName; break;
+      case 'email': value = email; break;
+      case 'phone': value = phone; break;
+      case 'password': value = password; break;
+      case 'confirmPassword': value = confirmPassword; break;
+    }
+    validateField(field, value);
   };
 
   const handleChange = (field, value) => {
@@ -183,7 +194,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
 
       {/* Header */}
       <div className="text-left w-full mb-8 relative">
-        <p className="text-7xl font-semibold text-gray-900 mb-4">Sign up</p>
+        <p className="text-7xl font-semibold text-gray-900 mb-4">{t("signup.title")}</p>
       </div>
 
       {/* Form */}
@@ -192,12 +203,12 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
         <div className="flex space-x-4">
           <div className="flex-1 space-y-2">
             <Label htmlFor="firstName" className="font-semibold text-gray-700">
-              First name <span className="text-red-500">*</span>
+              {t("signup.firstName")} <span className="text-red-500">*</span>
             </Label>
             <Input
               id="firstName"
               type="text"
-              placeholder="Enter first name"
+              placeholder={t("signup.firstNamePlaceholder")}
               maxLength={50}
               className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.firstName ? 'border-red-500' : 'border-gray-200'}`}
               value={firstName}
@@ -207,12 +218,12 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
           </div>
           <div className="flex-1 space-y-2">
             <Label htmlFor="lastName" className="font-semibold text-gray-700">
-              Last name <span className="text-red-500">*</span>
+              {t("signup.lastName")} <span className="text-red-500">*</span>
             </Label>
             <Input
               id="lastName"
               type="text"
-              placeholder="Enter last name"
+              placeholder={t("signup.lastNamePlaceholder")}
               maxLength={50}
               className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.lastName ? 'border-red-500' : 'border-gray-200'}`}
               value={lastName}
@@ -226,12 +237,12 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
         <div className="flex space-x-4">
           <div className="flex-1 space-y-2">
             <Label htmlFor="email" className="font-semibold text-gray-700">
-              Email address <span className="text-red-500">*</span>
+              {t("signup.email")} <span className="text-red-500">*</span>
             </Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@company.com"
+              placeholder={t("signup.emailPlaceholder")}
               maxLength={254}
               className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.email ? 'border-red-500' : 'border-gray-200'}`}
               value={email}
@@ -241,7 +252,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
           </div>
           <div className="flex-1 space-y-2">
             <Label htmlFor="phone" className="font-semibold text-gray-700">
-              Phone
+              {t("signup.phone")}
             </Label>
             <div className="flex">
               <div className="flex items-center justify-center px-3 border-2 border-r-0 border-gray-200 rounded-l-xl bg-white text-gray-700 font-medium min-w-[80px] h-[50px]">
@@ -250,7 +261,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
               <Input
                 id="phone"
                 type="tel"
-                placeholder="Phone"
+                placeholder={t("signup.phone")}
                 maxLength={15}
                 className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 text-gray-900 placeholder-gray-400 rounded-l-none focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.phone ? 'border-red-500' : 'border-gray-200'}`}
                 value={phone}
@@ -264,13 +275,13 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
         {/* Password */}
         <div className="space-y-2">
           <Label htmlFor="password" className="font-semibold text-gray-700">
-            Password <span className="text-red-500">*</span>
+            {t("signup.password")} <span className="text-red-500">*</span>
           </Label>
           <div className="relative">
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Create a strong password"
+              placeholder={t("signup.passwordPlaceholder")}
               maxLength={128}
               className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.password ? 'border-red-500' : 'border-gray-200'}`}
               value={password}
@@ -290,13 +301,13 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
         {/* Confirm Password */}
         <div className="space-y-2">
           <Label htmlFor="confirmPassword" className="font-semibold text-gray-700">
-            Confirm Password <span className="text-red-500">*</span>
+            {t("signup.confirmPassword")} <span className="text-red-500">*</span>
           </Label>
           <div className="relative">
             <Input
               id="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm your password"
+              placeholder={t("signup.confirmPasswordPlaceholder")}
               maxLength={128}
               className={`w-full h-[50px] border-2 rounded-xl bg-white px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:ring-[#5c4ce3] focus:border-[#5c4ce3] ${errors.confirmPassword ? 'border-red-500' : 'border-gray-200'}`}
               value={confirmPassword}
@@ -330,9 +341,9 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                 </svg>
-                Creating Account...
+                {t("signup.creatingAccount")}
               </span>
-            ) : 'Continue'
+            ) : t("signup.continue")
             }
           </Button>
         </div>
@@ -343,7 +354,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
             <div className="w-full border-t border-gray-100"></div>
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-white px-4 text-sm font-semibold text-gray-900">Or continue with</span>
+            <span className="bg-white px-4 text-sm font-semibold text-gray-900">{t("signup.orContinueWith")}</span>
           </div>
         </div>
 
@@ -361,7 +372,7 @@ export default function DetailsPage({ onNext, isFirstStep, isLastStep, email, se
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
-            Sign in with Google
+            {t("signup.signInWithGoogle")}
           </Button>
         </div>
 

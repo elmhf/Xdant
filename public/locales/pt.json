@@ -69,7 +69,15 @@
     "patients": "Pacientes",
     "patientName": "Felicia Hall",
     "reportTitle": "Relatório CBCT com IA",
-    "print": "Imprimir análises"
+    "logoUrl": "/XDENTAL.png",
+    "logoText": "XDent",
+    "goToHomepage": "Ir para a página inicial",
+    "logoAlt": "Logotipo da Xdental"
+  },
+  "dashboard": {
+    "navigator": "Navegador",
+    "thumbnailAlt": "miniatura",
+    "pixels": "px"
   },
   "addComment": {
     "note": "Nota",
@@ -227,5 +235,121 @@
     "warning": "Aviso",
     "error": "Erro",
     "info": "Informação"
+  },
+  "auth": {
+    "login": {
+      "title": "Bem-vindo de volta",
+      "subtitle": "Por favor, insira os seus dados",
+      "email": "Endereço de e-mail",
+      "emailPlaceholder": "Insira o seu e-mail",
+      "password": "Senha",
+      "passwordPlaceholder": "Insira a sua senha",
+      "rememberMe": "Lembrar-me",
+      "forgotPassword": "Esqueceu a senha?",
+      "signIn": "Entrar",
+      "signingIn": "Entrando...",
+      "continueWithGoogle": "Continuar com o Google",
+      "noAccount": "Não tem uma conta?",
+      "signUp": "Cadastre-se",
+      "errors": {
+        "invalidCredentials": "E-mail ou senha inválidos",
+        "network": "Erro de rede, tente novamente"
+      }
+    },
+    "signup": {
+      "title": "Cadastre-se",
+      "alreadyHaveAccount": "Já tem uma conta?",
+      "login": "Entrar",
+      "firstName": "Nome",
+      "firstNamePlaceholder": "Insira o nome",
+      "lastName": "Sobrenome",
+      "lastNamePlaceholder": "Insira o sobrenome",
+      "email": "Endereço de e-mail",
+      "emailPlaceholder": "voce@empresa.com",
+      "phone": "Telefone",
+      "password": "Senha",
+      "passwordPlaceholder": "Crie uma senha forte",
+      "confirmPassword": "Confirmar senha",
+      "confirmPasswordPlaceholder": "Confirme a sua senha",
+      "continue": "Continuar",
+      "creatingAccount": "Criando conta...",
+      "orContinueWith": "Ou continuar com",
+      "signInWithGoogle": "Entrar com o Google",
+      "validation": {
+        "firstNameRequired": "O nome é obrigatório",
+        "firstNameInvalid": "O nome deve ter entre 2 e 50 caracteres, apenas letras",
+        "lastNameRequired": "O sobrenome é obrigatório",
+        "lastNameInvalid": "O sobrenome deve ter entre 2 e 50 caracteres, apenas letras",
+        "emailRequired": "O e-mail é obrigatório",
+        "emailInvalid": "Insira um endereço de e-mail válido",
+        "phoneInvalid": "Insira um número de telefone válido",
+        "passwordRequired": "A senha é obrigatória",
+        "confirmPasswordRequired": "Confirme a sua senha",
+        "passwordsDontMatch": "As senhas não coincidem"
+      }
+    },
+    "forgotPassword": {
+      "title": "Redefinir senha",
+      "subtitle": "Insira o e-mail da sua conta para receber um link de redefinição",
+      "email": "Endereço de e-mail",
+      "resetButton": "Redefinir senha",
+      "checkEmail": {
+        "title": "Verifique o seu e-mail",
+        "desc": "Enviamos um código de redefinição para",
+        "verifyButton": "Verificar código",
+        "verifying": "Verificando...",
+        "noEmail": "Não recebeu o e-mail? Verifique a sua pasta de spam ou",
+        "resendIn": "reenviar em {{time}}",
+        "tryAgain": "tentar novamente"
+      },
+      "newPassword": {
+        "title": "Criar nova senha",
+        "subtitle": "Insira a sua nova senha abaixo para concluir o processo",
+        "passwordLabel": "Senha",
+        "passwordHint": "A senha deve conter pelo menos 12 caracteres",
+        "confirmLabel": "Confirmar senha",
+        "confirmHint": "As senhas devem ser idênticas",
+        "successTitle": "Senha atualizada!",
+        "successDesc": "Redirecionando para o login...",
+        "resetting": "Redefinindo..."
+      },
+      "errors": {
+        "otpRequired": "Insira todos os 6 dígitos"
+      }
+    },
+    "pinVerification": {
+      "title": "Verifique o seu e-mail",
+      "subtitle": "Enviamos um código de verificação de 6 dígitos para",
+      "enterOtp": "Insira o código de 6 dígitos enviado para o seu e-mail",
+      "verifyButton": "Verificar",
+      "verifying": "Verificando...",
+      "noCode": "Não recebeu o código?",
+      "resend": "Clique para reenviar",
+      "resending": "Reenviando...",
+      "backToDetails": "Voltar aos detalhes"
+    },
+    "acceptInvitation": {
+      "title": "Convite para se juntar à clínica",
+      "invalidTitle": "Convite inválido",
+      "subtitle": "Você foi convidado para se juntar a uma clínica",
+      "invalidSubtitle": "Este convite não é mais válido ou expirou",
+      "validating": "Validando convite...",
+      "role": "Função: {{role}}",
+      "importantInfo": "Informações importantes:",
+      "accessPatients": "Você terá acesso a todos os pacientes desta clínica",
+      "seeAppointments": "Você poderá ver os agendamentos e os registros",
+      "mustAccept": "Você deve aceitar para se juntar à clínica",
+      "rejectButton": "Rejeitar",
+      "acceptButton": "Aceitar convite",
+      "backToHome": "Voltar à página inicial",
+      "messages": {
+        "missingToken": "Token de convite ausente",
+        "invalidToken": "Token de convite inválido",
+        "acceptSuccess": "Convite aceito com sucesso! Agora você é membro da clínica.",
+        "acceptError": "Erro ao aceitar o convite",
+        "rejectSuccess": "Convite rejeitado. Você será redirecionado para a página inicial.",
+        "rejectError": "Erro ao rejeitar o convite"
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 import React, { useMemo, useCallback, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Navigator = ({
     image,
@@ -11,6 +12,7 @@ const Navigator = ({
     maxWidth = 180,
     maxHeight = 120
 }) => {
+    const { t } = useTranslation();
     const navCanvasRef = useRef(null);
 
     // Calculate navigator dimensions maintained aspect ratio
@@ -94,7 +96,7 @@ const Navigator = ({
             <div className="bg-[#1e1e2e]/90 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl overflow-hidden group">
                 {/* Header */}
                 <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5 bg-white/5">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Navigator</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t('dashboard.navigator')}</span>
                     <button
                         onClick={onClose}
                         className="p-1 hover:bg-white/10 rounded-md transition-colors text-gray-500 hover:text-white"
@@ -113,7 +115,7 @@ const Navigator = ({
                     {/* Background Image Thumbnail */}
                     <img
                         src={image.src}
-                        alt="thumbnail"
+                        alt={t('dashboard.thumbnailAlt')}
                         className="w-full h-full object-contain opacity-60 grayscale brightness-75"
                         draggable={false}
                     />

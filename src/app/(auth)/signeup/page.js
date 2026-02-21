@@ -6,8 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/shared/navbar/LanguageSwitcher";
 
 function SignUpContent() {
+  const { t } = useTranslation("auth");
   const [step, setStep] = useState(0);
   const [email, setEmail] = useState("");
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -57,7 +60,7 @@ function SignUpContent() {
       <div className="min-h-screen w-full flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p className="text-sm text-gray-500">{t("common:loading")}</p>
         </div>
       </div>
     );
@@ -75,18 +78,23 @@ function SignUpContent() {
             <div className="absolute top-8 left-8 z-20">
               <Image
                 src="/XDENTAL.png"
-                alt="Xdent Logo"
+                alt={t("navbar:logoAlt")}
                 width={120}
                 height={40}
                 className="h-10 w-auto rounded-full overflow-hidden object-contain"
               />
             </div>
 
+            {/* Language Switcher in side panel */}
+            <div className="absolute top-8 right-8 z-20">
+              <LanguageSwitcher />
+            </div>
+
             {/* Image with Border Radius */}
             <div className="relative w-full h-full rounded-3xl overflow-hidden">
               <Image
                 src="/singup.png"
-                alt="Dental Illustration"
+                alt={t("signup.title")}
                 fill
                 className="object-cover"
                 priority
@@ -96,12 +104,16 @@ function SignUpContent() {
 
           {/* Right Side - Form */}
           <div className="w-full md:w-2/3 p-6 md:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto relative">
+            {/* Mobile Language Switcher */}
+            <div className="absolute top-6 left-6 md:hidden z-50">
+              <LanguageSwitcher />
+            </div>
             {/* Top Right Login Link */}
             <div className="absolute top-6 right-6 md:top-10 md:right-10">
               <p className="text-sm text-gray-600">
-                Already have an account?{' '}
+                {t("signup.alreadyHaveAccount")}{' '}
                 <Link href="/login" className="font-bold text-black transition-colors">
-                  Log in
+                  {t("signup.login")}
                 </Link>
               </p>
             </div>
@@ -110,7 +122,7 @@ function SignUpContent() {
             <div className="md:hidden mb-8 text-center pt-10">
               <Image
                 src="/XDENTAL.png"
-                alt="Xdental Logo"
+                alt={t("navbar:logoAlt")}
                 width={120}
                 height={40}
                 className="h-12 w-auto mx-auto object-contain"

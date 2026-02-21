@@ -16,7 +16,7 @@ export const NoSliceDataMessage = React.memo(({ view }) => {
             transition={{ duration: 0.5 }}
         >
             <div className="text-gray-500 text-lg font-medium">
-                {t('dashboard.noSlices', { view })}
+                {t('toothSlice.noSlices', { view })}
             </div>
         </motion.div>
     );
@@ -34,11 +34,11 @@ export const MissingToothMessage = React.memo(({ toothNumber }) => {
             transition={{ duration: 0.5 }}
         >
             <span className="absolute top-2 left-2 font-[#0d0c22] text-3xl text-gray-800">
-                {t('dashboard.toothSlices')}
+                {t('toothSlice.toothSlices')}
             </span>
             <Lottie animationData={dataNotFound} className="w-[350px]" loop={true} />
             <p className="text-xl text-[#7564ed] font-medium opacity-50">
-                {t('dashboard.noMprMissing', { toothNumber })}
+                {t('toothSlice.noMprMissing', { toothNumber })}
             </p>
         </motion.div>
     );

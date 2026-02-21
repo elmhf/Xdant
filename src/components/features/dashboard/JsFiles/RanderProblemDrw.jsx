@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState, useRef, useContext, useCallback } from "react";
+import { useTranslation } from 'react-i18next';
 import { Stage, Layer, Image, Line, Group, Text, Circle, Rect } from "react-konva";
 import { DataContext } from "../dashboard";
 import { getToothBoundingBox } from "@/utils/toothUtils";
@@ -127,6 +128,7 @@ const applyShadowProps = (style, scale) => {
 };
 
 const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, resetMeasurements, onUndoCallback, showGrid = true, zoom, isLocked, showLayers, selectedTooth, onToothClick, selectedColor = 'rgba(255, 80, 80, 0.85)' }) => {
+  const { t } = useTranslation();
   const { pushNotification } = useNotification();
   const { stageRef, hoveredProblem } = useContext(DataContext);
   const containerRef = useRef(null);
@@ -699,7 +701,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
         const p2 = { x: finalPoints[2], y: finalPoints[3] };
         const distance = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 
-        const newMeasurement = { points: finalPoints, text: `${distance.toFixed(2)} px` };
+        const newMeasurement = { points: finalPoints, distance: distance };
         setMeasurementLines(prev => [...prev, newMeasurement]);
         saveToHistory('measurement', newMeasurement);
         setCurrentLinePoints([]);
@@ -1069,7 +1071,7 @@ const RenderProblemDrw = ({ image, tooth, ShowSetting, useFilter, activeTool, re
                   {/* Measurement Lines and Text */}
                   {measurementLines.map((line, i) => {
                     const style = COLOR_PALETTE.measurement;
-                    const textContent = line.text;
+                    const textContent = `${line.distance.toFixed(2)} ${t('dashboard.pixels')}`;
                     const fontSize = 14 / transform.scale;
                     const textWidth = (textContent.length * fontSize * 0.6);
                     const textHeight = fontSize * 1.2;

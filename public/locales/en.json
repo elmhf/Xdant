@@ -56,9 +56,15 @@
     "informationWas": "information was",
     "updated": "updated",
     "newAppointmentWith": "New appointment with",
+    "clinic": "Clinic",
     "at": "at",
-    "statusChangedTo": "status changed to",
-    "report": "report",
+    "statusChangedTo": "Status Changed To",
+    "report": "Report",
+    "tooth": "Tooth",
+    "patient": "Patient",
+    "printReport": "Print Report",
+    "summary": "Summary",
+    "breadcrumb": "Breadcrumb",
     "conclusion": "Conclusion",
     "lastModified": "Last modified",
     "na": "N/A",
@@ -249,9 +255,10 @@
     "home": "Home",
     "patients": "Patients",
     "patientName": "Felicia Hall",
-    "reportTitle": "AI CBCT Report",
-    "print": "Print Analysis",
-    "goToHomepage": "Go to homepage",
+    "reportTitle": "Report Title",
+    "logoUrl": "/XDENTAL.png",
+    "logoText": "XDent",
+    "goToHomepage": "Go to Homepage",
     "logoAlt": "Xdental Logo"
   },
   "addComment": {
@@ -265,6 +272,7 @@
     "card": {
       "Tooth": "Tooth",
       "NoProblemsDetected": "No problems detected",
+      "rawMissing": "Raw Missing",
       "Condition": "Condition",
       "Note": "Note",
       "Slices": "Slices",
@@ -747,6 +755,32 @@
     },
     "report": "Report Settings"
   },
+  "toothSlice": {
+    "loading": "Loading report data...",
+    "error": "Error: {{error}}",
+    "tryAgain": "Try Again",
+    "clearCache": "Clear Cache",
+    "dataNotLoaded": "Tooth data not loaded",
+    "detailsLoading": "Tooth number {{number}} data is being loaded from report...",
+    "view": "{{view}} View",
+    "axialView": "Axial View",
+    "sagittalView": "Sagittal View",
+    "coronalView": "Coronal View",
+    "sliceRange": "Slice Range:",
+    "to": "to",
+    "slicesCount": "Slices:",
+    "approved": "Approved",
+    "approve": "Approve",
+    "noToothData": "No tooth data available",
+    "noSliceData": "No slice data available",
+    "addImage": "Add image",
+    "dragDropImages": "drag&drop images here",
+    "addSlice": "Add slice",
+    "dragDropSlices": "drag & drop slices here",
+    "noSlices": "No slices for {{view}}",
+    "toothSlices": "Tooth Slices",
+    "noMprMissing": "There are no MPR for Missing tooth {{toothNumber}}"
+  },
   "dashboard": {
     "teethInReport": "Teeth in the Report",
     "selectTeeth": "Select teeth",
@@ -1002,20 +1036,6 @@
       "remove": "Remove Doctor",
       "removing": "Removing..."
     },
-    "toothSlice": {
-      "loading": "Loading report data...",
-      "error": "Error: {{error}}",
-      "tryAgain": "Try Again",
-      "clearCache": "Clear Cache",
-      "dataNotLoaded": "Tooth data not loaded",
-      "detailsLoading": "Tooth number {{number}} data is being loaded from report...",
-      "view": "{{view}} View",
-      "sliceRange": "Slice Range:",
-      "to": "to",
-      "slicesCount": "Slices:",
-      "approved": "Approved",
-      "approve": "Approve"
-    },
     "pdfReport": {
       "settings": {
         "title": "Settings",
@@ -1048,6 +1068,46 @@
         "remove": "Delete",
         "add": "Add your signature"
       },
+      "diagnosis": {
+        "title": "Tooth {{number}} Diagnosis",
+        "editCondition": "Edit Condition",
+        "addCondition": "Add New Condition",
+        "searchPlaceholder": "Search existing conditions...",
+        "noConditions": "No conditions found",
+        "addPrompt": "Add a new condition to get started",
+        "addNewButton": "Add New Condition",
+        "conditionLabel": "Condition",
+        "percentageLabel": "Percentage",
+        "statusTypeLabel": "Status Type",
+        "descriptionLabel": "Description",
+        "selectStatusPlaceholder": "Select status",
+        "statusUnhealthy": "Unhealthy",
+        "statusTreated": "Treated",
+        "statusHealthy": "Healthy",
+        "descriptionPlaceholder": "Optional details...",
+        "cancel": "Cancel",
+        "update": "Update",
+        "save": "Save",
+        "notifications": {
+          "removed": "Condition removed",
+          "updated": "Condition updated",
+          "added": "Condition added successfully",
+          "saveFailed": "Failed to save condition",
+          "selectCondition": "Please select a condition"
+        }
+      },
+      "conditions": {
+        "healthy": "Healthy",
+        "caries": "Caries",
+        "filling": "Filling",
+        "crown": "Crown",
+        "root_canal": "Root Canal",
+        "missing": "Missing",
+        "implant": "Implant",
+        "bridge": "Bridge",
+        "gingivitis": "Gingivitis",
+        "periodontitis": "Periodontitis"
+      },
       "content": {
         "reportTitle": "CBCT AI Report",
         "notSpecified": "not specified",
@@ -1063,6 +1123,7 @@
     },
     "dentalData": {
       "title": "Dental Data",
+      "groupTitle": "Dental Photos",
       "noData": "No dental data found",
       "noDataDesc": "Uploaded files will appear here.",
       "loading": "Loading...",
@@ -1112,7 +1173,9 @@
       "clinicRequired": "Please select a clinic",
       "cancel": "Cancel",
       "create": "Create Patient",
-      "creating": "Creating..."
+      "creating": "Creating...",
+      "add": "Add",
+      "selectDoctor": "Select a doctor"
     },
     "patientInfo": {
       "patient": "Patient",
@@ -1217,6 +1280,149 @@
           "missingClinicId": "Error: Clinic ID missing. Please refresh and try again.",
           "fieldsRequired": "Please enter both email and role."
         }
+      }
+    },
+    "notifications": {
+      "reportReadyTitle": "Report Ready",
+      "reportReadyMessage": "The {{type}} report for patient {{patient}} is ready now",
+      "reportFailedTitle": "Report Failed",
+      "reportFailedMessage": "The {{type}} report for patient {{patient}} failed to process",
+      "newReportCreated": "New {{type}} report created for patient {{patient}}",
+      "reportDeleted": "Report {{type}} for patient {{patient}} was deleted",
+      "reportDeletedId": "Report {{id}} was deleted",
+      "maintenanceModeTitle": "System Maintenance",
+      "maintenanceModeActive": "The system is currently undergoing maintenance treatment.",
+      "maintenanceModeOffline": "Maintenance treatment has completed. System is online.",
+      "patientAssignedTitle": "New Patient Assigned",
+      "patientAssignedMessage": "You have been assigned as treating doctor for {{patient}} in {{clinic}}",
+      "patientUpdatedTitle": "Patient Information Updated",
+      "patientUpdatedMessage": "Dr. {{doctor}} updated information for patient {{patient}} in {{clinic}}",
+      "reportStatusUpdatedTitle": "Report Status Updated",
+      "reportStatusUpdatedMessage": "Report status changed to {{status}}"
+    },
+    "errors": {
+      "fileTypeNotSupported": "File type not supported. Use: {{types}}",
+      "fileDeletionError": "Error deleting file",
+      "databaseError": "An error occurred with our database. Please try again later.",
+      "patientNotFound": "Patient not found.",
+      "permissionDenied": "You do not have permission to perform this action."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Sign in with Open account",
+      "email": "Email address",
+      "emailPlaceholder": "user@xdents.tn",
+      "orContinueWithEmail": "Or continue with email address",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••••••",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "continueWithGoogle": "Continue with Google",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "errors": {
+        "invalidCredentials": "Invalid email or password",
+        "pendingVerification": "Please verify your email to continue",
+        "network": "Network error, please try again"
+      }
+    },
+    "signup": {
+      "title": "Sign up",
+      "alreadyHaveAccount": "Already have an account?",
+      "login": "Log in",
+      "firstName": "First name",
+      "firstNamePlaceholder": "Enter first name",
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Enter last name",
+      "email": "Email address",
+      "emailPlaceholder": "you@company.com",
+      "phone": "Phone",
+      "password": "Password",
+      "passwordPlaceholder": "Create a strong password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "continue": "Continue",
+      "creatingAccount": "Creating Account...",
+      "orContinueWith": "Or continue with",
+      "signInWithGoogle": "Sign in with Google",
+      "validation": {
+        "firstNameRequired": "First name is required",
+        "firstNameInvalid": "First name must be 2-50 characters, letters only",
+        "lastNameRequired": "Last name is required",
+        "lastNameInvalid": "Last name must be 2-50 characters, letters only",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "phoneInvalid": "Please enter a valid phone number",
+        "passwordRequired": "Password is required",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordsDontMatch": "Passwords do not match"
+      }
+    },
+    "forgotPassword": {
+      "title": "Reset password",
+      "subtitle": "Enter your account email to receive a password reset link",
+      "email": "Email address",
+      "resetButton": "Reset password",
+      "checkEmail": {
+        "title": "Check your email",
+        "desc": "We've sent a password reset code to",
+        "verifyButton": "Verify Code",
+        "verifying": "Verifying...",
+        "noEmail": "Did you receive the email? If not, check your spam folder or",
+        "resendIn": "resend in {{time}}",
+        "tryAgain": "try again"
+      },
+      "newPassword": {
+        "title": "Create new password",
+        "subtitle": "Enter your new password below to complete the reset process",
+        "passwordLabel": "Password",
+        "passwordHint": "Password must contain at least 12 characters",
+        "confirmLabel": "Confirm password",
+        "confirmHint": "Passwords must be identical",
+        "successTitle": "Password updated!",
+        "successDesc": "Redirecting to login...",
+        "resetting": "Resetting..."
+      },
+      "errors": {
+        "otpRequired": "Please enter all 6 digits"
+      }
+    },
+    "pinVerification": {
+      "title": "Verify your email",
+      "subtitle": "We've sent a 6-digit verification code to",
+      "enterOtp": "Enter the 6-digit code sent to your email",
+      "verifyButton": "Verify",
+      "verifying": "Verifying...",
+      "noCode": "Didn't receive the code?",
+      "resend": "Click to resend",
+      "resending": "Resending...",
+      "backToDetails": "Back to details"
+    },
+    "acceptInvitation": {
+      "title": "Invitation to join the clinic",
+      "invalidTitle": "Invalid Invitation",
+      "subtitle": "You have been invited to join a clinic",
+      "invalidSubtitle": "This invitation is no longer valid or has expired",
+      "validating": "Validating invitation...",
+      "role": "Role: {{role}}",
+      "importantInfo": "Important Information:",
+      "accessPatients": "You will have access to all patients in this clinic",
+      "seeAppointments": "You can see appointments and records",
+      "mustAccept": "You must accept to join the clinic",
+      "rejectButton": "Reject",
+      "acceptButton": "Accept Invitation",
+      "backToHome": "Back to Home",
+      "messages": {
+        "missingToken": "Invitation token missing",
+        "invalidToken": "Invalid invitation token",
+        "acceptSuccess": "Invitation accepted successfully! You are now a member of the clinic.",
+        "acceptError": "Error while accepting the invitation",
+        "rejectSuccess": "Invitation rejected. You will be redirected to the home page.",
+        "rejectError": "Error while rejecting the invitation"
       }
     }
   }
