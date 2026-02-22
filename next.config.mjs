@@ -2,8 +2,8 @@
 import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig = {
-    eslint: {
-        ignoreDuringBuilds: true,
+    turbopack: {
+        root: 'C:/Users/jihad/Desktop/XdentProject/Xdental-main',
     },
     typescript: {
         ignoreBuildErrors: true,
