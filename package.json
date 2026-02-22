@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=5120 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -118,6 +118,7 @@
     "@tailwindcss/postcss": "^4.1.10",
     "autoprefixer": "^10.4.21",
     "cors": "^2.8.5",
+    "cross-env": "^10.1.0",
     "eslint": "^9.29.0",
     "eslint-config-next": "^15.3.4",
     "express": "^5.1.0",

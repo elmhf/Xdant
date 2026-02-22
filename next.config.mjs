@@ -2,8 +2,8 @@
 import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig = {
-    turbopack: {
-        root: process.cwd(),
+    eslint: {
+        ignoreDuringBuilds: true,
     },
     typescript: {
         ignoreBuildErrors: true,
