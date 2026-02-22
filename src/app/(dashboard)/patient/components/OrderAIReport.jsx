@@ -165,7 +165,7 @@ const OrderAIReport = ({ patient, onReportCreated }) => {
                   <div className="flex flex-col items-center justify-center space-y-2">
                     {React.createElement(report.icon, {
                       strokeWidth: 1.3,
-                      className: `w-18 h-18 text-[#7564ed]`,
+                      className: `w-20 h-20 text-[#7564ed]`,
                     })}
                     <span className="text-lg font-[600] text-[#7564ed]">
                       {report.name}

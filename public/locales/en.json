@@ -272,6 +272,7 @@
     "card": {
       "Tooth": "Tooth",
       "NoProblemsDetected": "No problems detected",
+      "Missing": "Missing",
       "rawMissing": "Raw Missing",
       "Condition": "Condition",
       "Note": "Note",
@@ -1425,5 +1426,16 @@
         "rejectError": "Error while rejecting the invitation"
       }
     }
+  },
+  "errorCard": {
+    "accessDenied": "Access Denied",
+    "oops": "Oops, Something Went Wrong!",
+    "troubleshooting": "Troubleshooting steps:",
+    "step1Title": "01. Doctor Assignment",
+    "step1Desc": "Ensure you are assigned as a treating doctor for this specific patient in the clinic records.",
+    "step2Title": "02. Admin Permissions",
+    "step2Desc": "Verify your account permissions and role settings with your clinic administrator.",
+    "goBack": "Go Back",
+    "generalError": "We apologize for the inconvenience. It seems there was an error processing your request:"
   }
 }

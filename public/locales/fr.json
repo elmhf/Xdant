@@ -645,6 +645,7 @@
     "card": {
       "Tooth": "Dent",
       "NoProblemsDetected": "Aucun problème détecté",
+      "Missing": "Absent",
       "rawMissing": "Absent",
       "Condition": "État",
       "Note": "Note",
@@ -1418,5 +1419,16 @@
         "rejectError": "Erreur lors du rejet de l'invitation"
       }
     }
+  },
+  "errorCard": {
+    "accessDenied": "Accès Refusé",
+    "oops": "Oups, Quelque Chose s'est Mal Passé !",
+    "troubleshooting": "Étapes de dépannage :",
+    "step1Title": "01. Affectation du Docteur",
+    "step1Desc": "Assurez-vous d'être affecté en tant que médecin traitant pour ce patient spécifique dans les dossiers de la clinique.",
+    "step2Title": "02. Autorisations d'Administrateur",
+    "step2Desc": "Vérifiez vos autorisations de compte et vos paramètres de rôle avec l'administrateur de votre clinique.",
+    "goBack": "Retourner",
+    "generalError": "Nous nous excusons pour la gêne occasionnée. Il semble qu'une erreur s'est produite lors du traitement de votre demande :"
   }
 }

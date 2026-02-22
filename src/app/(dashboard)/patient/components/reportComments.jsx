@@ -48,8 +48,7 @@ const ReportComments = ({ description = "", onEdit }) => {
         <p className="text-gray-600 whitespace-pre-wrap break-words">{desc}</p>
       ) : (
         <div className="flex flex-col justify-center items-center py-2 space-y-2">
-          <FileText className="w-8 h-8 text-[#7564ed]" />
-          <p className="text-sm text-gray-400">{t('comments.noDescription')}</p>
+          <FileText className="w-10 h-10 text-[#7564ed]" />
         </div>
       )}
 

@@ -351,5 +351,16 @@
         "rejectError": "Error al rechazar la invitación"
       }
     }
+  },
+  "errorCard": {
+    "accessDenied": "Acceso Denegado",
+    "oops": "¡Vaya, algo salió mal!",
+    "troubleshooting": "Pasos de solución de problemas:",
+    "step1Title": "01. Asignación de Doctor",
+    "step1Desc": "Asegúrese de estar asignado como médico tratante para este paciente específico en los registros de la clínica.",
+    "step2Title": "02. Permisos de Administrador",
+    "step2Desc": "Verifique los permisos de su cuenta y la configuración de roles con el administrador de su clínica.",
+    "goBack": "Volver",
+    "generalError": "Disculpe las molestias. Parece que hubo un error al procesar su solicitud:"
   }
 }

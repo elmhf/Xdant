@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import DetailsPage from "./SingUpSteps/details";
 import PinVerification from "./SingUpSteps/PinVerification";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,6 +14,27 @@ function SignUpContent() {
   const [step, setStep] = useState(0);
   const [email, setEmail] = useState("");
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const progressBarRef = useRef(null);
+  const videoElementRef = useRef(null);
+  const frameIdRef = useRef(null);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      if (videoElementRef.current && videoElementRef.current.duration && progressBarRef.current) {
+        const progress = (videoElementRef.current.currentTime / videoElementRef.current.duration) * 100;
+        progressBarRef.current.style.width = `${progress}%`;
+      }
+      frameIdRef.current = requestAnimationFrame(updateProgress);
+    };
+
+    frameIdRef.current = requestAnimationFrame(updateProgress);
+    return () => {
+      if (frameIdRef.current) {
+        cancelAnimationFrame(frameIdRef.current);
+      }
+    };
+  }, []);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -90,15 +111,25 @@ function SignUpContent() {
               <LanguageSwitcher />
             </div>
 
-            {/* Image with Border Radius */}
+            {/* Video with Border Radius */}
             <div className="relative w-full h-full rounded-3xl overflow-hidden">
-              <Image
-                src="/singup.png"
-                alt={t("signup.title")}
-                fill
-                className="object-cover"
-                priority
+              <video
+                ref={videoElementRef}
+                src="/sidevideoLogin.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
               />
+              {/* Video Progress Bar */}
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
+                <div
+                  ref={progressBarRef}
+                  className="h-full bg-white transition-none"
+                  style={{ width: '0%' }}
+                />
+              </div>
             </div>
           </div>
 

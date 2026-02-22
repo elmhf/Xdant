@@ -2,6 +2,11 @@
 import { notification } from "@/components/shared/jsFiles/NotificationProvider";
 import axios from "axios";
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://serverrouter.onrender.com';
+
+let lastErrorMessage = '';
+let lastErrorTime = 0;
+const ERROR_DEBOUNCE_TIME = 2000; // 2 seconds
+
 // const BACKEND_URL = RAW_BACKEND_URL.replace(/\/$/, '');
 /**
  * Custom error class for API requests
@@ -115,7 +120,12 @@ export async function apiClient(endpoint, options = {}) {
 
             // Show toast for non-401 errors (401 is handled by redirect usually)
             if (response.status !== 401) {
-                notification.error(errorMessage);
+                const now = Date.now();
+                if (errorMessage !== lastErrorMessage || (now - lastErrorTime) > ERROR_DEBOUNCE_TIME) {
+                    notification.error(errorMessage);
+                    lastErrorMessage = errorMessage;
+                    lastErrorTime = now;
+                }
             }
 
             // Throw error with data if available
@@ -192,7 +202,13 @@ export async function apiUploadClient(endpoint, formData, onUploadProgress, opti
 
         // Handle other errors
         const message = error.response?.data?.message || error.response?.data?.error || error.message || 'Upload failed';
-        notification.error(message);
+
+        const now = Date.now();
+        if (message !== lastErrorMessage || (now - lastErrorTime) > ERROR_DEBOUNCE_TIME) {
+            notification.error(message);
+            lastErrorMessage = message;
+            lastErrorTime = now;
+        }
         throw new ApiError(message, error.response?.status || 500, error.response?.data);
     }
 }

@@ -443,10 +443,6 @@ export function useReportData(options = {}) {
   // Main data fetching function
   const fetchData = useCallback(async (reportId, options = {}) => {
     const { forceRefresh = false } = options;
-    const store = useDentalStore.getState();
-    const currentStoreReportId = store.getCurrentReportId();
-
-    console.log('🚀 fetchData called:', { reportId, forceRefresh, currentStoreReportId });
 
     if (!reportId) {
       console.warn('⚠️ No reportId provided');
@@ -454,39 +450,61 @@ export function useReportData(options = {}) {
       return null;
     }
 
-    // 1. Check if we already have this report loaded effectively
+    // 1. Check module-level cache first (fastest)
+    const now = Date.now();
+    const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+
+    if (!forceRefresh &&
+      singleReportCache &&
+      singleReportCache.reportId === reportId &&
+      (now - singleReportCache.createdAt) < CACHE_TTL) {
+      console.log('🚀 Loading from module-level cache:', reportId);
+
+      // Restore to store if store is empty
+      const store = useDentalStore.getState();
+      if (!store.hasData() || store.getCurrentReportId() !== reportId) {
+        loadDataToStore(loadPatientData, singleReportCache.data, reportId, 'cache-restore');
+      }
+
+      updateState({
+        data: singleReportCache.data,
+        loading: false,
+        error: null,
+        reportType: singleReportCache.reportType
+      });
+
+      return singleReportCache.data;
+    }
+
+    // 2. Check store for existing data (Zustand persist cache)
+    const store = useDentalStore.getState();
+    const currentStoreReportId = store.getCurrentReportId ? store.getCurrentReportId() : null;
+
     if (!forceRefresh && currentStoreReportId === reportId && store.hasData()) {
       console.log('✅ Report already loaded in store, skipping fetch');
-      // Sync state with store data
       const storeData = store.data;
       updateState({
         data: storeData,
         loading: false,
         error: null,
-        reportType: storeData.reportType
+        reportType: store.reportType || detectReportType(storeData)
       });
       return storeData;
     }
 
-    // 2. If different report or force refresh, reset store
+    // 3. If different report or force refresh, reset and fetch
+    console.log('🌐 Fetching fresh report data:', { reportId, forceRefresh });
+
     if (currentStoreReportId !== reportId || forceRefresh) {
-      console.log('🔄 Switching reports: Clearing old data...');
-
-      // Reset store
       if (store.resetData) store.resetData();
-
-      // Update current report ID immediately to prevent race conditions
       if (store.setCurrentReportId) store.setCurrentReportId(reportId);
-
-      // Clear local cache variables
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      abortControllerRef.current = new AbortController();
-      lastProcessedUrlRef.current = null;
-      singleReportCache = null;
     }
 
+    // Cancel old request if any
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
     currentReportRef.current = reportId;
 
     // Set loading state
@@ -519,7 +537,6 @@ export function useReportData(options = {}) {
 
       // Normalize data structure
       if (reportData?.data) {
-        console
         fetchedData = reportData.data;
       } else {
         // Fallback or URL fetching logic if needed4
@@ -569,6 +586,14 @@ export function useReportData(options = {}) {
           console.warn('⚠️ No image URL found to process');
         }
       }
+
+      // Populate cache
+      singleReportCache = {
+        reportId: reportId,
+        data: fetchedData,
+        reportType: detectedReportType,
+        createdAt: Date.now()
+      };
 
       return fetchedData;
 
@@ -635,6 +660,20 @@ export function useReportData(options = {}) {
       });
     }
   }, [updateState]);
+
+  // Sync image URL when data or imageCard changes
+  useEffect(() => {
+    if (!state.data || !imageCard || state.loading) return;
+
+    // Process image URL from current data
+    const imageUrl = getImageUrl(state.data, state.reportType) ||
+      getImageUrl(state.data?.report, state.reportType);
+
+    if (imageUrl && imageUrl !== lastProcessedUrlRef.current) {
+      console.log('🔄 Syncing image to card:', imageUrl);
+      handleImageUrl(imageUrl);
+    }
+  }, [state.data, state.reportType, imageCard, state.loading, handleImageUrl]);
 
   // Get cache information
   const getCacheInfo = useCallback(() => {

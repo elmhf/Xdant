@@ -285,8 +285,8 @@ const AIOrdersList = ({
                     <div className="absolute inset-0 bg-[#0d0c22]/20"></div>
 
                     <div className="absolute top-4 left-4 text-white z-10">
-                      <h3 className="text-xl font-bold mb-1">{order.type}</h3>
-                      <p className="text-sm opacity-90">{formatReportDate(order.date)}</p>
+                      <p className="text-3xl font-medium mb-1">{order.type}</p>
+                      <p className="text-md opacity-90">{formatReportDate(order.date)}</p>
                       {new Date(order.date).getTime() > Date.now() - 60000 && (
                         <div className="mt-2">
                           <Badge className="bg-green-500 text-white text-xs">{t('reports.newReport')}</Badge>

@@ -43,15 +43,14 @@ export default function ReportPage() {
     if (imageCardHook && !imageCard) setImageCard(imageCardHook);
   }, [imageCardHook, imageCard]);
 
-  // Fetch report when reportId or imageCard changes
+  // Fetch report when reportId changes
   useEffect(() => {
     if (!reportId || reportId === lastProcessedId.current) return;
     if (paramsReportType === "toothSlice") return;
-    if (!imageCard) return;
 
     lastProcessedId.current = reportId;
     fetchData(reportId).catch((err) => console.error("❌ Fetch failed:", err));
-  }, [reportId, paramsReportType, imageCard, fetchData]);
+  }, [reportId, paramsReportType, fetchData]);
 
   // UI helpers
   const getLoadingConfig = () => {

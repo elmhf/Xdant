@@ -125,17 +125,18 @@ const ToothDiagnosis = memo(({
     <div
       onClick={() => setToothNumberSelect(idCard)}
       ref={cardRef}
-      className={`bg-white justify-between border-3 min-h-fit rounded-xl transition-all duration-200 flex flex-col w-full p-[1vw] 
+      className={`justify-between bg-white border-3 min-h-fit rounded-xl transition-all duration-200 flex flex-col w-full p-[1vw] 
         ${isReallyCompact ? 'p-2 text-[0.85rem] [&_*]:text-[0.85rem] [&_button]:text-[0.7rem] [&_button]:px-2 [&_button]:py-1 [&_button]:min-w-7 [&_button]:h-7 [&_button_svg]:w-4 [&_button_svg]:h-4' : ''} 
         ${isExtraCompact ? 'text-[0.7rem] [&_*]:text-[0.7rem] [&_button]:text-[0.6rem] [&_button]:px-1 [&_button]:py-0.5 [&_button]:min-w-5 [&_button]:h-5 [&_button_svg]:w-3 [&_button_svg]:h-3' : ''} 
-        ${isSelected ? 'border-2 border-[#5241cc] shadow-lg' : 'border-2 border-gray-200 hover:border-gray-300 '}`}
+        ${isSelected ? 'border-2 border-[#5241cc] shadow-lg' : 'border-2 border-gray-200 hover:border-gray-300 '}
+        ${tooth?.category === 'Missing' ? 'bg-transparent border-dashed' : 'bg-transparent'}`}
       id={`Tooth-Card-${idCard}`}
       style={{ boxSizing: 'border-box' }}
     >
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <h2 className="text-[1.8rem] font-bold text-gray-900 m-0">
-            {t('side.card.Tooth')} {idCard}
+          <h2 className={`text-[1.8rem] font-bold m-0 ${tooth?.category === 'Missing' ? 'text-red-500' : 'text-gray-900'}`}>
+            {tooth?.category === 'Missing' ? `${t('side.card.Missing')} ` : `${t('side.card.Tooth')} `} {idCard}
           </h2>
           <span className="text-md font-medium border-[1px] border-gray-100 rounded-md px-2 py-1 text-black bg-transparent">
             {t('side.card.rootsCount', { count: roots })}

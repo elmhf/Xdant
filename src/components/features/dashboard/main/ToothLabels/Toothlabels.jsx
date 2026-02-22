@@ -110,8 +110,8 @@ const Toothlabels = ({ NumberOnlyMode = false }) => {
   const isAllSelected = allToothNumbers.length > 0 && allToothNumbers.every(t => selectedTeeth?.includes(t));
 
   return (
-    <div className={`flex ${NumberOnlyMode ? "justify-start" : "justify-center"} items-center ${NumberOnlyMode ? "w-full overflow-visible" : "w-full rounded-2xl overflow-hidden bg-white"}`}>
-      <div className={`${NumberOnlyMode ? "w-auto p-0" : "w-full max-w-5xl bg-white items-start p-4"} flex flex-col gap-1`}>
+    <div className={`flex ${NumberOnlyMode ? "justify-start" : "justify-center"} items-center ${NumberOnlyMode ? "w-full overflow-visible" : "w-full rounded-2xl overflow-hidden bg-transparent"}`}>
+      <div className={`${NumberOnlyMode ? "w-auto p-0" : "w-full max-w-5xl bg-transparent items-start p-4"} flex flex-col gap-1`}>
 
         {!NumberOnlyMode && <div className="flex justify-between items-center w-full">
           <div className="flex items-center gap-3">

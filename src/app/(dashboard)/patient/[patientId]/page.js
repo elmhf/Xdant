@@ -247,7 +247,11 @@ export default function PatientDetailPage() {
 
   if (error) {
     return (
-      <ErrorCard error={error} onClose={handleBack} />
+      <ErrorCard
+        error={error}
+        onClose={handleBack}
+        onRetry={() => store.fetchPatient(patientId)}
+      />
     );
   }
 

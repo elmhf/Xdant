@@ -19,29 +19,46 @@ import { useTranslation } from "react-i18next";
 
 const TOOTH_CATEGORIES = {
   Healthy: {
-    color: '#000',
-    border: '1px solid black ',
-    bg: 'white'
+    svgFill: '#ffffff',
+    svgStroke: '#000000',
+    color: '#000000',
+    border: '2px solid #dadce2',
+    bg: 'transparent'
   },
   Treated: {
-    color: 'rgb(var(--color-Treated))',
-    border: '1px solid rgb(var(--color-Treated))',
-    bg: 'rgba(var(--color-Treated), 0.2)'
+    svgFill: '#7564ed',
+    svgStroke: '#ffffff',
+    color: '#5241cc',
+    border: '2px solid #7564ed',
+    bg: '#f1effd'
   },
   Unhealthy: {
-    color: 'rgb(var(--color-Unhealthy))',
-    border: '1px solid rgb(var(--color-Unhealthy))',
-    bg: 'rgba(var(--color-Unhealthy), 0.2)'
+    svgFill: '#e52a4d',
+    svgStroke: '#ffffff',
+    color: '#e52a4d',
+    border: '2px solid #e52a4d',
+    bg: 'rgba(255, 37, 78, 0.2)'
+  },
+  Suspicious: {
+    svgFill: '#ff8a00',
+    svgStroke: '#ffffff',
+    color: '#ff8a00',
+    border: '2px solid #ff8a00',
+    bg: 'rgba(255, 138, 0, 0.12)'
   },
   Missing: {
-    color: 'rgb(var(--color-Unhealthy))',
-    border: '1px solid rgb(var(--color-Unhealthy))',
-    bg: 'rgba(var(--color-Unhealthy), 0.2)'
+    svgFill: '#e52a4d',
+    svgStroke: '#ffffff',
+    color: '#e52a4d',
+    border: '2px dashed #e52a4d',
+    bg: 'rgba(255, 37, 78, 0.2)'
   },
   Unknown: {
-    color: '#000',
-    border: '1px solid #4b5563',
-    bg: 'rgba(var(--color-UNKNOWN-Tooth), 0)'
+    svgFill: '#f2f2f2',
+    svgStroke: '#aab1bf',
+    color: '#9ca3b4',
+    border: '2px solid #dadce2',
+    bg: '#f2f2f2'
   }
 };
 
@@ -400,21 +417,22 @@ const ToothChar = ({
                 >
                   <div className="w-full h-[70%] flex items-center justify-center">
                     {category === 'Missing' ? (
-                      <IoMdClose className="text-xl md:text-2xl text-center" style={{ color: styles.color }} />
+                      <div className="flex flex-col items-center justify-center w-full h-full">
+                        <IoMdClose className="text-3xl md:text-3xl font-bold" style={{ color: styles.color }} />
+                      </div>
                     ) : (
                       <ToothSVG
                         toothNumber={number}
-                        className="max-w-full max-h-full h-full  object-contain transition-transform duration-200"
-
+                        className="max-w-full max-h-full h-full object-contain transition-transform duration-200"
                         toothSVGs={toothSVGs}
-                        color={"white"} // White fill
-                        strokeColor={"#000000"} // Always black stroke
+                        color={styles.svgFill}
+                        strokeColor={styles.svgStroke}
                       />
                     )}
                   </div>
                   <div
-                    className="font-[400] p-1 tracking-wide text-shadow text-xs md:text-sm"
-                    style={{ color: ['Unknown', 'Healthy'].includes(category) ? '#000' : styles.color }}
+                    className="font-[600] p-1 tracking-wide text-xs md:text-sm"
+                    style={{ color: styles.color }}
                   >
                     {number}
                   </div>

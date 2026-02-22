@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -19,6 +19,27 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const progressBarRef = useRef(null);
+  const videoElementRef = useRef(null);
+  const frameIdRef = useRef(null);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      if (videoElementRef.current && videoElementRef.current.duration && progressBarRef.current) {
+        const progress = (videoElementRef.current.currentTime / videoElementRef.current.duration) * 100;
+        progressBarRef.current.style.width = `${progress}%`;
+      }
+      frameIdRef.current = requestAnimationFrame(updateProgress);
+    };
+
+    frameIdRef.current = requestAnimationFrame(updateProgress);
+    return () => {
+      if (frameIdRef.current) {
+        cancelAnimationFrame(frameIdRef.current);
+      }
+    };
+  }, []);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -124,15 +145,25 @@ export default function LoginPage() {
               <LanguageSwitcher />
             </div>
 
-            {/* Image with Border Radius */}
+            {/* Video with Border Radius */}
             <div className="relative w-full h-full rounded-3xl overflow-hidden">
-              <Image
-                src="/loginside.png"
-                alt={t("login.title")}
-                fill
-                className="object-cover"
-                priority
+              <video
+                ref={videoElementRef}
+                src="/sidevideoLogin.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
               />
+              {/* Video Progress Bar */}
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-white/20">
+                <div
+                  ref={progressBarRef}
+                  className="h-full bg-white transition-none"
+                  style={{ width: '0%' }}
+                />
+              </div>
             </div>
           </div>
 
@@ -224,7 +255,7 @@ export default function LoginPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-sm font-medium text-gray-700">{t("login.password")}</label>
-                    <Link href="/forgot-password" className="text-sm font-medium text-black font-bold transition-colors">
+                    <Link href="/forgot-password" className="text-sm font-bold transition-colors">
                       {t("login.forgotPassword")}
                     </Link>
                   </div>

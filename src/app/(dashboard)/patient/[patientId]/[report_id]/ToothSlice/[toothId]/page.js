@@ -382,8 +382,8 @@ export default function ToothSlicePage() {
       }
 
       {/* Bottom Navbar */}
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] border-t border-gray-200 px-6 py-2">
-        <div className="flex items-center justify-between max-w-[95%] mx-auto">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-transparent shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] border-t border-gray-200 px-6 py-2">
+        <div className="flex items-center bg-transparent justify-between max-w-[95%] mx-auto">
           {/* Left: Tooth Labels */}
           <div className="flex-1 overflow-x-auto">
             <Toothlabels NumberOnlyMode={true} />
