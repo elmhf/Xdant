@@ -30,7 +30,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Lottie from 'lottie-react';
 import liquidLoader from '@/components/shared/lottie/liquid_loader.json';
-import { toast } from "sonner";
+import { notification as toast } from "@/components/shared/jsFiles/NotificationProvider";
 import { useTranslation } from 'react-i18next';
 
 const AIOrdersList = ({

@@ -3,7 +3,7 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig = {
     turbopack: {
-        root: 'C:/Users/jihad/Desktop/XdentProject/Xdental-main',
+        root: process.cwd(),
     },
     typescript: {
         ignoreBuildErrors: true,

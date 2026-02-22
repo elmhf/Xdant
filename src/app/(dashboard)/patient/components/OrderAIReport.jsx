@@ -4,7 +4,7 @@ import CreateAIReportDialog from './CreateAIReportDialog';
 import { Scan, Circle, Box, Upload, Loader2 } from 'lucide-react';
 import useUserStore from "@/components/features/profile/store/userStore";
 import { apiClient } from '@/utils/apiClient';
-import { toast } from 'sonner';
+import { notification as toast } from "@/components/shared/jsFiles/NotificationProvider";
 import UploadToast, { useUploadToast } from './UploadToast';
 import GenericUploadDialog from './GenericUploadDialog';
 import axios from 'axios';
