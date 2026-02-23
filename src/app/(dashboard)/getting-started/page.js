@@ -180,7 +180,7 @@ export default function GettingStartedPage() {
 
     const videoMap = {
         'account-customization': 'h2Diys9v-Hk',
-        'patient-card-overview': 'hLbB7UB5hNM',
+        'patient-card-overview': 'y6k9fe__Y9o',
         'panoramic-analysis': '',
         'cbct-analysis': '',
     };

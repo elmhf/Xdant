@@ -16,7 +16,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Xdental$2d$main$2f$node_modu
 "use client";
 ;
 ;
-const BACKEND_URL = ("TURBOPACK compile-time value", "https://serverrouter.onrender.com") || 'https://serverrouter.onrender.com';
+const BACKEND_URL = ("TURBOPACK compile-time value", "http://localhost:5000") || 'https://serverrouter.onrender.com';
 let lastErrorMessage = '';
 let lastErrorTime = 0;
 const ERROR_DEBOUNCE_TIME = 2000; // 2 seconds
@@ -829,7 +829,7 @@ function LoginPage() {
             const checkAuth = {
                 "LoginPage.useEffect.checkAuth": async ()=>{
                     try {
-                        const BACKEND_URL = ("TURBOPACK compile-time value", "https://serverrouter.onrender.com") || 'https://serverrouter.onrender.com';
+                        const BACKEND_URL = ("TURBOPACK compile-time value", "http://localhost:5000") || 'https://serverrouter.onrender.com';
                         const response = await fetch(`${BACKEND_URL}/api/users/me`, {
                             method: 'GET',
                             credentials: 'include',
@@ -882,7 +882,7 @@ function LoginPage() {
         }
     };
     const handleGoogleLogin = ()=>{
-        const BACKEND_URL = ("TURBOPACK compile-time value", "https://serverrouter.onrender.com") || 'https://serverrouter.onrender.com';
+        const BACKEND_URL = ("TURBOPACK compile-time value", "http://localhost:5000") || 'https://serverrouter.onrender.com';
         window.location.href = `${BACKEND_URL}/api/auth/google`;
     };
     // Show loading while checking authentication
