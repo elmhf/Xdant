@@ -42,7 +42,7 @@ function formatAbsoluteDate(date, lng) {
   return `${weekday} ${time}`;
 }
 
-export default function NotificationDropdown({ userId }) {
+export default function NotificationDropdown({ userId, className = "" }) {
   const { t, i18n } = useTranslation();
   const { notifications, loadingNotification, fetchNotifications, clearNotifications } =
     useNotificationStore();
@@ -139,7 +139,7 @@ export default function NotificationDropdown({ userId }) {
         <Button
           variant="ghost"
           size="icon"
-          className="relative h-12 w-12"
+          className={`relative h-12 w-12 ${className}`}
           onClick={markAllAsRead}
         >
           <Bell className="h-11 w-11" />

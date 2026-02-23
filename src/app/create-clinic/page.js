@@ -118,7 +118,7 @@ export default function WelcomePage() {
             setStep(2);
         } catch (err) {
             console.error(err);
-            setError(err.message || t('createClinic.step2.errors.failedOtp'));
+            setError(err.message || t('patient.createClinic.step2.errors.failedOtp'));
         } finally {
             setLoading(false);
         }
@@ -127,7 +127,7 @@ export default function WelcomePage() {
     const handleStep2Submit = async (e) => {
         e.preventDefault();
         if (otp.length !== 6) {
-            setError(t('createClinic.step2.errors.invalidCode'));
+            setError(t('patient.createClinic.step2.errors.invalidCode'));
             return;
         }
 
@@ -149,7 +149,7 @@ export default function WelcomePage() {
             setStep(3); // Move to Invite step
         } catch (err) {
             console.error(err);
-            setError(err.message || t('createClinic.step2.errors.failedCreate'));
+            setError(err.message || t('patient.createClinic.step2.errors.failedCreate'));
         } finally {
             setLoading(false);
         }
@@ -187,17 +187,17 @@ export default function WelcomePage() {
 
     const handleInviteJob = async () => {
         if (!inviteEmail || !inviteRole) {
-            setInviteMessage(t('createClinic.step3.errors.fieldsRequired'));
+            setInviteMessage(t('patient.createClinic.step3.errors.fieldsRequired'));
             return;
         }
 
         if (invitedEmails.length >= 5) {
-            setInviteMessage(t('createClinic.step3.errors.limitReached'));
+            setInviteMessage(t('patient.createClinic.step3.errors.limitReached'));
             return;
         }
 
         if (!clinicId) {
-            setInviteMessage(t('createClinic.step3.errors.missingClinicId'));
+            setInviteMessage(t('patient.createClinic.step3.errors.missingClinicId'));
             return;
         }
 
@@ -211,7 +211,7 @@ export default function WelcomePage() {
             setInvitedEmails(prev => [...prev, inviteEmail]);
 
             // Show success message and clear fields for next invite
-            setInviteMessage(t('createClinic.step3.success', { email: inviteEmail }));
+            setInviteMessage(t('patient.createClinic.step3.success', { email: inviteEmail }));
             setInviteEmail("");
             setInviteRole("");
             setInviteLoading(false);
@@ -233,34 +233,34 @@ export default function WelcomePage() {
     const renderStep1 = () => (
         <div className="w-full max-w-2xl mx-auto p-6 overflow-scroll no-scrollbar bg-white ">
             <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900">{t('createClinic.step1.title')}</h2>
-                <p className="text-gray-500 mt-2">{t('createClinic.step1.desc')}</p>
+                <h2 className="text-3xl font-bold text-gray-900">{t('patient.createClinic.step1.title')}</h2>
+                <p className="text-gray-500 mt-2">{t('patient.createClinic.step1.desc')}</p>
             </div>
 
             <form onSubmit={handleStep1Submit} className="space-y-6">
                 <div className="space-y-4">
                     <div>
-                        <Label htmlFor="clinic_name" className="font-semibold text-gray-700">{t('createClinic.step1.companyName')} <span className="text-red-500">*</span></Label>
-                        <Input id="clinic_name" required value={formData.clinic_name} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.companyName')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                        <Label htmlFor="clinic_name" className="font-semibold text-gray-700">{t('patient.createClinic.step1.companyName')} <span className="text-red-500">*</span></Label>
+                        <Input id="clinic_name" required value={formData.clinic_name} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.companyName')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                     </div>
 
                     <div>
-                        <Label htmlFor="website" className="font-semibold text-gray-700">{t('createClinic.step1.website')}</Label>
-                        <Input id="website" value={formData.website} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.website')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                        <Label htmlFor="website" className="font-semibold text-gray-700">{t('patient.createClinic.step1.website')}</Label>
+                        <Input id="website" value={formData.website} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.website')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="country" className="font-semibold text-gray-700">{t('createClinic.step1.country')}</Label>
-                            <Input id="country" value={formData.country} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.country')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                            <Label htmlFor="country" className="font-semibold text-gray-700">{t('patient.createClinic.step1.country')}</Label>
+                            <Input id="country" value={formData.country} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.country')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                         </div>
                         <div>
                             <div className="flex justify-between items-center mb-1">
-                                <Label htmlFor="street_address" className="font-semibold text-gray-700">{t('createClinic.step1.streetAddress')}</Label>
+                                <Label htmlFor="street_address" className="font-semibold text-gray-700">{t('patient.createClinic.step1.streetAddress')}</Label>
                                 <Dialog open={isMapOpen} onOpenChange={setIsMapOpen}>
                                     <DialogTrigger asChild>
                                         <Button type="button" variant="outline" size="sm" className="h-7 text-xs flex items-center gap-1 text-[#5c4ce3] border-[#5c4ce3] hover:bg-[#5c4ce3]/10">
-                                            <MapPin className="w-3 h-3" /> {t('createClinic.step1.pickOnMap')}
+                                            <MapPin className="w-3 h-3" /> {t('patient.createClinic.step1.pickOnMap')}
                                         </Button>
                                     </DialogTrigger>
                                     <DialogContent className="sm:max-w-3xl h-[80vh] p-0 overflow-hidden rounded-2xl">
@@ -270,43 +270,43 @@ export default function WelcomePage() {
                                     </DialogContent>
                                 </Dialog>
                             </div>
-                            <Input id="street_address" value={formData.street_address} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.streetAddress')} className="h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                            <Input id="street_address" value={formData.street_address} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.streetAddress')} className="h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="city" className="font-semibold text-gray-700">{t('createClinic.step1.city')}</Label>
-                            <Input id="city" value={formData.city} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.city')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                            <Label htmlFor="city" className="font-semibold text-gray-700">{t('patient.createClinic.step1.city')}</Label>
+                            <Input id="city" value={formData.city} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.city')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                         </div>
                         <div>
-                            <Label htmlFor="postal_code" className="font-semibold text-gray-700">{t('createClinic.step1.zipCode')}</Label>
-                            <Input id="postal_code" value={formData.postal_code} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.zipCode')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                            <Label htmlFor="postal_code" className="font-semibold text-gray-700">{t('patient.createClinic.step1.zipCode')}</Label>
+                            <Input id="postal_code" value={formData.postal_code} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.zipCode')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                         </div>
                     </div>
 
                     <div>
-                        <Label htmlFor="neighbourhood" className="font-semibold text-gray-700">{t('createClinic.step1.neighbourhood')}</Label>
-                        <Input id="neighbourhood" value={formData.neighbourhood} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.neighbourhood')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                        <Label htmlFor="neighbourhood" className="font-semibold text-gray-700">{t('patient.createClinic.step1.neighbourhood')}</Label>
+                        <Input id="neighbourhood" value={formData.neighbourhood} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.neighbourhood')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                     </div>
 
                     <div className="pt-4 border-t border-gray-100">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">{t('createClinic.step1.clinicContact')}</h3>
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">{t('patient.createClinic.step1.clinicContact')}</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="contactEmail" className="font-semibold text-gray-700">{t('createClinic.step1.email')}</Label>
-                                <Input id="contactEmail" type="email" value={formData.contactEmail} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.email')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                                <Label htmlFor="contactEmail" className="font-semibold text-gray-700">{t('patient.createClinic.step1.email')}</Label>
+                                <Input id="contactEmail" type="email" value={formData.contactEmail} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.email')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                             </div>
                             <div>
-                                <Label htmlFor="contactPhone" className="font-semibold text-gray-700">{t('createClinic.step1.phone')}</Label>
-                                <Input id="contactPhone" type="tel" value={formData.contactPhone} onChange={handleChange} placeholder={t('createClinic.step1.placeholders.phone')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
+                                <Label htmlFor="contactPhone" className="font-semibold text-gray-700">{t('patient.createClinic.step1.phone')}</Label>
+                                <Input id="contactPhone" type="tel" value={formData.contactPhone} onChange={handleChange} placeholder={t('patient.createClinic.step1.placeholders.phone')} className="mt-1 h-[50px] border-1 border-gray-400 rounded-xl focus:ring-[#5c4ce3] focus:border-[#5c4ce3]" />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <Button type="submit" disabled={loading} className="w-full bg-[#5c4ce3] hover:bg-[#4b3ccb] text-white h-[50px] rounded-xl font-semibold text-lg">
-                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('createClinic.step1.nextStep')}
+                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('patient.createClinic.step1.nextStep')}
                 </Button>
             </form>
         </div>
@@ -319,10 +319,10 @@ export default function WelcomePage() {
                 <div className="w-16 h-16  rounded-full flex items-center justify-center mx-auto mb-4">
                     <Mail className="h-12 w-12 text-[#5c4ce3]" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">{t('createClinic.step2.title')}</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{t('patient.createClinic.step2.title')}</h2>
                 <div className="text-gray-500 mt-2">
                     <Trans
-                        i18nKey="createClinic.step2.desc"
+                        i18nKey="patient.createClinic.step2.desc"
                         t={t}
                         values={{ email: formData.contactEmail }}
                     >
@@ -377,10 +377,10 @@ export default function WelcomePage() {
                 </div>
 
                 <Button type="submit" disabled={loading} className="w-full bg-[#5c4ce3] hover:bg-[#4b3ccb] text-white h-[50px] rounded-xl font-semibold">
-                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('createClinic.step2.verifyAndCreate')}
+                    {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('patient.createClinic.step2.verifyAndCreate')}
                 </Button>
                 <button type="button" onClick={() => setStep(1)} className="text-sm text-gray-500 hover:text-[#5c4ce3]">
-                    {t('createClinic.step2.back')}
+                    {t('patient.createClinic.step2.back')}
                 </button>
             </form>
         </div>
@@ -391,10 +391,10 @@ export default function WelcomePage() {
     const renderStep3 = () => (
         <div className="w-full max-w-xl mx-auto p-8 overflow-y-scroll no-scrollbar max-h-[80vh] bg-white flex flex-col items-center">
             <div className="text-center mb-6">
-                <h2 className="text-3xl font-bold text-gray-900">{t('createClinic.step3.title')}</h2>
-                <p className="text-gray-500 mt-2">{t('createClinic.step3.desc')}</p>
+                <h2 className="text-3xl font-bold text-gray-900">{t('patient.createClinic.step3.title')}</h2>
+                <p className="text-gray-500 mt-2">{t('patient.createClinic.step3.desc')}</p>
                 <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-medium text-sm">
-                    {t('createClinic.step3.invitationsSent', { count: invitedEmails.length })}
+                    {t('patient.createClinic.step3.invitationsSent', { count: invitedEmails.length })}
                 </div>
             </div>
 
@@ -414,7 +414,7 @@ export default function WelcomePage() {
                 {/* Email Input */}
                 <div className="space-y-2">
                     <Label htmlFor="inviteEmail" className="block text-base font-medium text-gray-500">
-                        {t('createClinic.step3.email')} <span className="text-red-500">*</span>
+                        {t('patient.createClinic.step3.email')} <span className="text-red-500">*</span>
                     </Label>
                     <Input
                         id="inviteEmail"
@@ -429,17 +429,17 @@ export default function WelcomePage() {
                 {/* Role Select */}
                 <div className="space-y-2">
                     <Label htmlFor="role" className="block text-base font-medium text-gray-500">
-                        {t('createClinic.step3.accessLevel')} <span className="text-red-500">*</span>
+                        {t('patient.createClinic.step3.accessLevel')} <span className="text-red-500">*</span>
                     </Label>
                     <Select value={inviteRole} onValueChange={setInviteRole}>
                         <SelectTrigger className="h-12 text-base rounded-xl w-full border border-gray-200 focus:border-[#7564ed] focus:ring-2 focus:ring-[#7564ed]/20">
-                            <SelectValue placeholder={t('createClinic.step3.selectRole')} />
+                            <SelectValue placeholder={t('patient.createClinic.step3.selectRole')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="full_access">{t('createClinic.step3.roles.full_access')}</SelectItem>
-                            <SelectItem value="clinic_access">{t('createClinic.step3.roles.clinic_access')}</SelectItem>
-                            <SelectItem value="limited_access">{t('createClinic.step3.roles.limited_access')}</SelectItem>
-                            <SelectItem value="assistant_access">{t('createClinic.step3.roles.assistant_access')}</SelectItem>
+                            <SelectItem value="full_access">{t('patient.createClinic.step3.roles.full_access')}</SelectItem>
+                            <SelectItem value="clinic_access">{t('patient.createClinic.step3.roles.clinic_access')}</SelectItem>
+                            <SelectItem value="limited_access">{t('patient.createClinic.step3.roles.limited_access')}</SelectItem>
+                            <SelectItem value="assistant_access">{t('patient.createClinic.step3.roles.assistant_access')}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -458,7 +458,7 @@ export default function WelcomePage() {
                         disabled={inviteLoading}
                         className="w-full h-12 text-lg font-bold bg-[#EBE8FC] text-[#7564ed] hover:bg-[#dcd6fa] hover:outline-[#7564ed] hover:outline-2 transition-all duration-150 rounded-xl"
                     >
-                        {inviteLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('createClinic.step3.sendInvitation')}
+                        {inviteLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('patient.createClinic.step3.sendInvitation')}
                     </Button>
 
                     <Button
@@ -466,7 +466,7 @@ export default function WelcomePage() {
                         variant="outline"
                         className="w-full h-12 text-lg font-bold border-2 border-gray-100 text-gray-500 hover:border-gray-200 hover:bg-gray-50 rounded-xl"
                     >
-                        {invitedEmails.length > 0 ? t('createClinic.step3.finish') : t('createClinic.step3.skip')}
+                        {invitedEmails.length > 0 ? t('patient.createClinic.step3.finish') : t('patient.createClinic.step3.skip')}
                     </Button>
                 </div>
             </div>

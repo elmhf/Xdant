@@ -257,9 +257,10 @@
     "patientName": "Felicia Hall",
     "reportTitle": "Report Title",
     "logoUrl": "/XDENTAL.png",
-    "logoText": "XDent",
+    "logoText": "XTooth",
     "goToHomepage": "Go to Homepage",
-    "logoAlt": "Xdental Logo"
+    "logoAlt": "Xdental Logo",
+    "learningHub": "Get Started"
   },
   "addComment": {
     "note": "Note",
@@ -1069,34 +1070,6 @@
         "remove": "Delete",
         "add": "Add your signature"
       },
-      "diagnosis": {
-        "title": "Tooth {{number}} Diagnosis",
-        "editCondition": "Edit Condition",
-        "addCondition": "Add New Condition",
-        "searchPlaceholder": "Search existing conditions...",
-        "noConditions": "No conditions found",
-        "addPrompt": "Add a new condition to get started",
-        "addNewButton": "Add New Condition",
-        "conditionLabel": "Condition",
-        "percentageLabel": "Percentage",
-        "statusTypeLabel": "Status Type",
-        "descriptionLabel": "Description",
-        "selectStatusPlaceholder": "Select status",
-        "statusUnhealthy": "Unhealthy",
-        "statusTreated": "Treated",
-        "statusHealthy": "Healthy",
-        "descriptionPlaceholder": "Optional details...",
-        "cancel": "Cancel",
-        "update": "Update",
-        "save": "Save",
-        "notifications": {
-          "removed": "Condition removed",
-          "updated": "Condition updated",
-          "added": "Condition added successfully",
-          "saveFailed": "Failed to save condition",
-          "selectCondition": "Please select a condition"
-        }
-      },
       "conditions": {
         "healthy": "Healthy",
         "caries": "Caries",
@@ -1437,5 +1410,185 @@
     "step2Desc": "Verify your account permissions and role settings with your clinic administrator.",
     "goBack": "Go Back",
     "generalError": "We apologize for the inconvenience. It seems there was an error processing your request:"
+  },
+  "diagnosis": {
+    "title": "Diagnosis for Tooth {{number}}",
+    "editCondition": "Edit Condition",
+    "addCondition": "Add New Condition",
+    "searchPlaceholder": "Search existing conditions...",
+    "noConditions": "No conditions found",
+    "addPrompt": "Add a new condition to start",
+    "addNewButton": "Add New Condition",
+    "conditionLabel": "Condition",
+    "percentageLabel": "Percentage",
+    "statusTypeLabel": "Status Type",
+    "descriptionLabel": "Description",
+    "selectStatusPlaceholder": "Select status",
+    "statusUnhealthy": "Unhealthy",
+    "statusTreated": "Treated",
+    "statusHealthy": "Healthy",
+    "descriptionPlaceholder": "Optional details...",
+    "cancel": "Cancel",
+    "update": "Update",
+    "save": "Save",
+    "notifications": {
+      "removed": "Condition removed",
+      "updated": "Condition updated",
+      "added": "Condition added successfully",
+      "saveFailed": "Failed to save condition",
+      "selectCondition": "Please select a condition"
+    }
+  },
+  "gettingStarted": {
+    "title": "Get Started",
+    "breadcrumb": "Get Started",
+    "menu": {
+      "accountCustomization": "Account Customization",
+      "patientCardOverview": "Patient Card Overview",
+      "panoramicAnalysis": "Panoramic Analysis",
+      "cbctAnalysis": "CBCT Analysis"
+    },
+    "buttons": {
+      "goBack": "Go back",
+      "goNext": "Go next"
+    },
+    "content": {
+      "accountCustomization": {
+        "title": "Account Customization",
+        "description": "In this session, we'll guide you through customizing your XDent account to align with your clinic's specific needs.",
+        "accessingSettings": {
+          "title": "Accessing Account Settings:",
+          "step1": {
+            "label": "Navigate to Settings:",
+            "text": "Click on your profile details in the top-right corner of the screen."
+          },
+          "step2": {
+            "label": "Choose Settings:",
+            "text": "Select either 'Clinic Settings' or 'Profile Settings' from the dropdown menu."
+          }
+        },
+        "profileSettings": {
+          "title": "Profile Settings:",
+          "desc": "In the 'My Profile' section, you can:",
+          "step1": {
+            "label": "Update Personal Information:",
+            "text": "Edit your first name, last name, and email address."
+          },
+          "step2": {
+            "label": "Add Profile Photo:",
+            "text": "Upload a picture to personalize your account."
+          },
+          "step3": {
+            "label": "Upload Signature:",
+            "text": "On the right side, upload your signature and stamp in PNG format. These will automatically appear on your final patient reports, adding a professional touch."
+          }
+        },
+        "clinicSettings": {
+          "title": "Clinic Settings:",
+          "desc": "Within 'Clinic Settings,' there are three tabs:",
+          "info": {
+            "title": "Clinic Information:",
+            "step1": {
+              "label": "Enter Clinic Details:",
+              "text": "Input your clinic's name and contact information."
+            },
+            "step2": {
+              "label": "Upload Branding Elements:",
+              "text": "Add your clinic's logo and official seal (PNG format) to ensure all AI-powered patient reports are still clinic branded and professional."
+            }
+          },
+          "team": {
+            "title": "Team:",
+            "step1": {
+              "label": "Manage Team Access:",
+              "text": "Click 'Add Team Member' to invite new staff by entering their email, first name, last name, position, and assigning an access level."
+            },
+            "levels": {
+              "label": "Access Levels:",
+              "full": "Full Access: Complete platform access.",
+              "clinical": "Clinical Access: Access to clinical features.",
+              "limited": "Limited Clinical Access: Restricted clinical features.",
+              "nonclinical": "Non-clinical Member: Access to administrative features only."
+            },
+            "step2": {
+              "label": "Edit or Remove Members:",
+              "text": "Use the icons on the right-hand side to update details or remove team members as needed."
+            }
+          }
+        }
+      },
+      "patientCardOverview": {
+        "title": "Patient Card Overview",
+        "description": "The patient card is the central hub for all patient-specific data, including demographic information, appointment history, and clinical documentation.",
+        "uploading2D": {
+          "title": "Uploading 2D Studies:",
+          "desc": "To upload 2D studies:",
+          "step1": {
+            "label": "Open Patient Card:",
+            "text": "Access the relevant patient card."
+          },
+          "step2": {
+            "label": "Select Study Type:",
+            "text": "In the 'Order a Report' section, choose either 'Panoramic' or 'Intraoral' to upload the appropriate files."
+          },
+          "footer": "XDent ensures a seamless process for handling both 2D and 3D studies."
+        }
+      },
+      "panoramicAnalysis": {
+        "title": "Radiological Reports - Panoramic Analysis",
+        "description": "XDent’s Panoramic Radiologic Report is designed for precision and speed. This guide walks you through key features to enhance your review process.",
+        "smartChart": {
+          "title": "Understanding the Smart Dental Chart:",
+          "colorCodes": "Color Codes:",
+          "healthy": "Healthy",
+          "treated": "Treated",
+          "pathology": "Pathology",
+          "missing": "Missing tooth",
+          "periodontal": "Periodontal data available"
+        },
+        "toothCards": {
+          "title": "Reviewing Tooth Cards:",
+          "summary": "Tooth Cards summarize:",
+          "detected": "Detected conditions (over 50% AI certainty)",
+          "severity": "Condition severity & type",
+          "indicators": "Color Indicators:",
+          "pathologyLabel": "Pathology",
+          "priorLabel": "Prior treatment"
+        },
+        "finalizing": {
+          "title": "Finalizing the Report:",
+          "approve": "Click “Approve” to confirm findings.",
+          "select": "To include selected teeth only, use “Select Teeth”.",
+          "conclusions": "Add your additional clinical conclusions and recommendations."
+        }
+      },
+      "cbctAnalysis": {
+        "title": "Radiological Reports - CBCT Analysis",
+        "description": "In this video, we guide you through the process of navigating and analyzing Radiologic Reports for CBCT (Cone-Beam Computed Tomography) scans using XDental's AI-driven platform.",
+        "accessing": {
+          "title": "Accessing and Adjusting CBCT Reports:",
+          "step1": {
+            "label": "Opening a Report:",
+            "text": "Click on the CBCT reformat to access the automatically generated panoramic view, created using XDental's patented AI technology."
+          },
+          "step2": {
+            "label": "Image Adjustments:",
+            "text": "Utilize the toolbar on the left to modify brightness, contrast, and sharpness. Hover over each tool to see its description. You can split the panorama or expand it to full screen for enhanced diagnostic context."
+          },
+          "step3": {
+            "label": "Tooth Number Correction:",
+            "text": "If a tooth number needs correction, click the \"Change tooth number\" button, select the appropriate tooth, input the new number, and click \"Confirm\" to update the dental formula instantly."
+          }
+        },
+        "formula": {
+          "title": "Understanding the Dental Formula:",
+          "desc": "Below the panoramic reformat, the dental formula categorizes teeth by color:",
+          "healthy": "Healthy teeth.",
+          "treated": "Previously treated teeth.",
+          "unhealthy": "Unhealthy teeth.",
+          "missing": "Missing teeth."
+        }
+      }
+    }
   }
 }

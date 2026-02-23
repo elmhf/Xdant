@@ -14,14 +14,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import {
-  ChevronDown, LogOut, Settings, Smartphone, User, Check, ChevronRight, ArrowLeft, Building2, Loader2, AlertTriangle, UserRound
+  ChevronDown, LogOut, Settings, Smartphone, User, Check, ChevronRight, ArrowLeft, Building2, Loader2, AlertTriangle, UserRound, BookOpen, Link
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import clsx from 'clsx';
 import useUserStore from '@/components/features/profile/store/userStore';
 import { useTranslation } from 'react-i18next';
 
-export default function ProfileDropdown() {
+export default function ProfileDropdown({ isLight = false }) {
   const { t } = useTranslation();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = React.useState(false);
@@ -104,21 +104,21 @@ export default function ProfileDropdown() {
               <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
             </div>
           ) : (
-            <AvatarFallback>
+            <AvatarFallback className={isLight ? 'bg-white/20 text-white' : ''}>
               {userObj?.name?.charAt(0)?.toUpperCase() || <UserRound />}
             </AvatarFallback>
           )}
         </Avatar>
 
         {/* ↓↓↓ الـ icon متاع السهم ↓↓↓ */}
-        {Chevron && <div className="absolute bottom-0.5 right-0.5 translate-y-1/4 translate-x-1/4 bg-gray-300 rounded-full p-[2px] shadow-md">
-          <ChevronDown className="w-3.5 h-3.5 text-gray-700 stroke-4" />
+        {Chevron && <div className={`absolute bottom-0.5 right-0.5 translate-y-1/4 translate-x-1/4 rounded-full p-[2px] shadow-md transition-colors ${isLight ? 'bg-white/20' : 'bg-gray-300'}`}>
+          <ChevronDown className={`w-3.5 h-3.5 stroke-4 transition-colors ${isLight ? 'text-white' : 'text-gray-700'}`} />
         </div>}
       </div>
 
 
     );
-  }, []);
+  }, [isLight]);
 
   const renderCompanyAvatar = useCallback((companyObj, size = "h-8 w-8") => {
     const getImageFromCache = useUserStore.getState().getImageFromCache;
@@ -237,6 +237,20 @@ export default function ProfileDropdown() {
                   <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
                 </div>
 
+
+                {/* Learning Hub */}
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push('/getting-started');
+                    setOpen(false);
+                  }}
+                  className="flex items-center gap-3 px-4 py-3 mx-0 hover:bg-gray-100 cursor-pointer border-none"
+                >
+                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">
+                    {t('navbar.learningHub') || 'Get Started'}
+                  </span>
+                </DropdownMenuItem>
 
                 {/* Logout */}
                 <DropdownMenuItem

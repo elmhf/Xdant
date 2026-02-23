@@ -5,6 +5,8 @@ import { initReactI18next } from 'react-i18next';
 import en from '../../../public/locales/en.json';
 import fr from '../../../public/locales/fr.json';
 import ar from '../../../public/locales/ar.json';
+import es from '../../../public/locales/es.json';
+import pt from '../../../public/locales/pt.json';
 
 const savedLanguage =
   typeof window !== 'undefined'
@@ -24,6 +26,8 @@ if (!i18n.isInitialized) {
         en: { translation: en, ...en },
         fr: { translation: fr, ...fr },
         ar: { translation: ar, ...ar },
+        es: { translation: es, ...es },
+        pt: { translation: pt, ...pt },
       },
     });
 }

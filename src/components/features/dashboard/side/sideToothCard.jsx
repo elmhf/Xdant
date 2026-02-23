@@ -174,7 +174,7 @@ const SideCardes = ({ layoutKey, toothNumberSelect, setToothNumberSelect }) => {
             </AnimatePresence>
 
             {/* Conclusion Card - Scrolls with content */}
-            <div className="bg-transparent rounded-xl p-4 border border-gray-200 shadow-sm mt-4 mb-4">
+            <div className="rounded-xl p-4 border bg-white border-gray-200 shadow-sm mt-4 mb-4">
               <h3 className={`text-3xl font-bold mb-3 ${!conclusion ? 'text-red-500' : 'text-gray-900'}`}>
                 {t('common.conclusion')}
               </h3>

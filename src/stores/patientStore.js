@@ -521,6 +521,15 @@ export const usePatientStore = create(
               loading: false
             });
 
+            // Sync currentClinicId in userStore
+            if (result.patient.clinic_id) {
+              const { currentClinicId, setCurrentClinicId } = useUserStore.getState();
+              if (currentClinicId !== result.patient.clinic_id) {
+                console.log('🔄 Syncing clinic ID from patient data:', result.patient.clinic_id);
+                setCurrentClinicId(result.patient.clinic_id);
+              }
+            }
+
             // Initialize reports from patient data
             if (result.patient.reports) {
               set({ reports: result.patient.reports });

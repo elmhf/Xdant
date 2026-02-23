@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Globe, Moon, ChevronRight, Printer, Building, ChevronDown, Bell, Clock } from "lucide-react";
+import { Globe, Moon, ChevronRight, Printer, Building, ChevronDown, Bell, Clock, GraduationCap, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ProfileDropdown from "./UserDropdown";
@@ -161,6 +161,8 @@ export default function Navbar() {
   //   return () => clearInterval(interval);
   // }, [performAutoSave]);
 
+  const isGettingStarted = pathname === '/getting-started';
+
   if (!isMounted) {
     return (
       <div className="w-full flex items-center justify-center py-6">
@@ -170,13 +172,22 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 print:hidden">
-      <div className="flex items-center justify-between py-3 ">
+    <header className={`sticky  top-0 z-50 w-full transition-colors duration-300 print:hidden overflow-hidden ${isGettingStarted ? 'bg-[#7c5cfc] px-4 rounded-2xl my-4 overflow-hidden border-b border-white/10' : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'}`}>
+      {isGettingStarted && (
+        <div className="absolute  inset-0 pointer-events-none overflow-hidden">
+          {/* Decorative shapes exactly like the banner */}
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-20 bg-white/10 rounded-xl border border-white/5 rotate-12 opacity-60"></div>
+          <div className="absolute left-20 top-1/4 w-10 h-10 bg-white/10 rounded-lg border border-white/5 -rotate-6 opacity-40"></div>
+          <div className="absolute right-20 top-0 w-32 h-32 bg-white/10 rounded-3xl border border-white/5 rotate-12 opacity-50"></div>
+          <div className="absolute right-0 bottom-[-20px] w-40 h-40 bg-white/5 rounded-full blur-2xl opacity-40"></div>
+        </div>
+      )}
+      <div className="flex items-center justify-between py-3 relative z-10">
         <div className="flex items-center gap-3">
           {/* Logo and Brand */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 cursor-pointer" onClick={() => router.push("/")} tabIndex={0} role="button" aria-label={t('navbar.goToHomepage')}>
-              <div className="w-10 h-10 relative overflow-hidden rounded-full border border-gray-300  ">
+              <div className={`w-10 h-10 relative overflow-hidden rounded-full border transition-colors ${isGettingStarted ? 'border-white/30' : 'border-gray-300'}`}>
                 <Image
                   src={t('navbar.logoUrl').startsWith('/') ? t('navbar.logoUrl') : "/XDENTAL.png"}
                   alt={t('navbar.logoAlt')}
@@ -185,46 +196,75 @@ export default function Navbar() {
                   className="object-contain"
                 />
               </div>
-              <span className="text-3xl space-x-[-5px] font-[800] text-gray-900">{t('navbar.logoText') === 'navbar.logoText' ? 'XDent' : t('navbar.logoText')}</span>
+              <span className={`text-3xl space-x-[-5px] font-[800] transition-colors ${isGettingStarted ? 'text-white' : 'text-gray-900'}`}>{t('navbar.logoText') === 'navbar.logoText' ? 'XDent' : t('navbar.logoText')}</span>
             </div>
           </div>
 
-          <Breadcrumb className="hidden md:flex ml-4" />
+          <Breadcrumb className={`hidden md:flex ml-4 ${isGettingStarted ? 'text-white/70' : ''}`} />
         </div>
 
         <div className="flex items-center gap-2">
-
-          <div className="flex items-center gap-1">
-            <LanguageSwitcher />
-            <Button variant="ghost" size="icon" className="h-12 w-12" aria-label={t('common.toggleDarkMode')}>
-              <Moon className="h-11 w-11" />
-            </Button>
-
-            {/* Auto-save Clock Icon */}
-            {(pathname?.includes('/ToothSlice') || pathname?.includes('/PDFReport') || (pathname?.match(/\/patient\/[^\/]+\/[^\/]+$/) && !pathname?.includes('/ToothSlice') && !pathname?.includes('/PDFReport'))) && (
+          {isGettingStarted && (
+            <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-500">
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={t('common.autoSaveStatus')}
-                onClick={performAutoSave}
-                className="relative h-12 w-12"
+                className="h-10 w-10 text-white hover:bg-white/10 rounded-full transition-all"
+                onClick={() => router.push('/')}
+                aria-label="Go to Home"
               >
-                <Clock
-                  className={`h-11 w-11 transition-colors ${autoSaveStatus === 'saving' ? 'text-blue-500 animate-pulse' :
-                    autoSaveStatus === 'saved' ? 'text-green-500' :
-                      autoSaveStatus === 'error' ? 'text-red-500' :
-                        'text-gray-600'
-                    }`}
-                />
-                {autoSaveStatus === 'saving' && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full animate-ping" />
-                )}
+                <Home className="h-6 w-6" />
               </Button>
+              <span className="hidden lg:block text-2xl font-bold text-white tracking-tight">
+                {t('gettingStarted.title')}
+              </span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher variant={isGettingStarted ? 'light' : 'default'} />
+            {!isGettingStarted && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={`h-12 w-12 transition-colors ${isGettingStarted ? 'text-white hover:bg-white/10' : 'text-gray-600'}`}
+                  onClick={() => router.push('/getting-started')}
+                  aria-label={t('navbar.learningHub')}
+                >
+                  <GraduationCap className="h-11 w-11" />
+                </Button>
+                <Button variant="ghost" size="icon" className={`h-12 w-12 transition-colors ${isGettingStarted ? 'text-white hover:bg-white/10' : 'text-gray-600'}`} aria-label={t('common.toggleDarkMode')}>
+                  <Moon className="h-11 w-11" />
+                </Button>
+
+                {/* Auto-save Clock Icon */}
+                {(pathname?.includes('/ToothSlice') || pathname?.includes('/PDFReport') || (pathname?.match(/\/patient\/[^\/]+\/[^\/]+$/) && !pathname?.includes('/ToothSlice') && !pathname?.includes('/PDFReport'))) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t('common.autoSaveStatus')}
+                    onClick={performAutoSave}
+                    className="relative h-12 w-12"
+                  >
+                    <Clock
+                      className={`h-11 w-11 transition-colors ${autoSaveStatus === 'saving' ? 'text-blue-500 animate-pulse' :
+                        autoSaveStatus === 'saved' ? 'text-green-500' :
+                          autoSaveStatus === 'error' ? 'text-red-500' :
+                            isGettingStarted ? 'text-white' : 'text-gray-600'
+                        }`}
+                    />
+                    {autoSaveStatus === 'saving' && (
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full animate-ping" />
+                    )}
+                  </Button>
+                )}
+
+                <NotificationDropdown userId={userInfo?.user_id} className={isGettingStarted ? 'text-white' : ''} />
+              </>
             )}
 
-            <NotificationDropdown userId={userInfo?.user_id} />
-
-            <ProfileDropdown user={userInfo} />
+            <ProfileDropdown user={userInfo} isLight={isGettingStarted} />
           </div>
         </div>
       </div>

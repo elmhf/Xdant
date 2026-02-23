@@ -194,7 +194,8 @@
     "logoUrl": "/XDENTAL.png",
     "logoText": "XDent",
     "goToHomepage": "Aller à l'accueil",
-    "logoAlt": "Logo Xdental"
+    "logoAlt": "Logo Xdental",
+    "learningHub": "Get Started"
   },
   "addComment": {
     "note": "Note",
@@ -1062,34 +1063,6 @@
         "remove": "Supprimer",
         "add": "Ajouter votre signature"
       },
-      "diagnosis": {
-        "title": "Diagnostic dent {{number}}",
-        "editCondition": "Modifier la condition",
-        "addCondition": "Ajouter une nouvelle condition",
-        "searchPlaceholder": "Rechercher des conditions existantes...",
-        "noConditions": "Aucune condition trouvée",
-        "addPrompt": "Ajoutez une nouvelle condition pour commencer",
-        "addNewButton": "Ajouter une nouvelle condition",
-        "conditionLabel": "Condition",
-        "percentageLabel": "Pourcentage",
-        "statusTypeLabel": "Type de statut",
-        "descriptionLabel": "Description",
-        "selectStatusPlaceholder": "Sélectionner le statut",
-        "statusUnhealthy": "Malsain",
-        "statusTreated": "Traité",
-        "statusHealthy": "Sain",
-        "descriptionPlaceholder": "Détails optionnels...",
-        "cancel": "Annuler",
-        "update": "Mettre à jour",
-        "save": "Enregistrer",
-        "notifications": {
-          "removed": "Condition supprimée",
-          "updated": "Condition mise à jour",
-          "added": "Condition ajoutée avec succès",
-          "saveFailed": "Échec de l'enregistrement de la condition",
-          "selectCondition": "Veuillez sélectionner une condition"
-        }
-      },
       "conditions": {
         "healthy": "Sain",
         "caries": "Carie",
@@ -1430,5 +1403,185 @@
     "step2Desc": "Vérifiez vos autorisations de compte et vos paramètres de rôle avec l'administrateur de votre clinique.",
     "goBack": "Retourner",
     "generalError": "Nous nous excusons pour la gêne occasionnée. Il semble qu'une erreur s'est produite lors du traitement de votre demande :"
+  },
+  "diagnosis": {
+    "title": "Diagnostic dent {{number}}",
+    "editCondition": "Modifier la condition",
+    "addCondition": "Ajouter une nouvelle condition",
+    "searchPlaceholder": "Rechercher des conditions existantes...",
+    "noConditions": "Aucune condition trouvée",
+    "addPrompt": "Ajoutez une nouvelle condition pour commencer",
+    "addNewButton": "Ajouter une nouvelle condition",
+    "conditionLabel": "Condition",
+    "percentageLabel": "Pourcentage",
+    "statusTypeLabel": "Type de statut",
+    "descriptionLabel": "Description",
+    "selectStatusPlaceholder": "Sélectionner le statut",
+    "statusUnhealthy": "Malsain",
+    "statusTreated": "Traité",
+    "statusHealthy": "Sain",
+    "descriptionPlaceholder": "Détails optionnels...",
+    "cancel": "Annuler",
+    "update": "Mettre à jour",
+    "save": "Enregistrer",
+    "notifications": {
+      "removed": "Condition supprimée",
+      "updated": "Condition mise à jour",
+      "added": "Condition ajoutée avec succès",
+      "saveFailed": "Échec de l'enregistrement de la condition",
+      "selectCondition": "Veuillez sélectionner une condition"
+    }
+  },
+  "gettingStarted": {
+    "title": "Commencer",
+    "breadcrumb": "Commencer",
+    "menu": {
+      "accountCustomization": "Personnalisation du compte",
+      "patientCardOverview": "Aperçu de la fiche patient",
+      "panoramicAnalysis": "Analyse panoramique",
+      "cbctAnalysis": "Analyse CBCT"
+    },
+    "buttons": {
+      "goBack": "Retour",
+      "goNext": "Suivant"
+    },
+    "content": {
+      "accountCustomization": {
+        "title": "Personnalisation du compte",
+        "description": "Dans cette session, nous vous guiderons dans la personnalisation de votre compte XDent pour l'aligner sur les besoins spécifiques de votre clinique.",
+        "accessingSettings": {
+          "title": "Accès aux paramètres du compte :",
+          "step1": {
+            "label": "Accéder aux paramètres :",
+            "text": "Cliquez sur les détails de votre profil en haut à droite de l'écran."
+          },
+          "step2": {
+            "label": "Choisir les paramètres :",
+            "text": "Sélectionnez soit 'Paramètres de la clinique', soit 'Paramètres du profil' dans le menu déroulant."
+          }
+        },
+        "profileSettings": {
+          "title": "Paramètres du profil :",
+          "desc": "Dans la section 'Mon profil', vous pouvez :",
+          "step1": {
+            "label": "Mettre à jour les informations personnelles :",
+            "text": "Modifiez votre prénom, votre nom et votre adresse e-mail."
+          },
+          "step2": {
+            "label": "Ajouter une photo de profil :",
+            "text": "Téléchargez une image pour personnaliser votre compte."
+          },
+          "step3": {
+            "label": "Télécharger la signature :",
+            "text": "Sur le côté droit, téléchargez votre signature et votre tampon au format PNG. Ceux-ci apparaîtront automatiquement sur vos rapports patients finaux, ajoutant une touche professionnelle."
+          }
+        },
+        "clinicSettings": {
+          "title": "Paramètres de la clinique :",
+          "desc": "Dans 'Paramètres de la clinique', il y a trois onglets :",
+          "info": {
+            "title": "Informations sur la clinique :",
+            "step1": {
+              "label": "Saisir les détails de la clinique :",
+              "text": "Entrez le nom de votre clinique et ses coordonnées."
+            },
+            "step2": {
+              "label": "Télécharger les éléments de marque :",
+              "text": "Ajoutez le logo et le sceau officiel de votre clinique (format PNG) pour vous assurer que tous les rapports patients générés par l'IA portent toujours la marque de la clinique et sont professionnels."
+            }
+          },
+          "team": {
+            "title": "Équipe :",
+            "step1": {
+              "label": "Gérer l'accès de l'équipe :",
+              "text": "Cliquez sur 'Ajouter un membre de l'équipe' pour inviter du nouveau personnel en saisissant son adresse e-mail, son prénom, son nom, son poste et en lui attribuant un niveau d'accès."
+            },
+            "levels": {
+              "label": "Niveaux d'accès :",
+              "full": "Accès complet : Accès complet à la plateforme.",
+              "clinical": "Accès clinique : Accès aux fonctionnalités cliniques.",
+              "limited": "Accès clinique limité : Fonctionnalités cliniques restreintes.",
+              "nonclinical": "Membre non clinique : Accès aux fonctionnalités administratives uniquement."
+            },
+            "step2": {
+              "label": "Modifier ou supprimer des membres :",
+              "text": "Utilisez les icônes sur le côté droit pour mettre à jour les détails ou supprimer des membres de l'équipe si nécessaire."
+            }
+          }
+        }
+      },
+      "patientCardOverview": {
+        "title": "Aperçu de la fiche patient",
+        "description": "La fiche patient est le hub central pour toutes les données spécifiques au patient, y compris les informations démographiques, l'historique des rendez-vous et la documentation clinique.",
+        "uploading2D": {
+          "title": "Téléchargement d'études 2D :",
+          "desc": "Pour télécharger des études 2D :",
+          "step1": {
+            "label": "Ouvrir la fiche patient :",
+            "text": "Accédez à la fiche patient concernée."
+          },
+          "step2": {
+            "label": "Sélectionner le type d'étude :",
+            "text": "Dans la section 'Commander un rapport', choisissez soit 'Panoramique', soit 'Intra-oral' pour télécharger les fichiers appropriés."
+          },
+          "footer": "XDent assure un processus transparent pour la gestion des études 2D et 3D."
+        }
+      },
+      "panoramicAnalysis": {
+        "title": "Rapports radiologiques - Analyse panoramique",
+        "description": "Le rapport radiologique panoramique de XDent est conçu pour la précision et la rapidité. Ce guide vous présente les fonctionnalités clés pour améliorer votre processus d'examen.",
+        "smartChart": {
+          "title": "Comprendre le schéma dentaire intelligent :",
+          "colorCodes": "Codes de couleur :",
+          "healthy": "Sain",
+          "treated": "Traité",
+          "pathology": "Pathologie",
+          "missing": "Dent manquante",
+          "periodontal": "Données parodontales disponibles"
+        },
+        "toothCards": {
+          "title": "Examen des fiches dentaires :",
+          "summary": "Les fiches dentaires résument :",
+          "detected": "Conditions détectées (certitude de l'IA supérieure à 50 %)",
+          "severity": "Sévérité et type de condition",
+          "indicators": "Indicateurs de couleur :",
+          "pathologyLabel": "Pathologie",
+          "priorLabel": "Traitement antérieur"
+        },
+        "finalizing": {
+          "title": "Finalisation du rapport :",
+          "approve": "Cliquez sur « Approuver » pour confirmer les résultats.",
+          "select": "Pour n'inclure que les dents sélectionnées, utilisez « Sélectionner les dents ».",
+          "conclusions": "Ajoutez vos conclusions et recommandations cliniques supplémentaires."
+        }
+      },
+      "cbctAnalysis": {
+        "title": "Rapports radiologiques - Analyse CBCT",
+        "description": "Dans cette vidéo, nous vous guidons à travers le processus de navigation et d'analyse des rapports radiologiques pour les examens CBCT (tomographie volumique à faisceau conique) à l'aide de la plateforme pilotée par l'IA de XDent.",
+        "accessing": {
+          "title": "Accès et ajustement des rapports CBCT :",
+          "step1": {
+            "label": "Ouverture d'un rapport :",
+            "text": "Cliquez sur le reformatage CBCT pour accéder à la vue panoramique générée automatiquement, créée à l'aide de la technologie d'IA brevetée de XDent."
+          },
+          "step2": {
+            "label": "Ajustements d'image :",
+            "text": "Utilisez la barre d'outils sur la gauche pour modifier la luminosité, le contraste et la netteté. Survolez chaque outil pour voir sa description. Vous pouvez diviser le panorama ou l'agrandir en plein écran pour un contexte diagnostic amélioré."
+          },
+          "step3": {
+            "label": "Correction du numéro de dent :",
+            "text": "Si un numéro de dent doit être corrigé, cliquez sur le bouton \"Modifier le numéro de dent\", sélectionnez la dent appropriée, saisissez le nouveau numéro et cliquez sur \"Confirmer\" pour mettre à jour la formule dentaire instantanément."
+          }
+        },
+        "formula": {
+          "title": "Comprendre la formule dentaire :",
+          "desc": "Sous le reformatage panoramique, la formule dentaire catégorise les dents par couleur :",
+          "healthy": "Dents saines.",
+          "treated": "Dents précédemment traitées.",
+          "unhealthy": "Dents malsaines.",
+          "missing": "Dents manquantes."
+        }
+      }
+    }
   }
 }

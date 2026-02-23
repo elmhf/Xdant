@@ -19,14 +19,12 @@ export function useSliceImage(view, index) {
   const resultImage = useMemo(() => {
     return images?.[index] || sliceImages?.[index];
   }, [images, sliceImages, index]);
-  // Auto-load images if not loaded yet
   useEffect(() => {
     const sliceCount = sliceCounts[view] || 1;
     if (sliceCount > 0 && images.length === 0 && !loading[view]) {
-
       loadViewImages(view, sliceCount);
     }
-  }, []);
+  }, [view, sliceCounts, images.length, loading, loadViewImages]);
 
   return resultImage;
 }

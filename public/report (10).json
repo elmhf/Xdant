@@ -1,0 +1,2464 @@
+{
+  "patientInfo": {
+    "patientId": "50af57f3-909a-402a-9a46-f69845c7f3b6",
+    "info": {
+      "fullName": "Ahmed Mansour",
+      "dateOfBirth": "1982-05-14",
+      "age": 42,
+      "lastScanDate": "2026-01-01",
+      "gender": "Male",
+      "bloodType": "O+",
+      "allergies": [
+        "Penicillin"
+      ],
+      "medicalHistory": [
+        "Hypertension (controlled)"
+      ]
+    }
+  },
+  "teeth": [
+    {
+      "toothNumber": 47,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 1330.649658203125,
+        "y": 567.541259765625
+      },
+      "boundingBox": {
+        "x": 1330.649658203125,
+        "y": 567.541259765625,
+        "width": 170.992919921875,
+        "height": 187.37716674804688
+      },
+      "detectionConfidence": 0.49078258872032166,
+      "detectionId": "47_0",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.5777924656867981,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            1321.126708984375,
+            560.3737182617188,
+            142.2911376953125,
+            157.73171997070312
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803924",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 3,
+      "canals": 3,
+      "notes": [
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-07-04T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-08-20T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-09-10T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9696,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 43,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 806.8414306640625,
+        "y": 657.867919921875
+      },
+      "boundingBox": {
+        "x": 806.8414306640625,
+        "y": 657.867919921875,
+        "width": 89.1715087890625,
+        "height": 231.30804443359375
+      },
+      "detectionConfidence": 0.4848276376724243,
+      "detectionId": "43_1",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803935",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 1,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-01-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-04-05T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-04-12T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-05-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-11-04T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-11-06T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.8843,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 34,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 1076.77685546875,
+        "y": 659.9420166015625
+      },
+      "boundingBox": {
+        "x": 1076.77685546875,
+        "y": 659.9420166015625,
+        "width": 87.3038330078125,
+        "height": 225.18914794921875
+      },
+      "detectionConfidence": 0.45975804328918457,
+      "detectionId": "34_2",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.7735694050788879,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            1072.179443359375,
+            650.3270263671875,
+            77.199462890625,
+            200.1806640625
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803938",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 1,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-04-12T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-04-28T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-05-04T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-07-16T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-09-09T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.877,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 41,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 931.4765625,
+        "y": 641.61279296875
+      },
+      "boundingBox": {
+        "x": 931.4765625,
+        "y": 641.61279296875,
+        "width": 62.87750244140625,
+        "height": 185.6912841796875
+      },
+      "detectionConfidence": 0.44646525382995605,
+      "detectionId": "41_3",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803941",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 1,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-03-06T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-03-11T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-08-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-10-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-10-27T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-11-21T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9853,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 35,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 1138.4517822265625,
+        "y": 660.33642578125
+      },
+      "boundingBox": {
+        "x": 1138.4517822265625,
+        "y": 660.33642578125,
+        "width": 108.15869140625,
+        "height": 231.8494873046875
+      },
+      "detectionConfidence": 0.38274869322776794,
+      "detectionId": "35_4",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803943",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 1,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-04-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-06-05T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-06-09T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-10-13T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-11-13T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9322,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 31,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 932.1280517578125,
+        "y": 643.8773193359375
+      },
+      "boundingBox": {
+        "x": 932.1280517578125,
+        "y": 643.8773193359375,
+        "width": 61.58544921875,
+        "height": 188.75390625
+      },
+      "detectionConfidence": 0.3814537823200226,
+      "detectionId": "31_5",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803946",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 1,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-03-19T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-04-18T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-08-14T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-12-15T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9785,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 11,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 945.3160400390625,
+        "y": 419.8144226074219
+      },
+      "boundingBox": {
+        "x": 945.3160400390625,
+        "y": 419.8144226074219,
+        "width": 81.46978759765625,
+        "height": 235.48858642578125
+      },
+      "detectionConfidence": 0.3771740794181824,
+      "detectionId": "11_6",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.6917666792869568,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            946.8067626953125,
+            437.0342102050781,
+            72.82305908203125,
+            196.09368896484375
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803949",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 1,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-04-21T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-05-06T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-07-30T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-10-09T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-11-02T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9711,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 42,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 858.3009033203125,
+        "y": 646.830810546875
+      },
+      "boundingBox": {
+        "x": 858.3009033203125,
+        "y": 646.830810546875,
+        "width": 80.06695556640625,
+        "height": 201.85845947265625
+      },
+      "detectionConfidence": 0.3701589107513428,
+      "detectionId": "42_7",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803953",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 1,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-05-03T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-07-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-07-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-09-30T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-11-15T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.8715,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 48,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 1328.3907470703125,
+        "y": 339.5418701171875
+      },
+      "boundingBox": {
+        "x": 1328.3907470703125,
+        "y": 339.5418701171875,
+        "width": 109.2978515625,
+        "height": 173.496337890625
+      },
+      "detectionConfidence": 0.363442987203598,
+      "detectionId": "48_8",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.3296293020248413,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            1326.418212890625,
+            349.70941162109375,
+            85.0921630859375,
+            132.24136352539062
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803956",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 2,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-06-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-08-05T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-09-14T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9133,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 33,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 806.4931030273438,
+        "y": 658.3557739257812
+      },
+      "boundingBox": {
+        "x": 806.4931030273438,
+        "y": 658.3557739257812,
+        "width": 88.8629150390625,
+        "height": 232.4669189453125
+      },
+      "detectionConfidence": 0.3629259765148163,
+      "detectionId": "33_9",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803958",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 1,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-01-15T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-05-01T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-05-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-05-24T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-07-16T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-09-03T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9202,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 32,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 968.8392333984375,
+        "y": 649.83203125
+      },
+      "boundingBox": {
+        "x": 968.8392333984375,
+        "y": 649.83203125,
+        "width": 62.43389892578125,
+        "height": 209.8333740234375
+      },
+      "detectionConfidence": 0.3284892737865448,
+      "detectionId": "32_10",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803960",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 1,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-10-11T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-12-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-12-30T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9286,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 45,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 1137.091064453125,
+        "y": 662.3019409179688
+      },
+      "boundingBox": {
+        "x": 1137.091064453125,
+        "y": 662.3019409179688,
+        "width": 109.3338623046875,
+        "height": 235.9530029296875
+      },
+      "detectionConfidence": 0.3119659721851349,
+      "detectionId": "45_13",
+      "problems": [
+        {
+          "type": "Implant",
+          "severity": "medium",
+          "confidence": 0.4713033139705658,
+          "description": "Detected Implant on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            1133.467041015625,
+            659.626220703125,
+            98.6119384765625,
+            224.04937744140625
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803963",
+      "note": "Requires evaluation for Implant",
+      "approved": false,
+      "roots": 1,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-01-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-02-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-06-20T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-09-20T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-12-27T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-12-31T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.8537,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 22,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 944.8370971679688,
+        "y": 418.9813537597656
+      },
+      "boundingBox": {
+        "x": 944.8370971679688,
+        "y": 418.9813537597656,
+        "width": 81.6414794921875,
+        "height": 235.70819091796875
+      },
+      "detectionConfidence": 0.2949428856372833,
+      "detectionId": "22_16",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803965",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 1,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-01-20T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-04-19T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-10-11T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-10-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9602,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 44,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 746.2327880859375,
+        "y": 657.0031127929688
+      },
+      "boundingBox": {
+        "x": 746.2327880859375,
+        "y": 657.0031127929688,
+        "width": 80.565673828125,
+        "height": 205.6915283203125
+      },
+      "detectionConfidence": 0.28282424807548523,
+      "detectionId": "44_17",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.20446491241455078,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            745.0665893554688,
+            648.6249389648438,
+            72.2806396484375,
+            191.887451171875
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803968",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 1,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-04-21T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-11-05T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-11-14T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9052,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 17,
+      "toothType": "unknown",
+      "category": "Healthy",
+      "position": {
+        "x": 491.8155212402344,
+        "y": 375.54351806640625
+      },
+      "boundingBox": {
+        "x": 491.8155212402344,
+        "y": 375.54351806640625,
+        "width": 134.91986083984375,
+        "height": 237.93844604492188
+      },
+      "detectionConfidence": 0.26816362142562866,
+      "detectionId": "17_19",
+      "problems": [],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803969",
+      "note": "Healthy condition",
+      "approved": false,
+      "roots": 3,
+      "canals": 3,
+      "notes": [
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-06-28T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-10-05T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-10-25T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-12-22T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.952,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 37,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 1240.658203125,
+        "y": 620.9299926757812
+      },
+      "boundingBox": {
+        "x": 1240.658203125,
+        "y": 620.9299926757812,
+        "width": 160.7757568359375,
+        "height": 204.240478515625
+      },
+      "detectionConfidence": 0.256551593542099,
+      "detectionId": "37_22",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.5867934226989746,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            1234.5045166015625,
+            614.4793701171875,
+            144.285400390625,
+            177.65460205078125
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803972",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 3,
+      "canals": 3,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-05-27T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-09-02T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-10-17T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-11-21T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9769,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 14,
+      "toothType": "unknown",
+      "category": "Unhealthy",
+      "position": {
+        "x": 759.4410400390625,
+        "y": 400.9027099609375
+      },
+      "boundingBox": {
+        "x": 759.4410400390625,
+        "y": 400.9027099609375,
+        "width": 101.27178955078125,
+        "height": 257.3116455078125
+      },
+      "detectionConfidence": 0.23936478793621063,
+      "detectionId": "14_26",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.7992933988571167,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            758.7532958984375,
+            413.058837890625,
+            83.67889404296875,
+            224.57455444335938
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        },
+        {
+          "type": "Caries",
+          "severity": "low",
+          "confidence": 0.45,
+          "description": "Incipient caries suspected",
+          "detectedBy": "multiproblem",
+          "location": [
+            758.7532958984375,
+            413.058837890625,
+            83.67889404296875,
+            224.57455444335938
+          ],
+          "recommendation": "Monitor next visit",
+          "urgency": "low"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803975",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 1,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-03-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-03-14T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-03-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-08-15T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-09-25T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9493,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Unhealthy"
+    },
+    {
+      "toothNumber": 28,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 490.6927490234375,
+        "y": 376.11944580078125
+      },
+      "boundingBox": {
+        "x": 490.6927490234375,
+        "y": 376.11944580078125,
+        "width": 131.6395263671875,
+        "height": 235.74465942382812
+      },
+      "detectionConfidence": 0.2393634170293808,
+      "detectionId": "28_27",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.6953105926513672,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            491.1641845703125,
+            388.99188232421875,
+            110.43905639648438,
+            202.30337524414062
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803977",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 2,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-01-13T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-02-27T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-10-22T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-11-05T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9426,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 26,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 705.4764404296875,
+        "y": 408.06939697265625
+      },
+      "boundingBox": {
+        "x": 705.4764404296875,
+        "y": 408.06939697265625,
+        "width": 100.94390869140625,
+        "height": 254.1744384765625
+      },
+      "detectionConfidence": 0.22761332988739014,
+      "detectionId": "26_30",
+      "problems": [
+        {
+          "type": "Fillings",
+          "severity": "medium",
+          "confidence": 0.7383455038070679,
+          "description": "Detected Fillings on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            701.1507568359375,
+            422.11279296875,
+            73.07147216796875,
+            218.64602661132812
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803980",
+      "note": "Requires evaluation for Fillings",
+      "approved": false,
+      "roots": 3,
+      "canals": 4,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-04-02T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-04-29T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-06-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-06-24T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-11-21T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.9665,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 16,
+      "toothType": "unknown",
+      "category": "Treated",
+      "position": {
+        "x": 580.2896118164062,
+        "y": 400.83453369140625
+      },
+      "boundingBox": {
+        "x": 580.2896118164062,
+        "y": 400.83453369140625,
+        "width": 110.6405029296875,
+        "height": 228.72262573242188
+      },
+      "detectionConfidence": 0.2114131599664688,
+      "detectionId": "16_31",
+      "problems": [
+        {
+          "type": "Implant",
+          "severity": "medium",
+          "confidence": 0.6517764329910278,
+          "description": "Detected Implant on full scan",
+          "detectedBy": "multiproblem",
+          "location": [
+            581.580810546875,
+            418.8985900878906,
+            97.11468505859375,
+            188.96612548828125
+          ],
+          "recommendation": "",
+          "urgency": "medium"
+        }
+      ],
+      "gumHealth": "Unknown",
+      "lastCheckup": "2026-01-01T10:08:46.803982",
+      "note": "Requires evaluation for Implant",
+      "approved": false,
+      "roots": 3,
+      "canals": 4,
+      "notes": [
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-05-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-08-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-11-20T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": null,
+      "Root": null,
+      "Crown": null,
+      "ai_metadata": {
+        "segmentation_confidence": 0.8704,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Treated"
+    },
+    {
+      "toothNumber": 12,
+      "toothType": "incisor",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "12_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 2,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-06-29T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-07-22T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-08-17T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-08-24T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-12-02T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-12-22T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-04-02T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-05-22T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-08-01T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.9671,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 13,
+      "toothType": "canine",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "13_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 3,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-06-16T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-08-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-08-17T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-08-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-09-01T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-09-03T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-06-24T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-10-29T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-12-01T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.9122,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 15,
+      "toothType": "premolar",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "15_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 3,
+      "canals": 3,
+      "notes": [
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-02-19T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-09-12T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-09-16T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-11-08T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-11-10T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-08-15T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-08-30T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-10-02T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.8654,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 18,
+      "toothType": "molar",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "18_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 2,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-01-10T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-06-08T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-07-14T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-07-19T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-09-17T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-03-06T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-03-10T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-08-19T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.959,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 21,
+      "toothType": "incisor",
+      "category": "Missing",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "21_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "Tooth missing",
+      "approved": true,
+      "roots": 3,
+      "canals": 4,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-03-27T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-07-12T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-08-24T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-09-09T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-12-11T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-02-11T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-03-01T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-03-15T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.8648,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Missing"
+    },
+    {
+      "toothNumber": 23,
+      "toothType": "canine",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "23_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 1,
+      "canals": 4,
+      "notes": [
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-01-06T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-04-24T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-04-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-05-11T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-07-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-04-02T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-04-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-05-03T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.8995,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 24,
+      "toothType": "premolar",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "24_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 3,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-04-18T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-07-02T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-08-14T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-12-17T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-03-19T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-03-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-07-17T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.8675,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 25,
+      "toothType": "premolar",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "25_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 3,
+      "canals": 3,
+      "notes": [
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-01-11T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-02-04T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-07-04T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-09-27T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-01-31T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-07-20T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-09-20T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.888,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 27,
+      "toothType": "molar",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "27_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 1,
+      "canals": 2,
+      "notes": [
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-01-25T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-03-15T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-09-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-12-06T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-12-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-06-03T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-08-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-11-15T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.8551,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 36,
+      "toothType": "molar",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "36_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 2,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-03-26T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-06-09T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-06-16T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-07-03T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Gingival recession of 1mm noted.",
+          "date": "2023-06-19T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-11-23T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-12-03T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.9353,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    },
+    {
+      "toothNumber": 38,
+      "toothType": "molar",
+      "category": "Missing",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "38_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "Tooth missing",
+      "approved": true,
+      "roots": 2,
+      "canals": 1,
+      "notes": [
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-04-09T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-12-10T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-12-27T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-01-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-10-21T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Slight sensitivity reported by patient.",
+          "date": "2023-12-14T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.9298,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Missing"
+    },
+    {
+      "toothNumber": 46,
+      "toothType": "molar",
+      "category": "Healthy",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "boundingBox": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "detectionConfidence": 0.0,
+      "detectionId": "46_placeholder",
+      "problems": [],
+      "gumHealth": "Healthy",
+      "lastCheckup": "2026-01-01T10:08:46Z",
+      "note": "AI could not detect - added manually",
+      "approved": true,
+      "roots": 3,
+      "canals": 3,
+      "notes": [
+        {
+          "text": "Observed minor plaque buildup.",
+          "date": "2023-04-19T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-07-13T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "X-ray shows stable bone levels.",
+          "date": "2023-09-07T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Routine checkup, no issues noted.",
+          "date": "2023-10-16T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-01-30T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Filling margin looks secure.",
+          "date": "2023-03-09T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        },
+        {
+          "text": "Professional cleaning performed.",
+          "date": "2023-06-18T00:00:00Z",
+          "dentist": "Dr. Adam Smith"
+        }
+      ],
+      "Endo": {
+        "status": "none",
+        "treatmentDate": null
+      },
+      "Root": {
+        "condition": "Healthy",
+        "mask": []
+      },
+      "Crown": {
+        "condition": "Intact",
+        "mask": []
+      },
+      "ai_metadata": {
+        "segmentation_confidence": 0.9502,
+        "texture_analysis": "Normal",
+        "mineralization_level": "Optimal",
+        "pulp_chamber_visibility": "Clear"
+      },
+      "status": "Healthy"
+    }
+  ],
+  "statistics": {
+    "totalTeeth": 32,
+    "healthy": 19,
+    "unhealthy": 1,
+    "treated": 10,
+    "missing": 2,
+    "problemsDistribution": {
+      "Fillings": 9,
+      "Implant": 2,
+      "Caries": 1
+    },
+    "severityDistribution": {
+      "medium": 11,
+      "low": 1
+    },
+    "requiresAttention": true,
+    "cariesDistribution": {
+      "active": 3,
+      "arrested": 0,
+      "recurrent": 2,
+      "enamel": 4,
+      "dentin": 1,
+      "pulp": 0
+    },
+    "periodontalStatus": "Generalized mild to moderate gingivitis",
+    "missingTeeth": 0,
+    "detailedBreakdown": {
+      "upperRight": {
+        "healthy": 5,
+        "unhealthy": 3
+      },
+      "upperLeft": {
+        "healthy": 5,
+        "unhealthy": 3
+      },
+      "lowerLeft": {
+        "healthy": 5,
+        "unhealthy": 3
+      },
+      "lowerRight": {
+        "healthy": 4,
+        "unhealthy": 4
+      }
+    }
+  },
+  "scanInfo": {
+    "device": "Panoramic X-Ray",
+    "dimensions": {
+      "width": 0,
+      "height": 0,
+      "resolution": "300dpi"
+    },
+    "scanDate": "2026-01-01T10:08:46.803989",
+    "scanType": "panoramic",
+    "imageFormat": "PNG",
+    "advanced": {
+      "exposureTime": "12s",
+      "filterType": "Edge Enhancement",
+      "patientPositioning": "Optimal",
+      "sensorId": "SENS-992384"
+    }
+  },
+  "aiAnalysis": {
+    "segmentationModel": "models/pano/tooth_segmentation.pt",
+    "detectionModels": [
+      "multiproblem"
+    ],
+    "analysisDate": "2026-01-01T10:08:46.803993",
+    "processingTime": 0,
+    "confidence": 0,
+    "status": "success"
+  },
+  "conclusion": "The panoramic analysis reveals multiple teeth with restorations (Fillings on 47, 34, 11, etc.) and one implant on 16. Incipient caries are suspected on tooth 14. Overall bone support is stable, but generalized mild gingivitis is noted.",
+  "conclusionUpdatedAt": "2026-01-01T10:08:46Z",
+  "metadata": {
+    "reportId": "7c40ff9b-5608-4d46-a3ea-34f408945a63",
+    "reportType": "pano",
+    "generatedBy": "AI Analysis System v2",
+    "version": "2.0",
+    "lastUpdated": "2026-01-01T10:08:46.803996",
+    "clinicInfo": {
+      "clinicId": "CL-001",
+      "name": "Elite Dental Clinic",
+      "license": "LIC-2024-001",
+      "address": "Tunis, Tunisia"
+    }
+  }
+}

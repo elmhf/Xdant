@@ -3,6 +3,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { apiClient } from '@/utils/apiClient';
 import { useDentalStore } from '@/stores/dataStore';
 import { useImageStore } from '@/app/(dashboard)/OrthogonalViews/stores/imageStore';
+import useUserStore from '@/components/features/profile/store/userStore';
 
 // Simple cache for single report
 let singleReportCache = null;
@@ -16,8 +17,10 @@ async function fetchReportDataByPost(reportId, abortSignal) {
   const cleanReportId = String(reportId).trim();
   console.log('🔍 Fetching report:', cleanReportId);
 
-  // Extract patient ID from URL
-  const patientId = window.location.pathname.split('/')[2];
+  // Extract patient ID from URL robustly (handling locale prefixes like /en/patient/...)
+  const pathParts = window.location.pathname.split('/');
+  const patientIdx = pathParts.findIndex(p => p === 'patient') + 1;
+  const patientId = patientIdx > 0 ? pathParts[patientIdx] : pathParts[2];
   console.log('🔗 URL Parameters:', { patientId, reportId: cleanReportId });
 
   try {
@@ -30,7 +33,17 @@ async function fetchReportDataByPost(reportId, abortSignal) {
       signal: abortSignal
     });
 
+
     console.log('✅ Data fetched successfully', data);
+
+    // Sync Clinic ID if available in metadata
+    if (data?._meta?.clinic_id) {
+      const { currentClinicId, setCurrentClinicId } = useUserStore.getState();
+      if (currentClinicId !== data._meta.clinic_id) {
+        console.log('🔄 Syncing clinic ID from report metadata:', data._meta.clinic_id);
+        setCurrentClinicId(data._meta.clinic_id);
+      }
+    }
 
     // Setup image store data (ONLY for 3D/CBCT reports)
     const setupFromReport = useImageStore.getState().setupFromReport;
@@ -39,12 +52,20 @@ async function fetchReportDataByPost(reportId, abortSignal) {
       const detectedType = detectReportType(data);
       console.log('📊 Initializing Image Store for type:', detectedType);
 
-      if (detectedType === 'cbct' || detectedType === 'toothSlice' || detectedType === '3d model ai') {
-        // Prefer the full JSON data (report_data) which has scanInfo/dimensions
-        // If not available, fall back to the DB record (report)
-        console.log("dataddddd", data)
-        const dataForStore = data.report_data || data.report;
-        console.log("✅ Data sent to imageStore:", dataForStore ? "Found Data" : "Empty");
+      if (detectedType === 'cbct' || detectedType === 'toothslice' || detectedType === '3d model ai' || detectedType === 'tooth slice') {
+        // Merge report and report_data to ensure all fields (scanInfo, dimensions, URLs) are available
+        const dataForStore = {
+          ...(data.report || {}),
+          ...(data.report_data || data.data || {}),
+          data_url: data.data_url || (data.report?.data_url) || (data.report?.report_url)
+        };
+
+        console.log("✅ Data merged for imageStore:", {
+          hasScanInfo: !!dataForStore.scanInfo,
+          hasDimensions: !!dataForStore.scanInfo?.dimensions,
+          reportType: detectedType
+        });
+
         await setupFromReport(dataForStore);
       } else {
         console.log('⏭️ Skipping 3D Image Store setup for non-3D report type:', detectedType);
@@ -89,11 +110,12 @@ function detectReportType(reportData) {
   for (const dataToCheck of places) {
     console.log("reportDatareportDatareportDatareportDatareportDatareportData", reportData.report.report_type)
     if (!dataToCheck) continue;
-    // Check for report_type field
-    if (dataToCheck.report_type) {
-      console.log("reportDatareportDatareportDatareportDatareportDatareportData", dataToCheck.report_type)
-      const reportType = String(dataToCheck.report_type).toLowerCase();
-      console.log('📋 Report type detected:', reportType.toUpperCase(), '(from report_type field)');
+    // Check for report_type or raport_type field
+    if (dataToCheck.report_type || dataToCheck.raport_type) {
+      const typeValue = dataToCheck.report_type || dataToCheck.raport_type;
+      console.log("reportDatareportDatareportDatareportDatareportDatareportDataValue", typeValue)
+      const reportType = String(typeValue).toLowerCase();
+      console.log('📋 Report type detected:', reportType.toUpperCase(), '(from type field)');
       return reportType;
     }
     // Check for pano image URL first

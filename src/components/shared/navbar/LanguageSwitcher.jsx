@@ -11,7 +11,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function LanguageSwitcher({ className }) {
+export function LanguageSwitcher({ className, variant = 'dark' }) {
     const { t, i18n } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState('en');
 
@@ -28,12 +28,32 @@ export function LanguageSwitcher({ className }) {
         localStorage.setItem('preferredLanguage', lng);
     }, [i18n]);
 
+    const isLight = variant === 'light';
+
     return (
         <div className={className}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-12 w-12 flex items-center justify-center hover:bg-gray-100 rounded-xl transition-colors" aria-label={t('common.changeLanguage')}>
-                        <Globe className="h-11 w-11 text-gray-600" />
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`h-auto w-auto flex items-center gap-2 p-2 px-3 rounded-xl transition-colors ${isLight ? 'text-white hover:bg-white/10' : 'text-gray-600 hover:bg-gray-100'
+                            }`}
+                        aria-label={t('common.changeLanguage')}
+                    >
+                        <Globe className={`h-5 w-5 ${isLight ? 'text-white' : 'text-gray-600'}`} />
+                        <span className="text-sm font-medium">
+                            {
+                                {
+                                    'en': 'English',
+                                    'ar': 'العربية',
+                                    'fr': 'Français',
+                                    'es': 'Español',
+                                    'pt': 'Português'
+                                }[currentLanguage]
+                            }
+                        </span>
+                        <ChevronDown className={`h-4 w-4 opacity-70 ${isLight ? 'text-white' : 'text-gray-600'}`} />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-xl border-gray-100">

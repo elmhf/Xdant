@@ -4,9 +4,12 @@ import Navbar from '@/components/shared/navbar/NavBar';
 import useUserStore from '@/components/features/profile/store/userStore';
 import UploadToast from '@/app/(dashboard)/patient/components/UploadToast';
 import useUploadStore from '@/stores/uploadStore';
+import { usePathname } from 'next/navigation';
 
 
 export default function DashboardLayout({ children }) {
+  const pathname = usePathname();
+  const isGettingStarted = pathname === '/getting-started';
   const [loading, setLoading] = useState(true);
   const getUserInfo = useUserStore(state => state.getUserInfo);
   const fetchMyClinics = useUserStore(state => state.fetchMyClinics);
@@ -50,6 +53,7 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="min-h-screen p-0 w-full flex flex-col space-y-4 overflow-hidden">
       {/* Fixed Navbar with transparent backdrop */}
+      {/* Fixed Navbar with transparent backdrop */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-md">
         <div className="mx-auto" style={{ maxWidth: '70vw' }}>
           <Navbar />
@@ -57,7 +61,7 @@ export default function DashboardLayout({ children }) {
       </div>
 
       {/* Scrollable Content with padding for fixed navbar */}
-      <div className="flex-1 overflow-y-scroll pt-16">
+      <div className={`flex-1 overflow-y-scroll ${isGettingStarted ? 'pt-0' : 'pt-16'}`}>
         <div className="mx-auto" style={{ maxWidth: '70vw' }}>
           {children}
         </div>
