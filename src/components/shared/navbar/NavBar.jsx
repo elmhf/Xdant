@@ -232,7 +232,7 @@ export default function Navbar() {
                   onClick={() => router.push('/getting-started')}
                   aria-label={t('navbar.learningHub')}
                 >
-                  <GraduationCap className="h-11 w-11" />
+                  <GraduationCap className="h-12 w-12" />
                 </Button>
                 <Button variant="ghost" size="icon" className={`h-12 w-12 transition-colors ${isGettingStarted ? 'text-white hover:bg-white/10' : 'text-gray-600'}`} aria-label={t('common.toggleDarkMode')}>
                   <Moon className="h-11 w-11" />
