@@ -73,28 +73,83 @@ const AccountCustomizationContent = ({ t }) => (
     </div>
 );
 
-const PatientCardOverviewContent = ({ t }) => (
-    <div className="space-y-8">
-        <div>
-            <p className="text-3xl font-bold text-[#1e3a5a] mb-4">{t('gettingStarted.content.patientCardOverview.title')}</p>
-            <p className="text-xl text-[#334e68] leading-relaxed">
-                {t('gettingStarted.content.patientCardOverview.description')}
-            </p>
-        </div>
-
-        <section>
-            <h2 className="text-md font-bold text-[#1e3a5a] mb-4">{t('gettingStarted.content.patientCardOverview.uploading2D.title')}</h2>
-            <p className="text-[#334e68] mb-3">{t('gettingStarted.content.patientCardOverview.uploading2D.desc')}</p>
-            <ol className="list-decimal ml-8 space-y-3 text-[#334e68]">
-                <li><span className="font-bold text-[#1e3a5a]">{t('gettingStarted.content.patientCardOverview.uploading2D.step1.label')}</span> {t('gettingStarted.content.patientCardOverview.uploading2D.step1.text')}</li>
-                <li><span className="font-bold text-[#1e3a5a]">{t('gettingStarted.content.patientCardOverview.uploading2D.step2.label')}</span> {t('gettingStarted.content.patientCardOverview.uploading2D.step2.text')}</li>
-            </ol>
-            <p className="mt-6 font-bold text-[#1e3a5a]">
-                {t('gettingStarted.content.patientCardOverview.uploading2D.footer')}
-            </p>
-        </section>
+const PatientCardOverviewContent = () => (
+  <div className="space-y-8">
+    <div>
+      <p className="text-3xl font-bold text-[#1e3a5a] mb-4">
+        Patient Card Overview
+      </p>
+      <p className="text-xl text-[#334e68] leading-relaxed">
+        The patient card serves as the central hub for managing patient data and uploading studies. 
+        At the top, you'll find patient details such as name and date of birth. To edit this information, 
+        click the <span className="font-bold">Edit</span> button, make the necessary changes, and then click 
+        <span className="font-bold"> Save</span>. If you need to remove a patient card, use the 
+        <span className="font-bold"> Delete</span> button. Additionally, the plus sign (+) below the patient 
+        details allows you to add team members for collaborative case management.
+      </p>
     </div>
+
+    <section>
+      <h2 className="text-md font-bold text-[#1e3a5a] mb-4">
+        Uploading a CBCT Study for a New Patient
+      </h2>
+
+      <ol className="list-decimal ml-8 space-y-3 text-[#334e68]">
+        <li>
+          <span className="font-bold text-[#1e3a5a]">Create a Patient Card:</span>{" "}
+          Begin by creating a new patient card. For guidance, refer to our earlier lesson on patient profile creation.
+        </li>
+        <li>
+          <span className="font-bold text-[#1e3a5a]">Initiate CBCT Upload:</span>{" "}
+          Open the patient card and click the <span className="font-bold">CBCT Upload</span> icon.
+        </li>
+        <li>
+          <span className="font-bold text-[#1e3a5a]">Select Upload Method:</span>
+          <ul className="list-disc ml-6 mt-2 space-y-1">
+            <li><span className="font-bold">Drag and Drop:</span> Drag the entire CBCT study folder into</li>
+            <li><span className="font-bold">Manual Selection:</span> Manually select the folder’s path for upload.</li>
+          </ul>
+        </li>
+        <li>
+          <span className="font-bold text-[#1e3a5a]">Complete Upload:</span>{" "}
+          After selecting the files, click the <span className="font-bold">Order</span> button. 
+          Upload time varies based on internet speed. A green progress bar confirms a successful upload.
+        </li>
+        <li>
+          <span className="font-bold text-[#1e3a5a]">Report Generation:</span>{" "}
+          Post-upload, a radiologic report is automatically generated, typically within 4 to 6 minutes.
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2 className="text-md font-bold text-[#1e3a5a] mb-4">
+        Uploading 2D Studies
+      </h2>
+
+      <p className="text-[#334e68] mb-3">
+        To upload 2D studies:
+      </p>
+
+      <ol className="list-decimal ml-8 space-y-3 text-[#334e68]">
+        <li>
+          <span className="font-bold text-[#1e3a5a]">Open Patient Card:</span>{" "}
+          Access the relevant patient card.
+        </li>
+        <li>
+          <span className="font-bold text-[#1e3a5a]">Select Study Type:</span>{" "}
+          In the <span className="font-bold">Order a Report</span> section, choose either 
+          <span className="font-bold"> Panoramic</span> 
+        </li>
+      </ol>
+
+      <p className="mt-6 font-bold text-[#1e3a5a]">
+        The platform ensures a seamless process for handling both 2D and 3D studies.
+      </p>
+    </section>
+  </div>
 );
+
 
 const PanoramicAnalysisContent = ({ t }) => (
     <div className="space-y-8">
